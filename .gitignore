@@ -1,0 +1,13 @@
+target/
+clojure/
+clojure/*
+*/target/*
+*/*/target/*
+.project
+.classpath
+.settings/*
+target/*
+*.class
+*/.settings/*
+/core/.settings/org.eclipse.wst.common.component
+~                                                    

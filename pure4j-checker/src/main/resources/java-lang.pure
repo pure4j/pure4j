@@ -1,0 +1,9 @@
+java/lang/Object.finalize()V 
+java/lang/Object.wait(JI)V 
+java/lang/Object.wait(J)V 
+java/lang/Object.wait()V 
+java/lang/Object.getClass()Ljava/lang/Class; 
+java/lang/Object.clone()Ljava/lang/Object; 
+java/lang/Object.registerNatives()V 
+java/lang/Object.notify()V 
+java/lang/Object.notifyAll()V 

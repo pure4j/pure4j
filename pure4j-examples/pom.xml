@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.kite9</groupId>
+		<artifactId>kite9-java</artifactId>
+		<version>1.11-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>		
+	</parent>
+
+
+	<artifactId>kite9-java-examples</artifactId>
+	<packaging>jar</packaging>
+	<name>Kite9 Java Examples</name>
+	<url>http://www.kite9.org/java-examples</url>
+	<description>This is a standalone maven project containing some examples showing how to use the Kite9 toolkit in a Java project</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>project</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+			</plugin>
+			<plugin>
+				<groupId>org.kite9</groupId>
+				<artifactId>kite9-java-maven-plugin</artifactId>
+       		                <version>${project.version}</version>
+				<configuration>
+					<userProperties>
+						<property>
+							<name>context.projectId</name>
+							<value>${kite9.projectId}</value>
+						</property>
+						<property>
+							<name>context.secretKey</name>
+							<value>${kite9.secretKey}</value>
+						</property>
+					</userProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kite9</groupId>
+			<artifactId>kite9-java-core</artifactId>
+	                <version>${project.version}</version>
+			<scope />
+		</dependency>
+	</dependencies>
+</project>
