@@ -1,11 +1,11 @@
-package org.pure4j.checker.no_to_string;
+package org.pure4j.checker.library_case.client;
 
 import java.io.IOException;
 
 import org.junit.Test;
 import org.pure4j.checker.AbstractChecker;
 
-public class TestCheckNotImplementingToString extends AbstractChecker {
+public class TestCanUsePureLibrary extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {

@@ -1,6 +1,8 @@
 package org.pure4j.checker;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -13,8 +15,9 @@ public class AbstractChecker {
 
 	int errors = 0;
 	
-	public void checkThisPackage(Class<?> ofClass, int expectedErrorCount) throws IOException {
+	public void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
 		errors = 0;
+		final List<String> pures = new ArrayList<String>();
 
 		Callback cb = new Callback() {
 			
@@ -28,6 +31,11 @@ public class AbstractChecker {
 				errors++;
 				System.err.println(s);
 			}
+
+			@Override
+			public void registerPure(String signature) {
+				pures.add(signature);
+			}
 		};
 
 		
@@ -38,6 +46,12 @@ public class AbstractChecker {
 		PurityChecker checker = new PurityChecker(this.getClass().getClassLoader());
 		checker.checkModel(pm, cb);
 		
+		System.out.println("----- PURES ---- ");
+		for (String string : pures) {
+			System.out.println(string);
+		}
+		
 		Assert.assertEquals(expectedErrorCount, errors);
+		Assert.assertEquals(expectedPureCount, pures.size());
 	}
 }

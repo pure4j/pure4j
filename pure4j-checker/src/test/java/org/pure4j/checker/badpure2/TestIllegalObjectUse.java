@@ -23,6 +23,6 @@ public class TestIllegalObjectUse extends AbstractChecker {
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 3);
+		checkThisPackage(this.getClass(), 3,  1);
 	}
 }

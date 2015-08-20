@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.immutable.HashHelp;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
@@ -44,11 +46,47 @@ public class PurityChecker implements Rule {
 		private Boolean pureInterface = null;
 		private Boolean pureImplementation = null;
 
+		@Override
+		public int hashCode() {
+			return HashHelp.hashCode(usedFrom, declaration);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			PureMethod other = (PureMethod) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (declaration == null) {
+				if (other.declaration != null)
+					return false;
+			} else if (!declaration.equals(other.declaration))
+				return false;
+			if (usedFrom == null) {
+				if (other.usedFrom != null)
+					return false;
+			} else if (!usedFrom.equals(other.usedFrom))
+				return false;
+			return true;
+		}
+
 		public PureMethod(Class<?> usedFrom, MemberHandle declaration, Enforcement e) {
 			super();
 			this.usedFrom = usedFrom;
 			this.declaration = declaration;
 			this.e = e;
+			if (e==Enforcement.FORCE) {
+				 pureImplementation = true;
+				 pureInterface = true;
+			} else if (e==Enforcement.NOT_PURE) {
+				pureImplementation = false;
+				pureInterface = false;
+			}
 		}
 
 		@Override
@@ -57,6 +95,38 @@ public class PurityChecker implements Rule {
 					+ declaration + ", e=" + e + "]";
 		}
 		
+		public boolean checkImplementationPurity(Callback cb, ProjectModel pm) {
+			if (pureImplementation == null) {
+				pureImplementation = true;
+				for (MemberHandle mh: pm.getCalls(declaration)) {
+					if (mh instanceof MethodHandle) {
+						if (!isPureCall((MethodHandle) mh, cb)) {
+							cb.registerError(declaration+" is expected to be a pure method, but calls impure method "+mh, null);
+							pureImplementation = false;
+						}
+					} else if (mh instanceof ConstructorHandle) {
+						if (!isPureCall((ConstructorHandle) mh, cb)) {
+							cb.registerError(declaration+" is expected to be a pure method, but calls impure constructor "+mh, null);
+							pureImplementation = false;
+						}
+					} else if (mh instanceof FieldHandle) {
+						FieldHandle fieldHandle = (FieldHandle)mh;
+						Field f = fieldHandle.hydrate(cl);
+						
+						if ((!Modifier.isFinal(f.getModifiers()))) {
+							cb.registerError(declaration+" is expected to be pure but accesses non-final field "+fieldHandle, null);
+							pureImplementation = false;
+						}
+						
+						if (!typeIsImmutable(f.getGenericType(), cb)) {
+							cb.registerError(declaration+" is expected to be pure but accesses a non-immutable value "+fieldHandle, null);
+							pureImplementation = false;
+						}
+					}
+				}
+			}
+			return pureImplementation;
+		}
 
 		public boolean checkInterfacePurity(Callback cb) {
 			if (pureInterface == null) {
@@ -99,15 +169,19 @@ public class PurityChecker implements Rule {
 
 		public boolean checkPureMethodOutsideProject(Callback cb) {
 			if (declaration instanceof MethodHandle) {
-				return isPureCall((MethodHandle) declaration, cb);
+				pureImplementation = isPureCall((MethodHandle) declaration, cb);
 			} else if (declaration instanceof ConstructorHandle) {
-				return isPureCall((ConstructorHandle) declaration, cb); 
-			} else {
-				return true;
-			}
+				pureImplementation = isPureCall((ConstructorHandle) declaration, cb); 
+			} 
+			
+			return pureImplementation;
 		}
- 		
-		
+
+
+
+		private PurityChecker getOuterType() {
+			return PurityChecker.this;
+		}
 	}
 	
 	static {
@@ -125,57 +199,90 @@ public class PurityChecker implements Rule {
 	
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
-		List<PureMethod> pureList = createPureList(pm);
+		Set<PureMethod> pureList = createPureMethodList(pm);
+		addImmutablesToPureMethodList(pm, cb, pureList);
+		addPureClassesToPureMethodList(pm, cb, pureList);
+		lookForNotPureMethods(pureList, pm, cb);
+		outputPureMethodList(pureList, cb, pm);
+	}
+
+	private void outputPureMethodList(Set<PureMethod> pureList, Callback cb, ProjectModel pm) {
+		for (PureMethod pureMethod : pureList) {
+			if ((pureMethod.pureImplementation) && (pureMethod.pureInterface)) {
+				if (pm.getAllClasses().contains(pureMethod.declaration.getDeclaringClass())) {
+					cb.registerPure(pureMethod.declaration.toString());
+				}
+			}
+		}
+	}
+
+	private void addImmutablesToPureMethodList(ProjectModel pm, Callback cb, Set<PureMethod> pureList) {
 		for (String className : pm.getAllClasses()) {
 			Class<?> cl = hydrate(className);
 			if (classIsImmutable(cl, cb)) {
 				Class<?> immutableClass = hydrate(className);
 				if (!Modifier.isAbstract(immutableClass.getModifiers())) {
 					doClassChecks(immutableClass, cb);
-					addMethodsFromImmutablesToPureList(immutableClass, pureList, cb);
+					addMethodsFromClassToPureList(immutableClass, pureList, cb);
 				}
 			}
 		}
-		
-		lookForNotPureMethods(pureList, pm, cb, new HashSet<String>(pm.getAllClasses()));
+	}
+	
+	private void addPureClassesToPureMethodList(ProjectModel pm, Callback cb, Set<PureMethod> pureList) {
+		for (String className : pm.getAllClasses()) {
+			Class<?> cl = hydrate(className);
+			if (classIsPure(cl, cb)) {
+				Class<?> immutableClass = hydrate(className);
+				if (!Modifier.isAbstract(immutableClass.getModifiers())) {
+					addMethodsFromClassToPureList(immutableClass, pureList, cb);
+				}
+			}
+		}
 	}
 
-	private void lookForNotPureMethods(List<PureMethod> pureList, ProjectModel pm, Callback cb, Set<String> inScope) {
-		for (PureMethod meth : pureList) {
-			cb.send("Checking pure method: "+meth);
-			meth.checkInterfacePurity(cb); 
-		
-			if (inScope.contains(meth.declaration.getDeclaringClass())) {
-				// check what the pure method does
-				MemberHandle methodHandle = meth.declaration;
-				for (MemberHandle mh: pm.getCalls(methodHandle)) {
-					if (mh instanceof MethodHandle) {
-						if (!isPureCall((MethodHandle) mh, cb)) {
-							cb.registerError(methodHandle+" is expected to be a pure method, but calls impure method "+mh, null);
-						}
-					} else if (mh instanceof ConstructorHandle) {
-						if (!isPureCall((ConstructorHandle) mh, cb)) {
-							cb.registerError(methodHandle+" is expected to be a pure method, but calls impure constructor "+mh, null);
-						}
-					} else if (mh instanceof FieldHandle) {
-						FieldHandle fieldHandle = (FieldHandle)mh;
-						Field f = fieldHandle.hydrate(cl);
-						
-						if ((!Modifier.isFinal(f.getModifiers()))) {
-							cb.registerError(methodHandle+" is expected to be pure but accesses non-final field "+fieldHandle, null);
-						}
-						
-						if (!typeIsImmutable(f.getGenericType(), cb)) {
-							cb.registerError(methodHandle+" is expected to be pure but accesses a non-immutable value "+fieldHandle, null);
-						}
-					}
+	private void lookForNotPureMethods(Set<PureMethod> pureList, ProjectModel pm, Callback cb) {
+		Set<String> inScope = new HashSet<String>(pm.getAllClasses());
+		Map<MemberHandle, PureMethod> pureMethodLookup = createPureLookup(pureList);
+		for (PureMethod pureCandidate : pureList) {
+			cb.send("Checking pure method: "+pureCandidate);
+			pureCandidate.checkInterfacePurity(cb); 
+			if (inScope.contains(pureCandidate.declaration.getDeclaringClass())) {
+				boolean isImplementationPure = pureCandidate.checkImplementationPurity(cb, pm);
+				
+				if (!isImplementationPure) {
+					cascadeImpurity(pureMethodLookup, pureCandidate, pm, cb);
 				}
+				
 			} else {
-				if (!meth.checkPureMethodOutsideProject(cb)) {
-					cb.registerError(meth+" required to be pure, but isn't.  Consider overriding this method.", null);
+				if (!pureCandidate.checkPureMethodOutsideProject(cb)) {
+					cb.registerError(pureCandidate+" required to be pure, but isn't.  Consider overriding this method.", null);
+				} 
+			}
+		}
+	}
+	
+	private void cascadeImpurity(Map<MemberHandle, PureMethod> pureMethodLookup, PureMethod pureCandidate, ProjectModel pm, Callback cb) {
+		for (MemberHandle user : pm.getCalls(pureCandidate.declaration)) {
+			PureMethod toDemote = pureMethodLookup.get(user);
+			if (toDemote == null) {
+				cb.send("Couldn't find "+user+" in code base to demote");
+			} else {
+				if ((toDemote.e == Enforcement.CHECKED) && (toDemote.checkImplementationPurity(cb, pm))) {
+					cb.send(toDemote+" is not pure because it uses "+pureCandidate+", which is not pure");
+					toDemote.pureImplementation = false;
+					cascadeImpurity(pureMethodLookup, toDemote, pm, cb);
 				}
 			}
 		}
+	}
+
+	private Map<MemberHandle, PureMethod> createPureLookup(Set<PureMethod> pmList) {
+		Map<MemberHandle, PureMethod> out = new HashMap<MemberHandle, PurityChecker.PureMethod>(pmList.size() * 3);
+		for (PureMethod pureMethod : pmList) {
+			out.put(pureMethod.declaration, pureMethod);
+		}
+		return out;
 	}
 
 
@@ -264,15 +371,15 @@ public class PurityChecker implements Rule {
 		return classIsImmutable(c, cb);
 	}
 
-	private void addMethodsFromImmutablesToPureList(Class<?> immutableClass, List<PureMethod> pureList, Callback cb) {
+	private void addMethodsFromClassToPureList(Class<?> pureClass, Set<PureMethod> pureList, Callback cb) {
 		List<PureMethod> addedSoFar = new LinkedList<PureMethod>();
-		Class<?> in = immutableClass;
+		Class<?> in = pureClass;
 		while (in != null) {
 			for (Method m : in.getDeclaredMethods()) {
 				MethodHandle mh = new MethodHandle(m);
 				if (!methodOverridden(addedSoFar, mh)) {
 					Pure p = m.getAnnotation(Pure.class);
-					addedSoFar.add(new PureMethod(immutableClass, mh, p == null ? Enforcement.FULL : p.value()));
+					addedSoFar.add(new PureMethod(pureClass, mh, p == null ? Enforcement.CHECKED : p.value()));
 				}
 			}
 			
@@ -296,8 +403,8 @@ public class PurityChecker implements Rule {
 		return new ClassHandle(className).hydrate(cl);
 	}
 
-	private List<PureMethod> createPureList(ProjectModel pm) {
-		List<PureMethod> out = new LinkedList<PureMethod>();
+	private Set<PureMethod> createPureMethodList(ProjectModel pm) {
+		Set<PureMethod> out = new LinkedHashSet<PureMethod>();
 		for (MemberHandle handle : pm.getMembersWithAnnotation(getInternalName(Pure.class))) {
 			if (handle instanceof MethodHandle) {
 				Method m = ((MethodHandle)handle).hydrate(cl);
@@ -316,6 +423,19 @@ public class PurityChecker implements Rule {
 
 	private Map<String, Boolean> immutableClasses = new HashMap<String, Boolean>();
 
+	private boolean classIsPure(Class<?> in, Callback cb) {
+		if ((in == null) || (in == Object.class)) {
+			return false;
+		}
+		
+		Pure p = in.getAnnotation(Pure.class);
+		if ((p != null) && (p.value() != Enforcement.NOT_PURE)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private boolean classIsImmutable(Class<?> in, Callback cb) {
 		if ((in == null) || (in == Object.class)) {
 			return false;

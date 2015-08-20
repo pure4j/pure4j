@@ -17,13 +17,13 @@ public final class ConfusingEquals {
 	}
 	
 	public int hashCode() {
-		return 0;
+		return 0 + 6;
 	}
 	
 
 	@Override
 	public String toString() {
-		return "ConfusingEquals []";
+		return "ConfusingEquals []" ;
 	}
 	
 	

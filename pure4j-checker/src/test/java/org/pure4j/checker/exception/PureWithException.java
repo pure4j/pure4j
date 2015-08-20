@@ -19,7 +19,7 @@ public class PureWithException extends AbstractChecker {
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0);
+		checkThisPackage(this.getClass(), 0, 1);
 	}
 }
 

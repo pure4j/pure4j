@@ -6,4 +6,6 @@ public interface Callback {
 	
 	public void registerError(String s, Throwable optional);
 	
+	public void registerPure(String signature);
+	
 }
