@@ -22,7 +22,7 @@ public class AbstractChecker {
 	@Pure(Enforcement.NOT_PURE)
 	protected void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
 		errors = 0;
-		final List<String> pures = new ArrayList<String>();
+		final Set<String> pures = new LinkedHashSet<String>();
 		final Set<String> errorSet = new LinkedHashSet<String>();
 
 		Callback cb = new Callback() {
