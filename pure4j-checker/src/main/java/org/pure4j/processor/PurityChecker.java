@@ -105,14 +105,14 @@ public class PurityChecker implements Rule {
 					if (mh instanceof MethodHandle) {
 						if (!isPureCall((MethodHandle) mh, cb)) {
 							if (!silent) {
-								cb.registerError(declaration+" is expected to be a pure method, but calls impure method "+mh, null);
+								cb.registerError(this+" is expected to be a pure method, but calls impure method "+mh, null);
 							}
 							pureImplementation = false;
 						}
 					} else if (mh instanceof ConstructorHandle) {
 						if (!isPureCall((ConstructorHandle) mh, cb)) {
 							if (!silent) {
-								cb.registerError(declaration+" is expected to be a pure method, but calls impure constructor "+mh, null);
+								cb.registerError(this+" is expected to be a pure method, but calls impure constructor "+mh, null);
 							}
 							pureImplementation = false;
 						}
@@ -122,21 +122,21 @@ public class PurityChecker implements Rule {
 						if (!onCurrentObject(fieldHandle, f)) {
 							if ((!Modifier.isFinal(f.getModifiers()))) {
 								if (!silent) {
-									cb.registerError(declaration+" is expected to be pure but accesses non-final field which isn't private/protected "+fieldHandle, null);
+									cb.registerError(this+" is expected to be pure but accesses non-final field which isn't private/protected "+fieldHandle, null);
 								}
 								pureImplementation = false;
 							}
 							
 							if (!typeIsImmutable(f.getGenericType(), cb)) {
 								if (!silent) {
-									cb.registerError(declaration+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
+									cb.registerError(this+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
 								}
 								pureImplementation = false;
 							}
 						}
 					} else if (mh instanceof ThisHandle) {
 						if (silent) {
-							cb.registerError(declaration+" is expected to be pure but accesses 'this' "+mh, null);
+							cb.registerError(this+" is expected to be pure but accesses 'this' "+mh, null);
 						}
 						pureImplementation = false;
 					}
@@ -239,7 +239,8 @@ public class PurityChecker implements Rule {
 	
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
-		Set<PureMethod> pureList = createPureMethodList(pm);
+		Set<PureMethod> pureList = new LinkedHashSet<PureMethod>();
+		addMethodsAnnotatedPureToPureList(pm, pureList);
 		addMethodsFromImmutableValueClassToPureList(pm, cb, pureList);
 		addMethodsFromPureClassToPureList(pm, cb, pureList);
 		lookForNotPureMethods(pureList, pm, cb);
@@ -472,19 +473,16 @@ public class PurityChecker implements Rule {
 		return new ClassHandle(className).hydrate(cl);
 	}
 
-	private Set<PureMethod> createPureMethodList(ProjectModel pm) {
-		Set<PureMethod> out = new LinkedHashSet<PureMethod>();
+	private void addMethodsAnnotatedPureToPureList(ProjectModel pm, Set<PureMethod> purelist) {
 		for (MemberHandle handle : pm.getMembersWithAnnotation(getInternalName(Pure.class))) {
 			if (handle instanceof MethodHandle) {
 				Method m = ((MethodHandle)handle).hydrate(cl);
 				Pure p = m.getAnnotation(Pure.class);
 				if (p.value() != Enforcement.NOT_PURE) {
-					out.add(new PureMethod(m.getDeclaringClass(), (MethodHandle) handle, p.value(), false));
+					purelist.add(new PureMethod(m.getDeclaringClass(), (MethodHandle) handle, p.value(), false));
 				}
 			}
 		}
-		
-		return out;
 	}
 
 	protected String getInternalName(Class<?> in) {
