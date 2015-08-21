@@ -26,6 +26,7 @@ import org.pure4j.model.FieldHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.model.ThisHandle;
 
 @SuppressWarnings("unchecked")
 public class PurityChecker implements Rule {
@@ -45,6 +46,7 @@ public class PurityChecker implements Rule {
 		public Enforcement e;
 		private Boolean pureInterface = null;
 		private Boolean pureImplementation = null;
+		private boolean silent;
 
 		@Override
 		public int hashCode() {
@@ -75,11 +77,12 @@ public class PurityChecker implements Rule {
 			return true;
 		}
 
-		public PureMethod(Class<?> usedFrom, MemberHandle declaration, Enforcement e) {
+		public PureMethod(Class<?> usedFrom, MemberHandle declaration, Enforcement e, boolean silent) {
 			super();
 			this.usedFrom = usedFrom;
 			this.declaration = declaration;
 			this.e = e;
+			this.silent = silent;
 			if (e==Enforcement.FORCE) {
 				 pureImplementation = true;
 				 pureInterface = true;
@@ -101,31 +104,56 @@ public class PurityChecker implements Rule {
 				for (MemberHandle mh: pm.getCalls(declaration)) {
 					if (mh instanceof MethodHandle) {
 						if (!isPureCall((MethodHandle) mh, cb)) {
-							cb.registerError(declaration+" is expected to be a pure method, but calls impure method "+mh, null);
+							if (!silent) {
+								cb.registerError(declaration+" is expected to be a pure method, but calls impure method "+mh, null);
+							}
 							pureImplementation = false;
 						}
 					} else if (mh instanceof ConstructorHandle) {
 						if (!isPureCall((ConstructorHandle) mh, cb)) {
-							cb.registerError(declaration+" is expected to be a pure method, but calls impure constructor "+mh, null);
+							if (!silent) {
+								cb.registerError(declaration+" is expected to be a pure method, but calls impure constructor "+mh, null);
+							}
 							pureImplementation = false;
 						}
 					} else if (mh instanceof FieldHandle) {
 						FieldHandle fieldHandle = (FieldHandle)mh;
 						Field f = fieldHandle.hydrate(cl);
-						
-						if ((!Modifier.isFinal(f.getModifiers()))) {
-							cb.registerError(declaration+" is expected to be pure but accesses non-final field "+fieldHandle, null);
-							pureImplementation = false;
+						if (!onCurrentObject(fieldHandle, f)) {
+							if ((!Modifier.isFinal(f.getModifiers()))) {
+								if (!silent) {
+									cb.registerError(declaration+" is expected to be pure but accesses non-final field which isn't private/protected "+fieldHandle, null);
+								}
+								pureImplementation = false;
+							}
+							
+							if (!typeIsImmutable(f.getGenericType(), cb)) {
+								if (!silent) {
+									cb.registerError(declaration+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
+								}
+								pureImplementation = false;
+							}
 						}
-						
-						if (!typeIsImmutable(f.getGenericType(), cb)) {
-							cb.registerError(declaration+" is expected to be pure but accesses a non-immutable value "+fieldHandle, null);
-							pureImplementation = false;
+					} else if (mh instanceof ThisHandle) {
+						if (silent) {
+							cb.registerError(declaration+" is expected to be pure but accesses 'this' "+mh, null);
 						}
+						pureImplementation = false;
 					}
 				}
 			}
 			return pureImplementation;
+		}
+
+		private boolean onCurrentObject(FieldHandle fh, Field f) {
+			if (fh.getDeclaringClass().equals(declaration.getDeclaringClass())) {
+				// ok, it's the same class, but is it the same instance?  This is 
+				// a cheap way to work it out, but not the best.
+				return (Modifier.isPrivate(f.getModifiers()) || Modifier.isProtected(f.getModifiers())) &&
+					 (!Modifier.isStatic(f.getModifiers()));
+			}
+			
+			return false;
 		}
 
 		public boolean checkInterfacePurity(Callback cb) {
@@ -147,7 +175,9 @@ public class PurityChecker implements Rule {
 					Method m = ((MethodHandle) declaration).hydrate(cl);
 					for (Type t : m.getGenericParameterTypes()) {
 						if (!typeIsImmutable(t, cb)) {
-							cb.registerError("Pure method "+declaration+" can't take non-immutable argument "+t, null);
+							if (!silent) {
+								cb.registerError("Pure method "+declaration+" can't take non-immutable argument "+t, null);
+							}
 							pureInterface = false;
 						}
 					}
@@ -157,7 +187,9 @@ public class PurityChecker implements Rule {
 					Constructor<?> m = ((ConstructorHandle) declaration).hydrate(cl);
 					for (Type t : m.getGenericParameterTypes()) {
 						if (!typeIsImmutable(t, cb)) {
-							cb.registerError("Pure method "+declaration+" can't take non-immutable argument "+t, null);
+							if (!silent) {
+								cb.registerError("Pure method "+declaration+" can't take non-immutable argument "+t, null);
+							}
 							pureInterface = false;
 						}
 					}
@@ -200,8 +232,8 @@ public class PurityChecker implements Rule {
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
 		Set<PureMethod> pureList = createPureMethodList(pm);
-		addImmutablesToPureMethodList(pm, cb, pureList);
-		addPureClassesToPureMethodList(pm, cb, pureList);
+		addMethodsFromImmutableValueClassToPureList(pm, cb, pureList);
+		addMethodsFromPureClassToPureList(pm, cb, pureList);
 		lookForNotPureMethods(pureList, pm, cb);
 		outputPureMethodList(pureList, cb, pm);
 	}
@@ -216,26 +248,30 @@ public class PurityChecker implements Rule {
 		}
 	}
 
-	private void addImmutablesToPureMethodList(ProjectModel pm, Callback cb, Set<PureMethod> pureList) {
+	private void addMethodsFromImmutableValueClassToPureList(ProjectModel pm, Callback cb, Set<PureMethod> pureList) {
 		for (String className : pm.getAllClasses()) {
 			Class<?> cl = hydrate(className);
 			if (classIsImmutable(cl, cb)) {
 				Class<?> immutableClass = hydrate(className);
-				if (!Modifier.isAbstract(immutableClass.getModifiers())) {
+				if (isConcrete(immutableClass)) {
 					doClassChecks(immutableClass, cb);
-					addMethodsFromClassToPureList(immutableClass, pureList, cb);
+					addMethodsFromClassToPureList(immutableClass, pureList, cb, true); 
 				}
 			}
 		}
 	}
+
+	protected boolean isConcrete(Class<?> someClass) {
+		return !Modifier.isAbstract(someClass.getModifiers()) && !Modifier.isInterface(someClass.getModifiers());
+	}
 	
-	private void addPureClassesToPureMethodList(ProjectModel pm, Callback cb, Set<PureMethod> pureList) {
+	private void addMethodsFromPureClassToPureList(ProjectModel pm, Callback cb, Set<PureMethod> pureList) {
 		for (String className : pm.getAllClasses()) {
 			Class<?> cl = hydrate(className);
 			if (classIsPure(cl, cb)) {
-				Class<?> immutableClass = hydrate(className);
-				if (!Modifier.isAbstract(immutableClass.getModifiers())) {
-					addMethodsFromClassToPureList(immutableClass, pureList, cb);
+				Class<?> pureClass = hydrate(className);
+				if (isConcrete(pureClass)) {
+					addMethodsFromClassToPureList(pureClass, pureList, cb, false);
 				}
 			}
 		}
@@ -256,7 +292,9 @@ public class PurityChecker implements Rule {
 				
 			} else {
 				if (!pureCandidate.checkPureMethodOutsideProject(cb)) {
-					cb.registerError(pureCandidate+" required to be pure, but isn't.  Consider overriding this method.", null);
+					if (!pureCandidate.silent) {
+						cb.registerError(pureCandidate+" required to be pure, but isn't.  Consider overriding this method.", null);
+					}
 				} 
 			}
 		}
@@ -294,7 +332,12 @@ public class PurityChecker implements Rule {
 		Constructor<?> m = mh.hydrate(cl);
 		Pure p = m.getAnnotation(Pure.class);
 		if (p != null) {
-			return true;
+			return p.value() != Enforcement.NOT_PURE;
+		}
+		
+		p = m.getDeclaringClass().getAnnotation(Pure.class);
+		if (p != null) {
+			return p.value() != Enforcement.NOT_PURE;
 		}
 		
 		if (classIsImmutable(m.getDeclaringClass(), cb)) {
@@ -324,7 +367,12 @@ public class PurityChecker implements Rule {
 		Method m = mh.hydrate(cl);
 		Pure p = m.getAnnotation(Pure.class);
 		if (p != null) {
-			return true;
+			return p.value() != Enforcement.NOT_PURE;
+		}
+		
+		p = m.getDeclaringClass().getAnnotation(Pure.class);
+		if (p != null) {
+			return p.value() != Enforcement.NOT_PURE;
 		}
 		
 		if (classIsImmutable(m.getDeclaringClass(), cb)) {
@@ -371,16 +419,16 @@ public class PurityChecker implements Rule {
 		return classIsImmutable(c, cb);
 	}
 
-	private void addMethodsFromClassToPureList(Class<?> pureClass, Set<PureMethod> pureList, Callback cb) {
+	private void addMethodsFromClassToPureList(Class<?> pureClass, Set<PureMethod> pureList, Callback cb, boolean entireExposedInterface) {
 		List<PureMethod> addedSoFar = new LinkedList<PureMethod>();
 		Class<?> in = pureClass;
-		while (in != null) {
+		while (entireExposedInterface ? (in != null) : (in != Object.class)) {
 			for (Method m : in.getDeclaredMethods()) {
 				MethodHandle mh = new MethodHandle(m);
-				if (!methodOverridden(addedSoFar, mh)) {
-					Pure p = m.getAnnotation(Pure.class);
-					addedSoFar.add(new PureMethod(pureClass, mh, p == null ? Enforcement.CHECKED : p.value()));
-				}
+				boolean visible = entireExposedInterface ? methodIsVisible(m, pureClass) : true;
+				Pure p = m.getAnnotation(Pure.class);
+				Enforcement e = p == null ? Enforcement.CHECKED : p.value();
+				addedSoFar.add(new PureMethod(pureClass, mh, e, !visible));
 			}
 			
 			in = in.getSuperclass();
@@ -389,14 +437,31 @@ public class PurityChecker implements Rule {
 		pureList.addAll(addedSoFar);
 	}
 
-	protected boolean methodOverridden(List<PureMethod> addedSoFar, MethodHandle mh) {
-		for (PureMethod m : addedSoFar) {
-			if (((MethodHandle)m.declaration).overrides(mh)) {
-				return true;
-			}
+	protected boolean methodIsVisible(Method m, Class<?> pureClass) {
+		if (Modifier.isPrivate(m.getModifiers())) {
+			return false;
 		}
 		
-		return false;
+		if (Modifier.isProtected(m.getModifiers())) {
+			return false;
+		}
+ 		
+		
+		Class<?> onClass = m.getDeclaringClass();
+		while (pureClass != onClass) {
+			Method over;
+			try {
+				over = pureClass.getDeclaredMethod(m.getName(), m.getParameterTypes());
+				if (over != null) {
+					return false;
+				}
+			} catch (Exception e) {
+			}
+			
+			pureClass = pureClass.getSuperclass();
+		}
+		
+		return true;
 	}
 
 	protected Class<?> hydrate(String className) {
@@ -409,7 +474,9 @@ public class PurityChecker implements Rule {
 			if (handle instanceof MethodHandle) {
 				Method m = ((MethodHandle)handle).hydrate(cl);
 				Pure p = m.getAnnotation(Pure.class);
-				out.add(new PureMethod(m.getDeclaringClass(), (MethodHandle) handle, p.value()));
+				if (p.value() != Enforcement.NOT_PURE) {
+					out.add(new PureMethod(m.getDeclaringClass(), (MethodHandle) handle, p.value(), false));
+				}
 			}
 		}
 		

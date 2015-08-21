@@ -12,4 +12,16 @@ public class PureNarrowingTest {
 	public String doSomethingInterfacePure(String in) {
 		return doSomethingInterfaceNotPure(in);
 	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return null;
+	}
+	
+	
 }

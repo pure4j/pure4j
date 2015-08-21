@@ -15,7 +15,7 @@ public class AbstractChecker {
 
 	int errors = 0;
 	
-	public void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
+	protected void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
 		errors = 0;
 		final List<String> pures = new ArrayList<String>();
 

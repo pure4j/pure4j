@@ -2,6 +2,7 @@ package org.pure4j.processor;
 
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
@@ -13,6 +14,7 @@ import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
 import org.pure4j.model.ProjectModelImpl;
 import org.pure4j.model.Pure4JException;
+import org.pure4j.model.ThisHandle;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.Attribute;
 import org.springframework.asm.ClassReader;
@@ -20,9 +22,11 @@ import org.springframework.asm.ClassVisitor;
 import org.springframework.asm.FieldVisitor;
 import org.springframework.asm.Label;
 import org.springframework.asm.MethodVisitor;
+import org.springframework.asm.Opcodes;
 import org.springframework.asm.Type;
 import org.springframework.asm.commons.EmptyVisitor;
 import org.springframework.core.io.Resource;
+
 
 /**
  * Handles visiting class file resources and adding the details to the model.
@@ -31,6 +35,8 @@ import org.springframework.core.io.Resource;
  * 
  */
 public class ClassFileModelBuilder {
+	
+	public static final boolean OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -56,6 +62,7 @@ public class ClassFileModelBuilder {
 			String className;
 
 			public void visit(int version, int access, String name, String sig, String superName, String[] interfaces) {
+				output("CLASS: "+name);
 				this.className = name;
 				model.addSubclass(superName, name);
 
@@ -123,6 +130,25 @@ public class ClassFileModelBuilder {
 
 		};
 	}
+	
+	public static String getOpcode(int in) {
+		for (Field f : Opcodes.class.getDeclaredFields()) {
+			int value;
+			try {
+				value = f.getInt(null);
+				if ((value == in) 
+						&& (f.getName().charAt(1)!='_')) { // not opcodes, other flags
+					return f.getName();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return in+"(unknown)";
+		
+	}
 
 	private AnnotationVisitor createAnnotationVisitor(final ProjectModelImpl model,
 			final AnnotatedElementHandle<?> handle, final String desc) {
@@ -168,6 +194,9 @@ public class ClassFileModelBuilder {
 
 	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className,
 			final MemberHandle mh) {
+		
+		output(mh.getName());
+		
 		return new MethodVisitor() {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
@@ -180,6 +209,7 @@ public class ClassFileModelBuilder {
 				model.addCalls(mh, field);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
+				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
@@ -187,15 +217,17 @@ public class ClassFileModelBuilder {
 				model.addCalls(mh, remoteMethod);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
+				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
 			}
 
-			/* Consider implementing next 2 */
 			public void visitTypeInsn(int arg0, String type) {
 				model.addClassDependency(className, type);
+				output("  "+getOpcode(arg0)+" "+type);
 			}
 
 			public void visitMultiANewArrayInsn(String desc, int arg1) {
 				addDependency(className, model, desc, false);
+				output("  Multi New Array"+desc+" "+arg1);
 			}
 
 			/**
@@ -206,6 +238,11 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitVarInsn(int arg0, int arg1) {
+//				if ((arg0 == Opcodes.ALOAD) && (arg1 == 0)) {
+//					ThisHandle field = new ThisHandle(className);
+//					model.addCalls(mh, field);
+//				} 
+				output("  "+getOpcode(arg0)+" "+arg1);
 			}
 
 			public AnnotationVisitor visitAnnotationDefault() {
@@ -222,12 +259,16 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitIincInsn(int arg0, int arg1) {
+				output("  "+getOpcode(arg0)+ " "+arg1);
 			}
 
 			public void visitInsn(int arg0) {
+				output("  "+getOpcode(arg0));
+				
 			}
 
 			public void visitIntInsn(int arg0, int arg1) {
+				output("  "+getOpcode(arg0)+ " "+arg1);
 			}
 
 			public void visitJumpInsn(int arg0, Label arg1) {
@@ -237,27 +278,40 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitLdcInsn(Object arg0) {
+				output("  "+arg0);
 			}
 
 			public void visitLineNumber(int arg0, Label arg1) {
+				output("line: "+arg0);
 			}
 
 			public void visitLocalVariable(String arg0, String arg1, String arg2, Label arg3, Label arg4, int arg5) {
+				output("  visitLocal "+arg0+" "+arg1+" "+arg2+" "+arg3+" "+arg4+" "+arg5);
 			}
 
 			public void visitLookupSwitchInsn(Label arg0, int[] arg1, Label[] arg2) {
+				output("  lookupswitch");
 			}
 
 			public void visitMaxs(int arg0, int arg1) {
+				output("  maxs "+arg0+" "+arg1);
 			}
 
 			public void visitTableSwitchInsn(int arg0, int arg1, Label arg2, Label[] arg3) {
+				output("  lookupswitch");
 			}
 
 			public void visitTryCatchBlock(Label arg0, Label arg1, Label arg2, String arg3) {
+				output("  try/catch: "+arg0+" "+arg1+" "+arg2+" "+arg3);
 			}
 
 		};
+	}
+
+	private void output(String name) {
+		if (OUTPUT_ASM) {
+			System.out.println(name);
+		}
 	}
 
 	private void addDependency(final String className, final ProjectModelImpl model, String desc, boolean returnType) {

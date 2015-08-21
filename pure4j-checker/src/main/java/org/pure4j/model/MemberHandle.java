@@ -31,7 +31,7 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 
 	@Override
 	public String toString() {
-		return className + "." + name + desc;
+		return className + "." + name + (desc == null ? "" : desc);
 	}
 
 	
