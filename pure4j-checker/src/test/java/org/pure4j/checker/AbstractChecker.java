@@ -2,7 +2,9 @@ package org.pure4j.checker;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -21,6 +23,7 @@ public class AbstractChecker {
 	protected void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
 		errors = 0;
 		final List<String> pures = new ArrayList<String>();
+		final Set<String> errorSet = new LinkedHashSet<String>();
 
 		Callback cb = new Callback() {
 			
@@ -32,7 +35,7 @@ public class AbstractChecker {
 			@Override
 			public void registerError(String s, Throwable optional) {
 				errors++;
-				System.err.println(s);
+				errorSet.add(s);
 			}
 
 			@Override
@@ -53,6 +56,14 @@ public class AbstractChecker {
 		for (String string : pures) {
 			System.out.println(string);
 		}
+		
+		System.out.flush();
+		
+		for (String string : errorSet) {
+			System.err.println(string);
+		}
+		
+		System.err.flush();
 		
 		Assert.assertEquals(expectedErrorCount, errors);
 		Assert.assertEquals(expectedPureCount, pures.size());

@@ -28,6 +28,8 @@ public final class SomeValueObject extends AbstractVO {
 		return age;
 	}
 
+	
+	
 	public SomeValueObject(String name, Integer age) {
 		super();
 		this.name = name;
@@ -47,7 +49,7 @@ public final class SomeValueObject extends AbstractVO {
 
 	@Override
 	public String toString() {
-		return name+ bob;
+		return name;
 	}
 	
 	

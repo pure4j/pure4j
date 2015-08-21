@@ -13,7 +13,7 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * testing of it.  Possibly useful for logging or other harmless, but side-effecting methods.  <b>Use with caution</b>.
  * <li><code>NOT_PURE</code>: Tells the checker that the code isn't pure.  This means the checker will skip testing of 
  * the method.  This is useful if you have declared <code>@Pure</code> at the class level, but some methods are not pure,
- * but in any case you want to generally be using the class as a pure class.
+ * but in any case you want to generally be using the class as a pure class.  This is not acceptable as a class-level annotation.
  * </ul>
  * 
  * @see {@link ImmutableValue}

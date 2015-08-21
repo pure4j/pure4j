@@ -164,13 +164,24 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 	}
 
 	public static Field hydrateField(FieldHandle field, ClassLoader cl) {
+		Class<?> c = hydrateClass(field.getClassName(), cl);
+		Field f = hydrateFieldOn(c, field.getName());
+		if (f==null) {	
+			throw new Pure4JException("Could not find field: "+field);
+		}
+		return f;
+	}
+	
+	private static Field hydrateFieldOn(Class<?> c, String name) {
+		if (c == null) {
+			return null;
+		}
 		try {
-			Class<?> c = hydrateClass(field.getClassName(), cl);
-			Field f = c.getDeclaredField(field.getName());
+			Field f = c.getDeclaredField(name);
 			return f;
 		} catch (NoSuchFieldException e) {
-			throw new Pure4JException("Could not find field: ", e);
 		}
+		return hydrateFieldOn(c.getSuperclass(), name);
 	}
 
 	public static String convertClassName(Class<?> c) {
