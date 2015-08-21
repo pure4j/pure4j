@@ -200,11 +200,19 @@ public class PurityChecker implements Rule {
 		}
 
 		public boolean checkPureMethodOutsideProject(Callback cb) {
-			if (declaration instanceof MethodHandle) {
-				pureImplementation = isPureCall((MethodHandle) declaration, cb);
-			} else if (declaration instanceof ConstructorHandle) {
-				pureImplementation = isPureCall((ConstructorHandle) declaration, cb); 
-			} 
+			if (pureImplementation == null) {
+				if (declaration instanceof MethodHandle) {
+					pureImplementation = isPureCall((MethodHandle) declaration, cb);
+				} else if (declaration instanceof ConstructorHandle) {
+					pureImplementation = isPureCall((ConstructorHandle) declaration, cb); 
+				} 
+				
+				if (!pureImplementation) {
+					if (!silent) {
+						cb.registerError(this+" required to be pure, but isn't.  Consider overriding this method.", null);
+					}
+				}
+			}
 			
 			return pureImplementation;
 		}
@@ -291,11 +299,7 @@ public class PurityChecker implements Rule {
 				}
 				
 			} else {
-				if (!pureCandidate.checkPureMethodOutsideProject(cb)) {
-					if (!pureCandidate.silent) {
-						cb.registerError(pureCandidate+" required to be pure, but isn't.  Consider overriding this method.", null);
-					}
-				} 
+				pureCandidate.checkPureMethodOutsideProject(cb);
 			}
 		}
 	}

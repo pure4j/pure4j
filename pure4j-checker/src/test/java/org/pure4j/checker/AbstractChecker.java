@@ -6,6 +6,8 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.PurityChecker;
@@ -15,6 +17,7 @@ public class AbstractChecker {
 
 	int errors = 0;
 	
+	@Pure(Enforcement.NOT_PURE)
 	protected void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
 		errors = 0;
 		final List<String> pures = new ArrayList<String>();
