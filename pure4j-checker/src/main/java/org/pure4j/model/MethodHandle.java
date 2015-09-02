@@ -1,5 +1,6 @@
 package org.pure4j.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class MethodHandle extends MemberHandle {
@@ -33,4 +34,18 @@ public class MethodHandle extends MemberHandle {
 		return (this.name.equals(another.getName())) && (this.getDesc().equals(another.getDesc()));
 	}
 
+	public <T extends Annotation> T getAnnotation(ClassLoader cl, Class<T> c) {
+		Method m = hydrate(cl);
+		return m.getAnnotation(c);
+	}
+	
+	@Override
+	public Class<?> getDeclaringClass(ClassLoader cl) {
+		return hydrateClass(className, cl);
+	}
+	
+	@Override
+	public java.lang.reflect.Type[] getGenericTypes(ClassLoader cl) {
+		return hydrate(cl).getGenericParameterTypes();
+	}
 }

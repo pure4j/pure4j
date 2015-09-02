@@ -47,6 +47,7 @@ public class SpringProjectModelFactory {
 
 			cb.send("Searching: "+packageSearchPath);
 			Resource[] resources = resourcePatternResolver.getResources(packageSearchPath);
+			cb.send("Found "+resources.length+" resources");
 
 			for (Resource resource : resources) {
 				fileCount++;

@@ -9,6 +9,6 @@ public class CheckEclipseBoilerplateClass extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0, 0);
+		checkThisPackage(this.getClass(), 0, 5);
 	}
 }

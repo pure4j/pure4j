@@ -6,16 +6,17 @@ import org.junit.Test;
 import org.pure4j.checker.basic.AbstractChecker;
 
 /**
- * This test is where a class calls it's super.  But, the super is not declared pure, and
- * so the class gets a warning.  
+ * This test is where a class calls it's super.  But, the super is not declared pure.
+ * 
+ * It should still get tested to make sure it is.
  * 
  * @author robmoffat
  *
  */
-public class TestCheckPureNotInheritedBackwards extends AbstractChecker {
+public class TestCheckPureIsInheritedBackwards extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 3);
+		checkThisPackage(this.getClass(), 0, 5);
 	}
 }

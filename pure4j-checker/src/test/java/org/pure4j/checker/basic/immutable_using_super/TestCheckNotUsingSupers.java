@@ -9,6 +9,6 @@ public class TestCheckNotUsingSupers extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 2);
+		checkThisPackage(this.getClass(), 1, 3);
 	}
 }

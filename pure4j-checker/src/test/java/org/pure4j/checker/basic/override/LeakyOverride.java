@@ -7,11 +7,11 @@ public class LeakyOverride extends BadBase {
 
 	@Override
 	public int somethingNotPure() {
-		return super.somethingNotPure();
+		return super.somethingNotPure();	
 	}
 
 	public int somethingElse() {
-		return super.somethingNotPure();
+		return super.somethingNotPure();	
 	}
 	
 }

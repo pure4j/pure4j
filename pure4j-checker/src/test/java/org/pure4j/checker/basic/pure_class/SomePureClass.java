@@ -8,7 +8,7 @@ import org.pure4j.annotations.pure.Pure;
 @Pure
 public class SomePureClass {
 	
-	int state_too_public = 0;
+	public int state_too_public = 0;
 	private int state_private = 0;
 	
 	public Object returningThisIsPure() {

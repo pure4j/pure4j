@@ -57,4 +57,9 @@ public class ClassHandle extends AbstractHandle<Class<?>> implements AnnotatedEl
 		return className;
 	}
 
+	@Override
+	public Class<?> getDeclaringClass(ClassLoader cl) {
+		return hydrate(cl);
+	}
+
 }

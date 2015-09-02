@@ -1,5 +1,6 @@
 package org.pure4j.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 public class FieldHandle extends MemberHandle {
@@ -24,4 +25,20 @@ public class FieldHandle extends MemberHandle {
 		return className;
 	}
 
+	public <T extends Annotation> T getAnnotation(ClassLoader cl, Class<T> c) {
+		Field f = hydrate(cl);
+		return f.getAnnotation(c);
+	}
+	
+	@Override
+	public Class<?> getDeclaringClass(ClassLoader cl) {
+		return hydrateClass(className, cl);
+	}
+
+	@Override
+	public java.lang.reflect.Type[] getGenericTypes(ClassLoader cl) {
+		return new java.lang.reflect.Type[] { hydrate(cl).getGenericType() };
+	}
+	
+	
 }

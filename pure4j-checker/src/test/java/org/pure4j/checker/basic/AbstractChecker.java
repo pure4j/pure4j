@@ -30,12 +30,15 @@ public class AbstractChecker {
 			@Override
 			public void send(String s) {
 				System.out.println(s);
+				System.out.flush();
 			}
 			
 			@Override
 			public void registerError(String s, Throwable optional) {
 				errors++;
 				errorSet.add(s);
+				System.err.println(s);
+				System.err.flush();
 			}
 
 			@Override
@@ -59,6 +62,7 @@ public class AbstractChecker {
 		
 		System.out.flush();
 		
+		System.err.println("----- ERRORS ---- ");
 		for (String string : errorSet) {
 			System.err.println(string);
 		}

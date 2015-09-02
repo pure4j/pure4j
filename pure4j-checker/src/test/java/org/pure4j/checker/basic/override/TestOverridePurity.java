@@ -9,6 +9,6 @@ public class TestOverridePurity extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 6, 1);
+		checkThisPackage(this.getClass(), 1, 3);
 	}
 }

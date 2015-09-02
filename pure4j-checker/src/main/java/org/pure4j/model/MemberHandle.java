@@ -1,5 +1,6 @@
 package org.pure4j.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 
 
@@ -33,10 +34,6 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 	public String toString() {
 		return className + "." + name + (desc == null ? "" : desc);
 	}
-
-	
-
-	
 
 	public int compareTo(AnnotatedElementHandle<?> oo) {
 	    if (oo instanceof MemberHandle) {
@@ -97,4 +94,12 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 	}
 	
 	public abstract AccessibleObject hydrate(ClassLoader cl);
+	
+	public abstract <T extends Annotation> T getAnnotation(ClassLoader cl, Class<T> c);
+	
+	public abstract java.lang.reflect.Type[] getGenericTypes(ClassLoader cl);
+	
+	public String getSignature() {
+		return name+desc;
+	}
 }

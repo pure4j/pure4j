@@ -1,5 +1,6 @@
 package org.pure4j.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 
@@ -30,6 +31,20 @@ public class ThisHandle extends MemberHandle {
 
 	@Override
 	public AccessibleObject hydrate(ClassLoader cl) {
+		throw new UnsupportedOperationException("Can't hydrate <this>");
+	}
+	
+	public <T extends Annotation> T getAnnotation(ClassLoader cl, Class<T> c) {
+		return null;
+	}
+	
+	@Override
+	public Class<?> getDeclaringClass(ClassLoader cl) {
+		return hydrateClass(className, cl);
+	}
+	
+	@Override
+	public java.lang.reflect.Type[] getGenericTypes(ClassLoader cl) {
 		throw new UnsupportedOperationException("Can't hydrate <this>");
 	}
 }

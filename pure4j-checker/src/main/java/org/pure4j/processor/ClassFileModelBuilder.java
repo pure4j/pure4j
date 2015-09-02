@@ -14,7 +14,6 @@ import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
 import org.pure4j.model.ProjectModelImpl;
 import org.pure4j.model.Pure4JException;
-import org.pure4j.model.ThisHandle;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.Attribute;
 import org.springframework.asm.ClassReader;
@@ -24,7 +23,6 @@ import org.springframework.asm.Label;
 import org.springframework.asm.MethodVisitor;
 import org.springframework.asm.Opcodes;
 import org.springframework.asm.Type;
-import org.springframework.asm.commons.EmptyVisitor;
 import org.springframework.core.io.Resource;
 
 
@@ -36,7 +34,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static final boolean OUTPUT_ASM = true;
+	public static final boolean OUTPUT_ASM = false;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -44,11 +42,9 @@ public class ClassFileModelBuilder {
 		return model;
 	}
 
-	public static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
-
 	public void visit(Resource resource) throws IOException {
 		ClassReader cr = new ClassReader(resource.getInputStream());
-		cr.accept(createClassVisitor(model), false);
+		cr.accept(createClassVisitor(model), 0);
 	}
 
 	protected String convertAnnotationDescriptor(String desc) {
@@ -57,7 +53,7 @@ public class ClassFileModelBuilder {
 	}
 
 	public ClassVisitor createClassVisitor(final ProjectModelImpl model) {
-		return new ClassVisitor() {
+		return new ClassVisitor(Opcodes.ASM4) {
 
 			String className;
 
@@ -115,7 +111,7 @@ public class ClassFileModelBuilder {
 	}
 
 	private FieldVisitor createFieldVisitor(final ProjectModelImpl model, final String className, final FieldHandle mh) {
-		return new FieldVisitor() {
+		return new FieldVisitor(Opcodes.ASM4) {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
@@ -135,10 +131,13 @@ public class ClassFileModelBuilder {
 		for (Field f : Opcodes.class.getDeclaredFields()) {
 			int value;
 			try {
-				value = f.getInt(null);
-				if ((value == in) 
-						&& (f.getName().charAt(1)!='_')) { // not opcodes, other flags
-					return f.getName();
+				if (f.getType() == int.class) {
+					value = f.getInt(null);
+					
+					if ((value == in) 
+							&& (f.getName().charAt(1)!='_')) { // not opcodes, other flags
+						return f.getName();
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -152,7 +151,7 @@ public class ClassFileModelBuilder {
 
 	private AnnotationVisitor createAnnotationVisitor(final ProjectModelImpl model,
 			final AnnotatedElementHandle<?> handle, final String desc) {
-		return new AnnotationVisitor() {
+		return new AnnotationVisitor(Opcodes.ASM4) {
 
 			String field = null;
 
@@ -170,7 +169,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public AnnotationVisitor visitAnnotation(String arg0, String arg1) {
-				return EMPTY_VISITOR;
+				return null;
 			}
 
 			public AnnotationVisitor visitArray(final String arg0) {
@@ -197,7 +196,7 @@ public class ClassFileModelBuilder {
 		
 		output(mh.getName());
 		
-		return new MethodVisitor() {
+		return new MethodVisitor(Opcodes.ASM4) {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
@@ -234,7 +233,7 @@ public class ClassFileModelBuilder {
 			 * TODO: add support for parameter annotations
 			 */
 			public AnnotationVisitor visitParameterAnnotation(int arg0, String arg1, boolean arg2) {
-				return EMPTY_VISITOR;
+				return null;
 			}
 
 			public void visitVarInsn(int arg0, int arg1) {
@@ -246,7 +245,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public AnnotationVisitor visitAnnotationDefault() {
-				return EMPTY_VISITOR;
+				return null;
 			}
 
 			public void visitAttribute(Attribute arg0) {

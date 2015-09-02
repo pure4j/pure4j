@@ -1,5 +1,6 @@
 package org.pure4j.model;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
 public class ConstructorHandle extends MemberHandle {
@@ -29,5 +30,19 @@ public class ConstructorHandle extends MemberHandle {
 		return className;
 	}
 
+	public <T extends Annotation> T getAnnotation(ClassLoader cl, Class<T> c) {
+		Constructor<?> con = hydrate(cl);
+		return con.getAnnotation(c);
+	}
+	
+	@Override
+	public Class<?> getDeclaringClass(ClassLoader cl) {
+		return hydrateClass(cl);
+	}
+
+	@Override
+	public java.lang.reflect.Type[] getGenericTypes(ClassLoader cl) {
+		return hydrate(cl).getGenericParameterTypes();
+	}
 
 }
