@@ -23,6 +23,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+		    <groupId>org.reflections</groupId>
+		    <artifactId>reflections</artifactId>
+		    <version>0.9.10</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.pure4j</groupId>
 			<artifactId>pure4j-core</artifactId>
             <version>${project.version}</version>

@@ -27,7 +27,7 @@ public class ImmutableClassHandler {
 	static {
 		@SuppressWarnings({ "rawtypes" })
 		List l = Arrays.asList(Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class);
+			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Math.class, StrictMath.class);
 		INBUILT_IMMUTABLE_CLASSES.addAll(l);
 	}
 	
@@ -58,8 +58,8 @@ public class ImmutableClassHandler {
 			
 			if (immutable) {
 				cb.send("Found immutable class: "+in.getName());
-				immutableClasses.put(in.getName(), immutable);
 			}
+			immutableClasses.put(in.getName(), immutable);
 			return immutable;
 		} else {
 			return immutableClasses.get(in.getName());
@@ -71,10 +71,10 @@ public class ImmutableClassHandler {
 		Class<?> c;
 		if (t instanceof Class) {
 			c = (Class<?>) t;
-		} else {
+		} else if (t instanceof Enum<?>){
+			c = ((Enum) t).getDeclaringClass();
+		} else  {
 			throw new RuntimeException("Need some generics support");
-			// todo
-//			c = null;
 		}
 		
 		
