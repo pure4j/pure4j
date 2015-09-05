@@ -18,6 +18,6 @@ public interface IPersistentMap<K, V> extends Iterable<Map.Entry<K, V>>, Associa
 
 	IPersistentMap<K, V> assocEx(K key, V val);
 
-	IPersistentMap<K, V> without(K key);
+	IPersistentMap<K, V> without(Object key);
 
 }

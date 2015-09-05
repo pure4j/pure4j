@@ -15,17 +15,16 @@ package org.pure4j.collections;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public abstract class APersistentSet<K> implements IPersistentSet<K>,
-		Collection<K>, Set<K>, Serializable, IHashEq {
+		Collection<K>, Set<K>, Serializable {
 
-	private static final long serialVersionUID = 5557820681618430308L;
-	int _hash = -1;
 	int _hasheq = -1;
-	final IPersistentMap impl;
+	final IPersistentMap<K, K> impl;
 
-	protected APersistentSet(IPersistentMap impl) {
+	protected APersistentSet(IPersistentMap<K, K> impl) {
 		this.impl = impl;
 	}
 
@@ -37,7 +36,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return impl.containsKey(key);
 	}
 
-	public Object get(Object key) {
+	public K get(Object key) {
 		return impl.valAt(key);
 	}
 
@@ -45,8 +44,9 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return impl.count();
 	}
 
-	public ISeq seq() {
-		return RT.keys(impl);
+	@SuppressWarnings("unchecked")
+	public ISeq<K> seq() {
+		return (ISeq<K>) RT.keys(impl);
 	}
 
 	public Object invoke(Object arg1) {
@@ -57,12 +57,12 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return setEquals(this, obj);
 	}
 
-	static public boolean setEquals(IPersistentSet s1, Object obj) {
+	static public boolean setEquals(IPersistentSet<?> s1, Object obj) {
 		if (s1 == obj)
 			return true;
 		if (!(obj instanceof Set))
 			return false;
-		Set m = (Set) obj;
+		Set<?> m = (Set<?>) obj;
 
 		if (m.size() != s1.count())
 			return false;
@@ -75,46 +75,8 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return true;
 	}
 
-	public boolean equiv(Object obj) {
-		if (!(obj instanceof Set))
-			return false;
-
-		Set m = (Set) obj;
-
-		if (m.size() != size())
-			return false;
-
-		for (Object aM : m) {
-			if (!contains(aM))
-				return false;
-		}
-
-		return true;
-	}
-
 	public int hashCode() {
-		if (_hash == -1) {
-			// int hash = count();
-			int hash = 0;
-			for (ISeq s = seq(); s != null; s = s.next()) {
-				Object e = s.first();
-				// hash = Util.hashCombine(hash, Util.hash(e));
-				hash += Util.hash(e);
-			}
-			this._hash = hash;
-		}
-		return _hash;
-	}
-
-	public int hasheq() {
 		if (_hasheq == -1) {
-			// int hash = 0;
-			// for(ISeq s = seq(); s != null; s = s.next())
-			// {
-			// Object e = s.first();
-			// hash += Util.hasheq(e);
-			// }
-			// this._hasheq = hash;
 			_hasheq = Murmur3.hashUnordered(this);
 		}
 		return _hasheq;
@@ -132,7 +94,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends K> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -140,15 +102,15 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean containsAll(Collection c) {
+	public boolean containsAll(Collection<?> c) {
 		for (Object o : c) {
 			if (!contains(o))
 				return false;
@@ -156,8 +118,9 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return true;
 	}
 
-	public Object[] toArray(Object[] a) {
-		return RT.seqToPassedArray(seq(), a);
+	@SuppressWarnings("unchecked")
+	public <T> T[] toArray(T[] a) {
+		return (T[]) RT.seqToPassedArray(seq(), a);
 	}
 
 	public int size() {
@@ -168,19 +131,19 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return count() == 0;
 	}
 
-	public Iterator iterator() {
+	public Iterator<K> iterator() {
 		if (impl instanceof IMapIterable)
-			return ((IMapIterable) impl).keyIterator();
+			return ((IMapIterable<K, ?>) impl).keyIterator();
 		else
-			return new Iterator() {
-				private final Iterator iter = impl.iterator();
+			return new Iterator<K>() {
+				private final Iterator<Entry<K, K>> iter = impl.iterator();
 
 				public boolean hasNext() {
 					return iter.hasNext();
 				}
 
-				public Object next() {
-					return ((IMapEntry) iter.next()).key();
+				public K next() {
+					return iter.next().getKey();
 				}
 
 				public void remove() {

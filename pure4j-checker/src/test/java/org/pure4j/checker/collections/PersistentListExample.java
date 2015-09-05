@@ -24,6 +24,7 @@ public class PersistentListExample extends AbstractChecker {
 	}
 	
 	@Test
+	@Pure
 	public void testBusinessLogic() {
 		PersistentList<Integer> pl = new PersistentList<Integer>(5);
 		pl = pl.cons(10);

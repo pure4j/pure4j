@@ -12,12 +12,16 @@
 
 package org.pure4j.collections;
 
+import java.util.Set;
 
-public interface IPersistentSet<K> extends IPersistentCollection<K>, Counted{
+
+public interface IPersistentSet<K> extends IPersistentCollection<K>, Counted, Set<K> {
 
 	public IPersistentSet<K> disjoin(Object key) ;
 
 	public boolean contains(Object key);
 
 	public K get(Object key);
+	
+	public IPersistentSet<K> cons(K key);
 }

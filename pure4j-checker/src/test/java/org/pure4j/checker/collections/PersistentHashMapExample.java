@@ -1,5 +1,9 @@
 package org.pure4j.checker.collections;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
+
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
@@ -9,32 +13,42 @@ import org.pure4j.collections.PersistentHashMap;
 public class PersistentHashMapExample extends AbstractChecker {
 
 	@Pure
-	public void pureMethod(IPersistentMap<String, String> in) {
+	public void pureMethod(IPersistentMap<String, String> in, int expectedKeys, int expectedVals) {
 		System.out.println("keys:");
-		for (String entry : in.keySet()) {
+		Set<String> keySet = in.keySet();
+		assertEquals(expectedKeys, keySet.size());
+		
+		for (String entry : keySet) {
 			System.out.println(entry);
 		}
 		
 		System.out.println("vals:");
-		for (String entry : in.values()) {
+		Collection<String> values = in.values();
+		assertEquals(expectedVals, values.size());
+		for (String entry : values) {
 			System.out.println(entry);
 		}
 		
 		in.assoc("james", "bond");
 	}
 	
+	
+
 	@Test
+	@Pure
 	public void sanityTestOfMap() {
-		
 		IPersistentMap<String, String> phm = PersistentHashMap.emptyMap();
 		phm = phm.assoc("rob", "moffat");
 		phm = phm.assoc("peter", "moffat");
 		phm = phm.assoc("fiona", "pauli");
-		pureMethod(phm);
+		pureMethod(phm, 3, 2);
 		phm = phm.assoc("testy", "mctest");
-		pureMethod(phm);
-		
-		
+		pureMethod(phm, 4, 3);
+	}
+	
+	@Test
+	public void checkThisPackage() throws IOException {
+		checkThisPackage(this.getClass(), 1, 0);
 	}
 	
 }

@@ -596,7 +596,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 					return new BitmapIndexedNode(null, bitmap, cloneAndSet(
 							array, 2 * idx + 1, n));
 				}
-				if (Util.equiv(key, keyOrNull)) {
+				if (Util.equals(key, keyOrNull)) {
 					if (val == valOrNode)
 						return this;
 					return new BitmapIndexedNode(null, bitmap, cloneAndSet(
@@ -661,7 +661,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 				return new BitmapIndexedNode(null, bitmap ^ bit, removePair(
 						array, idx));
 			}
-			if (Util.equiv(key, keyOrNull))
+			if (Util.equals(key, keyOrNull))
 				// TODO: collapse
 				return new BitmapIndexedNode(null, bitmap ^ bit, removePair(
 						array, idx));
@@ -677,8 +677,8 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			Object valOrNode = array[2 * idx + 1];
 			if (keyOrNull == null)
 				return ((INode) valOrNode).find(shift + 5, hash, key);
-			if (Util.equiv(key, keyOrNull))
-				return (IMapEntry) Tuple.create(keyOrNull, valOrNode);
+			if (Util.equals(key, keyOrNull))
+				return new MapEntry(keyOrNull, valOrNode);
 			return null;
 		}
 
@@ -691,7 +691,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			Object valOrNode = array[2 * idx + 1];
 			if (keyOrNull == null)
 				return ((INode) valOrNode).find(shift + 5, hash, key, notFound);
-			if (Util.equiv(key, keyOrNull))
+			if (Util.equals(key, keyOrNull))
 				return valOrNode;
 			return notFound;
 		}
@@ -759,7 +759,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 						return this;
 					return editAndSet(edit, 2 * idx + 1, n);
 				}
-				if (Util.equiv(key, keyOrNull)) {
+				if (Util.equals(key, keyOrNull)) {
 					if (val == valOrNode)
 						return this;
 					return editAndSet(edit, 2 * idx + 1, val);
@@ -836,7 +836,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 					return null;
 				return editAndRemovePair(edit, bit, idx);
 			}
-			if (Util.equiv(key, keyOrNull)) {
+			if (Util.equals(key, keyOrNull)) {
 				removedLeaf.val = removedLeaf;
 				// TODO: collapse
 				return editAndRemovePair(edit, bit, idx);
@@ -845,7 +845,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
-	@SuppressWarnings({"rawtypes"})
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	final static class HashCollisionNode implements INode {
 
 		final int hash;
@@ -898,8 +898,8 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			int idx = findIndex(key);
 			if (idx < 0)
 				return null;
-			if (Util.equiv(key, array[idx]))
-				return (IMapEntry) Tuple.create(array[idx], array[idx + 1]);
+			if (Util.equals(key, array[idx]))
+				return new MapEntry(array[idx], array[idx + 1]);
 			return null;
 		}
 
@@ -907,7 +907,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			int idx = findIndex(key);
 			if (idx < 0)
 				return notFound;
-			if (Util.equiv(key, array[idx]))
+			if (Util.equals(key, array[idx]))
 				return array[idx + 1];
 			return notFound;
 		}
@@ -922,7 +922,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 
 		public int findIndex(Object key) {
 			for (int i = 0; i < 2 * count; i += 2) {
-				if (Util.equiv(key, array[i]))
+				if (Util.equals(key, array[i]))
 					return i;
 			}
 			return -1;
@@ -1163,7 +1163,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
-	@SuppressWarnings({"rawtypes"})
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	static final class NodeSeq extends ASeq {
 		final Object[] array;
 		final int i;
@@ -1202,7 +1202,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		public Object first() {
 			if (s != null)
 				return s.first();
-			return Tuple.create(array[i], array[i + 1]);
+			return new MapEntry(array[i], array[i + 1]);
 		}
 
 		public ISeq next() {

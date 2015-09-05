@@ -73,4 +73,11 @@ public class AbstractChecker {
 		Assert.assertEquals(expectedErrorCount, errors);
 		Assert.assertEquals(expectedPureCount, pures.size());
 	}
+	
+	@Pure
+	public void assertEquals(Object exp, Object act) {
+		if (!exp.equals(act)) {
+			throw new RuntimeException("Was expecting equality: "+exp+" and "+act);
+		}
+	}
 }

@@ -20,10 +20,9 @@ import java.util.ListIterator;
 
 import org.pure4j.collections.bin.SeqIterator;
 
-public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializable, IHashEq {
+public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializable {
 
 	private static final long serialVersionUID = 220865945544862915L;
-	transient int _hash = -1;
 	transient int _hasheq = -1;
 
 	public String toString() {
@@ -52,18 +51,6 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public int hashCode() {
-		if (_hash == -1) {
-			int hash = 1;
-			for (ISeq<K> s = seq(); s != null; s = s.next()) {
-				hash = 31 * hash
-						+ (s.first() == null ? 0 : s.first().hashCode());
-			}
-			this._hash = hash;
-		}
-		return _hash;
-	}
-
-	public int hasheq() {
 		if (_hasheq == -1) {
 			_hasheq = Murmur3.hashOrdered(this);
 		}

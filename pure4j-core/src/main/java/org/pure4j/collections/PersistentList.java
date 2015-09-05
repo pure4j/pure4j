@@ -94,24 +94,16 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 	}
 
 	static class EmptyList<K> implements IPersistentList<K>, List<K>, ISeq<K>,
-			Counted, IHashEq {
+			Counted {
 		static final int hasheq = Murmur3.hashOrdered(Collections.EMPTY_LIST);
 
 		public int hashCode() {
-			return 1;
-		}
-
-		public int hasheq() {
 			return hasheq;
 		}
-
+		
 		public boolean equals(Object o) {
 			return (o instanceof Sequential || o instanceof List)
 					&& RT.seq(o) == null;
-		}
-
-		public boolean equiv(Object o) {
-			return equals(o);
 		}
 
 		public K first() {

@@ -19,10 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
-		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable, MapEquivalence, IHashEq {
+		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable, MapEquivalence {
 	
 	private static final long serialVersionUID = 1L;
-	int _hash = -1;
 	int _hasheq = -1;
 
 	public String toString() {
@@ -60,25 +59,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public int hashCode() {
-		if (_hash == -1) {
-			this._hash = mapHash(this);
-		}
-		return _hash;
-	}
-
-	static public <K2, V2> int mapHash(IPersistentMap<K2,V2> m) {
-		int hash = 0;
-		for (ISeq<Entry<K2, V2>> s = m.seq(); s != null; s = s.next()) {
-			Map.Entry<K2, V2> e = s.first();
-			hash += (e.getKey() == null ? 0 : e.getKey().hashCode())
-					^ (e.getValue() == null ? 0 : e.getValue().hashCode());
-		}
-		return hash;
-	}
-
-	public int hasheq() {
 		if (_hasheq == -1) {
-			// this._hasheq = mapHasheq(this);
 			_hasheq = Murmur3.hashUnordered(this);
 		}
 		return _hasheq;
