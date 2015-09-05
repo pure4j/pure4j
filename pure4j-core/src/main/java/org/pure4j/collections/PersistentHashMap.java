@@ -49,6 +49,18 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 	
 	@SuppressWarnings("unchecked")
+	static public <K, V> IPersistentMap<K, V> create(Object... pairs) {
+		ITransientMap<K, V> ret = ((PersistentHashMap<K, V>) emptyMap()).asTransient();
+		if (pairs.length % 2 != 0) {
+			throw new IllegalArgumentException("Argument must supply key/value pairs");
+		}
+		for (int i = 0; i < pairs.length; i=i+2) {
+			ret = ret.assoc((K) pairs[i], (V) pairs[i+1]);	
+		}
+		return ret.persistent();
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static <K, V> PersistentHashMap<K, V> emptyMap() {
 		return (PersistentHashMap<K, V>) EMPTY;
 	}

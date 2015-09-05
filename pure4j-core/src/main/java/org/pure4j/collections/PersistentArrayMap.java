@@ -10,6 +10,7 @@
 
 package org.pure4j.collections;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -27,19 +28,18 @@ import org.pure4j.collections.bin.Keyword;
  * value via valAt - use contains/entryAt
  */
 
-public class PersistentArrayMap extends APersistentMap implements 
-		IEditableCollection, IMapIterable, IKVReduce {
+public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements 
+		IEditableCollection, IMapIterable<K, V> {
 
 	final Object[] array;
 	static final int HASHTABLE_THRESHOLD = 16;
 
-	public static final PersistentArrayMap EMPTY = new PersistentArrayMap();
-	private final IPersistentMap _meta;
+	public static final PersistentArrayMap<Object, Object> EMPTY = new PersistentArrayMap<Object, Object>();
 
-	static public IPersistentMap create(Map other) {
-		ITransientMap ret = EMPTY.asTransient();
-		for (Object o : other.entrySet()) {
-			Map.Entry e = (Entry) o;
+	@SuppressWarnings("unchecked")
+	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
+		ITransientMap<K, V> ret = (ITransientMap<K, V>) EMPTY.asTransient();
+		for (Entry<K, V> e : other.entrySet()) {
 			ret = ret.assoc(e.getKey(), e.getValue());
 		}
 		return ret.persistent();
@@ -47,22 +47,14 @@ public class PersistentArrayMap extends APersistentMap implements
 
 	protected PersistentArrayMap() {
 		this.array = new Object[] {};
-		this._meta = null;
 	}
 
-	public PersistentArrayMap withMeta(IPersistentMap meta) {
-		return new PersistentArrayMap(meta, array);
+	IPersistentMap<K, V> createHT(Object[] init) {
+		return PersistentHashMap.create(init);
 	}
 
-	PersistentArrayMap create(Object... init) {
-		return new PersistentArrayMap(meta(), init);
-	}
-
-	IPersistentMap createHT(Object[] init) {
-		return PersistentHashMap.create(meta(), init);
-	}
-
-	static public PersistentArrayMap createWithCheck(Object[] init) {
+	@SuppressWarnings("unchecked")
+	static public <K> PersistentArrayMap<K, K> createWithCheck(K... init) {
 		for (int i = 0; i < init.length; i += 2) {
 			for (int j = i + 2; j < init.length; j += 2) {
 				if (equalKey(init[i], init[j]))
@@ -70,10 +62,11 @@ public class PersistentArrayMap extends APersistentMap implements
 							+ init[i]);
 			}
 		}
-		return new PersistentArrayMap(init);
+		return new PersistentArrayMap<K, K>(init, true);
 	}
 
-	static public PersistentArrayMap createAsIfByAssoc(Object[] init) {
+	@SuppressWarnings("unchecked")
+	static public <K> PersistentArrayMap<K, K> createAsIfByAssoc(K[] init) {
 		// If this looks like it is doing busy-work, it is because it
 		// is achieving these goals: O(n^2) run time like
 		// createWithCheck(), never modify init arg, and only
@@ -120,24 +113,25 @@ public class PersistentArrayMap extends APersistentMap implements
 			}
 			if (m != n)
 				throw new IllegalArgumentException("Internal error: m=" + m);
-			init = nodups;
+			init = (K[]) nodups;
 		}
-		return new PersistentArrayMap(init);
+		return new PersistentArrayMap<K, K>(init, true);
 	}
 
 	/**
-	 * This ctor captures/aliases the passed array, so do not modify later
+	 * Creates a private copy of init.
 	 *
 	 * @param init
 	 *            {key1,val1,key2,val2,...}
 	 */
 	public PersistentArrayMap(Object[] init) {
-		this.array = init;
-		this._meta = null;
+		this(init, true);
 	}
-
-	public PersistentArrayMap(IPersistentMap meta, Object[] init) {
-		this._meta = meta;
+	
+	private PersistentArrayMap(Object[] init, boolean makeCopy) {
+		if (makeCopy) {
+			init = Arrays.copyOf(init, init.length);
+		}
 		this.array = init;
 	}
 
@@ -149,14 +143,15 @@ public class PersistentArrayMap extends APersistentMap implements
 		return indexOf(key) >= 0;
 	}
 
-	public IMapEntry entryAt(Object key) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public IMapEntry<K, V> entryAt(Object key) {
 		int i = indexOf(key);
 		if (i >= 0)
-			return (IMapEntry) Tuple.create(array[i], array[i + 1]);
+			return new MapEntry(array[i], array[i + 1]);
 		return null;
 	}
 
-	public IPersistentMap assocEx(Object key, Object val) {
+	public IPersistentMap<K, V> assocEx(K key, V val) {
 		int i = indexOf(key);
 		Object[] newArray;
 		if (i >= 0) {
@@ -171,10 +166,10 @@ public class PersistentArrayMap extends APersistentMap implements
 			newArray[0] = key;
 			newArray[1] = val;
 		}
-		return create(newArray);
+		return new PersistentArrayMap<K,V>(newArray, false);
 	}
 
-	public IPersistentMap assoc(Object key, Object val) {
+	public IPersistentMap<K, V> assoc(K key, V val) {
 		int i = indexOf(key);
 		Object[] newArray;
 		if (i >= 0) // already have key, same-sized replacement
@@ -186,17 +181,17 @@ public class PersistentArrayMap extends APersistentMap implements
 		} else // didn't have key, grow
 		{
 			if (array.length > HASHTABLE_THRESHOLD)
-				return createHT(array).assoc(key, val);
+				return ((IPersistentMap<K, V>) createHT(array)).assoc(key, val);
 			newArray = new Object[array.length + 2];
 			if (array.length > 0)
 				System.arraycopy(array, 0, newArray, 0, array.length);
 			newArray[newArray.length - 2] = key;
 			newArray[newArray.length - 1] = val;
 		}
-		return create(newArray);
+		return new PersistentArrayMap<K,V>(newArray, false);
 	}
 
-	public IPersistentMap without(Object key) {
+	public IPersistentMap<K, V> without(Object key) {
 		int i = indexOf(key);
 		if (i >= 0) // have key, will remove
 		{
@@ -212,24 +207,26 @@ public class PersistentArrayMap extends APersistentMap implements
 					d += 2;
 				}
 			}
-			return create(newArray);
+			return new PersistentArrayMap<K, V>(newArray, false);
 		}
 		// don't have key, no op
 		return this;
 	}
 
-	public IPersistentMap empty() {
-		return (IPersistentMap) EMPTY.withMeta(meta());
+	@SuppressWarnings("unchecked")
+	public IPersistentMap<K, V> empty() {
+		return (IPersistentMap<K, V>) EMPTY;
 	}
 
-	final public Object valAt(Object key, Object notFound) {
+	@SuppressWarnings("unchecked")
+	final public V valAt(Object key, V notFound) {
 		int i = indexOf(key);
 		if (i >= 0)
-			return array[i + 1];
+			return (V) array[i + 1];
 		return notFound;
 	}
 
-	public Object valAt(Object key) {
+	public V valAt(Object key) {
 		return valAt(key, null);
 	}
 
@@ -238,9 +235,8 @@ public class PersistentArrayMap extends APersistentMap implements
 	}
 
 	private int indexOfObject(Object key) {
-		Util.EquivPred ep = Util.equivPred(key);
 		for (int i = 0; i < array.length; i += 2) {
-			if (ep.equiv(key, array[i]))
+			if (Util.equals(key, array[i]))
 				return i;
 		}
 		return -1;
@@ -260,32 +256,28 @@ public class PersistentArrayMap extends APersistentMap implements
 	static boolean equalKey(Object k1, Object k2) {
 		if (k1 instanceof Keyword)
 			return k1 == k2;
-		return Util.equiv(k1, k2);
+		return Util.equals(k1, k2);
 	}
 
-	public Iterator iterator() {
-		return new Iter(array, APersistentMap.MAKE_ENTRY);
+	public Iterator<Entry<K,V>> iterator() {
+		return new Iter<K, V>(array);
 	}
 
-	public Iterator keyIterator() {
-		return new Iter(array, APersistentMap.MAKE_KEY);
+	public Iterator<K> keyIterator() {
+		return KeySeq.create(seq()).iterator();
 	}
 
-	public Iterator valIterator() {
-		return new Iter(array, APersistentMap.MAKE_VAL);
+	public Iterator<V> valIterator() {
+		return ValSeq.create(seq()).iterator();
 	}
 
-	public ISeq seq() {
+	public ISeq<Entry<K, V>> seq() {
 		if (array.length > 0)
-			return new Seq(array, 0);
+			return new Seq<K, V>(array, 0);
 		return null;
 	}
 
-	public IPersistentMap meta() {
-		return _meta;
-	}
-
-	static class Seq extends ASeq implements Counted {
+	static class Seq<K,V> extends ASeq<Entry<K,V>> implements Counted {
 		final Object[] array;
 		final int i;
 
@@ -294,19 +286,14 @@ public class PersistentArrayMap extends APersistentMap implements
 			this.i = i;
 		}
 
-		public Seq(IPersistentMap meta, Object[] array, int i) {
-			super(meta);
-			this.array = array;
-			this.i = i;
+		@SuppressWarnings("unchecked")
+		public Entry<K,V> first() {
+			return new MapEntry<K,V>((K)array[i], (V)array[i + 1]);
 		}
 
-		public Object first() {
-			return Tuple.create(array[i], array[i + 1]);
-		}
-
-		public ISeq next() {
+		public ISeq<Entry<K, V>> next() {
 			if (i + 2 < array.length)
-				return new Seq(array, i + 2);
+				return new Seq<K, V>(array, i + 2);
 			return null;
 		}
 
@@ -315,30 +302,29 @@ public class PersistentArrayMap extends APersistentMap implements
 		}
 	}
 
-	static class Iter implements Iterator {
-		IFn f;
+	static class Iter<K, V> implements Iterator<Entry<K, V>> {
 		Object[] array;
 		int i;
 
 		// for iterator
-		Iter(Object[] array, IFn f) {
-			this(array, -2, f);
+		Iter(Object[] array) {
+			this(array, -2);
 		}
 
 		// for entryAt
-		Iter(Object[] array, int i, IFn f) {
+		Iter(Object[] array, int i) {
 			this.array = array;
 			this.i = i;
-			this.f = f;
 		}
 
 		public boolean hasNext() {
 			return i < array.length - 2;
 		}
 
-		public Object next() {
+		@SuppressWarnings("unchecked")
+		public Entry<K, V> next() {
 			i += 2;
-			return f.invoke(array[i], array[i + 1]);
+			return new MapEntry<K,V>((K) array[i], (V) array[i + 1]);
 		}
 
 		public void remove() {
@@ -347,20 +333,11 @@ public class PersistentArrayMap extends APersistentMap implements
 
 	}
 
-	public Object kvreduce(IFn f, Object init) {
-		for (int i = 0; i < array.length; i += 2) {
-			init = f.invoke(init, array[i], array[i + 1]);
-			if (RT.isReduced(init))
-				return ((IDeref) init).deref();
-		}
-		return init;
+	public ITransientMap<K, V> asTransient() {
+		return new TransientArrayMap<K, V>(array);
 	}
 
-	public ITransientMap asTransient() {
-		return new TransientArrayMap(array);
-	}
-
-	static final class TransientArrayMap extends ATransientMap {
+	static final class TransientArrayMap<K, V> extends ATransientMap<K, V> {
 		volatile int len;
 		final Object[] array;
 		volatile Thread owner;
@@ -380,7 +357,8 @@ public class PersistentArrayMap extends APersistentMap implements
 			return -1;
 		}
 
-		ITransientMap doAssoc(Object key, Object val) {
+		@SuppressWarnings("unchecked")
+		ITransientMap<K, V> doAssoc(K key, V val) {
 			int i = indexOf(key);
 			if (i >= 0) // already have key,
 			{
@@ -389,7 +367,7 @@ public class PersistentArrayMap extends APersistentMap implements
 			} else // didn't have key, grow
 			{
 				if (len >= array.length)
-					return PersistentHashMap.create(array).asTransient()
+					return ((PersistentHashMap<K, V>) PersistentHashMap.create(array)).asTransient()
 							.assoc(key, val);
 				array[len++] = key;
 				array[len++] = val;
@@ -397,7 +375,7 @@ public class PersistentArrayMap extends APersistentMap implements
 			return this;
 		}
 
-		ITransientMap doWithout(Object key) {
+		ITransientMap<K, V> doWithout(Object key) {
 			int i = indexOf(key);
 			if (i >= 0) // have key, will remove
 			{
@@ -410,10 +388,11 @@ public class PersistentArrayMap extends APersistentMap implements
 			return this;
 		}
 
-		Object doValAt(Object key, Object notFound) {
+		@SuppressWarnings("unchecked")
+		V doValAt(Object key, V notFound) {
 			int i = indexOf(key);
 			if (i >= 0)
-				return array[i + 1];
+				return (V) array[i + 1];
 			return notFound;
 		}
 
@@ -421,12 +400,12 @@ public class PersistentArrayMap extends APersistentMap implements
 			return len / 2;
 		}
 
-		IPersistentMap doPersistent() {
+		IPersistentMap<K, V> doPersistent() {
 			ensureEditable();
 			owner = null;
 			Object[] a = new Object[len];
 			System.arraycopy(array, 0, a, 0, len);
-			return new PersistentArrayMap(a);
+			return new PersistentArrayMap<K, V>(a);
 		}
 
 		void ensureEditable() {

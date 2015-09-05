@@ -20,8 +20,8 @@ import java.util.ListIterator;
 import java.util.RandomAccess;
 
 public abstract class APersistentVector<K> implements
-		IPersistentVector<K>, Iterable<K>, List<K>, IMapEntry, RandomAccess, Comparable<K>,
-		Serializable, IHashEq {
+		IPersistentVector<K>, Iterable<K>, List<K>, RandomAccess, Comparable<K>,
+		Serializable {
 
 	private static final long serialVersionUID = 3143509526367951707L;
 	int _hash = -1;

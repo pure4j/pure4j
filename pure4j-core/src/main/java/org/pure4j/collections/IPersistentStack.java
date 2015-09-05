@@ -13,6 +13,7 @@
 package org.pure4j.collections;
 
 public interface IPersistentStack<K> extends IPersistentCollection<K> {
+	
 	K peek();
 
 	IPersistentStack<K> pop();
