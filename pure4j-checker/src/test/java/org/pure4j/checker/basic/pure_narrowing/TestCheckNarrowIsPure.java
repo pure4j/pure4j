@@ -3,7 +3,7 @@ package org.pure4j.checker.basic.pure_narrowing;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.pure4j.checker.basic.AbstractChecker;
+import org.pure4j.checker.AbstractChecker;
 
 public class TestCheckNarrowIsPure extends AbstractChecker {
 

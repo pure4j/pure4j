@@ -31,10 +31,18 @@ public class PurityChecker implements Rule {
 		addPureMethodsToPureList(pm);
 		addMethodsFromImmutableValueClassToPureList(pm, cb);
 		addMethodsFromPureClassToPureList(pm, cb);
-		
 		pureChecklist.doPureMethodChecks(cb, pm);
+	}
+	
+	public void cascadeImpurities(ProjectModel pm, Callback cb) {
+		//for
+		
+	}
+	
+	public void outputPureMethods(Callback cb, ProjectModel pm) {
 		pureChecklist.outputPureMethodList(cb, pm);
 	}
+	
 
 	private void addMethodsFromImmutableValueClassToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {

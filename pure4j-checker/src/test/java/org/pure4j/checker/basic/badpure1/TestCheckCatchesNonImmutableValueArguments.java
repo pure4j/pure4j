@@ -6,7 +6,7 @@ import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.checker.basic.AbstractChecker;
+import org.pure4j.checker.AbstractChecker;
 import org.pure4j.processor.Callback;
 
 public class TestCheckCatchesNonImmutableValueArguments extends AbstractChecker {

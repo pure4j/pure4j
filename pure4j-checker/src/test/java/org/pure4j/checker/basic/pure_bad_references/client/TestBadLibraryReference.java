@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.checker.basic.AbstractChecker;
+import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.pure_bad_references.supplier.SomePure;
 
 public class TestBadLibraryReference extends AbstractChecker {

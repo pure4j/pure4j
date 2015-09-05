@@ -3,7 +3,7 @@ package org.pure4j.checker.basic.immutable_calls_super;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.pure4j.checker.basic.AbstractChecker;
+import org.pure4j.checker.AbstractChecker;
 
 /**
  * This test is where a class calls it's super.  But, the super is not declared pure.

@@ -33,21 +33,12 @@ public class JavaPurity {
 		cfmb.visit(drl.getResource("classpath:/java/lang/StringBuilder.class"));
 		cfmb.visit(drl.getResource("classpath:/java/lang/AbstractStringBuilder.class"));
 		cfmb.visit(drl.getResource("classpath:/java/lang/Math.class"));
-		cfmb.visit(drl.getResource("classpath:));
+		cfmb.visit(drl.getResource("classpath:"));
 		ProjectModel pm = cfmb.getModel();
 		
 		PurityChecker checker = new PurityChecker(cl);
 		checker.addMethodsFromClassToPureList(StringBuilder.class, fc, pm, true);
 
-		
-//		// set all classes to pure
-//
-//		for (String className : pm.getAllClasses()) {
-//			System.out.println("Register pure: "+className);
-//			Class<?> c = ClassHandle.hydrateClass(className, cl);
-//			lib.registerPure(c);
-//		} 
-		
 		checker.checkModel(pm, fc);
 		fc.close();
 	}
