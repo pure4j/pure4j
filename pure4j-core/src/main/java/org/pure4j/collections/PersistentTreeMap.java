@@ -83,7 +83,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) RT.second(items));
+			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
 		}
 		return (PersistentTreeMap<K, K>) ret;
 	}
@@ -95,7 +95,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) RT.second(items));
+			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
 		}
 		return (PersistentTreeMap<K,K>) ret;
 	}
@@ -774,7 +774,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 
 		static ISeq<Node> push(Node t, ISeq<Node> stack, boolean asc) {
 			while (t != null) {
-				stack = RT.cons(t, stack);
+				stack = stack.cons(t);
 				t = asc ? t.left() : t.right();
 			}
 			return stack;

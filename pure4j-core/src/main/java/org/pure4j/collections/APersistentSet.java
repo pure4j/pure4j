@@ -46,7 +46,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 
 	@SuppressWarnings("unchecked")
 	public ISeq<K> seq() {
-		return (ISeq<K>) RT.keys(impl);
+		return (ISeq<K>) PureCollections.keys(impl);
 	}
 
 	public Object invoke(Object arg1) {
@@ -83,7 +83,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	public Object[] toArray() {
-		return RT.seqToArray(seq());
+		return PureCollections.seqToArray(seq());
 	}
 
 	public boolean add(Object o) {
@@ -120,7 +120,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 
 	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
-		return (T[]) RT.seqToPassedArray(seq(), a);
+		return (T[]) PureCollections.seqToPassedArray(seq(), a);
 	}
 
 	public int size() {

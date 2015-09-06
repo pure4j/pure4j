@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
-import org.pure4j.collections.IPersistentMap;
-import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentTreeMap;
 
 public class PersistentTreeMapExample extends AbstractChecker {

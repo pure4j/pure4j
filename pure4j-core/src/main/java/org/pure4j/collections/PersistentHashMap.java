@@ -39,13 +39,13 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	
 	final private static Object NOT_FOUND = new Object();
 
-	static public <K, V> IPersistentMap<K, V> create(Map<K,V> other) {
+	static public <K, V> PersistentHashMap<K, V> create(Map<K,V> other) {
 		@SuppressWarnings("unchecked")
-		ITransientMap<K, V> ret = ((PersistentHashMap<K, V>) emptyMap()).asTransient();
+		TransientHashMap<K, V> ret = ((PersistentHashMap<K, V>) emptyMap()).asTransient();
 		for (Entry<K,V> o : other.entrySet()) {
-			ret = ret.assoc(o.getKey(), o.getValue());
+			ret = (TransientHashMap<K, V>) ret.assoc(o.getKey(), o.getValue());
 		}
-		return ret.persistent();
+		return (PersistentHashMap<K, V>) ret.persistent();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -80,7 +80,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) RT.second(items));
+			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
 		}
 		return (PersistentHashMap<K, K>) ret.persistent();
 	}
@@ -92,7 +92,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) RT.second(items));
+			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
 			if (ret.count() != i + 1)
 				throw new IllegalArgumentException("Duplicate key: "
 						+ items.first());
@@ -118,7 +118,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (root != null) ? root.find(0, hash(key), key) : null;
 	}
 
-	public IPersistentMap<K, V> assoc(K key, V val) {
+	public PersistentHashMap<K, V> assoc(K key, V val) {
 		if (key == null) {
 			if (hasNull && val == nullValue)
 				return this;
@@ -145,7 +145,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return valAt(key, null);
 	}
 
-	public IPersistentMap<K,V> assocEx(K key, V val) {
+	public PersistentHashMap<K,V> assocEx(K key, V val) {
 		if (containsKey(key))
 			throw Util.runtimeException("Key already present");
 		return assoc(key, val);
@@ -267,8 +267,10 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			this.hasNull = hasNull;
 			this.nullValue = nullValue;
 		}
+		
+		
 
-		ITransientMap<K, V> doAssoc(K key, V val) {
+		TransientHashMap<K, V> doAssoc(K key, V val) {
 			if (key == null) {
 				if (this.nullValue != val)
 					this.nullValue = val;
@@ -289,7 +291,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return this;
 		}
 
-		ITransientMap<K, V> doWithout(Object key) {
+		TransientHashMap<K, V> doWithout(Object key) {
 			if (key == null) {
 				if (!hasNull)
 					return this;
@@ -310,7 +312,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return this;
 		}
 
-		IPersistentMap<K, V> doPersistent() {
+		PersistentHashMap<K, V> doPersistent() {
 			edit.set(null);
 			return new PersistentHashMap<K, V>(count, root, hasNull, nullValue);
 		}

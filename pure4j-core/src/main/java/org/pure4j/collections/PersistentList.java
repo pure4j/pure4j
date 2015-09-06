@@ -95,6 +95,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 
 	static class EmptyList<K> implements IPersistentList<K>, List<K>, ISeq<K>,
 			Counted {
+		private static final Object[] EMPTY_ARRAY = new Object[] {};
 		static final int hasheq = Murmur3.hashOrdered(Collections.EMPTY_LIST);
 
 		public int hashCode() {
@@ -103,7 +104,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 		
 		public boolean equals(Object o) {
 			return (o instanceof Sequential || o instanceof List)
-					&& RT.seq(o) == null;
+					&& PureCollections.seq(o) == null;
 		}
 
 		public K first() {
@@ -172,7 +173,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 		}
 
 		public Object[] toArray() {
-			return RT.EMPTY_ARRAY;
+			return EMPTY_ARRAY;
 		}
 
 		public boolean add(Object o) {
@@ -249,7 +250,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 
 		@SuppressWarnings("unchecked")
 		public K get(int index) {
-			return (K) RT.nth(this, index);
+			return (K) PureCollections.nth(this, index);
 		}
 
 		public void add(int index, Object element) {

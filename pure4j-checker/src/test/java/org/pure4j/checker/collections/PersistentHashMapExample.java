@@ -37,7 +37,7 @@ public class PersistentHashMapExample extends AbstractChecker {
 	@Test
 	@Pure
 	public void sanityTestOfMap() {
-		IPersistentMap<String, String> phm = PersistentHashMap.emptyMap();
+		PersistentHashMap<String, String> phm = PersistentHashMap.emptyMap();
 		phm = phm.assoc("rob", "moffat");
 		phm = phm.assoc("peter", "moffat");
 		phm = phm.assoc("fiona", "pauli");

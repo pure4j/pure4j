@@ -3,9 +3,7 @@ package org.pure4j.checker.collections;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
-import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.IPersistentSet;
-import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentHashSet;
 
 public class PersistentHashSetExample extends AbstractChecker {

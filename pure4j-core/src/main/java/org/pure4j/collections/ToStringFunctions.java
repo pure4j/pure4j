@@ -56,9 +56,9 @@ public class ToStringFunctions {
             Entry<K,V> e = i.next();
             K key = e.getKey();
             V value = e.getValue();
-            sb.append(key   == this ? "(this Map)" : key);
+            sb.append(key   == m ? "(this Map)" : key);
             sb.append('=');
-            sb.append(value == this ? "(this Map)" : value);
+            sb.append(value == m ? "(this Map)" : value);
             if (! i.hasNext())
                 return sb.append('}').toString();
             sb.append(',').append(' ');
