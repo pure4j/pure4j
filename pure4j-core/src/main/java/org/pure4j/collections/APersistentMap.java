@@ -24,9 +24,22 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	private static final long serialVersionUID = 1L;
 	int _hasheq = -1;
 
-	public String toString() {
-		return RT.printString(this);
-	}
+	 /**
+     * Returns a string representation of this map.  The string representation
+     * consists of a list of key-value mappings in the order returned by the
+     * map's <tt>entrySet</tt> view's iterator, enclosed in braces
+     * (<tt>"{}"</tt>).  Adjacent mappings are separated by the characters
+     * <tt>", "</tt> (comma and space).  Each key-value mapping is rendered as
+     * the key followed by an equals sign (<tt>"="</tt>) followed by the
+     * associated value.  Keys and values are converted to strings as by
+     * {@link String#valueOf(Object)}.
+     *
+     * @return a string representation of this map
+     */
+    public String toString() {
+       return ToStringFunctions.toString(this);
+    }
+
 
 	public IPersistentMap<K, V> cons(Map.Entry<K, V> o) {
 		return assoc(o.getKey(), o.getValue());

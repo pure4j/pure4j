@@ -229,7 +229,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 		public int indexOf(Object o) {
 			ISeq<K> s = seq();
 			for (int i = 0; s != null; s = s.next(), i++) {
-				if (Util.equiv(s.first(), o))
+				if (Util.equals(s.first(), o))
 					return i;
 			}
 			return -1;

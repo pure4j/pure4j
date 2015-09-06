@@ -13,9 +13,9 @@
 package org.pure4j.collections;
 
 
-public interface ITransientVector extends ITransientAssociative, Indexed{
+public interface ITransientVector<V> extends ITransientAssociative<Integer, V>, Indexed{
 
-ITransientVector assocN(int i, Object val);
+	ITransientVector<V> assocN(int i, Object val);
 
-ITransientVector pop();
+	ITransientVector<V> pop();
 }

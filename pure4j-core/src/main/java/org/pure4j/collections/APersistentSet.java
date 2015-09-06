@@ -29,7 +29,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	public String toString() {
-		return RT.printString(this);
+		return ToStringFunctions.toString(this);
 	}
 
 	public boolean contains(Object key) {

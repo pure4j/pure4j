@@ -14,12 +14,13 @@ package org.pure4j.collections;
 
 import java.util.Comparator;
 
-public interface Sorted {
-	Comparator comparator();
+public interface Sorted<K, E> {
+	
+	Comparator<K> comparator();
 
-	Object entryKey(Object entry);
+	K entryKey(E entry);
 
-	ISeq seq(boolean ascending);
+	ISeq<E> seq(boolean ascending);
 
-	ISeq seqFrom(Object key, boolean ascending);
+	ISeq<E> seqFrom(K key, boolean ascending);
 }

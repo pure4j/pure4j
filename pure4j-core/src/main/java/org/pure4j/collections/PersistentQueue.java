@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  */
 
 public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
-		Counted, IHashEq {
+		Counted {
 
 	final public static PersistentQueue EMPTY = new PersistentQueue(0,
 			null, null);

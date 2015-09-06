@@ -12,9 +12,12 @@
 
 package org.pure4j.collections;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 
 /**
@@ -24,89 +27,94 @@ import java.util.Stack;
  * See Okasaki, Kahrs, Larsen et al
  */
 
-public class PersistentTreeMap extends APersistentMap implements IObj,
-		Reversible, Sorted, IKVReduce {
+public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
+		Reversible, Sorted<K, Entry<K, V>> {
+	
+	private static final Comparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
+	
+	private static final class DefaultComparator<K> implements Comparator<K>, Serializable {
+	    public int compare(Object o1, Object o2){
+			return Util.compare(o1, o2);
+		}
 
-	public final Comparator comp;
+	    private Object readResolve() throws ObjectStreamException {
+	        // ensures that we aren't hanging onto a new default comparator for every
+	        // sorted set, etc., we deserialize
+	        return DEFAULT_COMPARATOR;
+	    }
+	}
+
+	public final Comparator<K> comp;
 	public final Node tree;
 	public final int _count;
-	final IPersistentMap _meta;
 
-	final static public PersistentTreeMap EMPTY = new PersistentTreeMap();
+	final static public PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
 
-	static public IPersistentMap create(Map other) {
-		IPersistentMap ret = EMPTY;
-		for (Object o : other.entrySet()) {
-			Map.Entry e = (Entry) o;
+	@SuppressWarnings("unchecked")
+	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
+		IPersistentMap<K, V> ret = (IPersistentMap<K, V>) EMPTY;
+		for (Entry<K, V> e : other.entrySet()) {
 			ret = ret.assoc(e.getKey(), e.getValue());
 		}
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	public PersistentTreeMap() {
-		this(RT.DEFAULT_COMPARATOR);
+		this((Comparator<K>) DEFAULT_COMPARATOR);
 	}
 
-	public PersistentTreeMap withMeta(IPersistentMap meta) {
-		return new PersistentTreeMap(meta, comp, tree, _count);
-	}
-
-	private PersistentTreeMap(Comparator comp) {
-		this(null, comp);
-	}
-
-	public PersistentTreeMap(IPersistentMap meta, Comparator comp) {
+	private PersistentTreeMap(Comparator<K> comp) {
 		this.comp = comp;
-		this._meta = meta;
 		tree = null;
 		_count = 0;
 	}
 
-	PersistentTreeMap(IPersistentMap meta, Comparator comp, Node tree,
-			int _count) {
-		this._meta = meta;
+	PersistentTreeMap(Comparator<K> comp, Node tree, int _count) {
 		this.comp = comp;
 		this.tree = tree;
 		this._count = _count;
 	}
 
-	static public PersistentTreeMap create(ISeq items) {
-		IPersistentMap ret = EMPTY;
+	@SuppressWarnings("unchecked")
+	static public <K> PersistentTreeMap<K, K> create(ISeq<K> items) {
+		IPersistentMap<K, K> ret = (IPersistentMap<K, K>) EMPTY;
 		for (; items != null; items = items.next().next()) {
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), RT.second(items));
+			ret = ret.assoc(items.first(), (K) RT.second(items));
 		}
-		return (PersistentTreeMap) ret;
+		return (PersistentTreeMap<K, K>) ret;
 	}
 
-	static public PersistentTreeMap create(Comparator comp, ISeq items) {
-		IPersistentMap ret = new PersistentTreeMap(comp);
+	@SuppressWarnings("unchecked")
+	static public <K> PersistentTreeMap<K, K> create(Comparator<K> comp, ISeq<K> items) {
+		IPersistentMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
 		for (; items != null; items = items.next().next()) {
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), RT.second(items));
+			ret = ret.assoc(items.first(), (K) RT.second(items));
 		}
-		return (PersistentTreeMap) ret;
+		return (PersistentTreeMap<K,K>) ret;
 	}
 
 	public boolean containsKey(Object key) {
 		return entryAt(key) != null;
 	}
 
-	public PersistentTreeMap assocEx(Object key, Object val) {
+	public PersistentTreeMap<K, V> assocEx(K key, V val) {
 		Box found = new Box(null);
 		Node t = add(tree, key, val, found);
 		if (t == null) // null == already contains key
 		{
 			throw Util.runtimeException("Key already present");
 		}
-		return new PersistentTreeMap(comp, t.blacken(), _count + 1, meta());
+		return new PersistentTreeMap<K, V>(comp, t.blacken(), _count + 1);
 	}
 
-	public PersistentTreeMap assoc(Object key, Object val) {
+	public PersistentTreeMap<K, V> assoc(K key, V val) {
 		Box found = new Box(null);
 		Node t = add(tree, key, val, found);
 		if (t == null) // null == already contains key
@@ -115,57 +123,57 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 			if (foundNode.val() == val) // note only get same collection on
 										// identity of val, not equals()
 				return this;
-			return new PersistentTreeMap(comp, replace(tree, key, val), _count,
-					meta());
+			return new PersistentTreeMap<K, V>(comp, replace(tree, key, val), _count);
 		}
-		return new PersistentTreeMap(comp, t.blacken(), _count + 1, meta());
+		return new PersistentTreeMap<K, V>(comp, t.blacken(), _count + 1);
 	}
 
-	public PersistentTreeMap without(Object key) {
+	public PersistentTreeMap<K, V> without(Object key) {
 		Box found = new Box(null);
 		Node t = remove(tree, key, found);
 		if (t == null) {
 			if (found.val == null)// null == doesn't contain key
 				return this;
 			// empty
-			return new PersistentTreeMap(meta(), comp);
+			return new PersistentTreeMap<K, V>(comp);
 		}
-		return new PersistentTreeMap(comp, t.blacken(), _count - 1, meta());
+		return new PersistentTreeMap<K, V>(comp, t.blacken(), _count - 1);
 	}
 
-	public ISeq seq() {
+	public ISeq<Entry<K, V>> seq() {
 		if (_count > 0)
 			return Seq.create(tree, true, _count);
 		return null;
 	}
 
-	public IPersistentCollection empty() {
-		return new PersistentTreeMap(meta(), comp);
+	public IPersistentCollection<Entry<K, V>> empty() {
+		return new PersistentTreeMap<K, V>(comp);
 	}
 
-	public ISeq rseq() {
+	public ISeq<Entry<K, V>> rseq() {
 		if (_count > 0)
 			return Seq.create(tree, false, _count);
 		return null;
 	}
 
-	public Comparator comparator() {
+	public Comparator<K> comparator() {
 		return comp;
 	}
 
-	public Object entryKey(Object entry) {
-		return ((IMapEntry) entry).key();
+	public K entryKey(Map.Entry<K, V> entry) {
+		return entry.getKey();
 	}
 
-	public ISeq seq(boolean ascending) {
+	public ISeq<Entry<K, V>> seq(boolean ascending) {
 		if (_count > 0)
 			return Seq.create(tree, ascending, _count);
 		return null;
 	}
 
-	public ISeq seqFrom(Object key, boolean ascending) {
+	@SuppressWarnings("unchecked")
+	public ISeq<Entry<K, V>> seqFrom(K key, boolean ascending) {
 		if (_count > 0) {
-			ISeq stack = null;
+			ISeq<Node> stack = null;
 			Node t = tree;
 			while (t != null) {
 				int c = doCompare(key, t.key);
@@ -174,7 +182,7 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 					return new Seq(stack, ascending);
 				} else if (ascending) {
 					if (c < 0) {
-						stack = RT.cons(t, stack);
+						stack = stack.cons(t);
 						t = t.left();
 					} else
 						t = t.right();
@@ -192,36 +200,28 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		return null;
 	}
 
-	public NodeIterator iterator() {
-		return new NodeIterator(tree, true);
+	public NodeIterator<K, V> iterator() {
+		return new NodeIterator<K, V>(tree, true);
+	}
+	
+	public NodeIterator<K, V> reverseIterator() {
+		return new NodeIterator<K, V>(tree, false);
 	}
 
-	public Object kvreduce(IFn f, Object init) {
-		if (tree != null)
-			init = tree.kvreduce(f, init);
-		if (RT.isReduced(init))
-			init = ((IDeref) init).deref();
-		return init;
-	}
-
-	public NodeIterator reverseIterator() {
-		return new NodeIterator(tree, false);
-	}
-
-	public Iterator keys() {
+	public Iterator<K> keyIterator() {
 		return keys(iterator());
 	}
 
-	public Iterator vals() {
+	public Iterator<V> valIterator() {
 		return vals(iterator());
 	}
 
-	public Iterator keys(NodeIterator it) {
-		return new KeyIterator(it);
+	public Iterator<K> keys(NodeIterator<K, V> it) {
+		return new KeyIterator<K, V>(it);
 	}
 
-	public Iterator vals(NodeIterator it) {
-		return new ValIterator(it);
+	public Iterator<V> vals(NodeIterator<K, V> it) {
+		return new ValIterator<K, V>(it);
 	}
 
 	public Object minKey() {
@@ -262,12 +262,13 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		return 1 + Math.max(depth(t.left()), depth(t.right()));
 	}
 
-	public Object valAt(Object key, Object notFound) {
-		Node n = entryAt(key);
-		return (n != null) ? n.val() : notFound;
+	@SuppressWarnings("unchecked")
+	public V valAt(Object key, Object notFound) {
+		Node n = (Node) entryAt(key);
+		return (V) ((n != null) ? n.val() : notFound);
 	}
 
-	public Object valAt(Object key) {
+	public V valAt(Object key) {
 		return valAt(key, null);
 	}
 
@@ -279,27 +280,27 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		return _count;
 	}
 
-	public Node entryAt(Object key) {
+	@SuppressWarnings("unchecked")
+	public IMapEntry<K, V> entryAt(Object key) {
 		Node t = tree;
 		while (t != null) {
 			int c = doCompare(key, t.key);
 			if (c == 0)
-				return t;
+				return (IMapEntry<K, V>) t;
 			else if (c < 0)
 				t = t.left();
 			else
 				t = t.right();
 		}
-		return t;
+		return (IMapEntry<K, V>) t;
 	}
 
+	@SuppressWarnings("unchecked")
 	public int doCompare(Object k1, Object k2) {
-		// if(comp != null)
-		return comp.compare(k1, k2);
-		// return ((Comparable) k1).compareTo(k2);
+		return comp.compare((K) k1, (K) k2);
 	}
 
-	Node add(Node t, Object key, Object val, Box found) {
+	Node add(Node t, K key, V val, Box found) {
 		if (t == null) {
 			if (val == null)
 				return new Red(key);
@@ -440,18 +441,11 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 			return black(key, val, left, ins);
 	}
 
-	Node replace(Node t, Object key, Object val) {
+	Node replace(Node t, K key, V val) {
 		int c = doCompare(key, t.key);
 		return t.replace(t.key, c == 0 ? val : t.val(),
 				c < 0 ? replace(t.left(), key, val) : t.left(),
 				c > 0 ? replace(t.right(), key, val) : t.right());
-	}
-
-	PersistentTreeMap(Comparator comp, Node tree, int count, IPersistentMap meta) {
-		this._meta = meta;
-		this.comp = comp;
-		this.tree = tree;
-		this._count = count;
 	}
 
 	static Red red(Object key, Object val, Node left, Node right) {
@@ -476,11 +470,7 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		return new BlackBranchVal(key, val, left, right);
 	}
 
-	public IPersistentMap meta() {
-		return _meta;
-	}
-
-	static abstract class Node extends AMapEntry {
+	static abstract class Node extends AMapEntry<Object, Object> {
 		final Object key;
 
 		Node(Object key) {
@@ -532,23 +522,11 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		}
 
 		abstract Node replace(Object key, Object val, Node left, Node right);
-
-		public Object kvreduce(IFn f, Object init) {
-			if (left() != null) {
-				init = left().kvreduce(f, init);
-				if (RT.isReduced(init))
-					return init;
-			}
-			init = f.invoke(init, key(), val());
-			if (RT.isReduced(init))
-				return init;
-
-			if (right() != null) {
-				init = right().kvreduce(f, init);
-			}
-			return init;
+		
+		@Override
+		public Object setValue(Object value) {
+			throw new UnsupportedOperationException();
 		}
-
 	}
 
 	static class Black extends Node {
@@ -583,7 +561,6 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		Node replace(Object key, Object val, Node left, Node right) {
 			return black(key, val, left, right);
 		}
-
 	}
 
 	static class BlackVal extends Black {
@@ -774,35 +751,28 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		}
 	}
 
-	static public class Seq extends ASeq {
-		final ISeq stack;
+	static public class Seq<K, V> extends ASeq<Entry<K, V>> {
+		final ISeq<Node> stack;
 		final boolean asc;
 		final int cnt;
 
-		public Seq(ISeq stack, boolean asc) {
+		public Seq(ISeq<Node> stack, boolean asc) {
 			this.stack = stack;
 			this.asc = asc;
 			this.cnt = -1;
 		}
 
-		public Seq(ISeq stack, boolean asc, int cnt) {
+		public Seq(ISeq<Node> stack, boolean asc, int cnt) {
 			this.stack = stack;
 			this.asc = asc;
 			this.cnt = cnt;
 		}
 
-		Seq(IPersistentMap meta, ISeq stack, boolean asc, int cnt) {
-			super(meta);
-			this.stack = stack;
-			this.asc = asc;
-			this.cnt = cnt;
+		static <K, V> Seq<K, V> create(Node t, boolean asc, int cnt) {
+			return new Seq<K, V>(push(t, null, asc), asc, cnt);
 		}
 
-		static Seq create(Node t, boolean asc, int cnt) {
-			return new Seq(push(t, null, asc), asc, cnt);
-		}
-
-		static ISeq push(Node t, ISeq stack, boolean asc) {
+		static ISeq<Node> push(Node t, ISeq<Node> stack, boolean asc) {
 			while (t != null) {
 				stack = RT.cons(t, stack);
 				t = asc ? t.left() : t.right();
@@ -810,15 +780,15 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 			return stack;
 		}
 
-		public Object first() {
-			return stack.first();
+		public Entry<K, V> first() {
+			return (java.util.Map.Entry<K, V>) stack.first();
 		}
 
-		public ISeq next() {
+		public ISeq<Entry<K, V>> next() {
 			Node t = (Node) stack.first();
-			ISeq nextstack = push(asc ? t.right() : t.left(), stack.next(), asc);
+			ISeq<Node> nextstack = push(asc ? t.right() : t.left(), stack.next(), asc);
 			if (nextstack != null) {
-				return new Seq(nextstack, asc, cnt - 1);
+				return new Seq<K, V>(nextstack, asc, cnt - 1);
 			}
 			return null;
 		}
@@ -828,14 +798,10 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 				return super.count();
 			return cnt;
 		}
-
-		public Obj withMeta(IPersistentMap meta) {
-			return new Seq(meta, stack, asc, cnt);
-		}
 	}
 
-	static public class NodeIterator implements Iterator {
-		Stack stack = new Stack();
+	static public class NodeIterator<K, V> implements Iterator<Entry<K, V>> {
+		Stack<Node> stack = new Stack<Node>();
 		boolean asc;
 
 		NodeIterator(Node t, boolean asc) {
@@ -854,10 +820,11 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 			return !stack.isEmpty();
 		}
 
-		public Object next() {
+		@SuppressWarnings("unchecked")
+		public Entry<K, V> next() {
 			Node t = (Node) stack.pop();
 			push(asc ? t.right() : t.left());
-			return t;
+			return (java.util.Map.Entry<K, V>) t;
 		}
 
 		public void remove() {
@@ -865,10 +832,10 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		}
 	}
 
-	static class KeyIterator implements Iterator {
-		NodeIterator it;
+	static class KeyIterator<K, V> implements Iterator<K> {
+		NodeIterator<K, V> it;
 
-		KeyIterator(NodeIterator it) {
+		KeyIterator(NodeIterator<K, V> it) {
 			this.it = it;
 		}
 
@@ -876,8 +843,8 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 			return it.hasNext();
 		}
 
-		public Object next() {
-			return ((Node) it.next()).key;
+		public K next() {
+			return it.next().getKey();
 		}
 
 		public void remove() {
@@ -885,10 +852,10 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 		}
 	}
 
-	static class ValIterator implements Iterator {
-		NodeIterator it;
+	static class ValIterator<K, V> implements Iterator<V> {
+		NodeIterator<K, V> it;
 
-		ValIterator(NodeIterator it) {
+		ValIterator(NodeIterator<K, V> it) {
 			this.it = it;
 		}
 
@@ -896,75 +863,12 @@ public class PersistentTreeMap extends APersistentMap implements IObj,
 			return it.hasNext();
 		}
 
-		public Object next() {
-			return ((Node) it.next()).val();
+		public V next() {
+			return it.next().getValue();
 		}
 
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
 	}
-	/*
-	 * static public void main(String args[]){ if(args.length != 1)
-	 * System.err.println("Usage: RBTree n"); int n = Integer.parseInt(args[0]);
-	 * Integer[] ints = new Integer[n]; for(int i = 0; i < ints.length; i++) {
-	 * ints[i] = i; } Collections.shuffle(Arrays.asList(ints)); //force the
-	 * ListMap class loading now // try // { // //
-	 * //PersistentListMap.EMPTY.assocEx(1,
-	 * null).assocEx(2,null).assocEx(3,null); // } // catch(Exception e) // { //
-	 * e.printStackTrace(); //To change body of catch statement use File |
-	 * Settings | File Templates. // } System.out.println("Building set");
-	 * //IPersistentMap set = new PersistentArrayMap(); //IPersistentMap set =
-	 * new PersistentHashtableMap(1001); IPersistentMap set =
-	 * PersistentHashMap.EMPTY; //IPersistentMap set = new ListMap();
-	 * //IPersistentMap set = new ArrayMap(); //IPersistentMap set = new
-	 * PersistentTreeMap(); // for(int i = 0; i < ints.length; i++) // { //
-	 * Integer anInt = ints[i]; // set = set.add(anInt); // } long startTime =
-	 * System.nanoTime(); for(Integer anInt : ints) { set = set.assoc(anInt,
-	 * anInt); } //System.out.println("_count = " + set.count());
-	 * 
-	 * // System.out.println("_count = " + set._count + ", min: " + set.minKey()
-	 * + ", max: " + set.maxKey() // + ", depth: " + set.depth()); for(Object
-	 * aSet : set) { IMapEntry o = (IMapEntry) aSet; if(!set.contains(o.key()))
-	 * System.err.println("Can't find: " + o.key()); //else if(n < 2000) //
-	 * System.out.print(o.key().toString() + ","); }
-	 * 
-	 * Random rand = new Random(42); for(int i = 0; i < ints.length / 2; i++) {
-	 * Integer anInt = ints[rand.nextInt(n)]; set = set.without(anInt); }
-	 * 
-	 * long estimatedTime = System.nanoTime() - startTime; System.out.println();
-	 * 
-	 * System.out.println("_count = " + set.count() + ", time: " + estimatedTime
-	 * / 1000000);
-	 * 
-	 * System.out.println("Building ht"); Hashtable ht = new Hashtable(1001);
-	 * startTime = System.nanoTime(); // for(int i = 0; i < ints.length; i++) //
-	 * { // Integer anInt = ints[i]; // ht.put(anInt,null); // } for(Integer
-	 * anInt : ints) { ht.put(anInt, anInt); } //System.out.println("size = " +
-	 * ht.size()); //Iterator it = ht.entrySet().iterator(); for(Object o1 :
-	 * ht.entrySet()) { Map.Entry o = (Map.Entry) o1;
-	 * if(!ht.containsKey(o.getKey())) System.err.println("Can't find: " + o);
-	 * //else if(n < 2000) // System.out.print(o.toString() + ","); }
-	 * 
-	 * rand = new Random(42); for(int i = 0; i < ints.length / 2; i++) { Integer
-	 * anInt = ints[rand.nextInt(n)]; ht.remove(anInt); } estimatedTime =
-	 * System.nanoTime() - startTime; System.out.println();
-	 * System.out.println("size = " + ht.size() + ", time: " + estimatedTime /
-	 * 1000000);
-	 * 
-	 * System.out.println("set lookup"); startTime = System.nanoTime(); int c =
-	 * 0; for(Integer anInt : ints) { if(!set.contains(anInt)) ++c; }
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("notfound = " + c + ", time: " + estimatedTime /
-	 * 1000000);
-	 * 
-	 * System.out.println("ht lookup"); startTime = System.nanoTime(); c = 0;
-	 * for(Integer anInt : ints) { if(!ht.containsKey(anInt)) ++c; }
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("notfound = " + c + ", time: " + estimatedTime /
-	 * 1000000);
-	 * 
-	 * // System.out.println("_count = " + set._count + ", min: " + set.minKey()
-	 * + ", max: " + set.maxKey() // + ", depth: " + set.depth()); }
-	 */
 }
