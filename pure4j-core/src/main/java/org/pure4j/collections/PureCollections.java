@@ -2,6 +2,7 @@ package org.pure4j.collections;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PureCollections {
@@ -57,11 +58,10 @@ public class PureCollections {
 						+ o.getClass().getSimpleName());
 	}
 
+	@SuppressWarnings("unchecked")
 	static public <K> ISeq<K> seq(Object coll) {
 		if (coll instanceof ASeq)
 			return (ASeq<K>) coll;
-		else if (coll instanceof LazySeq)
-			return ((LazySeq<K>) coll).seq();
 		else
 			return seqFrom(coll);
 	}
@@ -73,7 +73,7 @@ public class PureCollections {
 		else if (coll == null)
 			return null;
 		else if (coll instanceof Iterable)
-			return chunkIteratorSeq(((Iterable) coll).iterator());
+			return new IteratorSeq(((Iterable) coll).iterator());
 		else if (coll.getClass().isArray())
 			return ArraySeq.createFromObject(coll);
 		else if (coll instanceof CharSequence)
@@ -86,20 +86,6 @@ public class PureCollections {
 			throw new IllegalArgumentException(
 					"Don't know how to create ISeq from: " + c.getName());
 		}
-	}
-
-	static public <K, V> ISeq<K> keys(Object coll) {
-		if (coll instanceof IPersistentMap)
-			return APersistentMap.KeySeq.createFromMap((IPersistentMap<K, V>) coll);
-		else
-			return APersistentMap.KeySeq.create(seq(coll));
-	}
-
-	static public ISeq vals(Object coll) {
-		if (coll instanceof IPersistentMap)
-			return APersistentMap.ValSeq.createFromMap((IPersistentMap) coll);
-		else
-			return APersistentMap.ValSeq.create(seq(coll));
 	}
 
 	static public Object[] seqToArray(ISeq seq) {
@@ -171,5 +157,9 @@ public class PureCollections {
 			return new Cons<K>(x, (ISeq<K>) coll);
 		else
 			return new Cons<K>(x, (ISeq<K>) seq(coll));
+	}
+	
+	static public <K> ISeq<K> list(K arg1){
+		return new PersistentList<K>(arg1);
 	}
 }

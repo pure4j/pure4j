@@ -13,7 +13,7 @@ package org.pure4j.collections;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 
-public class ArrayIter implements Iterator {
+public class ArrayIter<K> implements Iterator<K> {
 	final Object[] array;
 	int i;
 

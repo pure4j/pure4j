@@ -83,15 +83,13 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		return (K) entry;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ISeq<K> seq(boolean ascending) {
 		PersistentTreeMap<K, K> m = (PersistentTreeMap<K, K>) impl;
-		return (ISeq<K>) PureCollections.keys(m.seq(ascending));
+		return APersistentMap.KeySeq.createFromMap(m);
 	}
 
-	@SuppressWarnings("unchecked")
 	public ISeq<K> seqFrom(K key, boolean ascending) {
 		PersistentTreeMap<K, K> m = (PersistentTreeMap<K, K>) impl;
-		return (ISeq<K>) PureCollections.keys(m.seqFrom(key, ascending));
+		return APersistentMap.KeySeq.create(m.seq());
 	}
 }

@@ -306,11 +306,10 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			return null;
 		}
 
-		@SuppressWarnings("unchecked")
 		public ISeq<K> chunkedMore() {
 			ISeq<K> s = chunkedNext();
 			if (s == null)
-				return (ISeq<K>) PersistentList.EMPTY;
+				return PersistentList.emptySeq();
 			return s;
 		}
 

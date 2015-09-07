@@ -22,17 +22,14 @@ import java.util.NoSuchElementException;
  * no reversing or suspensions required for persistent use
  */
 
-public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
-		Counted {
+public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Counted {
 
-	final public static PersistentQueue EMPTY = new PersistentQueue(0,
-			null, null);
+	final private static PersistentQueue<Object> EMPTY = new PersistentQueue<Object>(0,null, null);
 
 	final int cnt;
-	final ISeq f;
-	final PersistentVector r;
+	final ISeq<K> f;
+	final PersistentVector<K> r;
 	// static final int INITIAL_REAR_SIZE = 4;
-	int _hash = -1;
 	int _hasheq = -1;
 
 	PersistentQueue(int cnt, ISeq<K> f, PersistentVector<K> r) {
@@ -41,137 +38,101 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
 		this.r = r;
 	}
 
-	public boolean equiv(Object obj) {
-
-		if (!(obj instanceof Sequential))
-			return false;
-		ISeq ms = RT.seq(obj);
-		for (ISeq s = seq(); s != null; s = s.next(), ms = ms.next()) {
-			if (ms == null || !Util.equiv(s.first(), ms.first()))
-				return false;
-		}
-		return ms == null;
-
-	}
-
 	public boolean equals(Object obj) {
-
 		if (!(obj instanceof Sequential))
 			return false;
-		ISeq ms = RT.seq(obj);
-		for (ISeq s = seq(); s != null; s = s.next(), ms = ms.next()) {
+		ISeq<K> ms = PureCollections.seq(obj);
+		for (ISeq<K> s = seq(); s != null; s = s.next(), ms = ms.next()) {
 			if (ms == null || !Util.equals(s.first(), ms.first()))
 				return false;
 		}
 		return ms == null;
 
 	}
-
+	
 	public int hashCode() {
-		if (_hash == -1) {
-			int hash = 1;
-			for (ISeq s = seq(); s != null; s = s.next()) {
-				hash = 31 * hash
-						+ (s.first() == null ? 0 : s.first().hashCode());
-			}
-			this._hash = hash;
-		}
-		return _hash;
-	}
-
-	public int hasheq() {
 		if (_hasheq == -1) {
-			// int hash = 1;
-			// for(ISeq s = seq(); s != null; s = s.next())
-			// {
-			// hash = 31 * hash + Util.hasheq(s.first());
-			// }
-			// this._hasheq = hash;
 			_hasheq = Murmur3.hashOrdered(this);
 		}
 		return _hasheq;
 	}
 
-	public Object peek() {
-		return RT.first(f);
+	@SuppressWarnings("unchecked")
+	public K peek() {
+		return (K) PureCollections.first(f);
 	}
 
-	public PersistentQueue pop() {
+	public PersistentQueue<K> pop() {
 		if (f == null) // hmmm... pop of empty queue -> empty queue?
 			return this;
 		// throw new IllegalStateException("popping empty queue");
-		ISeq f1 = f.next();
-		PersistentVector r1 = r;
+		ISeq<K> f1 = f.next();
+		PersistentVector<K> r1 = r;
 		if (f1 == null) {
-			f1 = RT.seq(r);
+			f1 = PureCollections.seq(r);
 			r1 = null;
 		}
-		return new PersistentQueue(meta(), cnt - 1, f1, r1);
+		return new PersistentQueue<K>(cnt - 1, f1, r1);
 	}
 
 	public int count() {
 		return cnt;
 	}
 
-	public ISeq seq() {
+	@SuppressWarnings("unchecked")
+	public ISeq<K> seq() {
 		if (f == null)
 			return null;
-		return new Seq(f, RT.seq(r));
+		return new Seq<K>(f, (ISeq<K>) PureCollections.seq(r));
 	}
 
-	public PersistentQueue cons(Object o) {
+	@SuppressWarnings("unchecked")
+	public PersistentQueue<K> cons(K o) {
 		if (f == null) // empty
-			return new PersistentQueue(meta(), cnt + 1, RT.list(o), null);
-		else
-			return new PersistentQueue(meta(), cnt + 1, f, (r != null ? r
-					: PersistentVector.EMPTY).cons(o));
+			return new PersistentQueue<K>(cnt + 1,  PureCollections.list(o), null);
+		else {
+			PersistentVector<K> rr = (PersistentVector<K>) ((r != null) ? r : PersistentVector.emptyVector());
+			return new PersistentQueue<K>(cnt + 1, f, rr.cons(o));
+		}
 	}
 
-	public IPersistentCollection empty() {
-		return EMPTY.withMeta(meta());
+	@SuppressWarnings("unchecked")
+	public PersistentQueue<K> empty() {
+		return (PersistentQueue<K>) EMPTY;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <K> PersistentQueue<K> emptyQueue() {
+		return (PersistentQueue<K>) EMPTY;
 	}
 
-	public PersistentQueue withMeta(IPersistentMap meta) {
-		return new PersistentQueue(meta, cnt, f, r);
-	}
+	static class Seq<K> extends ASeq<K> {
+		final ISeq<K> f;
+		final ISeq<K> rseq;
 
-	static class Seq extends ASeq {
-		final ISeq f;
-		final ISeq rseq;
-
-		Seq(ISeq f, ISeq rseq) {
+		Seq(ISeq<K> f, ISeq<K> rseq) {
 			this.f = f;
 			this.rseq = rseq;
 		}
 
-		Seq(IPersistentMap meta, ISeq f, ISeq rseq) {
-			super(meta);
-			this.f = f;
-			this.rseq = rseq;
-		}
-
-		public Object first() {
+		public K first() {
 			return f.first();
 		}
 
-		public ISeq next() {
-			ISeq f1 = f.next();
-			ISeq r1 = rseq;
+		public ISeq<K> next() {
+			ISeq<K> f1 = f.next();
+			ISeq<K> r1 = rseq;
 			if (f1 == null) {
 				if (rseq == null)
 					return null;
 				f1 = rseq;
 				r1 = null;
 			}
-			return new Seq(f1, r1);
+			return new Seq<K>(f1, r1);
 		}
 
 		public int count() {
-			return RT.count(f) + RT.count(rseq);
-		}
-
-		public Seq withMeta(IPersistentMap meta) {
-			return new Seq(meta, f, rseq);
+			return PureCollections.count(f) + PureCollections.count(rseq);
 		}
 	}
 
@@ -189,7 +150,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends K> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -197,15 +158,15 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean containsAll(Collection c) {
+	public boolean containsAll(Collection<?> c) {
 		for (Object o : c) {
 			if (contains(o))
 				return true;
@@ -213,8 +174,9 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
 		return false;
 	}
 
-	public Object[] toArray(Object[] a) {
-		return RT.seqToPassedArray(seq(), a);
+	@SuppressWarnings("unchecked")
+	public <E> E[] toArray(E[] a) {
+		return (E[]) PureCollections.seqToPassedArray(seq(), a);
 	}
 
 	public int size() {
@@ -226,26 +188,26 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
 	}
 
 	public boolean contains(Object o) {
-		for (ISeq s = seq(); s != null; s = s.next()) {
-			if (Util.equiv(s.first(), o))
+		for (ISeq<K> s = seq(); s != null; s = s.next()) {
+			if (Util.equals(s.first(), o))
 				return true;
 		}
 		return false;
 	}
 
-	public Iterator iterator() {
-		return new Iterator() {
-			private ISeq fseq = f;
-			private final Iterator riter = r != null ? r.iterator() : null;
+	public Iterator<K> iterator() {
+		return new Iterator<K>() {
+			private ISeq<K> fseq = f;
+			private final Iterator<K> riter = r != null ? r.iterator() : null;
 
 			public boolean hasNext() {
 				return ((fseq != null && fseq.seq() != null) || (riter != null && riter
 						.hasNext()));
 			}
 
-			public Object next() {
+			public K next() {
 				if (fseq != null) {
-					Object ret = fseq.first();
+					K ret = fseq.first();
 					fseq = fseq.next();
 					return ret;
 				} else if (riter != null && riter.hasNext())
@@ -260,36 +222,6 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>,
 		};
 	}
 
-	/*
-	 * public static void main(String[] args){ if(args.length != 1) {
-	 * System.err.println("Usage: PersistentQueue n"); return; } int n =
-	 * Integer.parseInt(args[0]);
-	 * 
-	 * 
-	 * long startTime, estimatedTime;
-	 * 
-	 * Queue list = new LinkedList(); //Queue list = new
-	 * ConcurrentLinkedQueue(); System.out.println("Queue"); startTime =
-	 * System.nanoTime(); for(int i = 0; i < n; i++) { list.add(i); list.add(i);
-	 * list.remove(); } for(int i = 0; i < n - 10; i++) { list.remove(); }
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("time: " + estimatedTime / 1000000);
-	 * System.out.println("peek: " + list.peek());
-	 * 
-	 * 
-	 * PersistentQueue q = PersistentQueue.EMPTY;
-	 * System.out.println("PersistentQueue"); startTime = System.nanoTime();
-	 * for(int i = 0; i < n; i++) { q = q.cons(i); q = q.cons(i); q = q.pop(); }
-	 * // IPersistentList lastq = null; // IPersistentList lastq2; for(int i =
-	 * 0; i < n - 10; i++) { //lastq2 = lastq; //lastq = q; q = q.pop(); }
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("time: " + estimatedTime / 1000000);
-	 * System.out.println("peek: " + q.peek());
-	 * 
-	 * IPersistentList q2 = q; for(int i = 0; i < 10; i++) { q2 =
-	 * (IPersistentList) q2.cons(i); } // for(ISeq s = q.seq();s != null;s =
-	 * s.rest()) // System.out.println("q: " + s.first().toString()); //
-	 * for(ISeq s = q2.seq();s != null;s = s.rest()) //
-	 * System.out.println("q2: " + s.first().toString()); }
-	 */
+	
+
 }
