@@ -10,8 +10,7 @@
 
 package org.pure4j.collections;
 
+public interface IndexedSeq<K> extends ISeq<K>, Sequential, Counted {
 
-public interface IndexedSeq<K> extends ISeq<K>, Sequential, Counted{
-
-public int index();
+	public int index();
 }

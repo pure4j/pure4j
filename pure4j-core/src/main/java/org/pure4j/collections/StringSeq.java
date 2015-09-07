@@ -12,44 +12,36 @@
 
 package org.pure4j.collections;
 
+public class StringSeq extends ASeq<Character> implements IndexedSeq<Character> {
+	public final CharSequence s;
+	public final int i;
 
-public class StringSeq extends ASeq implements IndexedSeq{
-public final CharSequence s;
-public final int i;
+	static public StringSeq create(CharSequence s) {
+		if (s.length() == 0)
+			return null;
+		return new StringSeq(s, 0);
+	}
 
-static public StringSeq create(CharSequence s){
-	if(s.length() == 0)
+	StringSeq(CharSequence s, int i) {
+		this.s = s;
+		this.i = i;
+	}
+
+	public Character first() {
+		return Character.valueOf(s.charAt(i));
+	}
+
+	public ISeq<Character> next() {
+		if (i + 1 < s.length())
+			return new StringSeq(s, i + 1);
 		return null;
-	return new StringSeq(null, s, 0);
-}
+	}
 
-StringSeq(IPersistentMap meta, CharSequence s, int i){
-	super(meta);
-	this.s = s;
-	this.i = i;
-}
+	public int index() {
+		return i;
+	}
 
-public Obj withMeta(IPersistentMap meta){
-	if(meta == meta())
-		return this;
-	return new StringSeq(meta, s, i);
-}
-
-public Object first(){
-	return Character.valueOf(s.charAt(i));
-}
-
-public ISeq next(){
-	if(i + 1 < s.length())
-		return new StringSeq(_meta, s, i + 1);
-	return null;
-}
-
-public int index(){
-	return i;
-}
-
-public int count(){
-	return s.length() - i;
-}
+	public int count() {
+		return s.length() - i;
+	}
 }

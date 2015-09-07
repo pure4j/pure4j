@@ -175,7 +175,6 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ISeq<Entry<K, V>> seqFrom(K key, boolean ascending) {
 		if (_count > 0) {
 			ISeq<Node> stack = null;
@@ -183,7 +182,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			while (t != null) {
 				int c = doCompare(key, t.key);
 				if (c == 0) {
-					stack = RT.cons(t, stack);
+					stack = PureCollections.cons(t, stack);
 					return new Seq<K, V>(stack, ascending);
 				} else if (ascending) {
 					if (c < 0) {

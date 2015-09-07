@@ -3,7 +3,11 @@ package org.pure4j.collections;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
+import java.util.regex.Matcher;
+
 
 public class PureCollections {
 
@@ -76,8 +80,6 @@ public class PureCollections {
 			return new IteratorSeq(((Iterable) coll).iterator());
 		else if (coll.getClass().isArray())
 			return ArraySeq.createFromObject(coll);
-		else if (coll instanceof CharSequence)
-			return StringSeq.create((CharSequence) coll);
 		else if (coll instanceof Map)
 			return seq(((Map) coll).entrySet());
 		else {
@@ -137,7 +139,51 @@ public class PureCollections {
 	static public Object nth(Object coll, int n) {
 		if (coll instanceof Indexed)
 			return ((Indexed) coll).nth(n);
+		
 		return nthFrom(Util.ret1(coll, coll = null), n);
+	}
+	
+	static Object nthFrom(Object coll, int n, Object notFound){
+		if(coll == null)
+			return notFound;
+		else if(n < 0)
+			return notFound;
+
+		else if(coll instanceof CharSequence) {
+			CharSequence s = (CharSequence) coll;
+			if(n < s.length())
+				return Character.valueOf(s.charAt(n));
+			return notFound;
+		}
+		else if(coll.getClass().isArray()) {
+			if(n < Array.getLength(coll))
+				return Reflector.prepRet(coll.getClass().getComponentType(),Array.get(coll, n));
+			return notFound;
+		}
+		else if(coll instanceof RandomAccess) {
+			List list = (List) coll;
+			if(n < list.size())
+				return list.get(n);
+			return notFound;
+		}
+		else if(coll instanceof Matcher) {
+			Matcher m = (Matcher) coll;
+			if(n < m.groupCount())
+				return m.group(n);
+			return notFound;
+		}
+		else if(coll instanceof Sequential) {
+			ISeq seq = PureCollections.seq(coll);
+			coll = null;
+			for(int i = 0; i <= n && seq != null; ++i, seq = seq.next()) {
+				if(i == n)
+					return seq.first();
+			}
+			return notFound;
+		}
+		else
+			throw new UnsupportedOperationException(
+					"nth not supported on this type: " + coll.getClass().getSimpleName());
 	}
 	
 	@SuppressWarnings("unchecked")

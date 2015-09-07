@@ -139,7 +139,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 	// java.util.Collection implementation
 
 	public Object[] toArray() {
-		return RT.seqToArray(seq());
+		return PureCollections.seqToArray(seq());
 	}
 
 	public boolean add(Object o) {

@@ -79,7 +79,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public Object[] toArray() {
-		return RT.seqToArray(seq());
+		return PureCollections.seqToArray(seq());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -179,7 +179,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 
 	@SuppressWarnings("unchecked")
 	public K get(int index) {
-		return (K) RT.nth(this, index);
+		return (K) PureCollections.nth(this, index);
 	}
 
 	public void add(int index, Object element) {
