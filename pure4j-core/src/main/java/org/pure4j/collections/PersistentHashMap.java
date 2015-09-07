@@ -34,7 +34,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	final boolean hasNull;
 	final V nullValue;
 
-	final public static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
+	final private static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
 			null, false, null);
 	
 	final private static Object NOT_FOUND = new Object();
@@ -233,7 +233,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return hasNull ? new Cons(first, s) : s;
 	}
 
-	public IPersistentMap<K, V> empty() {
+	public PersistentHashMap<K, V> empty() {
 		return emptyMap();
 	}
 

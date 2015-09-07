@@ -14,77 +14,84 @@ package org.pure4j.collections;
 
 import java.util.Comparator;
 
-public class PersistentTreeSet extends APersistentSet implements IObj, Reversible, Sorted{
-static public final PersistentTreeSet EMPTY = new PersistentTreeSet(null, PersistentTreeMap.EMPTY);
-final IPersistentMap _meta;
+public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversible<K>, Sorted<K, K> {
 
+	static private final PersistentTreeSet<Object> EMPTY = new PersistentTreeSet<Object>(PersistentTreeMap.emptyMap());
 
-static public PersistentTreeSet create(ISeq items){
-	PersistentTreeSet ret = EMPTY;
-	for(; items != null; items = items.next())
-		{
-		ret = (PersistentTreeSet) ret.cons(items.first());
+	static public <K> PersistentTreeSet<K> create(ISeq<K> items) {
+		PersistentTreeSet<K> ret = emptySet();
+		for (; items != null; items = items.next()) {
+			ret = (PersistentTreeSet<K>) ret.cons(items.first());
 		}
-	return ret;
-}
-
-static public PersistentTreeSet create(Comparator comp, ISeq items){
-	PersistentTreeSet ret = new PersistentTreeSet(null, new PersistentTreeMap(null, comp));
-	for(; items != null; items = items.next())
-		{
-		ret = (PersistentTreeSet) ret.cons(items.first());
+		return ret;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <K> PersistentTreeSet<K> create(K... init) {
+		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>());
+		for (int i = 0; i < init.length; i++) {
+			ret = ret.cons(init[i]);
 		}
-	return ret;
-}
+		return ret;
+	}
 
-PersistentTreeSet(IPersistentMap meta, IPersistentMap impl){
-	super(impl);
-	this._meta = meta;
-}
+	static public <K> PersistentTreeSet<K> create(Comparator<K> comp, ISeq<K> items) {
+		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
+		for (; items != null; items = items.next()) {
+			ret = (PersistentTreeSet<K>) ret.cons(items.first());
+		}
+		return ret;
+	}
 
-public IPersistentSet disjoin(Object key) {
-	if(contains(key))
-		return new PersistentTreeSet(meta(),impl.without(key));
-	return this;
-}
+	PersistentTreeSet(IPersistentMap<K, K> impl) {
+		super(impl);
+	}
 
-public IPersistentSet cons(Object o){
-	if(contains(o))
+	public PersistentTreeSet<K> disjoin(Object key) {
+		if (contains(key))
+			return new PersistentTreeSet<K>(impl.without(key));
 		return this;
-	return new PersistentTreeSet(meta(),impl.assoc(o,o));
-}
+	}
 
-public IPersistentCollection empty(){
-	return new PersistentTreeSet(meta(),(PersistentTreeMap)impl.empty());
-}
+	public PersistentTreeSet<K> cons(K o) {
+		if (contains(o))
+			return this;
+		return new PersistentTreeSet<K>(impl.assoc(o, o));
+	}
 
-public ISeq rseq() {
-	return APersistentMap.KeySeq.create(((Reversible) impl).rseq());
-}
+	@SuppressWarnings("unchecked")
+	public PersistentTreeSet<K> empty() {
+		return (PersistentTreeSet<K>) EMPTY;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <K> PersistentTreeSet<K> emptySet() {
+		return (PersistentTreeSet<K>) EMPTY;
+	}
 
-public PersistentTreeSet withMeta(IPersistentMap meta){
-	return new PersistentTreeSet(meta, impl);
-}
+	public ISeq<K> rseq() {
+		return seq(false);
+	}
 
-public Comparator comparator(){
-	return ((Sorted)impl).comparator();
-}
 
-public Object entryKey(Object entry){
-	return entry;
-}
+	public Comparator<K> comparator() {
+		return ((PersistentTreeMap<K, K>) impl).comparator();
+	}
 
-public ISeq seq(boolean ascending){
-	PersistentTreeMap m = (PersistentTreeMap) impl;
-	return RT.keys(m.seq(ascending));
-}
+	@SuppressWarnings("unchecked")
+	public K entryKey(Object entry) {
+		return (K) entry;
+	}
 
-public ISeq seqFrom(Object key, boolean ascending){
-	PersistentTreeMap m = (PersistentTreeMap) impl;
-	return RT.keys(m.seqFrom(key,ascending));
-}
+	@SuppressWarnings("unchecked")
+	public ISeq<K> seq(boolean ascending) {
+		PersistentTreeMap<K, K> m = (PersistentTreeMap<K, K>) impl;
+		return (ISeq<K>) PureCollections.keys(m.seq(ascending));
+	}
 
-public IPersistentMap meta(){
-	return _meta;
-}
+	@SuppressWarnings("unchecked")
+	public ISeq<K> seqFrom(K key, boolean ascending) {
+		PersistentTreeMap<K, K> m = (PersistentTreeMap<K, K>) impl;
+		return (ISeq<K>) PureCollections.keys(m.seqFrom(key, ascending));
+	}
 }

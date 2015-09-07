@@ -33,7 +33,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	final Object[] array;
 	static final int HASHTABLE_THRESHOLD = 16;
 
-	public static final PersistentArrayMap<Object, Object> EMPTY = new PersistentArrayMap<Object, Object>();
+	private static final PersistentArrayMap<Object, Object> EMPTY = new PersistentArrayMap<Object, Object>();
 
 	@SuppressWarnings("unchecked")
 	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
@@ -215,6 +215,11 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	@SuppressWarnings("unchecked")
 	public IPersistentMap<K, V> empty() {
 		return (IPersistentMap<K, V>) EMPTY;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <K, V> PersistentArrayMap<K, V> emptyMap() {
+		return (PersistentArrayMap<K, V>) EMPTY;
 	}
 
 	@SuppressWarnings("unchecked")

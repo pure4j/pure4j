@@ -19,4 +19,8 @@ public interface ITransientMap<K, V> extends Counted {
 	ITransientMap<K, V> without(Object key);
 
 	IPersistentMap<K, V> persistent();
+
+	V valAt(Object key, V object);
+
+	V valAt(Object key);
 }

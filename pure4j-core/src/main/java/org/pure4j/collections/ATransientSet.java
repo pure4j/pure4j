@@ -41,9 +41,5 @@ public abstract class ATransientSet<K> implements ITransientSet<K> {
 		if (m != impl) this.impl = m;
 		return this;
 	}
-
-	public K get(Object key) {
-		return impl.valAt(key);
-	}
 	
 }

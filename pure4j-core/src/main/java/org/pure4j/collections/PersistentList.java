@@ -29,7 +29,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 	private final IPersistentList<K> _rest;
 	private final int _count;
 
-	final public static EmptyList<?> EMPTY = new EmptyList<Object>();
+	final private static EmptyList<?> EMPTY = new EmptyList<Object>();
 
 	public PersistentList(K first) {
 		this._first = first;
@@ -86,6 +86,11 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 	@SuppressWarnings("unchecked")
 	public IPersistentList<K> empty() {
 		return (IPersistentList<K>) EMPTY;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <X> IPersistentList<X> emptyList() {
+		return (IPersistentList<X>) EMPTY;
 	}
 	
 	@SuppressWarnings("unchecked")

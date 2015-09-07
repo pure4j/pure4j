@@ -16,8 +16,8 @@ import java.util.List;
 
 public class PersistentHashSet<K> extends APersistentSet<K> {
 
-	static public final PersistentHashSet<Object> EMPTY = new PersistentHashSet<Object>(
-			PersistentHashMap.EMPTY);
+	static private final PersistentHashSet<Object> EMPTY = new PersistentHashSet<Object>(
+			PersistentHashMap.emptyMap());
 
 	@SuppressWarnings("unchecked")
 	public static <K> PersistentHashSet<K> emptySet() {
@@ -104,8 +104,8 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public IPersistentCollection<K> empty() {
-		return (IPersistentCollection<K>) EMPTY;
+	public PersistentHashSet<K> empty() {
+		return (PersistentHashSet<K>) EMPTY;
 	}
 
 	public ITransientCollection<K> asTransient() {

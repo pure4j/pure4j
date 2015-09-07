@@ -14,7 +14,9 @@ package org.pure4j.collections;
 
 
 public interface ITransientSet<K> extends ITransientCollection<K>, Counted{
-	public ITransientSet<K> disjoin(Object key) ;
+	
+	public ITransientSet<K> disjoin(Object key);
+	
 	public boolean contains(Object key);
-	public K get(Object key);
+
 }

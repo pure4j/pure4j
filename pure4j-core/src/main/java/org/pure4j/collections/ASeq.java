@@ -24,12 +24,12 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	transient int _hasheq = -1;
 
 	public String toString() {
-		return RT.printString(this);
+		return ToStringFunctions.toString(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	public IPersistentCollection<K> empty() {
-		return (IPersistentCollection<K>) PersistentList.EMPTY;
+		return (IPersistentCollection<K>) PersistentList.emptyList();
 	}
 
 	protected ASeq() {
@@ -84,7 +84,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	
 	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
-		return (T[]) RT.seqToPassedArray(seq(), a);
+		return (T[]) PureCollections.seqToPassedArray(seq(), a);
 	}
 
 	public boolean add(K o) {
@@ -129,7 +129,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 
 	public boolean contains(Object o) {
 		for (ISeq<K> s = seq(); s != null; s = s.next()) {
-			if (Util.equiv(s.first(), o))
+			if (Util.equals(s.first(), o))
 				return true;
 		}
 		return false;
@@ -159,7 +159,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	public int indexOf(Object o) {
 		ISeq<K> s = seq();
 		for (int i = 0; s != null; s = s.next(), i++) {
-			if (Util.equiv(s.first(), o))
+			if (Util.equals(s.first(), o))
 				return i;
 		}
 		return -1;

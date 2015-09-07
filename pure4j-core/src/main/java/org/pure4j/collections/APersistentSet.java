@@ -44,9 +44,8 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return impl.count();
 	}
 
-	@SuppressWarnings("unchecked")
 	public ISeq<K> seq() {
-		return (ISeq<K>) PureCollections.keys(impl);
+		return APersistentMap.KeySeq.createFromMap(impl);
 	}
 
 	public Object invoke(Object arg1) {

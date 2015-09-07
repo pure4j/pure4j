@@ -48,7 +48,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	public final Node tree;
 	public final int _count;
 
-	final static public PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
+	final static private PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
 
 	@SuppressWarnings("unchecked")
 	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
@@ -64,7 +64,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		this((Comparator<K>) DEFAULT_COMPARATOR);
 	}
 
-	private PersistentTreeMap(Comparator<K> comp) {
+	public PersistentTreeMap(Comparator<K> comp) {
 		this.comp = comp;
 		tree = null;
 		_count = 0;
@@ -149,6 +149,11 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	public IPersistentCollection<Entry<K, V>> empty() {
 		return new PersistentTreeMap<K, V>(comp);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <K, V> PersistentTreeMap<K, V> emptyMap() {
+		return (PersistentTreeMap<K, V>) EMPTY;
+	}
 
 	public ISeq<Entry<K, V>> rseq() {
 		if (_count > 0)
@@ -182,13 +187,13 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 					return new Seq<K, V>(stack, ascending);
 				} else if (ascending) {
 					if (c < 0) {
-						stack = stack.cons(t);
+						stack = PureCollections.cons(t, stack);
 						t = t.left();
 					} else
 						t = t.right();
 				} else {
 					if (c > 0) {
-						stack = RT.cons(t, stack);
+						stack = PureCollections.cons(t, stack);
 						t = t.right();
 					} else
 						t = t.left();
@@ -774,7 +779,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 
 		static ISeq<Node> push(Node t, ISeq<Node> stack, boolean asc) {
 			while (t != null) {
-				stack = stack.cons(t);
+				stack = PureCollections.cons(t, stack);
 				t = asc ? t.left() : t.right();
 			}
 			return stack;

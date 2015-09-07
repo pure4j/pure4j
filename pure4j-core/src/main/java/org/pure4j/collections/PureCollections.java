@@ -57,16 +57,17 @@ public class PureCollections {
 						+ o.getClass().getSimpleName());
 	}
 
-	static public ISeq seq(Object coll) {
+	static public <K> ISeq<K> seq(Object coll) {
 		if (coll instanceof ASeq)
-			return (ASeq) coll;
+			return (ASeq<K>) coll;
 		else if (coll instanceof LazySeq)
-			return ((LazySeq) coll).seq();
+			return ((LazySeq<K>) coll).seq();
 		else
 			return seqFrom(coll);
 	}
 
-	static ISeq seqFrom(Object coll) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static <K> ISeq<K> seqFrom(Object coll) {
 		if (coll instanceof Seqable)
 			return ((Seqable) coll).seq();
 		else if (coll == null)
@@ -87,9 +88,9 @@ public class PureCollections {
 		}
 	}
 
-	static public ISeq keys(Object coll) {
+	static public <K, V> ISeq<K> keys(Object coll) {
 		if (coll instanceof IPersistentMap)
-			return APersistentMap.KeySeq.createFromMap((IPersistentMap) coll);
+			return APersistentMap.KeySeq.createFromMap((IPersistentMap<K, V>) coll);
 		else
 			return APersistentMap.KeySeq.create(seq(coll));
 	}
@@ -158,7 +159,17 @@ public class PureCollections {
 		if(end < start || start < 0 || end > v.count())
 			throw new IndexOutOfBoundsException();
 		if(start == end)
-			return PersistentVector.EMPTY;
+			return PersistentVector.emptyVector();
 		return new APersistentVector.SubVector<K>(v, start, end);
+	}
+	
+	@SuppressWarnings("unchecked")
+	static public <K> ISeq<K> cons(K x, Object coll){
+		if(coll == null)
+			return new PersistentList<K>(x);
+		else if(coll instanceof ISeq)
+			return new Cons<K>(x, (ISeq<K>) coll);
+		else
+			return new Cons<K>(x, (ISeq<K>) seq(coll));
 	}
 }
