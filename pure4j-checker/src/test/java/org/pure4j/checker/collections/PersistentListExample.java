@@ -1,7 +1,5 @@
 package org.pure4j.checker.collections;
 
-import java.io.IOException;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -31,10 +29,5 @@ public class PersistentListExample extends AbstractChecker {
 		int j = sumPersistentList(pl);
 		Assert.assertEquals(15,j);
 		Assert.assertEquals(2, pl.size());
-	}
-	
-	@Test
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 0);
 	}
 }

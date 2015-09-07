@@ -8,15 +8,26 @@
  *   You must not remove this notice, or any other, from this software.
  **/
 
-package org.pure4j.collections.bin;
+/* rich Mar 3, 2008 */
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.pure4j.collections;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface WarnBoxedMath {
-    boolean value() default true;
+import java.util.Enumeration;
+
+public class SeqEnumeration<E> implements Enumeration<E> {
+	ISeq<E> seq;
+
+	public SeqEnumeration(ISeq<E> seq) {
+		this.seq = seq;
+	}
+
+	public boolean hasMoreElements() {
+		return seq != null;
+	}
+
+	public E nextElement() {
+		E ret = seq.first();
+		seq = seq.next();
+		return ret;
+	}
 }

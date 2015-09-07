@@ -1,7 +1,5 @@
 package org.pure4j.checker.collections;
 
-import java.io.IOException;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -35,9 +33,5 @@ public class PersistentVectorExample extends AbstractChecker {
 		Assert.assertEquals(150*301,j);
 		Assert.assertEquals(301, pl.size());
 	}
-	
-	@Test
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 0);
-	}
+
 }

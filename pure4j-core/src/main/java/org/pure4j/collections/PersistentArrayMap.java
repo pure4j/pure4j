@@ -13,10 +13,8 @@ package org.pure4j.collections;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 
-import org.pure4j.collections.bin.Keyword;
 
 /**
  * Simple implementation of persistent map on an array
@@ -30,8 +28,7 @@ import org.pure4j.collections.bin.Keyword;
  * value via valAt - use contains/entryAt
  */
 
-public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements 
-		IEditableCollection<Entry<K, V>>, IMapIterable<K, V> {
+public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IMapIterable<K, V> {
 
 	final Object[] array;
 	static final int HASHTABLE_THRESHOLD = 16;
@@ -245,19 +242,10 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	private int indexOf(Object key) {
-		if (key instanceof Keyword) {
-			for (int i = 0; i < array.length; i += 2) {
-				if (key == array[i])
-					return i;
-			}
-			return -1;
-		} else
-			return indexOfObject(key);
+		return indexOfObject(key);
 	}
 
 	static boolean equalKey(Object k1, Object k2) {
-		if (k1 instanceof Keyword)
-			return k1 == k2;
 		return Util.equals(k1, k2);
 	}
 
@@ -335,7 +323,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements
 
 	}
 
-	public ITransientMap<K, V> asTransient() {
+	public TransientArrayMap<K, V> asTransient() {
 		return new TransientArrayMap<K, V>(array);
 	}
 

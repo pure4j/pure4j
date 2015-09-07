@@ -8,24 +8,32 @@
  *   You must not remove this notice, or any other, from this software.
  **/
 
-/* rich Aug 2, 2009 */
+/* rich Jun 19, 2007 */
 
-package org.pure4j.collections.bin;
+package org.pure4j.collections;
 
-import org.pure4j.collections.IFn;
-import org.pure4j.collections.ISeq;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
+public class SeqIterator<K> implements Iterator<K> {
+	
+	ISeq<K> next;
 
-public interface IAtom{
-Object swap(IFn f);
+	public SeqIterator(ISeq<K> o) {
+		next = o;
+	}
 
-Object swap(IFn f, Object arg);
+	public boolean hasNext() {
+		return next != null;
+	}
 
-Object swap(IFn f, Object arg1, Object arg2);
+	public K next() throws NoSuchElementException {
+		K out = next.first();
+		next = next.next();
+		return out;
+	}
 
-Object swap(IFn f, Object x, Object y, ISeq args);
-
-boolean compareAndSet(Object oldv, Object newv);
-
-Object reset(Object newval);
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 }

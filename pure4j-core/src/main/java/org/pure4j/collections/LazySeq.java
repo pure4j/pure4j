@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.pure4j.collections.bin.SeqIterator;
-
 public final class LazySeq extends Obj implements ISeq, Sequential, List, IPending, IHashEq{
 
 private IFn fn;

@@ -9,7 +9,7 @@ package org.pure4j.collections;
  * must not remove this notice, or any other, from this software.
  */
 
-public interface IPersistentVector<K> extends Sequential, IPersistentStack<K>, Reversible, Indexed<K> {
+public interface IPersistentVector<K> extends Sequential, IPersistentStack<K>, Reversible<K>, Indexed<K> {
 
 	int length();
 

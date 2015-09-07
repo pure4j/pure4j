@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.pure4j.collections.bin.SeqIterator;
-
 public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializable {
 
 	private static final long serialVersionUID = 220865945544862915L;

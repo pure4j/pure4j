@@ -1,6 +1,5 @@
 package org.pure4j.checker.collections;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -44,11 +43,6 @@ public class PersistentHashMapExample extends AbstractChecker {
 		pureMethod(phm, 3, 3);
 		phm = phm.assoc("testy", "mctest");
 		pureMethod(phm, 4, 4);
-	}
-	
-	@Test
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 0);
 	}
 	
 }

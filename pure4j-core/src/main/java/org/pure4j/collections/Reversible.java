@@ -13,6 +13,6 @@
 package org.pure4j.collections;
 
 
-public interface Reversible{
-ISeq rseq() ;
+public interface Reversible<K> {
+	ISeq<K> rseq() ;
 }

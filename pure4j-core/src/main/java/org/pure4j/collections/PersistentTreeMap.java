@@ -28,7 +28,7 @@ import java.util.Stack;
  */
 
 public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
-		Reversible, Sorted<K, Entry<K, V>> {
+		Reversible<Entry<K, V>>, Sorted<K, Entry<K, V>> {
 	
 	private static final Comparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
 	
@@ -179,7 +179,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 				int c = doCompare(key, t.key);
 				if (c == 0) {
 					stack = RT.cons(t, stack);
-					return new Seq(stack, ascending);
+					return new Seq<K, V>(stack, ascending);
 				} else if (ascending) {
 					if (c < 0) {
 						stack = stack.cons(t);
@@ -195,7 +195,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 				}
 			}
 			if (stack != null)
-				return new Seq(stack, ascending);
+				return new Seq<K, V>(stack, ascending);
 		}
 		return null;
 	}
