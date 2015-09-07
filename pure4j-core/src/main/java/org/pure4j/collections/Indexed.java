@@ -12,9 +12,9 @@
 
 package org.pure4j.collections;
 
+public interface Indexed<K> extends Counted {
+	
+	K nth(int i);
 
-public interface Indexed extends Counted{
-Object nth(int i);
-
-Object nth(int i, Object notFound);
+	K nth(int i, K notFound);
 }

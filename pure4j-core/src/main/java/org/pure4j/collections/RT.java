@@ -556,34 +556,7 @@ public static ISeq chunkIteratorSeq(final Iterator iter){
     return null;
 }
 
-static public ISeq seq(Object coll){
-	if(coll instanceof ASeq)
-		return (ASeq) coll;
-	else if(coll instanceof LazySeq)
-		return ((LazySeq) coll).seq();
-	else
-		return seqFrom(coll);
-}
 
-static ISeq seqFrom(Object coll){
-	if(coll instanceof Seqable)
-		return ((Seqable) coll).seq();
-	else if(coll == null)
-		return null;
-	else if(coll instanceof Iterable)
-		return chunkIteratorSeq(((Iterable) coll).iterator());
-	else if(coll.getClass().isArray())
-		return ArraySeq.createFromObject(coll);
-	else if(coll instanceof CharSequence)
-		return StringSeq.create((CharSequence) coll);
-	else if(coll instanceof Map)
-		return seq(((Map) coll).entrySet());
-	else {
-		Class c = coll.getClass();
-		Class sc = c.getSuperclass();
-		throw new IllegalArgumentException("Don't know how to create ISeq from: " + c.getName());
-	}
-}
 
 static public Iterator iter(Object coll){
 	if(coll instanceof Iterable)
@@ -660,33 +633,7 @@ public static int count(Object o){
 	return countFrom(Util.ret1(o, o = null));
 }
 
-static int countFrom(Object o){
-	if(o == null)
-		return 0;
-	else if(o instanceof IPersistentCollection) {
-		ISeq s = seq(o);
-		o = null;
-		int i = 0;
-		for(; s != null; s = s.next()) {
-			if(s instanceof Counted)
-				return i + s.count();
-			i++;
-		}
-		return i;
-	}
-	else if(o instanceof CharSequence)
-		return ((CharSequence) o).length();
-	else if(o instanceof Collection)
-		return ((Collection) o).size();
-	else if(o instanceof Map)
-		return ((Map) o).size();
-	else if (o instanceof Map.Entry)
-		return 2;
-	else if(o.getClass().isArray())
-		return Array.getLength(o);
 
-	throw new UnsupportedOperationException("count not supported on this type: " + o.getClass().getSimpleName());
-}
 
 static public IPersistentCollection conj(IPersistentCollection coll, Object x){
 	if(coll == null)
@@ -1693,8 +1640,8 @@ static public Object[] toArray(Object coll) {
 		return EMPTY_ARRAY;
 	else if(coll instanceof Object[])
 		return (Object[]) coll;
-	else if(coll instanceof Collection)
-		return ((Collection) coll).toArray();
+	else if(coll instanceof PureCollections)
+		return ((PureCollections) coll).toArray();
 	else if(coll instanceof Iterable) {
 		ArrayList ret = new ArrayList();
 		for(Object o : (Iterable)coll)
@@ -1728,20 +1675,7 @@ static public Object[] seqToArray(ISeq seq){
 	return ret;
 }
 
-    // supports java Collection.toArray(T[])
-    static public Object[] seqToPassedArray(ISeq seq, Object[] passed){
-        Object[] dest = passed;
-        int len = count(seq);
-        if (len > dest.length) {
-            dest = (Object[]) Array.newInstance(passed.getClass().getComponentType(), len);
-        }
-        for(int i = 0; seq != null; ++i, seq = seq.next())
-            dest[i] = seq.first();
-        if (len < passed.length) {
-            dest[len] = null;
-        }
-        return dest;
-    }
+  
 
 static public Object seqToTypedArray(ISeq seq) {
 	Class type = (seq != null && seq.first() != null) ? seq.first().getClass() : Object.class;

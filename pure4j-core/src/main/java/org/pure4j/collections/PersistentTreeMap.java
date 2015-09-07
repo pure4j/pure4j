@@ -780,6 +780,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			return stack;
 		}
 
+		@SuppressWarnings("unchecked")
 		public Entry<K, V> first() {
 			return (java.util.Map.Entry<K, V>) stack.first();
 		}

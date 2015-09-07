@@ -12,10 +12,8 @@
 
 package org.pure4j.collections;
 
+public interface IChunk<K> extends Indexed<K> {
 
-public interface IChunk extends Indexed{
+	IChunk<K> dropFirst();
 
-IChunk dropFirst();
-
-Object reduce(IFn f, Object start) ;
 }

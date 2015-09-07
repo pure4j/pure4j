@@ -13,6 +13,8 @@ package org.pure4j.collections;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+
 
 import org.pure4j.collections.bin.Keyword;
 
@@ -29,7 +31,7 @@ import org.pure4j.collections.bin.Keyword;
  */
 
 public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements 
-		IEditableCollection, IMapIterable<K, V> {
+		IEditableCollection<Entry<K, V>>, IMapIterable<K, V> {
 
 	final Object[] array;
 	static final int HASHTABLE_THRESHOLD = 16;

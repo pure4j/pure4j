@@ -152,4 +152,13 @@ public class PureCollections {
 			return ((Indexed) coll).nth(n);
 		return nthFrom(Util.ret1(coll, coll = null), n);
 	}
+	
+	@SuppressWarnings("unchecked")
+	static public <K> IPersistentVector<K> subvec(IPersistentVector<K> v, int start, int end){
+		if(end < start || start < 0 || end > v.count())
+			throw new IndexOutOfBoundsException();
+		if(start == end)
+			return PersistentVector.EMPTY;
+		return new APersistentVector.SubVector<K>(v, start, end);
+	}
 }

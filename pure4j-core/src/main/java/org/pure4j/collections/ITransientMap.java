@@ -12,7 +12,7 @@
 
 package org.pure4j.collections;
 
-public interface ITransientMap<K, V> extends ITransientAssociative<K, V>, Counted {
+public interface ITransientMap<K, V> extends Counted {
 
 	ITransientMap<K, V> assoc(K key, V val);
 

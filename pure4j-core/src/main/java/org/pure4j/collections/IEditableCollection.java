@@ -13,7 +13,7 @@
 package org.pure4j.collections;
 
 
-public interface IEditableCollection {
+public interface IEditableCollection<K> {
 	
-	ITransientCollection asTransient();
+	ITransientCollection<K> asTransient();
 }
