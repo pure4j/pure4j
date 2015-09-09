@@ -3,8 +3,6 @@ package org.pure4j.processor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.pure4j.annotations.pure.Enforcement;
@@ -13,6 +11,7 @@ import org.pure4j.model.ClassHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.processor.PureChecklistHandler.PureMethod;
 
 public class PurityChecker implements Rule {
 	
@@ -28,10 +27,16 @@ public class PurityChecker implements Rule {
 	
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
-		addPureMethodsToPureList(pm);
+		addPureMethodsToPureList(pm, cb);
 		addMethodsFromImmutableValueClassToPureList(pm, cb);
 		addMethodsFromPureClassToPureList(pm, cb);
 		pureChecklist.doPureMethodChecks(cb, pm);
+		Set<String> impureImplementations = identifyImpureImplementations(pm, cb);
+		outputPureMethodList(cb, pm);	
+	}
+	
+	public Set<String> identifyImpureImplementations(ProjectModel pm, Callback cb) {
+		return new InterfacePurityViolations().getPurityViolations(pureChecklist, pm, cb, cl);
 	}
 	
 	public void cascadeImpurities(ProjectModel pm, Callback cb) {
@@ -39,10 +44,15 @@ public class PurityChecker implements Rule {
 		
 	}
 	
-	public void outputPureMethods(Callback cb, ProjectModel pm) {
-		pureChecklist.outputPureMethodList(cb, pm);
+	public void outputPureMethodList(Callback cb, ProjectModel pm) {
+		for (PureMethod pureMethod : pureChecklist.getMethodList()) {
+			if ((pureMethod.checkImplementationPurity(cb, pm)) && (pureMethod.checkInterfacePurity(cb, pm))) {
+				if (pm.getAllClasses().contains(pureMethod.declaration.getDeclaringClass())) {
+					cb.registerPure(pureMethod.declaration.toString());
+				}
+			}
+		}
 	}
-	
 
 	private void addMethodsFromImmutableValueClassToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {
@@ -81,7 +91,7 @@ public class PurityChecker implements Rule {
 				boolean overridden = addedSoFar.contains(signature);
 				boolean calledBySomething = pm.getCalledBy(mh).size() > 0;
 				if ((!overridden) || (calledBySomething)) {
-					pureChecklist.addMethod(mh, e, pureClass);
+					pureChecklist.addMethod(mh, e, pureClass, cb);
 					addedSoFar.add(signature);
 				}
 			}
@@ -98,13 +108,13 @@ public class PurityChecker implements Rule {
 		return new ClassHandle(className).hydrate(cl);
 	}
 
-	private void addPureMethodsToPureList(ProjectModel pm) {
+	private void addPureMethodsToPureList(ProjectModel pm, Callback cb) {
 		for (MemberHandle handle : pm.getMembersWithAnnotation(getInternalName(Pure.class))) {
 			if (handle instanceof MethodHandle) {
 				Method m = ((MethodHandle)handle).hydrate(cl);
 				Pure p = m.getAnnotation(Pure.class);
 				if (p.value() != Enforcement.NOT_PURE) {
-					pureChecklist.addMethod(handle, p.value(), m.getDeclaringClass());
+					pureChecklist.addMethod(handle, p.value(), m.getDeclaringClass(), cb);
 				}
 			}
 		}

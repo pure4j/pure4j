@@ -12,7 +12,6 @@
 
 package org.pure4j.collections;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
@@ -33,29 +32,66 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 				
 		return new ArraySeq<K>(array, 0, true);
 	}
-
-	@SuppressWarnings("unchecked")
-	public static <K> ISeq<K> create(Object array) {
-		if (array == null || Array.getLength(array) == 0)
-			return null;
-		Class<?> aclass = array.getClass();
-		if (aclass == int[].class)
-			return (ISeq<K>) new ArraySeq_int((int[]) array, 0, true);
-		if (aclass == float[].class)
-			return (ISeq<K>) new ArraySeq_float((float[]) array, 0, true);
-		if (aclass == double[].class)
-			return (ISeq<K>) new ArraySeq_double((double[]) array, 0, true);
-		if (aclass == long[].class)
-			return (ISeq<K>) new ArraySeq_long((long[]) array, 0, true);
-		if (aclass == byte[].class)
-			return (ISeq<K>) new ArraySeq_byte((byte[]) array, 0, true);
-		if (aclass == char[].class)
-			return (ISeq<K>) new ArraySeq_char((char[]) array, 0, true);
-		if (aclass == short[].class)
-			return (ISeq<K>) new ArraySeq_short((short[]) array, 0, true);
-		if (aclass == boolean[].class)
-			return (ISeq<K>) new ArraySeq_boolean((boolean[]) array, 0, true);
-		return (ISeq<K>) new ArraySeq<K>((K[]) array, 0, true);
+	
+	public static ASeq<?> createFromArray(Object o) {
+		Class<? extends Object> class1 = o.getClass();
+		if (class1.isArray()) {
+			Class<?> component = class1.getComponentType();
+		
+			if (component == int.class) {
+				return create((int[]) o);
+			} 
+			if (component == double.class) {
+				return create((double[]) o);
+			} 
+			if (component == long.class) {
+				return create((long[]) o);
+			} 
+			if (component == short.class) {
+				return create((short[]) o);
+			} 
+			if (component == char.class) {
+				return create((char[]) o);
+			} 
+			if (component == boolean.class) {
+				return create((boolean[]) o);
+			} 
+			if (component == float.class) {
+				return create((float[]) o);
+			} 
+			
+			return create((Object[]) o);
+		} else {
+			throw new IllegalArgumentException("Was expecting array type but got "+class1.getName());
+		}
+	}
+	
+	public static ArraySeq_int create(int... array) {
+		return new ArraySeq_int(array, 0, true);
+	}
+	
+	public static ArraySeq_float create(float... array) {
+		return new ArraySeq_float(array, 0, true);
+	}
+	
+	public static ArraySeq_long create(long... array) {
+		return new ArraySeq_long(array, 0, true);
+	}
+	
+	public static ArraySeq_byte create(byte... array) {
+		return new ArraySeq_byte(array, 0, true);
+	}
+	
+	public static ArraySeq_short create(short... array) {
+		return new ArraySeq_short(array, 0, true);
+	}
+	
+	public static ArraySeq_char create(char... array) {
+		return new ArraySeq_char(array, 0, true);
+	}
+	
+	public static ArraySeq_boolean create(boolean... array) {
+		return new ArraySeq_boolean(array, 0, true);
 	}
 
 	ArraySeq(K[] array, int i, boolean copy) {

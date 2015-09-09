@@ -9,7 +9,7 @@ public class PersistentQueueExample extends AbstractChecker {
 
 	@Pure
 	public void checkIt(PersistentQueue<String> in, int expectedSize, String expectedFirst) {
-		System.out.println("queue:"+in);
+		log("queue:"+in.toString());
 		assertEquals(expectedSize, in.size());
 		
 		in.cons("james");

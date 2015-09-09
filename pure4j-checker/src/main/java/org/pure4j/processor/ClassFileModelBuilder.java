@@ -3,12 +3,15 @@ package org.pure4j.processor;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Stack;
 
+import org.pure4j.Pure4J;
 import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
+import org.pure4j.model.ImmutableCallMemberHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
@@ -34,7 +37,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static final boolean OUTPUT_ASM = false;
+	public static final boolean OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -87,7 +90,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] exceptions) {
-				final MemberHandle mh = createHandle(className, name, desc);
+				final MemberHandle mh = createHandle(className, name, desc, 0);
 				addDependency(className, model, desc, true);
 				return createMethodVisitor(model, className, mh);
 
@@ -198,6 +201,10 @@ public class ClassFileModelBuilder {
 		
 		return new MethodVisitor(Opcodes.ASM4) {
 
+			Stack<Integer> arguments = new Stack<Integer>();
+			int line = 0;
+			boolean firstCall = true;
+
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
 				return createAnnotationVisitor(model, mh, desc);
@@ -212,21 +219,29 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
-				MemberHandle remoteMethod = createHandle(owner, name, desc);
+				MemberHandle remoteMethod = null;
+				if (owner.equals(Type.getInternalName(Pure4J.class)) && (name.equals("immutable"))) {
+					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);
+				} else {
+					remoteMethod = createHandle(owner, name, desc, line);	
+				}
 				model.addCalls(mh, remoteMethod);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
 				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
+				firstCall = false;
 			}
 
 			public void visitTypeInsn(int arg0, String type) {
 				model.addClassDependency(className, type);
 				output("  "+getOpcode(arg0)+" "+type);
+				firstCall = false;
 			}
 
 			public void visitMultiANewArrayInsn(String desc, int arg1) {
 				addDependency(className, model, desc, false);
 				output("  Multi New Array"+desc+" "+arg1);
+				firstCall = false;
 			}
 
 			/**
@@ -237,11 +252,12 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitVarInsn(int arg0, int arg1) {
-//				if ((arg0 == Opcodes.ALOAD) && (arg1 == 0)) {
-//					ThisHandle field = new ThisHandle(className);
-//					model.addCalls(mh, field);
-//				} 
 				output("  "+getOpcode(arg0)+" "+arg1);
+				if ((Opcodes.ALOAD == arg0) && (firstCall)) {
+					arguments.push(arg1);
+				} else {
+					firstCall = false;
+				}
 			}
 
 			public AnnotationVisitor visitAnnotationDefault() {
@@ -259,18 +275,21 @@ public class ClassFileModelBuilder {
 
 			public void visitIincInsn(int arg0, int arg1) {
 				output("  "+getOpcode(arg0)+ " "+arg1);
+				firstCall = false;
 			}
 
 			public void visitInsn(int arg0) {
 				output("  "+getOpcode(arg0));
-				
+				firstCall = false;
 			}
 
 			public void visitIntInsn(int arg0, int arg1) {
 				output("  "+getOpcode(arg0)+ " "+arg1);
+				firstCall = false;
 			}
 
 			public void visitJumpInsn(int arg0, Label arg1) {
+				firstCall = false;
 			}
 
 			public void visitLabel(Label arg0) {
@@ -278,6 +297,7 @@ public class ClassFileModelBuilder {
 
 			public void visitLdcInsn(Object arg0) {
 				output("  "+arg0);
+				firstCall = false;
 			}
 
 			public void visitLineNumber(int arg0, Label arg1) {
@@ -285,23 +305,28 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitLocalVariable(String arg0, String arg1, String arg2, Label arg3, Label arg4, int arg5) {
-				output("  visitLocal "+arg0+" "+arg1+" "+arg2+" "+arg3+" "+arg4+" "+arg5);
+				output("  visitLocalVariable "+arg0+" "+arg1+" "+arg2+" "+arg3+" "+arg4+" "+arg5);
+				firstCall = false;
 			}
 
 			public void visitLookupSwitchInsn(Label arg0, int[] arg1, Label[] arg2) {
 				output("  lookupswitch");
+				firstCall = false;
 			}
 
 			public void visitMaxs(int arg0, int arg1) {
 				output("  maxs "+arg0+" "+arg1);
+				firstCall = false;
 			}
 
 			public void visitTableSwitchInsn(int arg0, int arg1, Label arg2, Label[] arg3) {
 				output("  lookupswitch");
+				firstCall = false;
 			}
 
 			public void visitTryCatchBlock(Label arg0, Label arg1, Label arg2, String arg3) {
 				output("  try/catch: "+arg0+" "+arg1+" "+arg2+" "+arg3);
+				firstCall = false;
 			}
 
 		};
@@ -349,12 +374,28 @@ public class ClassFileModelBuilder {
 		return name.substring(0, li);
 	}
 	
-	private MemberHandle createHandle(String owner, String name, String desc) {
+	private MemberHandle createHandle(String owner, String name, String desc, int line) {
 		if (name.equals("<init>")) {
-			return new ConstructorHandle(owner, desc);			
+			return new ConstructorHandle(owner, desc, line);			
 		} else {
-			return new MethodHandle(owner, name, desc);
+			return new MethodHandle(owner, name, desc, line);
 		}
+	}
+
+	protected int[] getArgs(String desc, Stack<Integer> argStack, int[] vars) {
+		if (argStack != null) {
+			int args = argCount(desc);
+			vars = new int[args];
+		
+			for (int i = 0; i < vars.length; i++) {
+				vars[i] = argStack.get(i);
+			}
+		}
+		return vars;
+	}
+
+	private int argCount(String desc) {
+		return Type.getArgumentTypes(desc).length;
 	}
 
 }

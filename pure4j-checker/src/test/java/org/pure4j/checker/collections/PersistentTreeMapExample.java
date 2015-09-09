@@ -13,27 +13,27 @@ public class PersistentTreeMapExample extends AbstractChecker {
 
 	@Pure
 	public void pureMethod(PersistentTreeMap<String, String> in, int expectedKeys, int expectedVals) {
-		System.out.println("keys:");
+		log("keys:");
 		for (Iterator<String> iterator = in.keyIterator(); iterator.hasNext();) {
 			String v = iterator.next();
-			System.out.println(v);
+			log(v);
 		}
 
 		assertEquals(expectedKeys, in.keySet().size());
 		
 		for (Iterator<Entry<String, String>> iterator = in.iterator(); iterator.hasNext();) {
 			Entry<String, String> e = iterator.next();
-			System.out.println(e.getKey()+" "+e.getValue());
+			log(e.getKey()+" "+e.getValue());
 		}
 		
-		System.out.println("vals:");
+		log("vals:");
 		Collection<String> values = in.values();
 		assertEquals(expectedVals, values.size());
 		for (String entry : values) {
-			System.out.println(entry);
+			log(entry);
 		}
 		
-		System.out.println(in);
+		log(in.toString());
 		
 		in.assoc("james", "bond");
 	}

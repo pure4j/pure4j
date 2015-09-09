@@ -10,12 +10,16 @@
 
 package org.pure4j.collections;
 
+import org.pure4j.annotations.immutable.ImmutableValue;
+
+
 /**
  * A persistent, functional, sequence interface
  * <p/>
  * ISeqs are immutable values, i.e. neither first(), nor rest() changes or
  * invalidates the ISeq
  */
+@ImmutableValue
 public interface ISeq<K> extends IPersistentCollection<K> {
 
 	K first();

@@ -1,8 +1,11 @@
 package org.pure4j.processor;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -47,7 +50,6 @@ public class ImmutableClassHandler {
 		}
 		
 		if (!immutableClasses.containsKey(in.getName())) {
-			cb.send("Checking Class For @ImmutableValue: " + in.getName());
 			boolean immutable = false;
 			ImmutableValue ann = in.getAnnotation(ImmutableValue.class);
 			immutable = immutable || (ann != null);
@@ -57,7 +59,9 @@ public class ImmutableClassHandler {
 			}
 			
 			if (immutable) {
-				cb.send("Found immutable class: "+in.getName());
+				cb.send("immutable:           "+in.getName());
+			} else {
+				cb.send("not immutable:       "+in.getName());
 			}
 			immutableClasses.put(in.getName(), immutable);
 			return immutable;
@@ -67,18 +71,41 @@ public class ImmutableClassHandler {
 	}
 
 	public boolean typeIsMarkedImmutable(Type t, Callback cb) {
-		// check if it's in the immutable list
-		Class<?> c;
 		if (t instanceof Class) {
-			c = (Class<?>) t;
+			if (((Class<?>) t).isArray()) {
+				return false;
+			} else {
+				return classIsMarkedImmutable((Class<?>) t, cb);
+			}
 		} else if (t instanceof Enum<?>){
-			c = ((Enum) t).getDeclaringClass();
-		} else  {
-			throw new RuntimeException("Need some generics support");
+			return classIsMarkedImmutable(((Enum<?>) t).getDeclaringClass(), cb);
+		} else if (t instanceof ParameterizedType) {
+			// we need to make sure the raw class is immutable
+			Type raw = ((ParameterizedType) t).getRawType();
+			if (!typeIsMarkedImmutable(raw, cb)) {
+				return false;
+			}
+			
+//			for (Type t2 : ((ParameterizedType) t).getActualTypeArguments()) {
+//				if (!typeIsMarkedImmutable(t2, cb)) {
+//					return false;
+//				}
+//			}
+			
+			return true;
+		} else if (t instanceof TypeVariable) {
+			TypeVariable<?> tv = (TypeVariable<?>) t;
+			for (Type b : tv.getBounds()) {
+				if (!typeIsMarkedImmutable(b, cb)) {
+					return false;
+				}
+			}
+			return true;
+		} else if (t instanceof GenericArrayType) {
+			return false;
+		} else {
+			throw new RuntimeException("Type not supported: "+t);
 		}
-		
-		
-		return classIsMarkedImmutable(c, cb);
 	}
 	
 	/**

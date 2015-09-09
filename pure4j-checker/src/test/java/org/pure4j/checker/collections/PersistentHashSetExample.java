@@ -10,9 +10,9 @@ public class PersistentHashSetExample extends AbstractChecker {
 
 	@Pure
 	public void pureMethod(IPersistentSet<String> in, int expected) {
-		System.out.println("keys:");
+		log("keys:");
 		for (String entry : in) {
-			System.out.println(entry);
+			log(entry);
 		}
 		assertEquals(expected, in.size());
 		

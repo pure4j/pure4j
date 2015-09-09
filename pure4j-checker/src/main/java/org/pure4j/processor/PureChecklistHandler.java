@@ -8,8 +8,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,10 +19,10 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
+import org.pure4j.model.ImmutableCallMemberHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
-import org.pure4j.model.ThisHandle;
 
 /**
  * The responsibility of this class is to keep track of all the methods we want to check 
@@ -67,8 +69,8 @@ public class PureChecklistHandler {
 			String methodPart = description.substring(firstDot+1, firstBracket);
 			String descPart = description.substring(firstBracket);
 			this.declaration = (methodPart.equals("<init>")) ? 
-				new ConstructorHandle(classPart, descPart) : 
-				new MethodHandle(classPart, methodPart, descPart);
+				new ConstructorHandle(classPart, descPart, 0) : 
+				new MethodHandle(classPart, methodPart, descPart, 0);
 			
 			this.e = e;
 			setupEnforcements(e);
@@ -87,14 +89,18 @@ public class PureChecklistHandler {
 				if (!pm.withinModel(declaration.getClassName())) {
 					// we can't confirm that the method is pure, unless it has been forced already.
 					
-					cb.registerError(this+" is expected to be a pure method, but is not in scope and isn't marked as such.", null);
+					cb.registerError("Pure implementation: "+this+" is expected to be a pure method, but is not in scope and isn't marked as such.", null);
 					pureImplementation = false;
+				}
+				
+				if (this.declaration.getDeclaringClass(cl).isInterface()) {
+					return true;
 				}
 				
 				for (MemberHandle mh: pm.getCalls(declaration)) {
 					if ((mh instanceof MethodHandle) || (mh instanceof ConstructorHandle)) {
 						if (!isMarkedPure(mh, cb)) {
-							cb.registerError(this+" is expected to be a pure method, but calls impure method "+mh, null);
+							cb.registerError("Pure implementation: "+this+" is expected to be a pure method, but calls impure method "+mh, null);
 							pureImplementation = false;
 						}
 					} else if (mh instanceof FieldHandle) {
@@ -102,20 +108,20 @@ public class PureChecklistHandler {
 						Field f = fieldHandle.hydrate(cl);
 						if (!onCurrentObject(fieldHandle, f)) {
 							if ((!Modifier.isFinal(f.getModifiers()))) {
-								cb.registerError(this+" is expected to be pure but accesses non-final field which isn't private/protected "+fieldHandle, null);
+								cb.registerError("Pure implementation: "+this+" is expected to be pure but accesses non-final field which isn't private/protected "+fieldHandle, null);
 								pureImplementation = false;
 							}
 							
 							if (!immutables.typeIsMarkedImmutable(f.getGenericType(), cb)) {
-								cb.registerError(this+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
+								cb.registerError("Pure implementation: "+this+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
 								pureImplementation = false;
 							}
 						}
-					} else if (mh instanceof ThisHandle) {
-						cb.registerError(this+" is expected to be pure but accesses 'this' "+mh, null);
-						pureImplementation = false;
-					}
+					} 
 				}
+				
+				cb.send("Pure implementation: "+this);
+
 			}
 			return pureImplementation;
 		}
@@ -135,27 +141,53 @@ public class PureChecklistHandler {
 			return false;
 		}
 	
-		public boolean checkInterfacePurity(Callback cb) {
+		public boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
 			if (pureInterface == null) {
 				pureInterface = true;
 				
 				if (IGNORE_EQUALS_PARAMETER_PURITY) {
 					if (("equals".equals(declaration.getName())) && 
-							("(Ljava/lang/Object;)Z".equals(declaration.getDesc()))) {
+						("(Ljava/lang/Object;)Z".equals(declaration.getDesc()))) {
 						return true;
 					}
 				}
 	
 				// check the signature of the pure method
-				for (Type t : declaration.getGenericTypes(cl)) {
+				Type[] genericTypes = declaration.getGenericTypes(cl);
+				for (int i = 0; i < genericTypes.length; i++) {
+					Type t = genericTypes[i];
 					if (!immutables.typeIsMarkedImmutable(t, cb)) {
-						cb.registerError("Pure method "+declaration+" can't take non-immutable argument "+t, null);
-						pureInterface = false;
+						if (!isRuntimeChecked(i, pm, cb)) {
+							cb.registerError("Pure interface:      "+this+" can't take non-immutable argument "+t, null);
+							pureInterface = false;
+						}
 					}
 				}
+				
+				cb.send("Pure interface:      "+this);
 			} 
 			return pureInterface;
 			
+		}
+
+		/**
+		 * Checks to see whether the developer has called the runtime check for immutability. 
+		 */
+		private boolean isRuntimeChecked(int paramNo, ProjectModel pm, Callback cb) {
+			List<MemberHandle> calls = pm.getCalls(declaration);
+			for (MemberHandle memberHandle : calls) {
+				if (memberHandle instanceof ImmutableCallMemberHandle) {
+					ImmutableCallMemberHandle icmh = (ImmutableCallMemberHandle) memberHandle;
+					if (!icmh.isFirstCall()) {
+						cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but it must be the first call in the method and only passed method parameters", null);
+					} else if (!icmh.getLocalVariables().contains(paramNo+1)) {
+						cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but this doesn't include parameter "+paramNo, null);
+					}
+					return true;
+				} 
+			}
+			
+			return false;
 		}	
 	}
 	
@@ -249,13 +281,14 @@ public class PureChecklistHandler {
 		return false;
 	}
 
-	public void addMethod(MemberHandle declaration, Enforcement e, Class<?> usedIn) {
+	public void addMethod(MemberHandle declaration, Enforcement e, Class<?> usedIn, Callback cb) {
 		PureMethod pm;
 		if (pureChecklist.containsKey(declaration)) {;
 			pm = pureChecklist.get(declaration);
 		} else {
 			pm = new PureMethod(declaration, e);
 			pureChecklist.put(declaration, pm);
+			cb.send("Adding new method for testing: "+declaration+" "+e);
 		}
 			
 		pm.usedIn.add(usedIn);
@@ -265,6 +298,10 @@ public class PureChecklistHandler {
 				throw new RuntimeException("Was expecting different enforcement for "+pm+": "+e);
 			}
 		}
+	}
+	
+	public PureMethod getElementFor(MemberHandle mh) {
+		return pureChecklist.get(mh);
 	}
 	
 	public static boolean methodIsVisible(Method m, Class<?> pureClass) {
@@ -296,19 +333,13 @@ public class PureChecklistHandler {
 	
 	public void doPureMethodChecks(Callback cb, ProjectModel pm) {
 		for (PureMethod pureCandidate : pureChecklist.values()) {
-			cb.send("Checking pure method: "+pureCandidate);
-			pureCandidate.checkInterfacePurity(cb); 
+			pureCandidate.checkInterfacePurity(cb, pm); 
 			pureCandidate.checkImplementationPurity(cb, pm);
 		}
 	}
 	
-	public void outputPureMethodList(Callback cb, ProjectModel pm) {
-		for (PureMethod pureMethod : pureChecklist.values()) {
-			if ((pureMethod.pureImplementation) && (pureMethod.pureInterface)) {
-				if (pm.getAllClasses().contains(pureMethod.declaration.getDeclaringClass())) {
-					cb.registerPure(pureMethod.declaration.toString());
-				}
-			}
-		}
+	public Collection<PureMethod> getMethodList() {
+		return pureChecklist.values();
 	}
+	
 }

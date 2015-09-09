@@ -1,7 +1,6 @@
 package org.pure4j.checker.collections;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
@@ -13,20 +12,20 @@ public class PersistentArrayMapExample extends AbstractChecker {
 
 	@Pure
 	public void pureMethod(IPersistentMap<String, String> in, int expectedKeys, int expectedVals) {
-		System.out.println("keys:");
-		Set<String> keySet = in.keySet();
-		assertEquals(expectedKeys, keySet.size());
+		log("keys:");
+//		Set<String> keySet = in.keySet();
+//		assertEquals(expectedKeys, keySet.size());
 		
-		for (String entry : keySet) {
-			System.out.println(entry);
+		for (String entry : in.keySet()) {
+			log(entry);
 		}
 		
-		System.out.println("vals:");
+		log("vals:");
 		Collection<String> values = in.values();
 		assertEquals(expectedVals, values.size());
 		for (String entry : values) {
-			System.out.println(entry);
-		}
+			log(entry);
+		} 
 		
 		in.assoc("james", "bond");
 	}

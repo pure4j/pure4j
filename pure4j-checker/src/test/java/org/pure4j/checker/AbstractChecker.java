@@ -1,9 +1,7 @@
 package org.pure4j.checker;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -54,7 +52,6 @@ public class AbstractChecker {
 		ProjectModel pm = spmf.createProjectModel(cb);
 		PurityChecker checker = new PurityChecker(this.getClass().getClassLoader());
 		checker.checkModel(pm, cb);
-		checker.outputPureMethods(cb, pm);
 		
 		System.out.println("----- PURES ---- ");
 		for (String string : pures) {
@@ -79,5 +76,10 @@ public class AbstractChecker {
 		if (!exp.equals(act)) {
 			throw new RuntimeException("Was expecting equality: "+exp+" and "+act);
 		}
+	}
+	
+	@Pure(Enforcement.FORCE) 
+	public void log(String s) {
+		System.out.println(s);
 	}
 }

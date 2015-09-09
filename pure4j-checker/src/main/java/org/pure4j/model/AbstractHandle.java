@@ -41,9 +41,20 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 	public static Class<?> hydrateClass(String className, ClassLoader cl) {
 		try {
 			String name = className.replace("/", ".");
-			Class<?> c = cl.loadClass(name);
-
-			return c;
+			name = name.endsWith(";") ? name.substring(0, name.length() - 1) : name;
+			
+			if (name.startsWith("[")) {
+				int lastBracket = name.lastIndexOf("[");
+				String shortName = name.substring(lastBracket+1);
+				if (shortName.startsWith("L")) {
+					cl.loadClass(shortName.substring(1));
+				}
+				Class<?> arrayClass = Class.forName(name+";");
+				return arrayClass;
+			} else {
+				Class<?> c = cl.loadClass(name);
+				return c;
+			}
 		} catch (ClassNotFoundException e) {
 			throw new Pure4JException("Could not load class: ", e);
 		}
@@ -130,6 +141,11 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 
 	public static Method getDeclaredMethod(String name, Class<?> c, Class<?>[] params, ClassLoader cl) {
 		Method m = null;
+		
+		if (c==null) {
+			return null;
+		}
+		
 		try {
 			m = c.getDeclaredMethod(name, params);
 		} catch (NoSuchMethodException e) {
@@ -185,7 +201,7 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 	}
 
 	public static String convertClassName(Class<?> c) {
-		return c.getName().replace(".", "/");
+		return Type.getInternalName(c);
 	}
 
 	public static String convertClassName(String name) {

@@ -40,5 +40,8 @@ public class FieldHandle extends MemberHandle {
 		return new java.lang.reflect.Type[] { hydrate(cl).getGenericType() };
 	}
 	
+	public Class<?>[] getRawTypes(ClassLoader cl) {
+		return new Class<?>[] { hydrate(cl).getType()};
+	}
 	
 }

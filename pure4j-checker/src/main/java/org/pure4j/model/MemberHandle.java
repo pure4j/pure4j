@@ -99,6 +99,8 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 	
 	public abstract java.lang.reflect.Type[] getGenericTypes(ClassLoader cl);
 	
+	public abstract Class<?>[] getRawTypes(ClassLoader cl);
+	
 	public String getSignature() {
 		return name+desc;
 	}

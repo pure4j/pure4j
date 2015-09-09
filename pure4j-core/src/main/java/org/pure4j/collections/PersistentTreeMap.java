@@ -145,10 +145,6 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			return Seq.create(tree, true, _count);
 		return null;
 	}
-
-	public IPersistentCollection<Entry<K, V>> empty() {
-		return new PersistentTreeMap<K, V>(comp);
-	}
 	
 	@SuppressWarnings("unchecked")
 	public static <K, V> PersistentTreeMap<K, V> emptyMap() {

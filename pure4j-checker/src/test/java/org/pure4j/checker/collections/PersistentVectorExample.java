@@ -28,7 +28,7 @@ public class PersistentVectorExample extends AbstractChecker {
 		for (int i = 0; i <= 300; i++) {
 			pl = pl.cons(i);
 		}
-		System.out.println(pl);
+		log(pl.toString());
 		int j = sumPersistentVector(pl);
 		Assert.assertEquals(150*301,j);
 		Assert.assertEquals(301, pl.size());

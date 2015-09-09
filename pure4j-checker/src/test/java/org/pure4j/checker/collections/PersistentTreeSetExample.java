@@ -14,7 +14,7 @@ public class PersistentTreeSetExample extends AbstractChecker {
 
 	@Pure
 	public void pureMethod(IPersistentSet<String> in, int expected) {
-		System.out.println("keys:"+in);
+		log("keys:"+in);
 		
 		List<String> l1 = new ArrayList<String>(in);
 		Collections.sort(l1);

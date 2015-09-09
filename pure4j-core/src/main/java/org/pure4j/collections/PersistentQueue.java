@@ -222,6 +222,9 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 		};
 	}
 
+	public String toString() {
+		return ToStringFunctions.toString(this);
+	}
 	
 
 }

@@ -1,6 +1,5 @@
 package org.pure4j.collections;
 
-import java.util.Map;
 
 
 /**
@@ -11,7 +10,7 @@ import java.util.Map;
  * any fashion, you are agreeing to be bound by the terms of this license. You
  * must not remove this notice, or any other, from this software.
  */
-public interface Associative<K, V> extends IPersistentCollection<Map.Entry<K, V>>, ILookup<K, V> {
+public interface Associative<K, V> extends ILookup<K, V> {
 	
 	boolean containsKey(Object key);
 

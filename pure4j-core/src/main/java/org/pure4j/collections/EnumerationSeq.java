@@ -16,63 +16,58 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.util.Enumeration;
 
-public class EnumerationSeq extends ASeq{
-final Enumeration iter;
-final State state;
+public class EnumerationSeq<K> extends ASeq<K> {
 
-    static class State{
-	volatile Object val;
-	volatile Object _rest;
-}
+	final Enumeration<K> iter;
+	final State state;
 
-public static EnumerationSeq create(Enumeration iter){
-	if(iter.hasMoreElements())
-		return new EnumerationSeq(iter);
-	return null;
-}
+	static class State {
+		volatile Object val;
+		volatile Object _rest;
+	}
 
-EnumerationSeq(Enumeration iter){
-	this.iter = iter;
-	state = new State();
-	this.state.val = state;
-	this.state._rest = state;
-}
+	private static <K> EnumerationSeq<K> create(Enumeration<K> iter) {
+		if (iter.hasMoreElements())
+			return new EnumerationSeq<K>(iter);
+		return null;
+	}
 
-EnumerationSeq(IPersistentMap meta, Enumeration iter, State state){
-	super(meta);
-	this.iter = iter;
-	this.state = state;
-}
+	public EnumerationSeq(Enumeration<K> iter) {
+		this.iter = iter;
+		state = new State();
+		this.state.val = state;
+		this.state._rest = state;
+	}
 
-public Object first(){
-	if(state.val == state)
-		synchronized(state)
-			{
-			if(state.val == state)
-				state.val = iter.nextElement();
+	EnumerationSeq(Enumeration<K> iter, State state) {
+		this.iter = iter;
+		this.state = state;
+	}
+
+	@SuppressWarnings("unchecked")
+	public K first() {
+		if (state.val == state)
+			synchronized (state) {
+				if (state.val == state)
+					state.val = iter.nextElement();
 			}
-	return state.val;
-}
+		return (K) state.val;
+	}
 
-public ISeq next(){
-	if(state._rest == state)
-		synchronized(state)
-			{
-			if(state._rest == state)
-				{
-				first();
-				state._rest = create(iter);
+	@SuppressWarnings("unchecked")
+	public ISeq<K> next() {
+		if (state._rest == state)
+			synchronized (state) {
+				if (state._rest == state) {
+					first();
+					state._rest = create(iter);
 				}
 			}
-	return (ISeq) state._rest;
-}
+		return (ISeq<K>) state._rest;
+	}
 
-public EnumerationSeq withMeta(IPersistentMap meta){
-	return new EnumerationSeq(meta, iter, state);
-}
-
-private void writeObject (java.io.ObjectOutputStream out) throws IOException {
-    throw new NotSerializableException(getClass().getName());
-}
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		throw new NotSerializableException(getClass().getName());
+	}
 
 }

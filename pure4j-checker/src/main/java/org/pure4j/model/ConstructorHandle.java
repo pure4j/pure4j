@@ -3,7 +3,7 @@ package org.pure4j.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
-public class ConstructorHandle extends MemberHandle {
+public class ConstructorHandle extends CallHandle {
 
 	public ConstructorHandle(Constructor<?> c) {
 		super();
@@ -12,7 +12,8 @@ public class ConstructorHandle extends MemberHandle {
 	    this.name = "<init>";
 	}
 
-	public ConstructorHandle(String className, String desc) {
+	public ConstructorHandle(String className, String desc, int line) {
+		super(className, "<init>", desc, line);
 	    this.className = className;
 	    this.desc = desc;
 	    this.name = "<init>";
@@ -45,4 +46,7 @@ public class ConstructorHandle extends MemberHandle {
 		return hydrate(cl).getGenericParameterTypes();
 	}
 
+	public Class<?>[] getRawTypes(ClassLoader cl) {
+		return hydrate(cl).getParameterTypes();
+	}
 }

@@ -3,19 +3,17 @@ package org.pure4j.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class MethodHandle extends MemberHandle {
+public class MethodHandle extends CallHandle {
 
 	public MethodHandle(Method m) {
 		super();
-		this.className = convertClassName(m.getDeclaringClass());
+		this.className =  convertClassName(m.getDeclaringClass());
 		this.name = m.getName();
 		this.desc = Type.getMethodDescriptor(m);
 	}
 
-	public MethodHandle(String className, String name, String desc) {
-	    this.className = className;
-	    this.name = name;
-	    this.desc = desc;
+	public MethodHandle(String className, String name, String desc, int line) {
+	    super(className, name, desc, line);
 	}
 
 	public Method hydrate(ClassLoader cl) {
@@ -47,5 +45,9 @@ public class MethodHandle extends MemberHandle {
 	@Override
 	public java.lang.reflect.Type[] getGenericTypes(ClassLoader cl) {
 		return hydrate(cl).getGenericParameterTypes();
+	}
+	
+	public Class<?>[] getRawTypes(ClassLoader cl) {
+		return hydrate(cl).getParameterTypes();
 	}
 }
