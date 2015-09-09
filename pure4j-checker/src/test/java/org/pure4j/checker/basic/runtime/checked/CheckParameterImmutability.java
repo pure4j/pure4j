@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.immutable.ClassNotImmutableException;
 
 public class CheckParameterImmutability extends AbstractChecker {
 
@@ -17,7 +18,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 * @param in2
 	 */
 	@Pure
-	public Object testParam1(Object in1, Object in2) {
+	public Object testParam1Bad(Object in1, Object in2) {
 		Object in3 = in2;
 		Pure4J.immutable(in1, in2);
 		return in3;
@@ -27,7 +28,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 * Should be fine.
 	 */
 	@Pure
-	public Object testParam2(Object in1, Object in2) {
+	public Object testParam2Good(Object in1, Object in2) {
 		Pure4J.immutable(in1, in2);
 		return in1;
 	}
@@ -36,7 +37,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 * Should be fine.
 	 */
 	@Pure
-	public Object testParam3(Object in1, int in2) {
+	public Object testParam3Good(Object in1, int in2) {
 		Pure4J.immutable(in1);
 		return in1;
 	}
@@ -45,17 +46,27 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 * Not testing all the parameters
 	 */
 	@Pure
-	public Object testParam4(Object in1, Object in2) {
+	public Object testParam4Bad(Object in1, Object in2) {
 		Pure4J.immutable(in1);
 		return in1;
 	}
 	
 	/**
-	 *Calling with constants, shouldn't matter
+	 *Calling with constants, gives a warning at compile time
 	 */
 	@Pure
-	public Object testParam5(Object in1) {
+	public Object testParam5Bad(Object in1) {
 		Pure4J.immutable(in1, 6);
+		return in1;
+	}
+	
+	/**
+	 *Calling with constants, gives a warning at compile time
+	 */
+	@Pure
+	public Object testParam6Good(Object in1, Object in2,Object in3, Object in4, Object in5, Object in6) {
+		Pure4J.immutable(in1,in2, in3, in4);
+		Pure4J.immutable(in5, in6);
 		return in1;
 	}
 	
@@ -63,13 +74,26 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 *Calling with members, shouldn't matter
 	 */
 	@Pure
-	public Object testParam6(Object in1) {
+	public Object testParam7Good(Object in1) {
 		Pure4J.immutable(in1, s);
 		return in1;
 	}
 	
 	@Test
+	public void callTheGoodOnes() {
+		testParam2Good("string", 66);
+		testParam3Good('c', 3455);
+		testParam5Bad("hello");
+		testParam7Good(345987d);
+	}
+	
+	@Test(expected=ClassNotImmutableException.class) 
+	public void testBad1() {
+		testParam1Bad(new Object(), "dhh");
+	}
+	
+	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0, 5);
+		checkThisPackage(this.getClass(), 3, 7);
 	}
 }

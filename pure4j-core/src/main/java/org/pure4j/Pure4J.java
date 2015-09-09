@@ -1,12 +1,28 @@
 package org.pure4j;
 
-import org.pure4j.annotations.pure.Pure;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
+import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.Util;
+import org.pure4j.immutable.RuntimeImmutabilityChecker;
+
+
+/**
+ * 
+ * @author robmoffat
+ *
+ */
 @Pure
 public class Pure4J {
 
 	private static final int SOME_PRIME = 31;
 
+	@Pure
+	public static int hashCode(Object a) {
+		return Util.hash(a);
+	}
+	
 	@Pure
 	public static int hashCode(Object a, Object b) {
 		return hashCode(a) * SOME_PRIME + hashCode(b);
@@ -14,7 +30,12 @@ public class Pure4J {
 	
 	@Pure
 	public static int hashCode(Object a, Object b, Object c) {
-		return ((hashCode(a) * SOME_PRIME) + hashCode(b) * 31) + hashCode(c);
+		return ((hashCode(a) * SOME_PRIME) + hashCode(b) * SOME_PRIME) + hashCode(c);
+	}
+		
+	@Pure
+	public static int hashCode(Object a, Object b, Object c, Object d) {
+		return (((hashCode(a) * SOME_PRIME) + hashCode(b) * SOME_PRIME) + hashCode(c)) * SOME_PRIME + hashCode(d);
 	}
 	
 	@Pure
@@ -26,23 +47,33 @@ public class Pure4J {
 		return out;
 	}
 	
-	@Pure
-	public static int hashCode(Object a) {
-		if (a == null) {
-			return 0;
-		} else {
-			return 1;
-		}
-	}
 	
 	public static final void immutable(Object a) {
-		// do nothing for now
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
 	}
 	
 	public static final void immutable(Object a, Object b) {
-		// do nothing for now
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
+		
 	}
 	
+	public static final void immutable(Object a, Object b, Object c) {
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(c.getClass());
+	}
+	
+	public static final void immutable(Object a, Object b, Object c, Object d) {
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(c.getClass());
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(d.getClass());
+	}
+	
+	/**
+	 * TODO:  add non-varargs version of this.
+	 */
 	@Pure
 	public static String toString(Object o, Object... fields) {
 		StringBuilder sb = new StringBuilder();
@@ -61,8 +92,13 @@ public class Pure4J {
 		return sb.toString();
 	}
 	
+	/**
+	 * TODO:  make this run really really fast so that no-one needs to
+	 * implement a specific equals method for @ImmutableValue classes ever again.
+	 * We can surely reach the performance of specific code with some bytecode malarkey.
+	 */
 	@Pure
-	public static boolean equals(Object a, Object b, Object... fields) {
+	public static boolean equals(Object a, Object b) {
 		if (a == b)
 			return true;
 		if (b == null)
@@ -70,6 +106,25 @@ public class Pure4J {
 		if (a.getClass() != b.getClass())
 			return false;
 
-		return true;		
+		Class<?> cl = a.getClass();
+		try {
+			if (cl != Object.class) {
+				for (Field f : cl.getDeclaredFields()) {
+					if ((!Modifier.isStatic(f.getModifiers())) && (!Modifier.isTransient(f.getModifiers()))) {
+						f.setAccessible(true);
+						Object aa = f.get(a);
+						Object bb = f.get(b);
+						if (!equals(aa, bb)) {
+							return false;
+						}
+						
+					}
+				}
+				cl = cl.getSuperclass();
+			}
+		return true;
+		} catch (Exception e) {
+			throw new RuntimeException("Couldn't reflectively determine fields: ", e);
+		}
 	}
 }

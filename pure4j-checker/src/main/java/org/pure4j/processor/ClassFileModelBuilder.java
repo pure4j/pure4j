@@ -222,14 +222,15 @@ public class ClassFileModelBuilder {
 				MemberHandle remoteMethod = null;
 				if (owner.equals(Type.getInternalName(Pure4J.class)) && (name.equals("immutable"))) {
 					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);
+					arguments = new Stack<Integer>();
 				} else {
 					remoteMethod = createHandle(owner, name, desc, line);	
+					firstCall = false;
 				}
 				model.addCalls(mh, remoteMethod);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
 				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
-				firstCall = false;
 			}
 
 			public void visitTypeInsn(int arg0, String type) {

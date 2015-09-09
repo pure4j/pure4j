@@ -175,19 +175,27 @@ public class PureChecklistHandler {
 		 */
 		private boolean isRuntimeChecked(int paramNo, ProjectModel pm, Callback cb) {
 			List<MemberHandle> calls = pm.getCalls(declaration);
+			boolean found = false;
+			boolean checkTried = false;
 			for (MemberHandle memberHandle : calls) {
 				if (memberHandle instanceof ImmutableCallMemberHandle) {
+					checkTried = true;
 					ImmutableCallMemberHandle icmh = (ImmutableCallMemberHandle) memberHandle;
 					if (!icmh.isFirstCall()) {
 						cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but it must be the first call in the method and only passed method parameters", null);
-					} else if (!icmh.getLocalVariables().contains(paramNo+1)) {
-						cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but this doesn't include parameter "+paramNo, null);
+						return true;
+					} else if (icmh.getLocalVariables().contains(paramNo+1)) {
+						found = true;
 					}
-					return true;
 				} 
 			}
 			
-			return false;
+			if (!found) {
+				cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but this doesn't include parameter "+paramNo, null);
+				return true;
+			}
+			
+			return checkTried;
 		}	
 	}
 	

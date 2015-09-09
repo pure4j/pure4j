@@ -33,6 +33,8 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import org.junit.Test;
+import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.ISeq;
 import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.model.ClassHandle;
@@ -67,7 +69,7 @@ public class JavaStandardLibraryPurity {
 			@SuppressWarnings("unchecked")
 			@Override
 			public List<Class<?>> topLevelClasses() {
-				return Arrays.asList((Class<?>) PersistentHashMap.class, PersistentHashSet.class);
+				return Arrays.asList((Class<?>) ArraySeq.class, ISeq.class);
 			}
 		});
 	}

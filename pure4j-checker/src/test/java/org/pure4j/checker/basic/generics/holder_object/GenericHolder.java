@@ -24,7 +24,7 @@ public final class GenericHolder<X> {
 
 	@Override
 	public boolean equals(Object obj) {
-		return Pure4J.equals(this, obj, this.in);
+		return Pure4J.equals(this, obj);
 	}
 
 	@Override
