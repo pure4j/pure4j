@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
@@ -38,6 +40,8 @@ public class PureChecklistHandler {
 	public static final boolean IGNORE_EXCEPTION_CONSTRUCTION = true;
 	public static final boolean IGNORE_EQUALS_PARAMETER_PURITY = true;
 	public static final boolean IGNORE_TOSTRING_PURITY = true;
+	public static final boolean IGNORE_ENUM_VALUES_PURITY = true;
+	
 	
 
 	class PureMethod {
@@ -97,13 +101,18 @@ public class PureChecklistHandler {
 				}
 				
 				if (this.declaration.getDeclaringClass(cl).isInterface()) {
+					pureImplementation = true;
+					return true;
+				}
+				
+				if (IGNORE_ENUM_VALUES_PURITY && declaration.getDeclaringClass(cl).isEnum() && declaration.getName().equals("values")) {
 					return true;
 				}
 				
 				for (MemberHandle mh: pm.getCalls(declaration)) {
 					if ((mh instanceof MethodHandle) || (mh instanceof ConstructorHandle)) {
 						if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object")) ){
-							pureImplementation = true;
+							// we can skip this one
 						} else if (!isMarkedPure(mh, cb)) {
 							cb.registerError("Pure implementation: "+line(mh)+this+" is expected to be a pure method, but calls impure method "+mh, null);
 							pureImplementation = false;
@@ -118,8 +127,10 @@ public class PureChecklistHandler {
 							}
 							
 							if (!immutables.typeIsMarkedImmutable(f.getGenericType(), cb)) {
-								cb.registerError("Pure implementation: "+this+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
-								pureImplementation = false;
+								if (!forcedImmutable(f)) {
+									cb.registerError("Pure implementation: "+this+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
+									pureImplementation = false;
+								}
 							}
 						}
 					} 
@@ -131,6 +142,17 @@ public class PureChecklistHandler {
 			return pureImplementation;
 		}
 	
+		private boolean forcedImmutable(Field f) {
+			ImmutableValue iv = f.getAnnotation(ImmutableValue.class);
+			if ((iv != null) && (iv.value() == Enforcement.FORCE)) {
+				return true;
+			} 
+			
+			// try the class level
+			iv = RuntimeImmutabilityChecker.classImmutableValueAnnotation(f.getDeclaringClass());
+			return (iv != null);
+		}
+
 		private String line(MemberHandle mh) {
 			if (mh instanceof CallHandle) {
 				return "(line: "+((CallHandle)mh).getLineNumber()+")";
@@ -197,7 +219,9 @@ public class PureChecklistHandler {
 					if (!icmh.isFirstCall()) {
 						cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but it must be the first call in the method and only passed method parameters", null);
 						return true;
-					} else if (icmh.getLocalVariables().contains(paramNo+1)) {
+					} else if ((icmh.getLocalVariables().contains(paramNo+1)) && (icmh.getName().equals("immutable"))) {
+						found = true;
+					} else if (icmh.getName().equals("unsupported")) {
 						found = true;
 					}
 				} 

@@ -206,6 +206,12 @@ java/lang/Math.tan(D)D
 java/lang/Math.tanh(D)D
 java/lang/Math.toDegrees(D)D
 java/lang/Math.toRadians(D)D
+java/lang/Number.byteValue()B
+java/lang/Number.doubleValue()D
+java/lang/Number.floatValue()F
+java/lang/Number.intValue()I
+java/lang/Number.longValue()J
+java/lang/Number.shortValue()S
 java/lang/StrictMath.IEEEremainder(DD)D
 java/lang/StrictMath.abs(D)D
 java/lang/StrictMath.abs(F)F

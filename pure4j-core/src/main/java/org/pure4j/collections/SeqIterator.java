@@ -15,6 +15,9 @@ package org.pure4j.collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.pure4j.annotations.pure.Pure;
+
+@Pure
 public class SeqIterator<K> implements Iterator<K> {
 	
 	ISeq<K> next;

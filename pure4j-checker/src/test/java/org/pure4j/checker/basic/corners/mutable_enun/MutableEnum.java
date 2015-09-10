@@ -24,7 +24,7 @@ public class MutableEnum extends AbstractChecker {
 			this.someState = in;
 		}
 		
-		public int[] someState;
+		final public int[] someState;
 	}
 	
 	@Pure
@@ -33,6 +33,6 @@ public class MutableEnum extends AbstractChecker {
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 5);
+		checkThisPackage(this.getClass(), 1, 3);
 	}
 }

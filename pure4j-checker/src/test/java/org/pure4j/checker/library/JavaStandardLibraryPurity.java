@@ -57,7 +57,7 @@ public class JavaStandardLibraryPurity {
 				out.addAll(javaUtilClasses());
 				return out;
 			}
-		});
+		}, "java.");
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) ArraySeq.class, ISeq.class);
 			}
-		});
+		}, "org.pure4j");
 	}
 	
 	interface ClassListProvider {
@@ -78,14 +78,14 @@ public class JavaStandardLibraryPurity {
 		
 	}
 
-	protected void checkPurityOfClasses(String outputName, ClassListProvider clp) throws IOException {
+	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem) throws IOException {
 		FileCallback fc = new FileCallback(new File(outputName));
 		ClassFileModelBuilder cfmb = new ClassFileModelBuilder();
 		ClassLoader cl = this.getClass().getClassLoader();
 		DefaultResourceLoader drl = new DefaultResourceLoader(cl);
 		
 		for (Class<?> c : clp.topLevelClasses()) {
-			visitAllOf(c, drl, cfmb);
+			visitAllOf(c, drl, cfmb, packageStem);
 		}
 		
 		ProjectModel pm = cfmb.getModel();
@@ -135,8 +135,8 @@ public class JavaStandardLibraryPurity {
 
 	@SuppressWarnings("unchecked")
 	protected List<Class<?>>  javaLangClasses() {
-		return Arrays.asList(ArrayList.class,
-
+		return Arrays.asList(
+		Number.class,
 		StringBuilder.class,
 		StringBuffer.class,
 		Math.class,
@@ -144,19 +144,21 @@ public class JavaStandardLibraryPurity {
 		Comparable.class);
 	}
 	
-	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb) throws IOException {
+	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem) throws IOException {
 		if ((c != Object.class) && (c != null)) {
-			cfmb.visit(drl.getResource("classpath:/"+c.getName().replace(".", "/")+".class"));
-			for (Class<?> intf : c.getInterfaces()) {
-				visitAllOf(intf, drl, cfmb);
+			if (c.getName().startsWith(packageStem)) {
+				cfmb.visit(drl.getResource("classpath:/"+c.getName().replace(".", "/")+".class"));
+				for (Class<?> intf : c.getInterfaces()) {
+					visitAllOf(intf, drl, cfmb, packageStem);
+				}
+				
+				for (Class<?> cl : c.getClasses()) {				
+					visitAllOf(cl, drl, cfmb, packageStem);
+				}
+				
+				
+				visitAllOf(c.getSuperclass(), drl, cfmb, packageStem);
 			}
-			
-			for (Class<?> cl : c.getClasses()) {				
-				visitAllOf(cl, drl, cfmb);
-			}
-			
-			
-			visitAllOf(c.getSuperclass(), drl, cfmb);
 		}
 	}
 

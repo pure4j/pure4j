@@ -18,10 +18,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializable {
 
 	private static final long serialVersionUID = 220865945544862915L;
-	transient int _hasheq = -1;
+	
+	@ImmutableValue(Enforcement.FORCE)
+	protected transient int _hasheq = -1;
 
 	public String toString() {
 		return ToStringFunctions.toString(this);
@@ -68,6 +75,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public ISeq<K> cons(K o) {
+		Pure4J.immutable(o);
 		return new Cons<K>(o, this);
 	}
 
@@ -88,30 +96,36 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public boolean add(K o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return true;
 	}
 
 	public boolean remove(Object o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return true;
 	}
 
 	public boolean addAll(Collection<? extends K> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return true;
 	}
 
 	public void clear() {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
 	}
 
 	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return true;
 	}
 
 	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return true;
 	}
 
 	public boolean containsAll(Collection<?> c) {
+		Pure4J.immutable(c);
 		for (Object o : c) {
 			if (!contains(o))
 				return false;
@@ -128,6 +142,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public boolean contains(Object o) {
+		Pure4J.immutable(o);
 		for (ISeq<K> s = seq(); s != null; s = s.next()) {
 			if (Util.equals(s.first(), o))
 				return true;
@@ -140,6 +155,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	// ////////// List stuff /////////////////
+	@Pure(Enforcement.FORCE)  // no side-effects
 	private List<K> reify() {
 		return Collections.unmodifiableList(new ArrayList<K>(this));
 	}
@@ -149,14 +165,17 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public K set(int index, Object element) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return null;
 	}
 
 	public K remove(int index) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return null;
 	}
 
 	public int indexOf(Object o) {
+		Pure4J.immutable(o);
 		ISeq<K> s = seq();
 		for (int i = 0; s != null; s = s.next(), i++) {
 			if (Util.equals(s.first(), o))
@@ -166,6 +185,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public int lastIndexOf(Object o) {
+		Pure4J.immutable(o);
 		return reify().lastIndexOf(o);
 	}
 
@@ -183,11 +203,12 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 
 	public void add(int index, Object element) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
 	}
 
 	public boolean addAll(int index, Collection<? extends K> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return true;
 	}
 
 }

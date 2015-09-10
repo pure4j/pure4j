@@ -14,8 +14,14 @@ package org.pure4j.collections;
 
 import java.util.Arrays;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.immutable.ImmutableValue;
+
 public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	
+	@ImmutableValue(Enforcement.FORCE)
 	private final K[] array;
 	final int i;
 
@@ -25,6 +31,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return null;
 	}
 
+	@Pure(Enforcement.FORCE)
 	static public <K> ArraySeq<K> create(K... array) {
 		if (array == null || array.length == 0)
 			return null;
@@ -32,6 +39,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return new ArraySeq<K>(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ASeq<?> createFromArray(Object o) {
 		Class<? extends Object> class1 = o.getClass();
 		if (class1.isArray()) {
@@ -65,35 +73,42 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_int create(int... array) {
 		return new ArraySeq_int(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_float create(float... array) {
 		return new ArraySeq_float(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_long create(long... array) {
 		return new ArraySeq_long(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_byte create(byte... array) {
 		return new ArraySeq_byte(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_short create(short... array) {
 		return new ArraySeq_short(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_char create(char... array) {
 		return new ArraySeq_char(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public static ArraySeq_boolean create(boolean... array) {
 		return new ArraySeq_boolean(array, 0, true);
 	}
 
-	ArraySeq(K[] array, int i, boolean copy) {
+	private ArraySeq(K[] array, int i, boolean copy) {
 		this.i = i;
 		this.array = copy ? Arrays.copyOf(array, array.length) : array;
 	}
@@ -121,6 +136,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	public int indexOf(Object o) {
+		Pure4J.immutable(o);
 		if (array != null)
 			for (int j = i; j < array.length; j++)
 				if (Util.equals(o, array[j]))
@@ -129,6 +145,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	public int lastIndexOf(Object o) {
+		Pure4J.immutable(o);
 		if (array != null) {
 			if (o == null) {
 				for (int j = array.length - 1; j >= i; j--)
@@ -147,6 +164,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	// ///////////////////////////////
 
 	static public class ArraySeq_int extends ASeq<Integer> implements IndexedSeq<Integer>  {
+		@ImmutableValue(Enforcement.FORCE)
 		public final int[] array;
 		final int i;
 
@@ -174,6 +192,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				int k = ((Number) o).intValue();
 				for (int j = i; j < array.length; j++)
@@ -185,6 +204,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				int k = ((Number) o).intValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -197,6 +217,8 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_float extends ASeq<Float> implements IndexedSeq<Float>  {
+		
+		@ImmutableValue(Enforcement.FORCE)
 		public final float[] array;
 		final int i;
 
@@ -224,6 +246,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				float f = ((Number) o).floatValue();
 				for (int j = i; j < array.length; j++)
@@ -234,6 +257,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				float f = ((Number) o).floatValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -245,6 +269,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_double extends ASeq<Double> implements IndexedSeq<Double> {
+		@ImmutableValue(Enforcement.FORCE)
 		public final double[] array;
 		final int i;
 
@@ -272,6 +297,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				double d = ((Number) o).doubleValue();
 				for (int j = i; j < array.length; j++)
@@ -283,6 +309,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				double d = ((Number) o).doubleValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -295,6 +322,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_long extends ASeq<Long> implements IndexedSeq<Long> {
+		@ImmutableValue(Enforcement.FORCE)
 		public final long[] array;
 		final int i;
 
@@ -322,6 +350,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				long l = ((Number) o).longValue();
 				for (int j = i; j < array.length; j++)
@@ -333,6 +362,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Number) {
 				long l = ((Number) o).longValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -345,6 +375,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_byte extends ASeq<Byte> implements IndexedSeq<Byte>  {
+		@ImmutableValue(Enforcement.FORCE)
 		public final byte[] array;
 		final int i;
 
@@ -372,6 +403,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Byte) {
 				byte b = ((Byte) o).byteValue();
 				for (int j = i; j < array.length; j++)
@@ -388,6 +420,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Byte) {
 				byte b = ((Byte) o).byteValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -405,6 +438,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_char extends ASeq<Character> implements IndexedSeq<Character> {
+		@ImmutableValue(Enforcement.FORCE)
 		public final char[] array;
 		final int i;
 
@@ -432,6 +466,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Character) {
 				char c = ((Character) o).charValue();
 				for (int j = i; j < array.length; j++)
@@ -448,6 +483,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Character) {
 				char c = ((Character) o).charValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -465,6 +501,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_short extends ASeq<Short> implements IndexedSeq<Short> {
+		@ImmutableValue(Enforcement.FORCE)
 		public final short[] array;
 		final int i;
 
@@ -492,6 +529,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Short) {
 				short s = ((Short) o).shortValue();
 				for (int j = i; j < array.length; j++)
@@ -508,6 +546,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Short) {
 				short s = ((Short) o).shortValue();
 				for (int j = array.length - 1; j >= i; j--)
@@ -525,6 +564,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_boolean extends ASeq<Boolean> implements IndexedSeq<Boolean> {
+		@ImmutableValue(Enforcement.FORCE)
 		public final boolean[] array;
 		final int i;
 
@@ -552,6 +592,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 		
 		public int indexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Boolean) {
 				boolean b = ((Boolean) o).booleanValue();
 				for (int j = i; j < array.length; j++)
@@ -568,6 +609,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 
 		public int lastIndexOf(Object o) {
+			Pure4J.immutable(o);
 			if (o instanceof Boolean) {
 				boolean b = ((Boolean) o).booleanValue();
 				for (int j = array.length - 1; j >= i; j--)

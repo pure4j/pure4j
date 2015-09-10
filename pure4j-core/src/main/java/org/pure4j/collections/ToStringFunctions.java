@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.pure4j.annotations.pure.Pure;
+
+@Pure
 public class ToStringFunctions {
 
 	   /**

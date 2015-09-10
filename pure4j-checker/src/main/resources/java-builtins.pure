@@ -206,6 +206,12 @@ java/lang/Math.tan(D)D
 java/lang/Math.tanh(D)D
 java/lang/Math.toDegrees(D)D
 java/lang/Math.toRadians(D)D
+java/lang/Number.byteValue()B
+java/lang/Number.doubleValue()D
+java/lang/Number.floatValue()F
+java/lang/Number.intValue()I
+java/lang/Number.longValue()J
+java/lang/Number.shortValue()S
 java/lang/StrictMath.IEEEremainder(DD)D
 java/lang/StrictMath.abs(D)D
 java/lang/StrictMath.abs(F)F
@@ -298,6 +304,8 @@ java/lang/StringBuffer.substring(I)Ljava/lang/String;
 java/lang/StringBuffer.substring(II)Ljava/lang/String;
 java/lang/StringBuffer.toString()Ljava/lang/String;
 java/lang/StringBuffer.trimToSize()V
+java/lang/StringBuilder.<init>()V
+java/lang/StringBuilder.<init>(Ljava/lang/String;)V
 java/lang/StringBuilder.append(C)Ljava/lang/AbstractStringBuilder;
 java/lang/StringBuilder.append(C)Ljava/lang/Appendable;
 java/lang/StringBuilder.append(C)Ljava/lang/StringBuilder;
@@ -309,6 +317,7 @@ java/lang/StringBuilder.append(I)Ljava/lang/AbstractStringBuilder;
 java/lang/StringBuilder.append(I)Ljava/lang/StringBuilder;
 java/lang/StringBuilder.append(J)Ljava/lang/AbstractStringBuilder;
 java/lang/StringBuilder.append(J)Ljava/lang/StringBuilder;
+java/lang/StringBuilder.append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
 java/lang/StringBuilder.append(Ljava/lang/String;)Ljava/lang/AbstractStringBuilder;
 java/lang/StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 java/lang/StringBuilder.append(Z)Ljava/lang/AbstractStringBuilder;
@@ -362,6 +371,7 @@ java/util/AbstractCollection.isEmpty()Z
 java/util/AbstractCollection.iterator()Ljava/util/Iterator;
 java/util/AbstractCollection.size()I
 java/util/AbstractCollection.toArray()[Ljava/lang/Object;
+java/util/AbstractCollection.toString()Ljava/lang/String;
 java/util/AbstractList.equals(Ljava/lang/Object;)Z
 java/util/AbstractList.get(I)Ljava/lang/Object;
 java/util/AbstractList.hashCode()I
@@ -372,10 +382,12 @@ java/util/AbstractMap$SimpleEntry.equals(Ljava/lang/Object;)Z
 java/util/AbstractMap$SimpleEntry.getKey()Ljava/lang/Object;
 java/util/AbstractMap$SimpleEntry.getValue()Ljava/lang/Object;
 java/util/AbstractMap$SimpleEntry.hashCode()I
+java/util/AbstractMap$SimpleEntry.toString()Ljava/lang/String;
 java/util/AbstractMap$SimpleImmutableEntry.equals(Ljava/lang/Object;)Z
 java/util/AbstractMap$SimpleImmutableEntry.getKey()Ljava/lang/Object;
 java/util/AbstractMap$SimpleImmutableEntry.getValue()Ljava/lang/Object;
 java/util/AbstractMap$SimpleImmutableEntry.hashCode()I
+java/util/AbstractMap$SimpleImmutableEntry.toString()Ljava/lang/String;
 java/util/AbstractMap.clear()V
 java/util/AbstractMap.clone()Ljava/lang/Object;
 java/util/AbstractMap.entrySet()Ljava/util/Set;
@@ -383,7 +395,10 @@ java/util/AbstractMap.equals(Ljava/lang/Object;)Z
 java/util/AbstractMap.hashCode()I
 java/util/AbstractMap.isEmpty()Z
 java/util/AbstractMap.size()I
+java/util/AbstractMap.toString()Ljava/lang/String;
+java/util/AbstractSequentialList.get(I)Ljava/lang/Object;
 java/util/AbstractSequentialList.listIterator(I)Ljava/util/ListIterator;
+java/util/AbstractSequentialList.remove(I)Ljava/lang/Object;
 java/util/ArrayList.clear()V
 java/util/ArrayList.clone()Ljava/lang/Object;
 java/util/ArrayList.elementData(I)Ljava/lang/Object;
@@ -392,11 +407,14 @@ java/util/ArrayList.get(I)Ljava/lang/Object;
 java/util/ArrayList.grow(I)V
 java/util/ArrayList.hugeCapacity(I)I
 java/util/ArrayList.isEmpty()Z
+java/util/ArrayList.outOfBoundsMsg(I)Ljava/lang/String;
 java/util/ArrayList.rangeCheck(I)V
 java/util/ArrayList.rangeCheckForAdd(I)V
 java/util/ArrayList.size()I
+java/util/ArrayList.subListRangeCheck(III)V
 java/util/ArrayList.toArray()[Ljava/lang/Object;
 java/util/ArrayList.trimToSize()V
+java/util/Arrays.rangeCheck(III)V
 java/util/Collection.clear()V
 java/util/Collection.equals(Ljava/lang/Object;)Z
 java/util/Collection.hashCode()I
@@ -426,6 +444,7 @@ java/util/Dictionary.keys()Ljava/util/Enumeration;
 java/util/Dictionary.size()I
 java/util/EnumMap.clear()V
 java/util/EnumMap.clone()Ljava/lang/Object;
+java/util/EnumMap.entryHashCode(I)I
 java/util/EnumMap.equals(Ljava/lang/Object;)Z
 java/util/EnumMap.hashCode()I
 java/util/EnumMap.size()I
@@ -457,6 +476,7 @@ java/util/Hashtable.equals(Ljava/lang/Object;)Z
 java/util/Hashtable.isEmpty()Z
 java/util/Hashtable.keys()Ljava/util/Enumeration;
 java/util/Hashtable.size()I
+java/util/Hashtable.toString()Ljava/lang/String;
 java/util/Iterator.hasNext()Z
 java/util/Iterator.next()Ljava/lang/Object;
 java/util/Iterator.remove()V
@@ -465,6 +485,7 @@ java/util/LinkedList.checkPositionIndex(I)V
 java/util/LinkedList.element()Ljava/lang/Object;
 java/util/LinkedList.isElementIndex(I)Z
 java/util/LinkedList.isPositionIndex(I)Z
+java/util/LinkedList.outOfBoundsMsg(I)Ljava/lang/String;
 java/util/LinkedList.poll()Ljava/lang/Object;
 java/util/LinkedList.pollFirst()Ljava/lang/Object;
 java/util/LinkedList.pollLast()Ljava/lang/Object;
@@ -568,6 +589,7 @@ java/util/TreeSet.pollLast()Ljava/lang/Object;
 java/util/Vector.capacity()I
 java/util/Vector.clear()V
 java/util/Vector.clone()Ljava/lang/Object;
+java/util/Vector.elementAt(I)Ljava/lang/Object;
 java/util/Vector.elementData(I)Ljava/lang/Object;
 java/util/Vector.ensureCapacity(I)V
 java/util/Vector.ensureCapacityHelper(I)V

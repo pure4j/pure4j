@@ -220,7 +220,7 @@ public class ClassFileModelBuilder {
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
 				MemberHandle remoteMethod = null;
-				if (owner.equals(Type.getInternalName(Pure4J.class)) && (name.equals("immutable"))) {
+				if (owner.equals(Type.getInternalName(Pure4J.class))) {
 					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);
 					arguments = new Stack<Integer>();
 				} else {

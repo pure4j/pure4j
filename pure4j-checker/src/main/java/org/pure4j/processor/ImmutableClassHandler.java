@@ -28,6 +28,7 @@ import org.pure4j.immutable.RuntimeImmutabilityChecker;
 public class ImmutableClassHandler {
 
 	public static final Set<?> INBUILT_IMMUTABLE_CLASSES = new HashSet<Object>();
+	public static final boolean CHECK_FOR_FINAL_CLASSES = false;
 
 	static {
 		@SuppressWarnings({ "rawtypes" })
@@ -123,15 +124,20 @@ public class ImmutableClassHandler {
 			return;
 		}
 		
-		if (!Modifier.isFinal(immutableClass.getModifiers())) {
-			cb.registerError("Concrete @ImmutableValue class should be final: "+immutableClass.getName(), null);
+		if (CHECK_FOR_FINAL_CLASSES) {
+			if (!Modifier.isFinal(immutableClass.getModifiers())) {
+				cb.registerError("Concrete @ImmutableValue class should be final: "+immutableClass.getName(), null);
+			}
 		}
 		
 		while (immutableClass != Object.class) {
 			for (Field f : immutableClass.getDeclaredFields()) {
 				ImmutableValue fieldIV = f.getAnnotation(ImmutableValue.class);
+				boolean skip = false;
+				skip |= ((fieldIV != null) && (fieldIV.value() == Enforcement.FORCE));
+				skip |= (immutableClass.isEnum() && f.getName().equals("ENUM$VALUES"));
 				
-				if ((fieldIV == null) || (fieldIV.value() != Enforcement.FORCE)){
+				if (!skip) {
 					if (!Modifier.isStatic(f.getModifiers())) {
 						if (!Modifier.isFinal(f.getModifiers())) {
 							cb.registerError("Field "+f.getName()+" should be final on @ImmutableValue class "+immutableClass.getName(), null);
@@ -143,6 +149,7 @@ public class ImmutableClassHandler {
 								immutableClass+".  Consider adding @ImmutableValue to "+f.getType(), null);
 					}
 				}
+					
 			}
 			
 			immutableClass = immutableClass.getSuperclass();

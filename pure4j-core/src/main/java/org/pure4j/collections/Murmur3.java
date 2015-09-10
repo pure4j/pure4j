@@ -30,6 +30,8 @@
 
 package org.pure4j.collections;
 
+import org.pure4j.annotations.pure.Pure;
+
 /**
  * See http://smhasher.googlecode.com/svn/trunk/MurmurHash3.cpp
  * MurmurHash3_x86_32
@@ -39,6 +41,7 @@ package org.pure4j.collections;
  * @author Kurt Alfred Kluever
  */
 
+@Pure
 public final class Murmur3 {
 	private static final int seed = 0;
 	private static final int C1 = 0xcc9e2d51;

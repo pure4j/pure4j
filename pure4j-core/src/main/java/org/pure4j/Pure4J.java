@@ -127,4 +127,8 @@ public class Pure4J {
 			throw new RuntimeException("Couldn't reflectively determine fields: ", e);
 		}
 	}
+	
+	public static final void unsupported() {
+		throw new UnsupportedOperationException();
+	}
 }
