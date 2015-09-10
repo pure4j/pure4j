@@ -1,4 +1,4 @@
-package org.pure4j.checker.basic.immutable.forced;
+package org.pure4j.checker.basic.immutable.forced1;
 
 import java.io.IOException;
 

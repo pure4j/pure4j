@@ -70,7 +70,7 @@ import org.pure4j.annotations.pure.Enforcement;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.FIELD})
 public @interface ImmutableValue {
 
 	Enforcement value() default Enforcement.CHECKED;

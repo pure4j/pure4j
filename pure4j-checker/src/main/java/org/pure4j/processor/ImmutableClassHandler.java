@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 /**
@@ -116,27 +117,38 @@ public class ImmutableClassHandler {
 	}
 		
 	public void doClassImmutabilityChecks(Class<?> immutableClass, Callback cb) {
+		ImmutableValue iv = RuntimeImmutabilityChecker.classImmutableValueAnnotation(immutableClass);
+		if (iv.value() == Enforcement.FORCE) {
+			// accept that it's immutable, even when it's not
+			return;
+		}
+		
 		if (!Modifier.isFinal(immutableClass.getModifiers())) {
 			cb.registerError("Concrete @ImmutableValue class should be final: "+immutableClass.getName(), null);
 		}
 		
 		while (immutableClass != Object.class) {
 			for (Field f : immutableClass.getDeclaredFields()) {
-				if (!Modifier.isStatic(f.getModifiers())) {
-					if (!Modifier.isFinal(f.getModifiers())) {
-						cb.registerError("Field "+f.getName()+" should be final on @ImmutableValue class "+immutableClass.getName(), null);
-					}
-				}
+				ImmutableValue fieldIV = f.getAnnotation(ImmutableValue.class);
 				
-				if (!typeIsMarkedImmutable(f.getGenericType(), cb)) {
-					cb.registerError("Field "+f.getName()+" should have an immutable type on class "+
-							immutableClass+".  Consider adding @ImmutableValue to "+f.getType(), null);
+				if ((fieldIV == null) || (fieldIV.value() != Enforcement.FORCE)){
+					if (!Modifier.isStatic(f.getModifiers())) {
+						if (!Modifier.isFinal(f.getModifiers())) {
+							cb.registerError("Field "+f.getName()+" should be final on @ImmutableValue class "+immutableClass.getName(), null);
+						}
+					}
+					
+					if (!typeIsMarkedImmutable(f.getGenericType(), cb)) {
+						cb.registerError("Field "+f.getName()+" should have an immutable type on class "+
+								immutableClass+".  Consider adding @ImmutableValue to "+f.getType(), null);
+					}
 				}
 			}
 			
 			immutableClass = immutableClass.getSuperclass();
 		}
 	}
+	
 	
 	public void checkAddImmutableClasses(Set<Class<?>> modelClasses, Callback cb) {
 		for (Class<?> class1 : modelClasses) {

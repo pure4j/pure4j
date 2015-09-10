@@ -14,7 +14,7 @@ public final class HasPrivateArray {
 
 	@Override
 	public int hashCode() {
-		return Arrays.hashCode(members);
+		return 5;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public final class HasPrivateArray {
 
 	@Override
 	public String toString() {
-		return Arrays.toString(members);
+		return "blah";
 	}
 	
 	
