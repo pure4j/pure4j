@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
 import org.pure4j.model.ImmutableCallMemberHandle;
@@ -104,7 +105,7 @@ public class PureChecklistHandler {
 						if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object")) ){
 							pureImplementation = true;
 						} else if (!isMarkedPure(mh, cb)) {
-							cb.registerError("Pure implementation: "+this+" is expected to be a pure method, but calls impure method "+mh, null);
+							cb.registerError("Pure implementation: "+line(mh)+this+" is expected to be a pure method, but calls impure method "+mh, null);
 							pureImplementation = false;
 						}
 					} else if (mh instanceof FieldHandle) {
@@ -130,6 +131,14 @@ public class PureChecklistHandler {
 			return pureImplementation;
 		}
 	
+		private String line(MemberHandle mh) {
+			if (mh instanceof CallHandle) {
+				return "(line: "+((CallHandle)mh).getLineNumber()+")";
+			}
+			
+			return "";
+		}
+
 		private boolean onCurrentObject(FieldHandle fh, Field f) {
 			if (fh.getDeclaringClass().equals(declaration.getDeclaringClass())) {
 				// ok, it's the same class, but is it the same instance?  This is 

@@ -21,6 +21,7 @@ java/util/List.toArray()[Ljava/lang/Object;
 org/pure4j/collections/ASeq.clear()V
 org/pure4j/collections/ASeq.count()I
 org/pure4j/collections/ASeq.empty()Lorg/pure4j/collections/IPersistentCollection;
+org/pure4j/collections/ASeq.equals(Ljava/lang/Object;)Z
 org/pure4j/collections/ASeq.isEmpty()Z
 org/pure4j/collections/ASeq.listIterator()Ljava/util/ListIterator;
 org/pure4j/collections/ASeq.listIterator(I)Ljava/util/ListIterator;
@@ -45,8 +46,11 @@ org/pure4j/collections/ArraySeq$ArraySeq_long.first()Ljava/lang/Object;
 org/pure4j/collections/ArraySeq$ArraySeq_long.index()I
 org/pure4j/collections/ArraySeq$ArraySeq_short.first()Ljava/lang/Object;
 org/pure4j/collections/ArraySeq$ArraySeq_short.index()I
+org/pure4j/collections/ArraySeq.count()I
 org/pure4j/collections/ArraySeq.create()Lorg/pure4j/collections/ArraySeq;
+org/pure4j/collections/ArraySeq.first()Ljava/lang/Object;
 org/pure4j/collections/ArraySeq.index()I
+org/pure4j/collections/ArraySeq.next()Lorg/pure4j/collections/ISeq;
 org/pure4j/collections/Counted.count()I
 org/pure4j/collections/IPersistentCollection.empty()Lorg/pure4j/collections/IPersistentCollection;
 org/pure4j/collections/ISeq.first()Ljava/lang/Object;

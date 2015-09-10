@@ -14,6 +14,8 @@ package org.pure4j.collections;
 
 import java.math.BigInteger;
 
+import org.pure4j.annotations.pure.Pure;
+
 public class Util {
 
 	static public boolean identical(Object k1, Object k2) {
@@ -95,6 +97,7 @@ public class Util {
 		throw (T) t;
 	}
 
+	@Pure
 	static public boolean equals(Object k1, Object k2){
 		if(k1 == k2)
 			return true;

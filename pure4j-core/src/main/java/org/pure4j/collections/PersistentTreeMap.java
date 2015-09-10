@@ -21,7 +21,8 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 /**
- * Persistent Red Black Tree Note that instances of this class are constant
+ * Persistent Red Black Tree 
+ * Note that instances of this class are constant
  * values i.e. add/remove etc return new values
  * <p/>
  * See Okasaki, Kahrs, Larsen et al

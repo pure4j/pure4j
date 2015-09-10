@@ -118,7 +118,7 @@ public class ImmutableClassHandler {
 		
 	public void doClassImmutabilityChecks(Class<?> immutableClass, Callback cb) {
 		ImmutableValue iv = RuntimeImmutabilityChecker.classImmutableValueAnnotation(immutableClass);
-		if (iv.value() == Enforcement.FORCE) {
+		if ((iv != null) && (iv.value() == Enforcement.FORCE)) {
 			// accept that it's immutable, even when it's not
 			return;
 		}

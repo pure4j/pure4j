@@ -52,7 +52,6 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return PersistentHashMap.create(init);
 	}
 
-	@SuppressWarnings("unchecked")
 	static public <K> PersistentArrayMap<K, K> createWithCheck(K... init) {
 		for (int i = 0; i < init.length; i += 2) {
 			for (int j = i + 2; j < init.length; j += 2) {

@@ -26,7 +26,6 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		return ret;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <K> PersistentTreeSet<K> create(K... init) {
 		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>());
 		for (int i = 0; i < init.length; i++) {

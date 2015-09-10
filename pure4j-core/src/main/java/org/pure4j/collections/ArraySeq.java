@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	
-	public final K[] array;
+	private final K[] array;
 	final int i;
 
 	// ISeq _rest;
@@ -25,7 +25,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	static public <K> ArraySeq<K> create(K... array) {
 		if (array == null || array.length == 0)
 			return null;
