@@ -36,6 +36,8 @@ public class PureChecklistHandler {
 	
 	public static final boolean IGNORE_EXCEPTION_CONSTRUCTION = true;
 	public static final boolean IGNORE_EQUALS_PARAMETER_PURITY = true;
+	public static final boolean IGNORE_TOSTRING_PURITY = true;
+	
 
 	class PureMethod {
 		
@@ -99,7 +101,9 @@ public class PureChecklistHandler {
 				
 				for (MemberHandle mh: pm.getCalls(declaration)) {
 					if ((mh instanceof MethodHandle) || (mh instanceof ConstructorHandle)) {
-						if (!isMarkedPure(mh, cb)) {
+						if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object")) ){
+							pureImplementation = true;
+						} else if (!isMarkedPure(mh, cb)) {
 							cb.registerError("Pure implementation: "+this+" is expected to be a pure method, but calls impure method "+mh, null);
 							pureImplementation = false;
 						}
@@ -190,9 +194,11 @@ public class PureChecklistHandler {
 				} 
 			}
 			
-			if (!found) {
-				cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but this doesn't include parameter "+paramNo, null);
-				return true;
+			if (checkTried) {
+				if (!found) {
+					cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but this doesn't include parameter "+paramNo, null);
+					return true;
+				}
 			}
 			
 			return checkTried;
@@ -215,6 +221,8 @@ public class PureChecklistHandler {
 	public void loadPureLists() {
 		try {
 			load("/java-lang.pure");
+			load("/java-builtins.pure");
+			load("/java-extra.pure");
 		} catch (Exception e) {
 			throw new RuntimeException("Couldn't load the pure lists: ",e);
 		}

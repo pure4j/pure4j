@@ -8,3 +8,16 @@ java/lang/Object.registerNatives()V
 java/lang/Object.notify()V 
 java/lang/Object.notifyAll()V 
 java/lang/Object.<init>()V
+java/lang/Enum.hashCode()I
+java/lang/Enum.valueOf(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
+java/lang/Enum.getDeclaringClass()Ljava/lang/Class;
+java/lang/Enum.finalize()V
+java/lang/Enum.clone()Ljava/lang/Object;
+java/lang/Enum.compareTo(Ljava/lang/Enum;)I
+java/lang/Enum.ordinal()I
+java/lang/Enum.name()Ljava/lang/String;
+java/lang/Enum.readObjectNoData()V
+java/lang/Enum.toString()Ljava/lang/String;
+java/lang/Enum.equals(Ljava/lang/Object;)Z
+java/lang/Enum.compareTo(Ljava/lang/Object;)I
+java/lang/Enum.readObject(Ljava/io/ObjectInputStream;)V

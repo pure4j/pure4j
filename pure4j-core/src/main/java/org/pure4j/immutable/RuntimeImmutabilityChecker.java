@@ -1,8 +1,6 @@
 package org.pure4j.immutable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -56,42 +54,29 @@ public class RuntimeImmutabilityChecker {
 			throw new ClassNotImmutableException("Array type passed:  not immutable. "+immutableClass);
 		}
 		
-		if (!classHasImmutableValueAnnotation(immutableClass)) {
+		if (classImmutableValueAnnotation(immutableClass) == null) {
 			throw new ClassNotImmutableException("Class is missing @ImmutableValue annotation"+immutableClass);
-		}
-		
-		while (immutableClass != Object.class) {
-			for (Field f : immutableClass.getDeclaredFields()) {
-				if (!Modifier.isStatic(f.getModifiers())) {
-					if (!Modifier.isFinal(f.getModifiers())) {
-						throw new ClassNotImmutableException("Field "+f.getName()+" not final on immutable class "+immutableClass.getName());
-					}
-					
-					throwIfTypeNotImmutable(f.getGenericType());
-				}
-			}
-			
-			immutableClass = immutableClass.getSuperclass();
 		}
 		
 		immutableClassCache.add(immutableClass);
 	}
 	
-	public static boolean classHasImmutableValueAnnotation(Class<?> immutableClass) {
+	public static ImmutableValue classImmutableValueAnnotation(Class<?> immutableClass) {
 		if ((immutableClass == Object.class) || (immutableClass == null)) {
-			return false;
+			return null;
 		}
 		
-		ImmutableValue ann = immutableClass.getClass().getAnnotation(ImmutableValue.class);
+		ImmutableValue ann = immutableClass.getAnnotation(ImmutableValue.class);
 		if (ann != null) {
-			return true;
+			return ann;
 		} else {
 			for (Class<?> interf : immutableClass.getInterfaces()) {
-				if (classHasImmutableValueAnnotation(interf)) {
-					return true;
+				ann = classImmutableValueAnnotation(interf);
+				if (ann != null) {
+					return ann;
 				}
 			}
-			return classHasImmutableValueAnnotation(immutableClass.getSuperclass());
+			return classImmutableValueAnnotation(immutableClass.getSuperclass());
 		}
 	}
 	

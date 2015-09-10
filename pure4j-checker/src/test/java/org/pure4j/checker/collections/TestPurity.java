@@ -1,4 +1,4 @@
-package org.pure4j.checker.collections.quarantine;
+package org.pure4j.checker.collections;
 
 import java.io.IOException;
 
@@ -9,6 +9,6 @@ public class TestPurity extends AbstractChecker {
  
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 2,  0);
+		checkThisPackage(this.getClass(), 0,  10);
 	}
 }

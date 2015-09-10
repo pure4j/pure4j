@@ -35,8 +35,6 @@ import java.util.Vector;
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
-import org.pure4j.collections.PersistentHashMap;
-import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;

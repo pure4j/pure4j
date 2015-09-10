@@ -7,7 +7,7 @@ public class StringBuilding {
 
 	@Pure
 	public static String soSomeMorePureStuff(SomeValueObject a, String b) {
-		return a + b;
+		return a + b;		// this should be fine, as both are immutable
 	}
 	
 }

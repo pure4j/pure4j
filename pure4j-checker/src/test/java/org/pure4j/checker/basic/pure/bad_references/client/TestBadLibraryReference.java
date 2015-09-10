@@ -19,6 +19,6 @@ public class TestBadLibraryReference extends AbstractChecker {
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 2, 0);
+		checkThisPackage(this.getClass(), 1, 0);
 	}
 }

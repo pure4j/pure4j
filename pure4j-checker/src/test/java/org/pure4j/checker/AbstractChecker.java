@@ -14,12 +14,9 @@ import org.pure4j.processor.PurityChecker;
 import org.pure4j.processor.SpringProjectModelFactory;
 
 public class AbstractChecker {
-
-	int errors = 0;
 	
 	@Pure(Enforcement.NOT_PURE)
 	protected void checkThisPackage(Class<?> ofClass, int expectedErrorCount, int expectedPureCount) throws IOException {
-		errors = 0;
 		final Set<String> pures = new LinkedHashSet<String>();
 		final Set<String> errorSet = new LinkedHashSet<String>();
 
@@ -33,7 +30,6 @@ public class AbstractChecker {
 			
 			@Override
 			public void registerError(String s, Throwable optional) {
-				errors++;
 				errorSet.add(s);
 				System.err.println(s);
 				System.err.flush();
@@ -67,11 +63,11 @@ public class AbstractChecker {
 		
 		System.err.flush();
 		
-		Assert.assertEquals(expectedErrorCount, errors);
+		Assert.assertEquals(expectedErrorCount, errorSet.size());
 		Assert.assertEquals(expectedPureCount, pures.size());
 	}
 	
-	@Pure
+	@Pure(Enforcement.FORCE)
 	public void assertEquals(Object exp, Object act) {
 		if (!exp.equals(act)) {
 			throw new RuntimeException("Was expecting equality: "+exp+" and "+act);

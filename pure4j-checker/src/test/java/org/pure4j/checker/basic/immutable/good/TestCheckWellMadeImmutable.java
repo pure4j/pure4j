@@ -9,6 +9,6 @@ public class TestCheckWellMadeImmutable extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0, 6);
+		checkThisPackage(this.getClass(), 0, 9);
 	}
 }

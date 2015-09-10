@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 /**
  * Keeps track of the classes that have been registered as immutable
@@ -51,13 +52,9 @@ public class ImmutableClassHandler {
 		
 		if (!immutableClasses.containsKey(in.getName())) {
 			boolean immutable = false;
-			ImmutableValue ann = in.getAnnotation(ImmutableValue.class);
-			immutable = immutable || (ann != null);
-			immutable = immutable || ((in.getSuperclass() != null) ? classIsMarkedImmutable(in.getSuperclass(), cb) : false);
-			for (Class<?> interf : in.getInterfaces()) {
-				immutable = immutable || classIsMarkedImmutable(interf, cb);
-			}
-			
+			ImmutableValue ann = RuntimeImmutabilityChecker.classImmutableValueAnnotation(in);
+			immutable = (ann != null);
+
 			if (immutable) {
 				cb.send("immutable:           "+in.getName());
 			} else {
@@ -78,7 +75,7 @@ public class ImmutableClassHandler {
 				return classIsMarkedImmutable((Class<?>) t, cb);
 			}
 		} else if (t instanceof Enum<?>){
-			return classIsMarkedImmutable(((Enum<?>) t).getDeclaringClass(), cb);
+			return true;
 		} else if (t instanceof ParameterizedType) {
 			// we need to make sure the raw class is immutable
 			Type raw = ((ParameterizedType) t).getRawType();
