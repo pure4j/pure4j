@@ -99,7 +99,9 @@ org/pure4j/collections/ArraySeq.indexOf(Ljava/lang/Object;)I
 org/pure4j/collections/ArraySeq.lastIndexOf(Ljava/lang/Object;)I
 org/pure4j/collections/ArraySeq.next()Lorg/pure4j/collections/ISeq;
 org/pure4j/collections/Counted.count()I
+org/pure4j/collections/IPersistentCollection.cons(Ljava/lang/Object;)Lorg/pure4j/collections/IPersistentCollection;
 org/pure4j/collections/IPersistentCollection.empty()Lorg/pure4j/collections/IPersistentCollection;
+org/pure4j/collections/ISeq.cons(Ljava/lang/Object;)Lorg/pure4j/collections/ISeq;
 org/pure4j/collections/ISeq.first()Ljava/lang/Object;
 org/pure4j/collections/ISeq.more()Lorg/pure4j/collections/ISeq;
 org/pure4j/collections/ISeq.next()Lorg/pure4j/collections/ISeq;

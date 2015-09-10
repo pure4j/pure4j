@@ -48,7 +48,6 @@ public class PureChecklistHandler {
 		
 		public MemberHandle declaration;
 		public Enforcement e;
-		private Boolean pureInterface = null;
 		private Boolean pureImplementation = null;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 	
@@ -62,10 +61,8 @@ public class PureChecklistHandler {
 		protected void setupEnforcements(Enforcement e) {
 			if (e==Enforcement.FORCE) {
 				 pureImplementation = true;
-				 pureInterface = true;
 			} else if (e==Enforcement.NOT_PURE) {
 				pureImplementation = false;
-				pureInterface = false;
 			}
 		}
 		
@@ -107,6 +104,39 @@ public class PureChecklistHandler {
 				
 				if (IGNORE_ENUM_VALUES_PURITY && declaration.getDeclaringClass(cl).isEnum() && declaration.getName().equals("values")) {
 					return true;
+				}
+				
+				if (IGNORE_EQUALS_PARAMETER_PURITY) {
+					if (("equals".equals(declaration.getName())) && 
+						("(Ljava/lang/Object;)Z".equals(declaration.getDesc()))) {
+						return true;
+					}
+				}
+				
+				// finish now if abstract/interface
+				if (declaration.getDeclaringClass(cl).isInterface()) {
+					return true;
+				}
+				
+				if (declaration instanceof MethodHandle) {
+					Method m = ((MethodHandle) declaration).hydrate(cl);
+					if (Modifier.isAbstract(m.getModifiers())) {
+						return true;
+					}
+				}
+				
+	
+				// check the signature of the pure method
+				Type[] genericTypes = declaration.getGenericTypes(cl);
+				for (int i = 0; i < genericTypes.length; i++) {
+					Type t = genericTypes[i];
+					if (!immutables.typeIsMarkedImmutable(t, cb)) {
+						if (!isRuntimeChecked(i, pm, cb)) {
+							cb.registerError("Pure interface:      "+this+" can't take non-immutable argument "+t, null);
+							pureImplementation = false;
+							return false;
+						}
+					}
 				}
 				
 				for (MemberHandle mh: pm.getCalls(declaration)) {
@@ -174,35 +204,6 @@ public class PureChecklistHandler {
 			}
 			
 			return false;
-		}
-	
-		public boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
-			if (pureInterface == null) {
-				pureInterface = true;
-				
-				if (IGNORE_EQUALS_PARAMETER_PURITY) {
-					if (("equals".equals(declaration.getName())) && 
-						("(Ljava/lang/Object;)Z".equals(declaration.getDesc()))) {
-						return true;
-					}
-				}
-	
-				// check the signature of the pure method
-				Type[] genericTypes = declaration.getGenericTypes(cl);
-				for (int i = 0; i < genericTypes.length; i++) {
-					Type t = genericTypes[i];
-					if (!immutables.typeIsMarkedImmutable(t, cb)) {
-						if (!isRuntimeChecked(i, pm, cb)) {
-							cb.registerError("Pure interface:      "+this+" can't take non-immutable argument "+t, null);
-							pureInterface = false;
-						}
-					}
-				}
-				
-				cb.send("Pure interface:      "+this);
-			} 
-			return pureInterface;
-			
 		}
 
 		/**
@@ -382,7 +383,6 @@ public class PureChecklistHandler {
 	
 	public void doPureMethodChecks(Callback cb, ProjectModel pm) {
 		for (PureMethod pureCandidate : pureChecklist.values()) {
-			pureCandidate.checkInterfacePurity(cb, pm); 
 			pureCandidate.checkImplementationPurity(cb, pm);
 		}
 	}

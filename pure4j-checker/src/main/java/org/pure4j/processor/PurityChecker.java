@@ -46,7 +46,7 @@ public class PurityChecker implements Rule {
 	
 	public void outputPureMethodList(Callback cb, ProjectModel pm) {
 		for (PureMethod pureMethod : pureChecklist.getMethodList()) {
-			if ((pureMethod.checkImplementationPurity(cb, pm)) && (pureMethod.checkInterfacePurity(cb, pm))) {
+			if ((pureMethod.checkImplementationPurity(cb, pm))) {
 				if (pm.getAllClasses().contains(pureMethod.declaration.getDeclaringClass())) {
 					cb.registerPure(pureMethod.declaration.toString());
 				}
