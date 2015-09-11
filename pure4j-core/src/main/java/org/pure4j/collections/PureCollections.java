@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.RandomAccess;
 import java.util.regex.Matcher;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -141,7 +142,7 @@ public class PureCollections {
 		return seq.next();
 	}
 
-	@Pure
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("rawtypes")
 	static public Object nth(Object coll, int n) {
 		if (coll instanceof Indexed)

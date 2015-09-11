@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static final boolean OUTPUT_ASM = false;
+	public static final boolean OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 

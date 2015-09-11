@@ -102,6 +102,6 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 	public abstract Class<?>[] getRawTypes(ClassLoader cl);
 	
 	public String getSignature() {
-		return name+desc;
+		return name+desc.substring(0, desc.lastIndexOf(")")+1);
 	}
 }
