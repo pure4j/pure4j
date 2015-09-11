@@ -9,8 +9,8 @@ org/pure4j/collections/ASeq.containsAll(Ljava/util/Collection;)Z
 org/pure4j/collections/ASeq.count()I
 org/pure4j/collections/ASeq.empty()Lorg/pure4j/collections/IPersistentCollection;
 org/pure4j/collections/ASeq.equals(Ljava/lang/Object;)Z
+org/pure4j/collections/ASeq.get(I)Ljava/lang/Object;
 org/pure4j/collections/ASeq.hashCode()I
-org/pure4j/collections/ASeq.indexOf(Ljava/lang/Object;)I
 org/pure4j/collections/ASeq.isEmpty()Z
 org/pure4j/collections/ASeq.iterator()Ljava/util/Iterator;
 org/pure4j/collections/ASeq.listIterator()Ljava/util/ListIterator;
@@ -25,6 +25,8 @@ org/pure4j/collections/ASeq.seq()Lorg/pure4j/collections/ISeq;
 org/pure4j/collections/ASeq.set(ILjava/lang/Object;)Ljava/lang/Object;
 org/pure4j/collections/ASeq.size()I
 org/pure4j/collections/ASeq.subList(II)Ljava/util/List;
+org/pure4j/collections/ASeq.toArray()[Ljava/lang/Object;
+org/pure4j/collections/ASeq.toArray([Ljava/lang/Object;)[Ljava/lang/Object;
 org/pure4j/collections/ASeq.toString()Ljava/lang/String;
 org/pure4j/collections/ArraySeq$ArraySeq_boolean.count()I
 org/pure4j/collections/ArraySeq$ArraySeq_boolean.first()Ljava/lang/Boolean;
@@ -86,6 +88,7 @@ org/pure4j/collections/ArraySeq.count()I
 org/pure4j/collections/ArraySeq.create()Lorg/pure4j/collections/ArraySeq;
 org/pure4j/collections/ArraySeq.create([B)Lorg/pure4j/collections/ArraySeq$ArraySeq_byte;
 org/pure4j/collections/ArraySeq.create([C)Lorg/pure4j/collections/ArraySeq$ArraySeq_char;
+org/pure4j/collections/ArraySeq.create([D)Lorg/pure4j/collections/ArraySeq$ArraySeq_double;
 org/pure4j/collections/ArraySeq.create([F)Lorg/pure4j/collections/ArraySeq$ArraySeq_float;
 org/pure4j/collections/ArraySeq.create([I)Lorg/pure4j/collections/ArraySeq$ArraySeq_int;
 org/pure4j/collections/ArraySeq.create([J)Lorg/pure4j/collections/ArraySeq$ArraySeq_long;
@@ -98,12 +101,6 @@ org/pure4j/collections/ArraySeq.index()I
 org/pure4j/collections/ArraySeq.indexOf(Ljava/lang/Object;)I
 org/pure4j/collections/ArraySeq.lastIndexOf(Ljava/lang/Object;)I
 org/pure4j/collections/ArraySeq.next()Lorg/pure4j/collections/ISeq;
-org/pure4j/collections/Counted.count()I
-org/pure4j/collections/IPersistentCollection.cons(Ljava/lang/Object;)Lorg/pure4j/collections/IPersistentCollection;
-org/pure4j/collections/IPersistentCollection.empty()Lorg/pure4j/collections/IPersistentCollection;
-org/pure4j/collections/ISeq.cons(Ljava/lang/Object;)Lorg/pure4j/collections/ISeq;
-org/pure4j/collections/ISeq.first()Ljava/lang/Object;
-org/pure4j/collections/ISeq.more()Lorg/pure4j/collections/ISeq;
-org/pure4j/collections/ISeq.next()Lorg/pure4j/collections/ISeq;
-org/pure4j/collections/IndexedSeq.index()I
-org/pure4j/collections/Seqable.seq()Lorg/pure4j/collections/ISeq;
+org/pure4j/collections/PureCollections.length(Lorg/pure4j/collections/ISeq;)I
+org/pure4j/collections/PureCollections.seqToArray(Lorg/pure4j/collections/ISeq;)[Ljava/lang/Object;
+org/pure4j/collections/PureCollections.seqToNewArray(Lorg/pure4j/collections/ISeq;[Ljava/lang/Object;)[Ljava/lang/Object;

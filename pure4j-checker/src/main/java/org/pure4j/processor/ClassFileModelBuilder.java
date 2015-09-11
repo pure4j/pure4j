@@ -219,6 +219,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
+				MemberHandle myMethod = mh;
 				MemberHandle remoteMethod = null;
 				if (owner.equals(Type.getInternalName(Pure4J.class))) {
 					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);
@@ -303,6 +304,7 @@ public class ClassFileModelBuilder {
 
 			public void visitLineNumber(int arg0, Label arg1) {
 				output("line: "+arg0);
+				line = arg0;
 			}
 
 			public void visitLocalVariable(String arg0, String arg1, String arg2, Label arg3, Label arg4, int arg5) {

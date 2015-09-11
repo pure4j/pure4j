@@ -91,8 +91,9 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Pure(Enforcement.FORCE)
 	public <T> T[] toArray(T[] a) {
-		return (T[]) PureCollections.seqToPassedArray(seq(), a);
+		return (T[]) PureCollections.seqToNewArray(seq(), a);
 	}
 
 	public boolean add(K o) {

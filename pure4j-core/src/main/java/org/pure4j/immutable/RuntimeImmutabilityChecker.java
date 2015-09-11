@@ -8,11 +8,15 @@ import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Pure;
 
 
 public class RuntimeImmutabilityChecker {
@@ -22,27 +26,28 @@ public class RuntimeImmutabilityChecker {
 	 */
 	public static final String PURE4J_IMMUTABILITY_CHECKING = "pure4j.immutability_checking";
 	
-	private static final Set<Class<?>> INBUILT_IMMUTABLE_CLASSES = createInbuiltImmutableSet();
+	public static final Set<Class<?>> INBUILT_IMMUTABLE_CLASSES = createInbuiltImmutableSet();
 
 	@SuppressWarnings("unchecked")
 	public static Set<Class<?>> createInbuiltImmutableSet() {
 		HashSet<Class<?>> out = new HashSet<Class<?>>();
-		List<Class<?>> l = Arrays.asList(Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Math.class, StrictMath.class);
+		List<Class<?>> l = Arrays.asList((Class<?>) Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
+			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class);
 		out.addAll(l);
-		return out;
+		return Collections.unmodifiableSet(out);
 	}
 	
-	private static Set<Class<?>> immutableClassCache = new HashSet<Class<?>>(100);
+	private static Map<Class<?>, Boolean> immutableClassCache = new HashMap<Class<?>, Boolean>(100);
 	
-	
+	@Pure
 	public static void throwIfClassNotImmutable(Class<?> immutableClass) {
 		if (INBUILT_IMMUTABLE_CLASSES.contains(immutableClass)) {
 			return;
 		}
 
-		if(immutableClassCache.contains(immutableClass)) {
-			return;
+		Boolean imm = immutableClassCache.get(immutableClass);
+		if(Boolean.TRUE.equals(imm)) {
+			return ;
 		}
 	
 		String prop = System.getProperty(PURE4J_IMMUTABILITY_CHECKING);
@@ -51,14 +56,40 @@ public class RuntimeImmutabilityChecker {
 		}
 		
 		if (immutableClass.isArray()) {
+			immutableClassCache.put(immutableClass, false);
 			throw new ClassNotImmutableException("Array type passed:  not immutable. "+immutableClass);
 		}
 		
 		if (classImmutableValueAnnotation(immutableClass) == null) {
+			immutableClassCache.put(immutableClass, false);
 			throw new ClassNotImmutableException("Class is missing @ImmutableValue annotation"+immutableClass);
 		}
 		
-		immutableClassCache.add(immutableClass);
+		immutableClassCache.put(immutableClass, true);
+	}
+	
+	@Pure
+	public static boolean isClassImmutable(Class<?> immutableClass) {
+		if (INBUILT_IMMUTABLE_CLASSES.contains(immutableClass)) {
+			return true; 
+		}
+
+		Boolean imm = immutableClassCache.get(immutableClass);
+		if(imm != null) {
+			return imm;
+		}
+	
+		if (immutableClass.isArray()) {
+			return false;
+		}
+		
+		if (classImmutableValueAnnotation(immutableClass) != null) {
+			immutableClassCache.put(immutableClass, true);
+			return true;
+		}
+		
+		immutableClassCache.put(immutableClass, false);
+		return false;
 	}
 	
 	public static ImmutableValue classImmutableValueAnnotation(Class<?> immutableClass) {

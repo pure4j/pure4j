@@ -2,7 +2,6 @@ package org.pure4j.checker.basic.immutable.good;
 
 import java.math.BigInteger;
 
-import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.checker.basic.pure.methods.SomePureStuff;
 
@@ -54,11 +53,6 @@ public final class SomeValueObject {
 	@Override
 	public int hashCode() {
 		return 0;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return Pure4J.equals(this, obj);
 	}
 
 	@Override

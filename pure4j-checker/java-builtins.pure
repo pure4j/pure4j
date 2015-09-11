@@ -674,10 +674,16 @@ java/util/TreeMap.lastKey()Ljava/lang/Object;
 java/util/TreeMap.pollFirstEntry()Ljava/util/Map$Entry;
 java/util/TreeMap.pollLastEntry()Ljava/util/Map$Entry;
 java/util/TreeMap.size()I
+java/util/TreeSet.clear()V
+java/util/TreeSet.comparator()Ljava/util/Comparator;
 java/util/TreeSet.descendingIterator()Ljava/util/Iterator;
+java/util/TreeSet.first()Ljava/lang/Object;
+java/util/TreeSet.isEmpty()Z
 java/util/TreeSet.iterator()Ljava/util/Iterator;
+java/util/TreeSet.last()Ljava/lang/Object;
 java/util/TreeSet.pollFirst()Ljava/lang/Object;
 java/util/TreeSet.pollLast()Ljava/lang/Object;
+java/util/TreeSet.size()I
 java/util/Vector.capacity()I
 java/util/Vector.clear()V
 java/util/Vector.clone()Ljava/lang/Object;

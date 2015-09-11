@@ -176,7 +176,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 
 	@SuppressWarnings("unchecked")
 	public <E> E[] toArray(E[] a) {
-		return (E[]) PureCollections.seqToPassedArray(seq(), a);
+		return (E[]) PureCollections.seqToNewArray(seq(), a);
 	}
 
 	public int size() {

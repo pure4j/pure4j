@@ -19,11 +19,6 @@ public final class CompositionalObject {
 		return Pure4J.hashCode(svo);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return Pure4J.equals(this, obj);
-	}
-
 	public SomeValueObject getSvo() {
 		return svo;
 	}

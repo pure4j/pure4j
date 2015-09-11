@@ -92,42 +92,6 @@ public class Pure4J {
 		return sb.toString();
 	}
 	
-	/**
-	 * TODO:  make this run really really fast so that no-one needs to
-	 * implement a specific equals method for @ImmutableValue classes ever again.
-	 * We can surely reach the performance of specific code with some bytecode malarkey.
-	 */
-	@Pure
-	public static boolean equals(Object a, Object b) {
-		if (a == b)
-			return true;
-		if (b == null)
-			return false;
-		if (a.getClass() != b.getClass())
-			return false;
-
-		Class<?> cl = a.getClass();
-		try {
-			if (cl != Object.class) {
-				for (Field f : cl.getDeclaredFields()) {
-					if ((!Modifier.isStatic(f.getModifiers())) && (!Modifier.isTransient(f.getModifiers()))) {
-						f.setAccessible(true);
-						Object aa = f.get(a);
-						Object bb = f.get(b);
-						if (!equals(aa, bb)) {
-							return false;
-						}
-						
-					}
-				}
-				cl = cl.getSuperclass();
-			}
-		return true;
-		} catch (Exception e) {
-			throw new RuntimeException("Couldn't reflectively determine fields: ", e);
-		}
-	}
-	
 	public static final void unsupported() {
 		throw new UnsupportedOperationException();
 	}

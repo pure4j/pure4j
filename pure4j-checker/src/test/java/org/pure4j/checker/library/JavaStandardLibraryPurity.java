@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -35,12 +36,14 @@ import java.util.Vector;
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PureCollections;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.ClassFileModelBuilder;
 import org.pure4j.processor.PurityChecker;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 
 
 public class JavaStandardLibraryPurity {
@@ -57,7 +60,7 @@ public class JavaStandardLibraryPurity {
 				out.addAll(javaUtilClasses());
 				return out;
 			}
-		}, "java.");
+		}, "java.", true);
 	}
 	
 	@Test
@@ -67,9 +70,9 @@ public class JavaStandardLibraryPurity {
 			@SuppressWarnings("unchecked")
 			@Override
 			public List<Class<?>> topLevelClasses() {
-				return Arrays.asList((Class<?>) ArraySeq.class, ISeq.class);
+				return Arrays.asList((Class<?>) ArraySeq.class, PureCollections.class);
 			}
-		}, "org.pure4j");
+		}, "org.pure4j", false);
 	}
 	
 	interface ClassListProvider {
@@ -78,21 +81,28 @@ public class JavaStandardLibraryPurity {
 		
 	}
 
-	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem) throws IOException {
+	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem, boolean assumePurity) throws IOException {
 		FileCallback fc = new FileCallback(new File(outputName));
 		ClassFileModelBuilder cfmb = new ClassFileModelBuilder();
 		ClassLoader cl = this.getClass().getClassLoader();
 		DefaultResourceLoader drl = new DefaultResourceLoader(cl);
+		Set<Resource> resources = new HashSet<Resource>();
 		
 		for (Class<?> c : clp.topLevelClasses()) {
-			visitAllOf(c, drl, cfmb, packageStem);
+			visitAllOf(c, drl, cfmb, packageStem, resources);
+		}
+		
+		for (Resource resource : resources) {
+			cfmb.visit(resource);
 		}
 		
 		ProjectModel pm = cfmb.getModel();
 		PurityChecker checker = new PurityChecker(cl);
-		for (String classInModel : pm.getAllClasses()) {
-			ClassHandle ch = new ClassHandle(classInModel);
-			checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true);	
+		if (assumePurity) {
+			for (String classInModel : pm.getAllClasses()) {
+				ClassHandle ch = new ClassHandle(classInModel);
+				checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true);	
+			}
 		}
 		checker.checkModel(pm, fc);
 		fc.close();
@@ -144,20 +154,20 @@ public class JavaStandardLibraryPurity {
 		Comparable.class);
 	}
 	
-	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem) throws IOException {
+	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Resource> resources) throws IOException {
 		if ((c != Object.class) && (c != null)) {
 			if (c.getName().startsWith(packageStem)) {
-				cfmb.visit(drl.getResource("classpath:/"+c.getName().replace(".", "/")+".class"));
+				resources.add(drl.getResource("classpath:/"+c.getName().replace(".", "/")+".class"));
 				for (Class<?> intf : c.getInterfaces()) {
-					visitAllOf(intf, drl, cfmb, packageStem);
+					visitAllOf(intf, drl, cfmb, packageStem, resources);
 				}
 				
 				for (Class<?> cl : c.getClasses()) {				
-					visitAllOf(cl, drl, cfmb, packageStem);
+					visitAllOf(cl, drl, cfmb, packageStem, resources);
 				}
 				
 				
-				visitAllOf(c.getSuperclass(), drl, cfmb, packageStem);
+				visitAllOf(c.getSuperclass(), drl, cfmb, packageStem, resources);
 			}
 		}
 	}
@@ -172,7 +182,7 @@ public class JavaStandardLibraryPurity {
 		
 		@Override
 		public void send(String s) {
-			System.out.println(s);
+			//System.out.println(s);
 		}
 		
 		@Override

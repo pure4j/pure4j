@@ -119,7 +119,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 
 	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
-		return (T[]) PureCollections.seqToPassedArray(seq(), a);
+		return (T[]) PureCollections.seqToNewArray(seq(), a);
 	}
 
 	public int size() {

@@ -7,21 +7,21 @@ import java.util.Map;
 import java.util.RandomAccess;
 import java.util.regex.Matcher;
 
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 public class PureCollections {
 
-	// supports java Collection.toArray(T[])
+	/**
+	 * Note that this doesn't use the passed array as that would violate purity.
+	 */
 	@SuppressWarnings("rawtypes")
-	static public Object[] seqToPassedArray(ISeq seq, Object[] passed) {
-		Object[] dest = passed;
+	@Pure(Enforcement.FORCE)
+	static public Object[] seqToNewArray(ISeq seq, Object[] passed) {
 		int len = count(seq);
-		if (len > dest.length) {
-			dest = (Object[]) Array.newInstance(passed.getClass()
-					.getComponentType(), len);
-		}
-		for (int i = 0; seq != null; ++i, seq = seq.next())
+		Object[] dest = (Object[]) Array.newInstance(passed.getClass().getComponentType(), len);
+		for (int i = 0; seq != null; ++i, seq = seq.next()) {
 			dest[i] = seq.first();
-		if (len < passed.length) {
-			dest[len] = null;
 		}
 		return dest;
 	}
@@ -89,6 +89,7 @@ public class PureCollections {
 		}
 	}
 
+	@Pure
 	@SuppressWarnings("rawtypes")
 	static public Object[] seqToArray(ISeq seq) {
 		int len = length(seq);
@@ -98,6 +99,7 @@ public class PureCollections {
 		return ret;
 	}
 
+	@Pure
 	@SuppressWarnings("rawtypes")
 	static public int length(ISeq list) {
 		int i = 0;
@@ -139,6 +141,7 @@ public class PureCollections {
 		return seq.next();
 	}
 
+	@Pure
 	@SuppressWarnings("rawtypes")
 	static public Object nth(Object coll, int n) {
 		if (coll instanceof Indexed)

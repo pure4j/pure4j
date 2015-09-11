@@ -8,6 +8,7 @@ java/lang/Object.registerNatives()V
 java/lang/Object.notify()V 
 java/lang/Object.notifyAll()V 
 java/lang/Object.<init>()V
+java/lang/Object.equals(Ljava/lang/Object;)Z
 java/lang/Enum.hashCode()I
 java/lang/Enum.valueOf(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
 java/lang/Enum.getDeclaringClass()Ljava/lang/Class;

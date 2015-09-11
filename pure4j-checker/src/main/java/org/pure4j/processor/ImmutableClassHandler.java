@@ -6,12 +6,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,15 +22,7 @@ import org.pure4j.immutable.RuntimeImmutabilityChecker;
 @SuppressWarnings("unchecked")
 public class ImmutableClassHandler {
 
-	public static final Set<?> INBUILT_IMMUTABLE_CLASSES = new HashSet<Object>();
 	public static final boolean CHECK_FOR_FINAL_CLASSES = false;
-
-	static {
-		@SuppressWarnings({ "rawtypes" })
-		List l = Arrays.asList(Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Math.class, StrictMath.class);
-		INBUILT_IMMUTABLE_CLASSES.addAll(l);
-	}
 	
 	private Map<String, Boolean> immutableClasses = new HashMap<String, Boolean>();
 	
@@ -48,7 +35,7 @@ public class ImmutableClassHandler {
 			return true;
 		}
 		
-		if (INBUILT_IMMUTABLE_CLASSES.contains(in)) {
+		if (RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(in)) {
 			return true;
 		}
 		

@@ -54,11 +54,6 @@ public final class SomeValueObject extends AbstractVO {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return Pure4J.equals(this, obj);
-	}
-
-	@Override
 	public String toString() {
 		return name;
 	}

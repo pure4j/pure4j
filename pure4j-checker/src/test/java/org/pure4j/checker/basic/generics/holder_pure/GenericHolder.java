@@ -22,10 +22,25 @@ public final class GenericHolder<X extends SomePureInterface> {
 		return Pure4J.hashCode(in);
 	}
 
+	
+
 	@Override
 	public boolean equals(Object obj) {
-		return Pure4J.equals(this, obj);
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GenericHolder<?> other = (GenericHolder<?>) obj;
+		if (in == null) {
+			if (other.in != null)
+				return false;
+		} else if (!in.equals(other.in))
+			return false;
+		return true;
 	}
+
 
 	@Override
 	public String toString() {

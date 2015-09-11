@@ -107,6 +107,11 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	public static ArraySeq_boolean create(boolean... array) {
 		return new ArraySeq_boolean(array, 0, true);
 	}
+	
+	@Pure(Enforcement.FORCE)
+	public static ArraySeq_double create(double... array) {
+		return new ArraySeq_double(array, 0, true);
+	}
 
 	private ArraySeq(K[] array, int i, boolean copy) {
 		this.i = i;
@@ -476,9 +481,9 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 			if (o == null) {
 				return -1;
 			}
-			for (int j = i; j < array.length; j++)
-				if (o.equals(array[j]))
-					return j - i;
+//			for (int j = i; j < array.length; j++)
+//				if (Pure4J.equals(a, b)array[j]==c)
+//					return j - i;
 			return -1;
 		}
 

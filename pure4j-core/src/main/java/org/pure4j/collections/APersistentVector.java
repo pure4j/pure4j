@@ -303,7 +303,7 @@ public abstract class APersistentVector<K> implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T[] toArray(T[] a) {
-		return (T[]) PureCollections.seqToPassedArray(seq(), a);
+		return (T[]) PureCollections.seqToNewArray(seq(), a);
 	}
 
 	public int size() {

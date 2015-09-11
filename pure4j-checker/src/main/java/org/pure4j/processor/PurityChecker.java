@@ -89,7 +89,7 @@ public class PurityChecker implements Rule {
 				Enforcement e = p == null ? Enforcement.CHECKED : p.value();
 				String signature = mh.getSignature();
 				boolean overridden = addedSoFar.contains(signature);
-				boolean calledBySomething = pm.getCalledBy(mh).size() > 0;
+				boolean calledBySomething = calledWithin(pm.getCalledBy(mh), pureClass);
 				if ((!overridden) || (calledBySomething)) {
 					pureChecklist.addMethod(mh, e, pureClass, cb);
 					addedSoFar.add(signature);
@@ -98,6 +98,27 @@ public class PurityChecker implements Rule {
 			
 			in = in.getSuperclass();
 		}
+	}
+
+	/**
+	 * Even if a class overrides a method, it can still use super to call it.
+	 */
+	private boolean calledWithin(Set<MemberHandle> calledBy, Class<?> pureClass) {
+		for (MemberHandle memberHandle : calledBy) {
+			if (calledWithin(memberHandle, pureClass)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean calledWithin(MemberHandle calledBy, Class<?> pureClass) {
+		if ((pureClass != Object.class) && (pureClass != null)) {
+			return (calledBy.getDeclaringClass(cl) == pureClass) || calledWithin(calledBy, pureClass.getSuperclass());
+		}
+		
+		return false;
 	}
 
 	public static boolean isConcrete(Class<?> someClass) {

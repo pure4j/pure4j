@@ -41,8 +41,6 @@ public class PureChecklistHandler {
 	public static final boolean IGNORE_EQUALS_PARAMETER_PURITY = true;
 	public static final boolean IGNORE_TOSTRING_PURITY = true;
 	public static final boolean IGNORE_ENUM_VALUES_PURITY = true;
-	
-	
 
 	class PureMethod {
 		
@@ -217,11 +215,13 @@ public class PureChecklistHandler {
 				if (memberHandle instanceof ImmutableCallMemberHandle) {
 					checkTried = true;
 					ImmutableCallMemberHandle icmh = (ImmutableCallMemberHandle) memberHandle;
-					if (!icmh.isFirstCall()) {
-						cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but it must be the first call in the method and only passed method parameters", null);
-						return true;
-					} else if ((icmh.getLocalVariables().contains(paramNo+1)) && (icmh.getName().equals("immutable"))) {
-						found = true;
+					if (icmh.getName().equals("immutable")) {
+						if (!icmh.isFirstCall()) {
+							cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but it must be the first call in the method and only passed method parameters", null);
+							return true;
+						} else if ((icmh.getLocalVariables().contains(paramNo+1)) && (icmh.getName().equals("immutable"))) {
+							found = true;
+						}
 					} else if (icmh.getName().equals("unsupported")) {
 						found = true;
 					}
@@ -288,6 +288,11 @@ public class PureChecklistHandler {
 		Pure p = mh.getAnnotation(cl, Pure.class);
 		if (p != null) {
 			return p.value() != Enforcement.NOT_PURE;
+		}
+		
+		// interfaces now allowed as pure
+		if (mh.getDeclaringClass(cl).isInterface()) {
+			return true;
 		}
 		
 		if (isMarkedPure(mh.getDeclaringClass(cl), cb)) {

@@ -28,11 +28,6 @@ public final class SomeValueObject {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return Pure4J.equals(obj, this);
-	}
-
-	@Override
 	public String toString() {
 		return Pure4J.toString(this, someArray);
 	}
