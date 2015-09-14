@@ -49,4 +49,9 @@ public class ConstructorHandle extends CallHandle {
 	public Class<?>[] getRawTypes(ClassLoader cl) {
 		return hydrate(cl).getParameterTypes();
 	}
+	
+	@Override
+	public ConstructorHandle swapClass(Class<?> class1) {
+		return new ConstructorHandle(convertClassName(class1), desc, getLineNumber()); 
+	}
 }

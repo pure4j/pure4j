@@ -40,19 +40,20 @@ import org.pure4j.annotations.pure.Enforcement;
  * <h3>Value Contract</h3>
  * 
  * <p>
- * Any methods on the class must be pure functions. (see {@link Pure} for what
+ * Any instance (i.e. non-static) methods on the class must be pure. (see {@link Pure} for what
  * this entails).
  * 
  * <p>
- * In normal operation this will therefore mean that <code>equals</code>,
+ * In normal operation this will therefore mean that
  * <code>hashCode</code> and <code>toString</code> will need to be implemented,
  * as by default they use built-in methods on the <code>Object</code> class
- * which rely on the object's identity, which are determined by object creation.
+ * which rely on the object's identity, which are determined by object creation (are therefore impure).
  * 
  * <p>If these methods are not implemented in with pure functions, this will be
  * reported and cause failures in your build.
  * <p>
  * <h3>Generic Type Parameters</h3>
+ * 
  * <p>Any generic type parameters supplied to an <code>ImmutableValue</code> annotated
  * class must also be immutable value types. 
  * <h3>What Qualifies As An Immutable Value?</h3>

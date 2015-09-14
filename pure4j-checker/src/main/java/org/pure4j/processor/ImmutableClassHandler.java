@@ -12,6 +12,9 @@ import java.util.Set;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.exception.ClassNotFinalException;
+import org.pure4j.exception.FieldNotFinalException;
+import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 /**
@@ -19,7 +22,6 @@ import org.pure4j.immutable.RuntimeImmutabilityChecker;
  * @author robmoffat
  *
  */
-@SuppressWarnings("unchecked")
 public class ImmutableClassHandler {
 
 	public static final boolean CHECK_FOR_FINAL_CLASSES = false;
@@ -113,7 +115,7 @@ public class ImmutableClassHandler {
 		
 		if (CHECK_FOR_FINAL_CLASSES) {
 			if (!Modifier.isFinal(immutableClass.getModifiers())) {
-				cb.registerError("Concrete @ImmutableValue class should be final: "+immutableClass.getName(), null);
+				cb.registerError(new ClassNotFinalException(immutableClass));
 			}
 		}
 		
@@ -127,13 +129,12 @@ public class ImmutableClassHandler {
 				if (!skip) {
 					if (!Modifier.isStatic(f.getModifiers())) {
 						if (!Modifier.isFinal(f.getModifiers())) {
-							cb.registerError("Field "+f.getName()+" should be final on @ImmutableValue class "+immutableClass.getName(), null);
+							cb.registerError(new FieldNotFinalException(f));
 						}
 					}
 					
 					if (!typeIsMarkedImmutable(f.getGenericType(), cb)) {
-						cb.registerError("Field "+f.getName()+" should have an immutable type on class "+
-								immutableClass+".  Consider adding @ImmutableValue to "+f.getType(), null);
+						cb.registerError(new FieldTypeNotImmutableException(f));
 					}
 				}
 					

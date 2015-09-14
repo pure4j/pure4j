@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
 
@@ -13,6 +14,7 @@ public class ArraySeqExample extends AbstractChecker{
 
 	@SuppressWarnings("unchecked")
 	@Pure
+	@ShouldBePure
 	public <K> void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
 		Pure4J.immutable(in, expectedFirst);
 		

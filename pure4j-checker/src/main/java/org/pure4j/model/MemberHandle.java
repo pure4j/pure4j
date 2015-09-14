@@ -37,22 +37,10 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 
 	public int compareTo(AnnotatedElementHandle<?> oo) {
 	    if (oo instanceof MemberHandle) {
-		MemberHandle o = (MemberHandle) oo;
-		int res = this.getName().compareTo(o.getName());
-		if (res==0) {
-			if (this.getDesc()!=null) {
-				return (this.getDesc().compareTo(o.getDesc()));
-			} else if (o.getDesc()==null) {
-				return 0;
-			} else {
-				return 1;
-			}
-			
-		}
-		
-		return res;
+	    	MemberHandle o = (MemberHandle) oo;
+	    	return (className+desc+name).compareTo(o.className+o.desc+o.name);
 	    } else {
-		return 1;
+	    	return 0;
 	    }
 	}
 

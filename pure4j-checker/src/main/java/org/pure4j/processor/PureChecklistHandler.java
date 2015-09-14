@@ -18,6 +18,14 @@ import java.util.Set;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.exception.ClassExpectingPureMethod;
+import org.pure4j.exception.IncorrectPure4JImmutableCallException;
+import org.pure4j.exception.MissingImmutableParameterCheckException;
+import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
+import org.pure4j.exception.PureMethodAccessesSharedFieldException;
+import org.pure4j.exception.PureMethodCallsImpureException;
+import org.pure4j.exception.PureMethodNotInProjectScopeException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
@@ -42,7 +50,7 @@ public class PureChecklistHandler {
 	public static final boolean IGNORE_TOSTRING_PURITY = true;
 	public static final boolean IGNORE_ENUM_VALUES_PURITY = true;
 
-	class PureMethod {
+	public class PureMethod {
 		
 		public MemberHandle declaration;
 		public Enforcement e;
@@ -90,8 +98,7 @@ public class PureChecklistHandler {
 				
 				if (!pm.withinModel(declaration.getClassName())) {
 					// we can't confirm that the method is pure, unless it has been forced already.
-					
-					cb.registerError("Pure implementation: "+this+" is expected to be a pure method, but is not in scope and isn't marked as such.", null);
+					cb.registerError(new PureMethodNotInProjectScopeException(this));
 					pureImplementation = false;
 				}
 				
@@ -130,7 +137,7 @@ public class PureChecklistHandler {
 					Type t = genericTypes[i];
 					if (!immutables.typeIsMarkedImmutable(t, cb)) {
 						if (!isRuntimeChecked(i, pm, cb)) {
-							cb.registerError("Pure interface:      "+this+" can't take non-immutable argument "+t, null);
+							cb.registerError(new PureMethodArgumentNotImmutableException(this, t));
 							pureImplementation = false;
 							return false;
 						}
@@ -138,11 +145,16 @@ public class PureChecklistHandler {
 				}
 				
 				for (MemberHandle mh: pm.getCalls(declaration)) {
-					if ((mh instanceof MethodHandle) || (mh instanceof ConstructorHandle)) {
+					boolean staticMethod = false;
+					if (mh instanceof MethodHandle) {
+						Method m = ((MethodHandle) mh).hydrate(cl);
+						staticMethod = Modifier.isStatic(m.getModifiers());
+					}
+					if (mh instanceof CallHandle) {
 						if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object")) ){
 							// we can skip this one
-						} else if (!isMarkedPure(mh, cb)) {
-							cb.registerError("Pure implementation: "+line(mh)+this+" is expected to be a pure method, but calls impure method "+mh, null);
+						} else if (!isMarkedPure(mh, cb, staticMethod)) {
+							cb.registerError(new PureMethodCallsImpureException(this, (CallHandle) mh));
 							pureImplementation = false;
 						}
 					} else if (mh instanceof FieldHandle) {
@@ -150,13 +162,13 @@ public class PureChecklistHandler {
 						Field f = fieldHandle.hydrate(cl);
 						if (!onCurrentObject(fieldHandle, f)) {
 							if ((!Modifier.isFinal(f.getModifiers()))) {
-								cb.registerError("Pure implementation: "+this+" is expected to be pure but accesses non-final field which isn't private/protected "+fieldHandle, null);
+								cb.registerError(new PureMethodAccessesSharedFieldException(this, fieldHandle));
 								pureImplementation = false;
 							}
 							
 							if (!immutables.typeIsMarkedImmutable(f.getGenericType(), cb)) {
 								if (!forcedImmutable(f)) {
-									cb.registerError("Pure implementation: "+this+" is expected to be pure but accesses a non-immutable value which isn't private/protected "+fieldHandle, null);
+									cb.registerError(new PureMethodAccessesNonImmutableFieldException(this, fieldHandle));
 									pureImplementation = false;
 								}
 							}
@@ -179,14 +191,6 @@ public class PureChecklistHandler {
 			// try the class level
 			iv = RuntimeImmutabilityChecker.classImmutableValueAnnotation(f.getDeclaringClass());
 			return (iv != null);
-		}
-
-		private String line(MemberHandle mh) {
-			if (mh instanceof CallHandle) {
-				return "(line: "+((CallHandle)mh).getLineNumber()+")";
-			}
-			
-			return "";
 		}
 
 		private boolean onCurrentObject(FieldHandle fh, Field f) {
@@ -217,8 +221,8 @@ public class PureChecklistHandler {
 					ImmutableCallMemberHandle icmh = (ImmutableCallMemberHandle) memberHandle;
 					if (icmh.getName().equals("immutable")) {
 						if (!icmh.isFirstCall()) {
-							cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but it must be the first call in the method and only passed method parameters", null);
-							return true;
+							cb.registerError(new IncorrectPure4JImmutableCallException(this));
+							return false;
 						} else if ((icmh.getLocalVariables().contains(paramNo+1)) && (icmh.getName().equals("immutable"))) {
 							found = true;
 						}
@@ -230,8 +234,8 @@ public class PureChecklistHandler {
 			
 			if (checkTried) {
 				if (!found) {
-					cb.registerError("Pure interface:      "+this+" has call to Pure4J.immutable, but this doesn't include parameter "+paramNo, null);
-					return true;
+					cb.registerError(new MissingImmutableParameterCheckException(this, paramNo));
+					return false;
 				}
 			}
 			
@@ -250,8 +254,7 @@ public class PureChecklistHandler {
 	}
 
 	private Map<MemberHandle, PureMethod> pureChecklist = new HashMap<MemberHandle, PureMethod>();
-
-	
+		
 	public void loadPureLists() {
 		try {
 			load("/java-lang.pure");
@@ -267,13 +270,15 @@ public class PureChecklistHandler {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String line = br.readLine();
 		while (line != null) {
-			PureMethod pureMethod = new PureMethod(line.trim(), Enforcement.FORCE);
+			String[] parts = line.trim().split(" ");
+			Enforcement e = Enforcement.valueOf(parts[0]);
+			PureMethod pureMethod = new PureMethod(parts[1], e);
 			pureChecklist.put(pureMethod.declaration, pureMethod);
 			line = br.readLine();
 		}
 	}
 	
-	public boolean isMarkedPure(MemberHandle mh, Callback cb) {
+	public boolean isMarkedPure(MemberHandle mh, Callback cb, boolean staticMethod) {
 		if (pureChecklist.containsKey(mh)) {
 			PureMethod pm = pureChecklist.get(mh);
 			return pm.e != Enforcement.NOT_PURE;
@@ -290,6 +295,10 @@ public class PureChecklistHandler {
 			return p.value() != Enforcement.NOT_PURE;
 		}
 		
+		if (staticMethod) {
+			return false;
+		}
+		
 		// interfaces now allowed as pure
 		if (mh.getDeclaringClass(cl).isInterface()) {
 			return true;
@@ -298,6 +307,7 @@ public class PureChecklistHandler {
 		if (isMarkedPure(mh.getDeclaringClass(cl), cb)) {
 			return true;
 		}
+		
 		
 		if (IGNORE_EXCEPTION_CONSTRUCTION) {
 			if (Throwable.class.isAssignableFrom(mh.getDeclaringClass(cl))) {
@@ -313,9 +323,8 @@ public class PureChecklistHandler {
 			return false;
 		}
 		
-		// immutables also count as pure
 		if (immutables.classIsMarkedImmutable(in, cb)) {
-			return true;
+				return true;
 		}
 		
 		Pure p = in.getAnnotation(Pure.class);
@@ -336,23 +345,23 @@ public class PureChecklistHandler {
 		return false;
 	}
 
-	public void addMethod(MemberHandle declaration, Enforcement e, Class<?> usedIn, Callback cb) {
+	public void addMethod(CallHandle declaration, Enforcement e, Class<?> usedIn, Callback cb) {
 		PureMethod pm;
-		if (pureChecklist.containsKey(declaration)) {;
+		if (pureChecklist.containsKey(declaration)) {
 			pm = pureChecklist.get(declaration);
 		} else {
 			pm = new PureMethod(declaration, e);
 			pureChecklist.put(declaration, pm);
 			cb.send("Adding new method for testing: "+declaration+" "+e);
 		}
-			
-		pm.usedIn.add(usedIn);
-			
+		
 		if (pm.e != e) {
 			if (pm.e != Enforcement.FORCE) {
-				throw new RuntimeException("Was expecting different enforcement for "+pm+": "+e);
+				cb.registerError(new ClassExpectingPureMethod(usedIn, pm));
 			}
 		}
+		
+		pm.usedIn.add(usedIn);
 	}
 	
 	public PureMethod getElementFor(MemberHandle mh) {

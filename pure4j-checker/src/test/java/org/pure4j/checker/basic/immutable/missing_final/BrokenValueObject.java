@@ -3,14 +3,24 @@ package org.pure4j.checker.basic.immutable.missing_final;
 import java.io.InputStream;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.checker.basic.support.CausesError;
+import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.exception.FieldNotFinalException;
+import org.pure4j.exception.FieldTypeNotImmutableException;
+import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodCallsImpureException;
 
 @ImmutableValue
 public class BrokenValueObject extends AnotherBrokenObject {
 
+	@CausesError(FieldNotFinalException.class)
 	Integer int2;
+	@CausesError(FieldNotFinalException.class)
 	String b;
+	@CausesError(FieldTypeNotImmutableException.class)
 	final InputStream is;
 	
+	@CausesError(PureMethodArgumentNotImmutableException.class)
 	public BrokenValueObject(Integer in, Integer int2, String b, InputStream is) {
 		super(in);
 		this.int2 = int2;
@@ -18,6 +28,7 @@ public class BrokenValueObject extends AnotherBrokenObject {
 		this.is = is;
 	}
 
+	@CausesError(PureMethodCallsImpureException.class)
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -29,22 +40,27 @@ public class BrokenValueObject extends AnotherBrokenObject {
 	}
 
 	@Override
+	@ShouldBePure
 	public boolean equals(Object obj) {
 		return super.equals(obj);
 	}
 	
+	@ShouldBePure // pure, just not immutable
 	public void increment() {
 		this.int2++;
 	}
 
+	@ShouldBePure
 	public Integer getInt2() {
 		return int2;
 	}
 
+	@ShouldBePure
 	public String getB() {
 		return b;
 	}
 
+	@ShouldBePure
 	public InputStream getIs() {
 		return is;
 	}

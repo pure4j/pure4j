@@ -29,7 +29,6 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * <li>Only accesses fields where they are immutable and final.
  * </ol></p>
  * 
- * <p>Pure methods can generally also be marked static.
  * 
  * <h3><code>Class</code> Purity.</h3>
  * <p>
@@ -44,12 +43,14 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * <li>There are no side-effects outside of the class' interface.  
  * </ul>
  * 
- * <p>This is exactly like a pure function, then, except that you are describing not a single method call, but a series of 
+ * <p>This is exactly like a pure method, then, except that you are describing not a single method call, but a series of 
  * interactions with the class.  Pure classes are therefore <b>not</b> guaranteed to be thread-safe.  They may be implemented in this way, but it is
  * not a requirement. 
  *  
  * <p>If you define a class as @Pure, it's purity will be checked on a per-method (and per-constructor) basis.  The checker will report errors for methods that
  * don't meet the requirements.  Adding @Pure to individual constructors/methods will override the class-level behaviour.
+ * 
+ * <p>Adding @Pure to a single interface or superclass will cause all concrete classes to be regarded as pure.
  * 
  * <h3>Caveats</h3>
  * <p>
@@ -62,7 +63,7 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * @author robmoffat
  *
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Pure {
 	

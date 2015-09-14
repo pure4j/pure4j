@@ -9,6 +9,6 @@ public class TestCheckInheritedAnnotation extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0, 2);
+		checkThisPackage(this.getClass(), 2);
 	}
 }

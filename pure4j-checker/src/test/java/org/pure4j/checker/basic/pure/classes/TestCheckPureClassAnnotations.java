@@ -9,6 +9,6 @@ public class TestCheckPureClassAnnotations extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 2, 5);
+		checkThisPackage(this.getClass(), 0);
 	}
 }

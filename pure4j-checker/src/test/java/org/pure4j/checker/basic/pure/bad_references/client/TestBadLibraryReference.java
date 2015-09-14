@@ -6,9 +6,12 @@ import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.pure.bad_references.supplier.SomePure;
+import org.pure4j.checker.basic.support.CausesError;
+import org.pure4j.exception.PureMethodCallsImpureException;
 
 public class TestBadLibraryReference extends AbstractChecker {
 
+	@CausesError(PureMethodCallsImpureException.class)
 	@Pure
 	public void doLibraryCall() {
 		SomePure somePure = new SomePure();
@@ -19,6 +22,6 @@ public class TestBadLibraryReference extends AbstractChecker {
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 0);
+		checkThisPackage(this.getClass(), 0);
 	}
 }

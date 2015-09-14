@@ -6,16 +6,19 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.CausesError;
+import org.pure4j.exception.PureMethodArgumentNotImmutableException;
 
 public class TestCheckCatchesNonImmutableValueArguments extends AbstractChecker {
 
 	@Pure
+	@CausesError(PureMethodArgumentNotImmutableException.class)
 	public int someFunction(InputStream is) {
 		return 0;
 	}
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1, 0);
+		checkThisPackage(this.getClass(), 0);
 	}
 }

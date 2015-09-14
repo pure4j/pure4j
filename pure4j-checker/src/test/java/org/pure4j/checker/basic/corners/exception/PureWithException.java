@@ -5,10 +5,12 @@ import java.io.IOException;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 
 public class PureWithException extends AbstractChecker {
 
 	@Pure
+	@ShouldBePure
 	public static int doSomething(int i) {
 		try {
 			return new Integer(i).toString().hashCode();
@@ -19,7 +21,7 @@ public class PureWithException extends AbstractChecker {
 	
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0, 1);
+		checkThisPackage(this.getClass(), 0);
 	}
 }
 

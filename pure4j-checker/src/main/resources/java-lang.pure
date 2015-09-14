@@ -1,24 +1,31 @@
-java/lang/Object.finalize()V 
-java/lang/Object.wait(JI)V 
-java/lang/Object.wait(J)V 
-java/lang/Object.wait()V 
-java/lang/Object.getClass()Ljava/lang/Class; 
-java/lang/Object.clone()Ljava/lang/Object; 
-java/lang/Object.registerNatives()V 
-java/lang/Object.notify()V 
-java/lang/Object.notifyAll()V 
-java/lang/Object.<init>()V
-java/lang/Object.equals(Ljava/lang/Object;)Z
-java/lang/Enum.hashCode()I
-java/lang/Enum.valueOf(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
-java/lang/Enum.getDeclaringClass()Ljava/lang/Class;
-java/lang/Enum.finalize()V
-java/lang/Enum.clone()Ljava/lang/Object;
-java/lang/Enum.compareTo(Ljava/lang/Enum;)I
-java/lang/Enum.ordinal()I
-java/lang/Enum.name()Ljava/lang/String;
-java/lang/Enum.readObjectNoData()V
-java/lang/Enum.toString()Ljava/lang/String;
-java/lang/Enum.equals(Ljava/lang/Object;)Z
-java/lang/Enum.compareTo(Ljava/lang/Object;)I
-java/lang/Enum.readObject(Ljava/io/ObjectInputStream;)V
+FORCE java/lang/Object.finalize()V 
+FORCE java/lang/Object.wait(JI)V 
+FORCE java/lang/Object.wait(J)V 
+FORCE java/lang/Object.wait()V 
+FORCE java/lang/Object.getClass()Ljava/lang/Class; 
+FORCE java/lang/Object.clone()Ljava/lang/Object; 
+FORCE java/lang/Object.registerNatives()V 
+FORCE java/lang/Object.notify()V 
+FORCE java/lang/Object.notifyAll()V 
+FORCE java/lang/Object.<init>()V
+FORCE java/lang/Object.equals(Ljava/lang/Object;)Z
+FORCE java/lang/Enum.hashCode()I
+FORCE java/lang/Enum.valueOf(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
+FORCE java/lang/Enum.getDeclaringClass()Ljava/lang/Class;
+FORCE java/lang/Enum.finalize()V
+FORCE java/lang/Enum.clone()Ljava/lang/Object;
+FORCE java/lang/Enum.compareTo(Ljava/lang/Enum;)I
+FORCE java/lang/Enum.ordinal()I
+FORCE java/lang/Enum.name()Ljava/lang/String;
+FORCE java/lang/Enum.readObjectNoData()V
+FORCE java/lang/Enum.toString()Ljava/lang/String;
+FORCE java/lang/Enum.equals(Ljava/lang/Object;)Z
+FORCE java/lang/Enum.compareTo(Ljava/lang/Object;)I
+FORCE java/lang/Enum.readObject(Ljava/io/ObjectInputStream;)V
+FORCE java/lang/Enum.<init>(Ljava/lang/String;I)V
+FORCE java/lang/String.hashCode()I
+NOT_PURE java/lang/Object.hashCode()I
+NOT_PURE java/lang/Object.toString()Ljava/lang/String;
+FORCE java/lang/Integer.valueOf(I)Ljava/lang/Integer;
+FORCE java/lang/Character.valueOf(C)Ljava/lang/Character;
+FORCE java/lang/Double.valueOf(D)Ljava/lang/Double;

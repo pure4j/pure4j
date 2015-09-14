@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.Stack;
 
 import org.pure4j.Pure4J;
+import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
 import org.pure4j.model.ClassHandle;
@@ -16,7 +17,6 @@ import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
 import org.pure4j.model.ProjectModelImpl;
-import org.pure4j.model.Pure4JException;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.Attribute;
 import org.springframework.asm.ClassReader;
@@ -219,7 +219,6 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
-				MemberHandle myMethod = mh;
 				MemberHandle remoteMethod = null;
 				if (owner.equals(Type.getInternalName(Pure4J.class))) {
 					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);

@@ -18,4 +18,5 @@ public abstract class CallHandle extends MemberHandle {
 		return lineNumber;
 	}
 	
+	public abstract CallHandle swapClass(Class<?> class1);
 }

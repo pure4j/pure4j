@@ -5,11 +5,13 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.PersistentVector;
 
 public class PersistentVectorExample extends AbstractChecker {
 	
 	@Pure
+	@ShouldBePure
 	public int sumPersistentVector(PersistentVector<Integer> someInts) {
 		int total = 0;
 		for (Integer integer : someInts) {
@@ -23,6 +25,7 @@ public class PersistentVectorExample extends AbstractChecker {
 	
 	@Test
 	@Pure
+	@ShouldBePure
 	public void testBusinessLogic() {
 		PersistentVector<Integer> pl = PersistentVector.emptyVector();
 		for (int i = 0; i <= 300; i++) {

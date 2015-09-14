@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.pure4j.exception.Pure4JException;
+
 
 public abstract class AbstractHandle<X> implements Handle<X> {
 

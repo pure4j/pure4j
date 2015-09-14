@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+
 /*
  A persistent rendition of Phil Bagwell's Hash Array Mapped Trie
 
@@ -30,13 +33,18 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 
 	private static final long serialVersionUID = -5413707354958055094L;
 	final int count;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	final INode root;
 	final boolean hasNull;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	final V nullValue;
 
 	final private static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
 			null, false, null);
 	
+	@ImmutableValue(Enforcement.FORCE)
 	final private static Object NOT_FOUND = new Object();
 
 	static public <K, V> PersistentHashMap<K, V> create(Map<K,V> other) {
@@ -164,6 +172,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 				nullValue);
 	}
 
+	@ImmutableValue(Enforcement.FORCE)
 	static final Iterator<Object> EMPTY_ITER = new Iterator<Object>() {
 		public boolean hasNext() {
 			return false;
@@ -575,6 +584,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
+	@ImmutableValue(Enforcement.FORCE)
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	final static class BitmapIndexedNode implements INode {
 		static final BitmapIndexedNode EMPTY = new BitmapIndexedNode(null, 0,
@@ -859,6 +869,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
+	@ImmutableValue(Enforcement.FORCE)
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	final static class HashCollisionNode implements INode {
 
@@ -1021,49 +1032,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return editable;
 		}
 	}
-
-	/*
-	 * public static void main(String[] args){ try { ArrayList words = new
-	 * ArrayList(); Scanner s = new Scanner(new File(args[0]));
-	 * s.useDelimiter(Pattern.compile("\\W")); while(s.hasNext()) { String word
-	 * = s.next(); words.add(word); } System.out.println("words: " +
-	 * words.size()); IPersistentMap map = PersistentHashMap.EMPTY;
-	 * //IPersistentMap map = new PersistentTreeMap(); //Map ht = new
-	 * Hashtable(); Map ht = new HashMap(); Random rand;
-	 * 
-	 * System.out.println("Building map"); long startTime = System.nanoTime();
-	 * for(Object word5 : words) { map = map.assoc(word5, word5); } rand = new
-	 * Random(42); IPersistentMap snapshotMap = map; for(int i = 0; i <
-	 * words.size() / 200; i++) { map =
-	 * map.without(words.get(rand.nextInt(words.size() / 2))); } long
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("count = " + map.count() + ", time: " + estimatedTime
-	 * / 1000000);
-	 * 
-	 * System.out.println("Building ht"); startTime = System.nanoTime();
-	 * for(Object word1 : words) { ht.put(word1, word1); } rand = new
-	 * Random(42); for(int i = 0; i < words.size() / 200; i++) {
-	 * ht.remove(words.get(rand.nextInt(words.size() / 2))); } estimatedTime =
-	 * System.nanoTime() - startTime; System.out.println("count = " + ht.size()
-	 * + ", time: " + estimatedTime / 1000000);
-	 * 
-	 * System.out.println("map lookup"); startTime = System.nanoTime(); int c =
-	 * 0; for(Object word2 : words) { if(!map.contains(word2)) ++c; }
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("notfound = " + c + ", time: " + estimatedTime /
-	 * 1000000); System.out.println("ht lookup"); startTime = System.nanoTime();
-	 * c = 0; for(Object word3 : words) { if(!ht.containsKey(word3)) ++c; }
-	 * estimatedTime = System.nanoTime() - startTime;
-	 * System.out.println("notfound = " + c + ", time: " + estimatedTime /
-	 * 1000000); System.out.println("snapshotMap lookup"); startTime =
-	 * System.nanoTime(); c = 0; for(Object word4 : words) {
-	 * if(!snapshotMap.contains(word4)) ++c; } estimatedTime = System.nanoTime()
-	 * - startTime; System.out.println("notfound = " + c + ", time: " +
-	 * estimatedTime / 1000000); } catch(FileNotFoundException e) {
-	 * e.printStackTrace(); }
-	 * 
-	 * }
-	 */
 
 	private static INode[] cloneAndSet(INode[] array, int i, INode a) {
 		INode[] clone = array.clone();

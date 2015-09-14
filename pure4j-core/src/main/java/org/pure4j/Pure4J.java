@@ -13,7 +13,6 @@ import org.pure4j.immutable.RuntimeImmutabilityChecker;
  * @author robmoffat
  *
  */
-@Pure
 public class Pure4J {
 
 	private static final int SOME_PRIME = 31;
@@ -47,23 +46,26 @@ public class Pure4J {
 		return out;
 	}
 	
-	
+	@Pure
 	public static final void immutable(Object a) {
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
 	}
 	
+	@Pure
 	public static final void immutable(Object a, Object b) {
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
 		
 	}
 	
+	@Pure
 	public static final void immutable(Object a, Object b, Object c) {
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(c.getClass());
 	}
 	
+	@Pure
 	public static final void immutable(Object a, Object b, Object c, Object d) {
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
 		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
@@ -92,6 +94,7 @@ public class Pure4J {
 		return sb.toString();
 	}
 	
+	@Pure
 	public static final void unsupported() {
 		throw new UnsupportedOperationException();
 	}

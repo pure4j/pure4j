@@ -6,12 +6,14 @@ import java.util.List;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.IterableSeq;
 
 public class IteratorSeqExample extends AbstractChecker {
 
 	@Pure
+	@ShouldBePure
 	public <K> void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
 		log("seq: "+in);
 		

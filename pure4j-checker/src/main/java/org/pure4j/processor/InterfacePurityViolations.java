@@ -18,20 +18,20 @@ public class InterfacePurityViolations {
 	
 	public Set<String> getPurityViolations(PureChecklistHandler pch, ProjectModel pm, Callback cb, ClassLoader cl) {
 		Set<String> impureClasses = new HashSet<String>(pm.getAllClasses().size() * 2);
-		for (PureMethod pure : pch.getMethodList()) {
-			if (pure.checkImplementationPurity(cb, pm) == false) {
-				if (pure.declaration instanceof MethodHandle) {
-					Method m = ((MethodHandle) pure.declaration).hydrate(cl);
-					Class<?> c = m.getDeclaringClass();
-					Class<?> intf = overridesPureMethod(m, c, pch, cb, pm);
-					if (intf != null) {
-						cb.registerError("Method "+m+" is impure but implements pure interface: "+intf,null);
-						impureClasses.add(pure.declaration.getDeclaringClass());
-					}
-
-				}
-			}
-		}
+//		for (PureMethod pure : pch.getMethodList()) {
+//			if (pure.checkImplementationPurity(cb, pm) == false) {
+//				if (pure.declaration instanceof MethodHandle) {
+//					Method m = ((MethodHandle) pure.declaration).hydrate(cl);
+//					Class<?> c = m.getDeclaringClass();
+//					Class<?> intf = overridesPureMethod(m, c, pch, cb, pm);
+//					if (intf != null) {
+//						cb.registerError("Method "+m+" is impure but implements pure interface: "+intf,null);
+//						impureClasses.add(pure.declaration.getDeclaringClass());
+//					}
+//
+//				}
+//			}
+//		}
 		
 		return impureClasses;
 	}

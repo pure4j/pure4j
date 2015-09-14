@@ -18,10 +18,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+
 public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable, MapEquivalence {
 	
 	private static final long serialVersionUID = 1L;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	int _hasheq = -1;
 
 	 /**

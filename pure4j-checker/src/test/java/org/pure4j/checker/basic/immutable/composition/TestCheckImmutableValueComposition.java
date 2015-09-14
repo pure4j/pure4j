@@ -9,6 +9,6 @@ public class TestCheckImmutableValueComposition extends AbstractChecker {
 
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0, 3);
+		checkThisPackage(this.getClass(), 1);
 	}
 }

@@ -5,12 +5,14 @@ import java.util.Collection;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.PersistentArrayMap;
 
 public class PersistentArrayMapExample extends AbstractChecker {
 
 	@Pure
+	@ShouldBePure
 	public void pureMethod(IPersistentMap<String, String> in, int expectedKeys, int expectedVals) {
 		log("keys:");
 //		Set<String> keySet = in.keySet();
@@ -34,6 +36,7 @@ public class PersistentArrayMapExample extends AbstractChecker {
 
 	@Test
 	@Pure
+	@ShouldBePure
 	public void sanityTestOfMap() {
 		IPersistentMap<String, String> phm = PersistentArrayMap.createWithCheck("a", "b");
 		phm = phm.assoc("rob", "moffat");

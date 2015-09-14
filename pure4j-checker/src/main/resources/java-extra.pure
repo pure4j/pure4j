@@ -1,3 +1,3 @@
-java/lang/StringBuilder.<init>(Ljava/lang/String;)V
-java/lang/StringBuilder.<init>()V
-java/lang/StringBuilder.append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+FORCE java/lang/StringBuilder.<init>(Ljava/lang/String;)V
+FORCE java/lang/StringBuilder.<init>()V
+FORCE java/lang/StringBuilder.append(Ljava/lang/Object;)Ljava/lang/StringBuilder;

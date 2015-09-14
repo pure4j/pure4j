@@ -2,21 +2,29 @@ package org.pure4j.checker.basic.generics.holder_pure;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.checker.basic.support.CausesError;
+import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.exception.FieldTypeNotImmutableException;
+import org.pure4j.exception.PureMethodArgumentNotImmutableException;
 
 @ImmutableValue
 public final class GenericHolder<X extends SomePureInterface> {
 
+	@CausesError(FieldTypeNotImmutableException.class)
 	private final X in;
 
+	@CausesError(PureMethodArgumentNotImmutableException.class)
 	public GenericHolder(X in) {
 		super();
 		this.in = in;
 	}
 
+	@ShouldBePure
 	public X getIn() {
 		return in;
 	}
 
+	@ShouldBePure
 	@Override
 	public int hashCode() {
 		return Pure4J.hashCode(in);
@@ -25,6 +33,7 @@ public final class GenericHolder<X extends SomePureInterface> {
 	
 
 	@Override
+	@ShouldBePure
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -43,6 +52,7 @@ public final class GenericHolder<X extends SomePureInterface> {
 
 
 	@Override
+	@ShouldBePure
 	public String toString() {
 		return Pure4J.toString(this, in);
 	}

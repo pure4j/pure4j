@@ -35,8 +35,9 @@ import java.util.Vector;
 
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
-import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
@@ -70,7 +71,9 @@ public class JavaStandardLibraryPurity {
 			@SuppressWarnings("unchecked")
 			@Override
 			public List<Class<?>> topLevelClasses() {
-				return Arrays.asList((Class<?>) ArraySeq.class, PureCollections.class);
+				return Arrays.asList((Class<?>) ArraySeq.class, 
+						PersistentHashMap.class, 
+						PureCollections.class);
 			}
 		}, "org.pure4j", false);
 	}
@@ -151,7 +154,13 @@ public class JavaStandardLibraryPurity {
 		StringBuffer.class,
 		Math.class,
 		StrictMath.class,
-		Comparable.class);
+		Integer.class, 
+		Double.class, 
+		Float.class,
+		Character.class,
+		Boolean.class,
+		Long.class,
+		String.class);
 	}
 	
 	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Resource> resources) throws IOException {
@@ -186,8 +195,8 @@ public class JavaStandardLibraryPurity {
 		}
 		
 		@Override
-		public void registerError(String s, Throwable optional) {
-			System.err.println(s);
+		public void registerError(Pure4JException t) {
+			System.err.println(t.getMessage());
 		}
 
 		List<String> pureSignatures = new ArrayList<String>();
@@ -201,6 +210,7 @@ public class JavaStandardLibraryPurity {
 		public void close() throws IOException {
 			Collections.sort(pureSignatures);
 			for (String s : pureSignatures) {
+				stream.write("FORCE ");
 				stream.write(s);
 				stream.write("\n");
 			}

@@ -50,4 +50,11 @@ public class MethodHandle extends CallHandle {
 	public Class<?>[] getRawTypes(ClassLoader cl) {
 		return hydrate(cl).getParameterTypes();
 	}
+
+	@Override
+	public MethodHandle swapClass(Class<?> class1) {
+		return new MethodHandle(convertClassName(class1), name, desc, getLineNumber()); 
+	}
+	
+	
 }
