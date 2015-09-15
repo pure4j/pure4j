@@ -18,10 +18,17 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		Collection<K>, Set<K>, Serializable {
 
+	@ImmutableValue(Enforcement.FORCE)
 	int _hasheq = -1;
+	
 	final IPersistentMap<K, K> impl;
 
 	protected APersistentSet(IPersistentMap<K, K> impl) {
@@ -33,10 +40,12 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	public boolean contains(Object key) {
+		Pure4J.immutable(key);
 		return impl.containsKey(key);
 	}
 
 	public K get(Object key) {
+		Pure4J.immutable(key);
 		return impl.valAt(key);
 	}
 
@@ -46,10 +55,6 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 
 	public ISeq<K> seq() {
 		return APersistentMap.KeySeq.createFromMap(impl);
-	}
-
-	public Object invoke(Object arg1) {
-		return get(arg1);
 	}
 
 	public boolean equals(Object obj) {
@@ -86,14 +91,17 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	public boolean add(Object o) {
+		Pure4J.immutable(o);
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean remove(Object o) {
+		Pure4J.immutable(o);
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean addAll(Collection<? extends K> c) {
+		Pure4J.immutable(c);
 		throw new UnsupportedOperationException();
 	}
 
@@ -102,14 +110,17 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	public boolean retainAll(Collection<?> c) {
+		Pure4J.immutable(c);
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean removeAll(Collection<?> c) {
+		Pure4J.immutable(c);
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean containsAll(Collection<?> c) {
+		Pure4J.immutable(c);
 		for (Object o : c) {
 			if (!contains(o))
 				return false;
@@ -118,6 +129,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	@SuppressWarnings("unchecked")
+	@Pure(Enforcement.FORCE)
 	public <T> T[] toArray(T[] a) {
 		return (T[]) PureCollections.seqToNewArray(seq(), a);
 	}
@@ -134,7 +146,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		if (impl instanceof IMapIterable)
 			return ((IMapIterable<K, ?>) impl).keyIterator();
 		else
-			return new Iterator<K>() {
+			return new IPureIterator<K>() {
 				private final Iterator<Entry<K, K>> iter = impl.iterator();
 
 				public boolean hasNext() {

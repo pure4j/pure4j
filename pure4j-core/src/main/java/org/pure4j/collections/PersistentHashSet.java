@@ -14,6 +14,10 @@ package org.pure4j.collections;
 
 import java.util.List;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 public class PersistentHashSet<K> extends APersistentSet<K> {
 
 	static private final PersistentHashSet<Object> EMPTY = new PersistentHashSet<Object>(
@@ -92,12 +96,14 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	}
 
 	public IPersistentSet<K> disjoin(Object key) {
+		Pure4J.immutable(key);
 		if (contains(key))
 			return new PersistentHashSet<K>(impl.without(key));
 		return this;
 	}
 
 	public IPersistentSet<K> cons(K o) {
+		Pure4J.immutable(o);
 		if (contains(o))
 			return this;
 		return new PersistentHashSet<K>(impl.assoc(o, o));
@@ -108,6 +114,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return (PersistentHashSet<K>) EMPTY;
 	}
 
+	@Pure(Enforcement.NOT_PURE)
 	public ITransientCollection<K> asTransient() {
 		return new TransientHashSet<K>(((PersistentHashMap<K, K>) impl).asTransient());
 	}

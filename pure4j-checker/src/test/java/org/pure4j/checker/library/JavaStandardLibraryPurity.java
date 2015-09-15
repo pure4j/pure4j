@@ -36,6 +36,7 @@ import java.util.Vector;
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.PersistentHashMap;
+import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.ClassHandle;
@@ -73,6 +74,7 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) ArraySeq.class, 
 						PersistentHashMap.class, 
+						PersistentHashSet.class,
 						PureCollections.class);
 			}
 		}, "org.pure4j", false);
