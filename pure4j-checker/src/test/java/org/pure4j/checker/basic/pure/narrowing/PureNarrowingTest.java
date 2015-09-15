@@ -3,12 +3,12 @@ package org.pure4j.checker.basic.pure.narrowing;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
-import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
 @Pure
 public class PureNarrowingTest {
 
-	@CausesError(PureMethodArgumentNotImmutableException.class)
+	@CausesError(PureMethodParameterNotImmutableException.class)
 	public String doSomethingInterfaceNotPure(Object in) {
 		return "blah";
 	}

@@ -22,7 +22,7 @@ import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MethodCantBeHydratedException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
-import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
 import org.pure4j.exception.PureMethodAccessesSharedFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
@@ -127,19 +127,27 @@ public class PureChecklistHandler {
 						}
 					}
 
-					// check the signature of the pure method
-					Type[] genericTypes = declaration.getGenericTypes(cl);
-					for (int i = 0; i < genericTypes.length; i++) {
-						Type t = genericTypes[i];
-						if (!immutables.typeIsMarkedImmutable(t, cb)) {
-							if (!isRuntimeChecked((staticMethod ? 0 : 1) + i, pm, cb)) {
-								cb.registerError(new PureMethodArgumentNotImmutableException(this, t));
-								pureImplementation = false;
-								return false;
+					
+					// check the signature of accessible pure method
+					boolean pub = Modifier.isPublic(declaration.getModifiers(cl));
+					boolean priv = Modifier.isPrivate(declaration.getModifiers(cl));
+					boolean prot = Modifier.isProtected(declaration.getModifiers(cl));
+					
+					if (pub || ((!priv) && (!prot))) {
+						Type[] genericTypes = declaration.getGenericTypes(cl);
+						for (int i = 0; i < genericTypes.length; i++) {
+							Type t = genericTypes[i];
+							if (!immutables.typeIsMarkedImmutable(t, cb)) {
+								if (!isRuntimeChecked((staticMethod ? 0 : 1) + i, pm, cb)) {
+									cb.registerError(new PureMethodParameterNotImmutableException(this, t));
+									pureImplementation = false;
+									return false;
+								}
 							}
 						}
 					}
 
+					
 					List<MemberHandle> calls = pm.getCalls(declaration);
 					for (MemberHandle mh : calls) {
 						boolean staticCall = false;

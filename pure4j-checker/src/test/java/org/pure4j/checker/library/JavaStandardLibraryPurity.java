@@ -35,10 +35,13 @@ import java.util.Vector;
 
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.PersistentArrayMap;
 import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentQueue;
+import org.pure4j.collections.PersistentTreeMap;
+import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.ClassHandle;
@@ -80,7 +83,9 @@ public class JavaStandardLibraryPurity {
 						PersistentHashSet.class,
 						PersistentList.class,
 						PureCollections.class,
-						PersistentQueue.class);
+						PersistentQueue.class,
+						PersistentArrayMap.class,
+						PersistentTreeMap.class);
 			}
 		}, "org.pure4j", false);
 	}

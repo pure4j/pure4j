@@ -10,7 +10,7 @@ import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
-import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.immutable.ClassNotImmutableException;
 
 public class CheckParameterImmutability extends AbstractChecker {
@@ -23,7 +23,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 * @param in2
 	 */
 	@Pure
-	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodArgumentNotImmutableException.class})
+	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodParameterNotImmutableException.class})
 	public Object testParam1Bad(Object in1, Object in2) {
 		Object in3 = in2;
 		Pure4J.immutable(in1, in2);
@@ -54,7 +54,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 * Not testing all the parameters
 	 */
 	@Pure
-	@CausesError({MissingImmutableParameterCheckException.class, PureMethodArgumentNotImmutableException.class})
+	@CausesError({MissingImmutableParameterCheckException.class, PureMethodParameterNotImmutableException.class})
 	public Object testParam4Bad(Object in1, Object in2) {
 		Pure4J.immutable(in1);
 		return in1;
@@ -64,7 +64,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 *Calling with constants, gives a warning at compile time
 	 */
 	@Pure
-	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodArgumentNotImmutableException.class})
+	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodParameterNotImmutableException.class})
 	public Object testParam5Bad(Object in1) {
 		Pure4J.immutable(in1, 6);
 		return in1;

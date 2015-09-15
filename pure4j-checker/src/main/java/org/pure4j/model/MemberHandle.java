@@ -92,4 +92,6 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 	public String getSignature() {
 		return name+(desc != null ? desc.substring(0, desc.lastIndexOf(")")+1) : "");
 	}
+
+	public abstract int getModifiers(ClassLoader cl);
 }

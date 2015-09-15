@@ -51,7 +51,7 @@ public class ConstructorHandle extends CallHandle {
 	}
 	
 	@Override
-	public ConstructorHandle swapClass(Class<?> class1) {
-		return new ConstructorHandle(convertClassName(class1), desc, getLineNumber()); 
+	public int getModifiers(ClassLoader cl) {
+		return hydrate(cl).getModifiers();
 	}
 }

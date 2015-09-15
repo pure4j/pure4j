@@ -7,7 +7,7 @@ import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.FieldTypeNotImmutableException;
-import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 
 @ImmutableValue
@@ -20,7 +20,7 @@ public class BrokenValueObject extends AnotherBrokenObject {
 	@CausesError(FieldTypeNotImmutableException.class)
 	final InputStream is;
 	
-	@CausesError(PureMethodArgumentNotImmutableException.class)
+	@CausesError(PureMethodParameterNotImmutableException.class)
 	public BrokenValueObject(Integer in, Integer int2, String b, InputStream is) {
 		super(in);
 		this.int2 = int2;

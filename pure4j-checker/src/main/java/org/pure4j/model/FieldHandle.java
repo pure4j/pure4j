@@ -43,5 +43,12 @@ public class FieldHandle extends MemberHandle {
 	public Class<?>[] getRawTypes(ClassLoader cl) {
 		return new Class<?>[] { hydrate(cl).getType()};
 	}
+
+	@Override
+	public int getModifiers(ClassLoader cl) {
+		return hydrate(cl).getModifiers();
+	}
+	
+	
 	
 }

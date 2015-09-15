@@ -20,6 +20,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 /**
  * Persistent Red Black Tree 
  * Note that instances of this class are constant
@@ -33,6 +38,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	
 	private static final Comparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
 	
+	@ImmutableValue
 	private static final class DefaultComparator<K> implements Comparator<K>, Serializable {
 	    public int compare(Object o1, Object o2){
 			return Util.compare(o1, o2);
@@ -45,8 +51,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	    }
 	}
 
+	@ImmutableValue(Enforcement.FORCE)
 	public final Comparator<K> comp;
+	@ImmutableValue(Enforcement.FORCE)
 	public final Node tree;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	public final int _count;
 
 	final static private PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
@@ -66,12 +76,14 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	public PersistentTreeMap(Comparator<K> comp) {
+		Pure4J.immutable(comp);
 		this.comp = comp;
 		tree = null;
 		_count = 0;
 	}
 
-	PersistentTreeMap(Comparator<K> comp, Node tree, int _count) {
+	@Pure(Enforcement.FORCE)	// since it's private
+	private PersistentTreeMap(Comparator<K> comp, Node tree, int _count) {
 		this.comp = comp;
 		this.tree = tree;
 		this._count = _count;
@@ -752,12 +764,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
-	static public class Seq<K, V> extends ASeq<Entry<K, V>> {
+	static private class Seq<K, V> extends ASeq<Entry<K, V>> {
 		final ISeq<Node> stack;
 		final boolean asc;
 		final int cnt;
 
-		public Seq(ISeq<Node> stack, boolean asc) {
+		private Seq(ISeq<Node> stack, boolean asc) {
 			this.stack = stack;
 			this.asc = asc;
 			this.cnt = -1;
@@ -802,7 +814,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
-	static public class NodeIterator<K, V> implements Iterator<Entry<K, V>> {
+	static class NodeIterator<K, V> implements Iterator<Entry<K, V>> {
 		Stack<Node> stack = new Stack<Node>();
 		boolean asc;
 

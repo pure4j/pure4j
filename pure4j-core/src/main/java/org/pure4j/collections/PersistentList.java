@@ -23,7 +23,6 @@ import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-@ImmutableValue
 public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, List<K>, Counted {
 
 	private static final long serialVersionUID = 1L;
@@ -43,8 +42,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 		this._count = 1;
 	}
 
-	PersistentList(K _first, IPersistentList<K> _rest, int _count) {
-		Pure4J.immutable(_first);
+	protected PersistentList(K _first, IPersistentList<K> _rest, int _count) {
 		this._first = _first;
 		this._rest = _rest;
 		this._count = _count;

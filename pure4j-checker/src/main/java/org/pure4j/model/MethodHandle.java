@@ -52,9 +52,7 @@ public class MethodHandle extends CallHandle {
 	}
 
 	@Override
-	public MethodHandle swapClass(Class<?> class1) {
-		return new MethodHandle(convertClassName(class1), name, desc, getLineNumber()); 
+	public int getModifiers(ClassLoader cl) {
+		return hydrate(cl).getModifiers();
 	}
-	
-	
 }

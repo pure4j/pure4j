@@ -14,6 +14,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 
 
 /**
@@ -30,13 +35,15 @@ import java.util.Map;
 
 public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IMapIterable<K, V> {
 
-	final Object[] array;
+	@ImmutableValue(Enforcement.FORCE)
+	private final Object[] array;
 	static final int HASHTABLE_THRESHOLD = 16;
 
 	private static final PersistentArrayMap<Object, Object> EMPTY = new PersistentArrayMap<Object, Object>();
 
 	@SuppressWarnings("unchecked")
 	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
+		Pure4J.immutable(other);
 		ITransientMap<K, V> ret = (ITransientMap<K, V>) EMPTY.asTransient();
 		for (Entry<K, V> e : other.entrySet()) {
 			ret = ret.assoc(e.getKey(), e.getValue());
@@ -48,7 +55,8 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		this.array = new Object[] {};
 	}
 
-	IPersistentMap<K, V> createHT(Object[] init) {
+	@Pure(Enforcement.FORCE)	// only used privately
+	private IPersistentMap<K, V> createHT(Object[] init) {
 		return PersistentHashMap.create(init);
 	}
 
@@ -122,10 +130,12 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	 * @param init
 	 *            {key1,val1,key2,val2,...}
 	 */
+	@Pure(Enforcement.NOT_PURE)
 	public PersistentArrayMap(Object[] init) {
 		this(init, true);
 	}
 	
+	@Pure(Enforcement.NOT_PURE) // makes copy and is private.
 	private PersistentArrayMap(Object[] init, boolean makeCopy) {
 		if (makeCopy) {
 			init = Arrays.copyOf(init, init.length);
@@ -138,18 +148,22 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	public boolean containsKey(Object key) {
+		Pure4J.immutable(key);
 		return indexOf(key) >= 0;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public IMapEntry<K, V> entryAt(Object key) {
+		Pure4J.immutable(key);
 		int i = indexOf(key);
 		if (i >= 0)
 			return new MapEntry(array[i], array[i + 1]);
 		return null;
 	}
 
+	@Pure(Enforcement.FORCE)	// performs array copy on own array
 	public IPersistentMap<K, V> assocEx(K key, V val) {
+		Pure4J.immutable(key, val);
 		int i = indexOf(key);
 		Object[] newArray;
 		if (i >= 0) {
@@ -167,7 +181,9 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return new PersistentArrayMap<K,V>(newArray, false);
 	}
 
+	@Pure(Enforcement.FORCE)	// performs array copy on own array
 	public IPersistentMap<K, V> assoc(K key, V val) {
+		Pure4J.immutable(key, val);
 		int i = indexOf(key);
 		Object[] newArray;
 		if (i >= 0) // already have key, same-sized replacement
@@ -189,7 +205,9 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return new PersistentArrayMap<K,V>(newArray, false);
 	}
 
+	@Pure(Enforcement.FORCE)	// private array manipulation
 	public IPersistentMap<K, V> without(Object key) {
+		Pure4J.immutable(key);
 		int i = indexOf(key);
 		if (i >= 0) // have key, will remove
 		{
@@ -217,12 +235,14 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Pure
 	public static <K, V> PersistentArrayMap<K, V> emptyMap() {
 		return (PersistentArrayMap<K, V>) EMPTY;
 	}
 
 	@SuppressWarnings("unchecked")
 	final public V valAt(Object key, V notFound) {
+		Pure4J.immutable(key, notFound);
 		int i = indexOf(key);
 		if (i >= 0)
 			return (V) array[i + 1];
@@ -230,6 +250,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	public V valAt(Object key) {
+		Pure4J.immutable(key);
 		return valAt(key, null);
 	}
 
@@ -237,6 +258,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return count();
 	}
 
+	@Pure(Enforcement.FORCE)
 	private int indexOfObject(Object key) {
 		for (int i = 0; i < array.length; i += 2) {
 			if (Util.equals(key, array[i]))
@@ -245,6 +267,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return -1;
 	}
 
+	@Pure(Enforcement.FORCE)	// since it's private, and doesn't modify
 	private int indexOf(Object key) {
 		return indexOfObject(key);
 	}
@@ -296,7 +319,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		}
 	}
 
-	static class Iter<K, V> implements Iterator<Entry<K, V>> {
+	static class Iter<K, V> implements IPureIterator<Entry<K, V>> {
 		Object[] array;
 		int i;
 
@@ -327,6 +350,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 
 	}
 
+	@Pure(Enforcement.NOT_PURE)
 	public TransientArrayMap<K, V> asTransient() {
 		return new TransientArrayMap<K, V>(array);
 	}

@@ -262,7 +262,7 @@ public class PureCollections {
 	@SuppressWarnings("unchecked")
 	static public <K> ISeq<K> cons(K x, Object coll) {
 		if (coll == null)
-			return new PersistentList<K>(x);
+			return new PersistentList<K>(x, null, 1);
 		else if (coll instanceof ISeq)
 			return new Cons<K>(x, (ISeq<K>) coll);
 		else

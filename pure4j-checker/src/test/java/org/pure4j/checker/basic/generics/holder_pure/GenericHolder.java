@@ -5,7 +5,7 @@ import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
-import org.pure4j.exception.PureMethodArgumentNotImmutableException;
+import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
 @ImmutableValue
 public final class GenericHolder<X extends SomePureInterface> {
@@ -13,7 +13,7 @@ public final class GenericHolder<X extends SomePureInterface> {
 	@CausesError(FieldTypeNotImmutableException.class)
 	private final X in;
 
-	@CausesError(PureMethodArgumentNotImmutableException.class)
+	@CausesError(PureMethodParameterNotImmutableException.class)
 	public GenericHolder(X in) {
 		super();
 		this.in = in;
