@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentHashSet;
+import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.ClassHandle;
@@ -72,9 +73,11 @@ public class JavaStandardLibraryPurity {
 			@SuppressWarnings("unchecked")
 			@Override
 			public List<Class<?>> topLevelClasses() {
-				return Arrays.asList((Class<?>) ArraySeq.class, 
-						PersistentHashMap.class, 
-						PersistentHashSet.class,
+				return Arrays.asList((Class<?>) 
+					//	ArraySeq.class, 
+					//	PersistentHashMap.class, 
+					//	PersistentHashSet.class,
+						PersistentList.class,
 						PureCollections.class);
 			}
 		}, "org.pure4j", false);

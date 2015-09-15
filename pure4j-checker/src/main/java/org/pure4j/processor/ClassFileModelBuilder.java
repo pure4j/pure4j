@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static final boolean OUTPUT_ASM = false;
+	public static final boolean OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -59,10 +59,12 @@ public class ClassFileModelBuilder {
 		return new ClassVisitor(Opcodes.ASM4) {
 
 			String className;
+			String sup;
 
 			public void visit(int version, int access, String name, String sig, String superName, String[] interfaces) {
 				output("CLASS: "+name);
 				this.className = name;
+				this.sup = superName;
 				model.addSubclass(superName, name);
 
 				String packageName = getPackageName(name);
@@ -92,7 +94,7 @@ public class ClassFileModelBuilder {
 			public MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] exceptions) {
 				final MemberHandle mh = createHandle(className, name, desc, 0);
 				addDependency(className, model, desc, true);
-				return createMethodVisitor(model, className, mh);
+				return createMethodVisitor(model, className, mh, sup);
 
 			}
 
@@ -195,7 +197,7 @@ public class ClassFileModelBuilder {
 	}
 
 	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className,
-			final MemberHandle mh) {
+			final MemberHandle mh, final String superName) {
 		
 		output(mh.getName());
 		
@@ -223,6 +225,9 @@ public class ClassFileModelBuilder {
 				if (owner.equals(Type.getInternalName(Pure4J.class))) {
 					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);
 					arguments = new Stack<Integer>();
+				} else if (name.equals("<init>") && mh.getName().equals("<init>") && owner.equals(superName)) {
+					// calling the superclass constructor.  DON'T turn off firstCall
+					remoteMethod = createHandle(owner, name, desc, line);	
 				} else {
 					remoteMethod = createHandle(owner, name, desc, line);	
 					firstCall = false;

@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 @ImmutableValue
@@ -26,6 +28,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 
 	private static final long serialVersionUID = 1L;
 
+	@ImmutableValue(Enforcement.FORCE)
 	private final K _first;
 	private final IPersistentList<K> _rest;
 	private final int _count;
@@ -33,14 +36,15 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 	final private static EmptyList<?> EMPTY = new EmptyList<Object>();
 
 	public PersistentList(K first) {
+		Pure4J.immutable(first);
 		this._first = first;
 		this._rest = null;
 
 		this._count = 1;
 	}
 
-	PersistentList(K _first, IPersistentList<K> _rest,
-			int _count) {
+	PersistentList(K _first, IPersistentList<K> _rest, int _count) {
+		Pure4J.immutable(_first);
 		this._first = _first;
 		this._rest = _rest;
 		this._count = _count;
@@ -81,6 +85,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 	}
 
 	public PersistentList<K> cons(K o) {
+		Pure4J.immutable(o);
 		return new PersistentList<K>(o, this, _count + 1);
 	}
 
