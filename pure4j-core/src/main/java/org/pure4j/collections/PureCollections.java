@@ -64,7 +64,9 @@ public class PureCollections {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Pure
 	static public <K> ISeq<K> seq(Object coll) {
+		Pure4J.immutable(coll);
 		if (coll instanceof ASeq)
 			return (ASeq<K>) coll;
 		else
@@ -72,7 +74,9 @@ public class PureCollections {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Pure
 	static <K> ISeq<K> seqFrom(Object coll) {
+		Pure4J.immutable(coll);
 		if (coll instanceof Seqable)
 			return ((Seqable) coll).seq();
 		else if (coll == null)
@@ -110,8 +114,10 @@ public class PureCollections {
 		return i;
 	}
 
+	@Pure
 	@SuppressWarnings("rawtypes")
 	static public Object first(Object x) {
+		Pure4J.immutable(x);
 		if (x instanceof ISeq)
 			return ((ISeq) x).first();
 		ISeq seq = seq(x);
@@ -263,7 +269,9 @@ public class PureCollections {
 			return new Cons<K>(x, (ISeq<K>) seq(coll));
 	}
 
+	@Pure
 	static public <K> ISeq<K> list(K arg1) {
+		Pure4J.immutable(arg1);
 		return new PersistentList<K>(arg1);
 	}
 }

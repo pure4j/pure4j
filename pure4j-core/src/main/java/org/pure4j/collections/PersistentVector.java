@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.pure4j.annotations.pure.Pure;
+
 public class PersistentVector<K> extends APersistentVector<K> {
 
 	public static class Node implements Serializable {
@@ -334,6 +336,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Pure
 	public static <K> PersistentVector<K> emptyVector() {
 		return (PersistentVector<K>) EMPTY;
 	}

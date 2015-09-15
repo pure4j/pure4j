@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.pure4j.exception.MethodCantBeHydratedException;
 import org.pure4j.exception.Pure4JException;
 
 
@@ -135,7 +136,7 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 		Method m = getDeclaredMethod(method.getName(), c, params, cl);
 
 		if (m == null) {
-			throw new Pure4JException("Could not find method: " + method.getName());
+			throw new MethodCantBeHydratedException(method);
 		}
 		return m;
 

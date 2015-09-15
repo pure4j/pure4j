@@ -14,6 +14,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 //import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -30,7 +35,9 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 	final ISeq<K> f;
 	final PersistentVector<K> r;
 	// static final int INITIAL_REAR_SIZE = 4;
-	int _hasheq = -1;
+	
+	@ImmutableValue(Enforcement.FORCE)
+	private int _hasheq = -1;
 
 	PersistentQueue(int cnt, ISeq<K> f, PersistentVector<K> r) {
 		this.cnt = cnt;
@@ -88,6 +95,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 
 	@SuppressWarnings("unchecked")
 	public PersistentQueue<K> cons(K o) {
+		Pure4J.immutable(o);
 		if (f == null) // empty
 			return new PersistentQueue<K>(cnt + 1,  PureCollections.list(o), null);
 		else {
@@ -143,30 +151,36 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 	}
 
 	public boolean add(Object o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public boolean remove(Object o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public boolean addAll(Collection<? extends K> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public void clear() {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
 	}
 
 	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public boolean containsAll(Collection<?> c) {
+		Pure4J.immutable(c);
 		for (Object o : c) {
 			if (contains(o))
 				return true;
@@ -175,6 +189,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 	}
 
 	@SuppressWarnings("unchecked")
+	@Pure(Enforcement.FORCE)
 	public <E> E[] toArray(E[] a) {
 		return (E[]) PureCollections.seqToNewArray(seq(), a);
 	}
@@ -188,6 +203,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 	}
 
 	public boolean contains(Object o) {
+		Pure4J.immutable(o);
 		for (ISeq<K> s = seq(); s != null; s = s.next()) {
 			if (Util.equals(s.first(), o))
 				return true;
@@ -196,7 +212,7 @@ public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Co
 	}
 
 	public Iterator<K> iterator() {
-		return new Iterator<K>() {
+		return new IPureIterator<K>() {
 			private ISeq<K> fseq = f;
 			private final Iterator<K> riter = r != null ? r.iterator() : null;
 
