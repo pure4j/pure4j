@@ -113,6 +113,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return new ArraySeq_double(array, 0, true);
 	}
 
+	@Pure(Enforcement.FORCE)
 	private ArraySeq(K[] array, int i, boolean copy) {
 		this.i = i;
 		this.array = copy ? Arrays.copyOf(array, array.length) : array;
@@ -173,6 +174,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final int[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_int(int[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -227,6 +229,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final float[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_float(float[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -278,6 +281,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final double[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_double(double[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -331,6 +335,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final long[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_long(long[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -384,6 +389,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final byte[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_byte(byte[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -447,6 +453,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final char[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_char(char[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -510,6 +517,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final short[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_short(short[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
@@ -573,6 +581,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		public final boolean[] array;
 		final int i;
 
+		@Pure(Enforcement.FORCE)
 		ArraySeq_boolean(boolean[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;

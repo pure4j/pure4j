@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Pure;
 
 @ImmutableValue
 public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, List<K>, Counted {
@@ -88,11 +89,13 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 		return (IPersistentList<K>) EMPTY;
 	}
 	
+	@Pure
 	@SuppressWarnings("unchecked")
 	public static <X> IPersistentList<X> emptyList() {
 		return (IPersistentList<X>) EMPTY;
 	}
 	
+	@Pure
 	@SuppressWarnings("unchecked")
 	public static <X> ISeq<X> emptySeq() {
 		return (ISeq<X>) EMPTY;

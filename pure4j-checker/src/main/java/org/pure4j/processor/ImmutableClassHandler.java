@@ -134,7 +134,7 @@ public class ImmutableClassHandler {
 					}
 					
 					if (!typeIsMarkedImmutable(f.getGenericType(), cb)) {
-						cb.registerError(new FieldTypeNotImmutableException(f));
+						cb.registerError(new FieldTypeNotImmutableException(f, immutableClass));
 					}
 				}
 					

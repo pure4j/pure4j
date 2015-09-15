@@ -7,11 +7,13 @@ import java.util.Map.Entry;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.PersistentTreeMap;
 
 public class PersistentTreeMapExample extends AbstractChecker {
 
 	@Pure
+	@ShouldBePure
 	public void pureMethod(PersistentTreeMap<String, String> in, int expectedKeys, int expectedVals) {
 		log("keys:");
 		for (Iterator<String> iterator = in.keyIterator(); iterator.hasNext();) {

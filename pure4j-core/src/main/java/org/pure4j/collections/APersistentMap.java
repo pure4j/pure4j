@@ -11,15 +11,15 @@
 package org.pure4j.collections;
 
 import java.io.Serializable;
-import java.util.AbstractCollection;
-import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
 
 public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable, MapEquivalence {
@@ -47,6 +47,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 
 
 	public IPersistentMap<K, V> cons(Map.Entry<K, V> o) {
+		Pure4J.immutable(o);
 		return assoc(o.getKey(), o.getValue());
 	}
 
@@ -89,15 +90,20 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 
 	static public class KeySeq<K, V> extends ASeq<K> {
 		private static final long serialVersionUID = 5550732202968416322L;
+		
 		final ISeq<Entry<K, V>> seq;
+
+		@ImmutableValue(Enforcement.FORCE)
 		final Iterable<Entry<K, V>> iterable;
 
+		@Pure
 		static public <K2, V2> KeySeq<K2, V2> create(ISeq<Entry<K2, V2>> seq) {
 			if (seq == null)
 				return null;
 			return new KeySeq<K2, V2>(seq, null);
 		}
 
+		@Pure
 		static public <K2, V2> KeySeq<K2, V2> createFromMap(IPersistentMap<K2, V2> map) {
 			if (map == null)
 				return null;
@@ -107,6 +113,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 			return new KeySeq<K2, V2>(seq, map);
 		}
 
+		@Pure(Enforcement.FORCE)
 		private KeySeq(ISeq<Entry<K, V>> seq, Iterable<Entry<K,V>> iterable) {
 			this.seq = seq;
 			this.iterable = iterable;
@@ -129,7 +136,8 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 				return (Iterator<K>) ((IMapIterable<?,?>) iterable).keyIterator();
 
 			final Iterator<Entry<K, V>> mapIter = iterable.iterator();
-			return new Iterator<K>() {
+			
+			return new IPureIterator<K>() {
 				public boolean hasNext() {
 					return mapIter.hasNext();
 				}
@@ -146,16 +154,20 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	static public class ValSeq<K, V> extends ASeq<V> {
-		private static final long serialVersionUID = -1871854374403282281L;
+		
 		final ISeq<Entry<K, V>> seq;
+		
+		@ImmutableValue(Enforcement.FORCE)
 		final Iterable<Entry<K,V>> iterable;
 
+		@Pure
 		static public <K, V> ValSeq<K, V> create(ISeq<Entry<K, V>> seq) {
 			if (seq == null)
 				return null;
 			return new ValSeq<K, V>(seq, null);
 		}
 
+		@Pure
 		static public <K, V> ValSeq<K, V> createFromMap(IPersistentMap<K, V> map) {
 			if (map == null)
 				return null;
@@ -164,7 +176,8 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 				return null;
 			return new ValSeq<K, V>(seq, map);
 		}
-
+		
+		@Pure(Enforcement.FORCE)
 		private ValSeq(ISeq<Entry<K, V>> seq, Iterable<Entry<K, V>> iterable) {
 			this.seq = seq;
 			this.iterable = iterable;
@@ -187,7 +200,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 				return (Iterator<V>) ((IMapIterable<?,?>) iterable).valIterator();
 
 			final Iterator<Entry<K,V>> mapIter = iterable.iterator();
-			return new Iterator<V>() {
+			return new IPureIterator<V>() {
 				public boolean hasNext() {
 					return mapIter.hasNext();
 				}
@@ -210,12 +223,13 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public boolean containsValue(Object value) {
+		Pure4J.immutable(value);
 		return values().contains(value);
 	}
-
+	
 	public Set<Entry<K, V>> entrySet() {
-		return new AbstractSet<Entry<K, V>>() {
-
+		return new AImmutableSet<Entry<K, V>>() {
+			
 			public Iterator<Entry<K, V>> iterator() {
 				return APersistentMap.this.iterator();
 			}
@@ -242,6 +256,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public V get(Object key) {
+		Pure4J.immutable(key);
 		return valAt(key);
 	}
 
@@ -250,12 +265,12 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public Set<K> keySet() {
-		return new AbstractSet<K>() {
+		return new AImmutableSet<K>() {
 
 			public Iterator<K> iterator() {
 				final Iterator<Entry<K, V>> mi = APersistentMap.this.iterator();
 
-				return new Iterator<K>() {
+				return new IPureIterator<K>() {
 
 					public boolean hasNext() {
 						return mi.hasNext();
@@ -283,14 +298,17 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public V put(K key, V value) {
+		Pure4J.immutable(key, value);
 		throw new UnsupportedOperationException();
 	}
 
 	public void putAll(Map<? extends K, ? extends V> t) {
+		Pure4J.immutable(t);
 		throw new UnsupportedOperationException();
 	}
 
 	public V remove(Object key) {
+		Pure4J.immutable(key);
 		throw new UnsupportedOperationException();
 	}
 
@@ -299,12 +317,12 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public Collection<V> values() {
-		return new AbstractCollection<V>() {
+		return new AImmutableCollection<V>() {
 
 			public Iterator<V> iterator() {
 				final Iterator<Map.Entry<K, V>> mi = APersistentMap.this.iterator();
 
-				return new Iterator<V>() {
+				return new IPureIterator<V>() {
 
 					public boolean hasNext() {
 						return mi.hasNext();

@@ -16,8 +16,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
 
 /*
  A persistent rendition of Phil Bagwell's Hash Array Mapped Trie
@@ -68,11 +70,13 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return ret.persistent();
 	}
 	
+	@Pure
 	@SuppressWarnings("unchecked")
 	public static <K, V> PersistentHashMap<K, V> emptyMap() {
 		return (PersistentHashMap<K, V>) EMPTY;
 	}
 
+	@Pure(Enforcement.FORCE)
 	PersistentHashMap(int count, INode root, boolean hasNull, V nullValue) {
 		this.count = count;
 		this.root = root;
@@ -108,11 +112,14 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (PersistentHashMap<K, K>) ret.persistent();
 	}
 
+	@Pure
 	static int hash(Object k) {
-		return k.hashCode();
+		Pure4J.immutable(k);
+		return Pure4J.hashCode(k);		// should be a less expensive way to do this
 	}
 
 	public boolean containsKey(Object key) {
+		Pure4J.immutable(key);
 		if (key == null)
 			return hasNull;
 		return (root != null) ? root.find(0, hash(key), key, NOT_FOUND) != NOT_FOUND
@@ -121,12 +128,20 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 
 	@SuppressWarnings("unchecked")
 	public IMapEntry<K, V> entryAt(Object key) {
+		Pure4J.immutable(key);
 		if (key == null)
 			return hasNull ? new MapEntry<K, V>(null, nullValue) : null;
 		return (root != null) ? root.find(0, hash(key), key) : null;
 	}
 
+	@Pure(Enforcement.FORCE)
+	/*
+	 * Not pure, specifically because of Box.
+	 * It would be fairly easy to re-write Box so that it has getters and setters, and 
+	 * assures it's purity.  However, it's part of the implementation, so I won't do this now.
+	 */
 	public PersistentHashMap<K, V> assoc(K key, V val) {
+		Pure4J.immutable(key, val);
 		if (key == null) {
 			if (hasNull && val == nullValue)
 				return this;
@@ -144,22 +159,26 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 
 	@SuppressWarnings("unchecked")
 	public V valAt(Object key, V notFound) {
+		Pure4J.immutable(key, notFound);
 		if (key == null)
 			return hasNull ? nullValue : notFound;
 		return (V) (root != null ? root.find(0, hash(key), key, notFound) : notFound);
 	}
 
 	public V valAt(Object key) {
+		Pure4J.immutable(key);
 		return valAt(key, null);
 	}
 
 	public PersistentHashMap<K,V> assocEx(K key, V val) {
+		Pure4J.immutable(key, val);
 		if (containsKey(key))
 			throw Util.runtimeException("Key already present");
 		return assoc(key, val);
 	}
 
 	public IPersistentMap<K, V> without(Object key) {
+		Pure4J.immutable(key);
 		if (key == null)
 			return hasNull ? new PersistentHashMap<K, V>(count - 1, root,
 					false, null) : this;
@@ -187,6 +206,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	};
 	
+	@Pure
 	@SuppressWarnings("unchecked")
 	public static <X> Iterator<X> emptyIter() {
 		return (Iterator<X>) EMPTY_ITER;
@@ -197,7 +217,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		final Iterator<?> rootIter = (root == null) ? EMPTY_ITER : root
 				.iterator();
 		if (hasNull) {
-			return new Iterator<Entry<K, V>>() {
+			return new IPureIterator<Entry<K, V>>() {
 				private boolean seen = false;
 
 				public boolean hasNext() {
@@ -251,10 +271,12 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (hash >>> shift) & 0x01f;
 	}
 
+	@Pure(Enforcement.NOT_PURE)
 	public TransientHashMap<K, V> asTransient() {
 		return new TransientHashMap<K, V>(this);
 	}
 
+	
 	static final class TransientHashMap<K, V> extends ATransientMap<K, V> {
 		final AtomicReference<Thread> edit;
 		volatile INode root;

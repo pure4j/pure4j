@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 
 public class FieldTypeNotImmutableException extends Pure4JException {
 
-	public FieldTypeNotImmutableException(Field f) {
+	public FieldTypeNotImmutableException(Field f, Class<?> immutableClass) {
 		super(	"Field "+f.getName()+" should have an immutable type on class "+
-				f.getGenericType()+".  Consider adding @ImmutableValue to "+f.getGenericType());
+				f+".  Consider adding @ImmutableValue to "+f.getGenericType());
 	}
 
 }

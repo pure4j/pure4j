@@ -29,3 +29,8 @@ NOT_PURE java/lang/Object.toString()Ljava/lang/String;
 FORCE java/lang/Integer.valueOf(I)Ljava/lang/Integer;
 FORCE java/lang/Character.valueOf(C)Ljava/lang/Character;
 FORCE java/lang/Double.valueOf(D)Ljava/lang/Double;
+FORCE java/lang/Boolean.valueOf(Z)Ljava/lang/Boolean;
+FORCE java/lang/Byte.valueOf(B)Ljava/lang/Byte;
+FORCE java/lang/Float.valueOf(F)Ljava/lang/Float;
+FORCE java/lang/Long.valueOf(J)Ljava/lang/Long;
+FORCE java/lang/Short.valueOf(S)Ljava/lang/Short;

@@ -62,7 +62,7 @@ public class RuntimeImmutabilityChecker {
 		
 		if (classImmutableValueAnnotation(immutableClass) == null) {
 			immutableClassCache.put(immutableClass, false);
-			throw new ClassNotImmutableException("Class is missing @ImmutableValue annotation"+immutableClass);
+			throw new ClassNotImmutableException("Class is missing @ImmutableValue annotation "+immutableClass);
 		}
 		
 		immutableClassCache.put(immutableClass, true);

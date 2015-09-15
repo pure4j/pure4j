@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.pure4j.annotations.pure.Pure;
 
-@Pure
+
 public class ToStringFunctions {
 
 	   /**
@@ -20,7 +20,8 @@ public class ToStringFunctions {
      *
      * @return a string representation of this collection
      */
-    public static <E> String toString(Collection<E> c) {
+	@Pure
+	public static <E> String toString(Collection<E> c) {
         Iterator<E> it = c.iterator();
         if (! it.hasNext())
             return "[]";
@@ -48,7 +49,8 @@ public class ToStringFunctions {
      *
      * @return a string representation of this map
      */
-    public static <K, V> String toString(Map<K, V> m) {
+	@Pure
+	public static <K, V> String toString(Map<K, V> m) {
         Iterator<Entry<K,V>> i = m.entrySet().iterator();
         if (! i.hasNext())
             return "{}";

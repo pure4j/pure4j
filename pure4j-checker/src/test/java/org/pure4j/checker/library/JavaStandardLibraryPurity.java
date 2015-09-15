@@ -185,6 +185,8 @@ public class JavaStandardLibraryPurity {
 		
 		private BufferedWriter stream;
 		
+		private List<String> errors = new ArrayList<String>();
+		
 		public FileCallback(File out) throws IOException {
 			stream = new BufferedWriter(new FileWriter(out));
 		}
@@ -196,7 +198,7 @@ public class JavaStandardLibraryPurity {
 		
 		@Override
 		public void registerError(Pure4JException t) {
-			System.err.println(t.getMessage());
+			errors.add(t.getMessage());
 		}
 
 		List<String> pureSignatures = new ArrayList<String>();
@@ -208,6 +210,11 @@ public class JavaStandardLibraryPurity {
 
 		@Override
 		public void close() throws IOException {
+			Collections.sort(errors);
+			for (String string : errors) {
+				System.err.println(string);
+			}
+			
 			Collections.sort(pureSignatures);
 			for (String s : pureSignatures) {
 				stream.write("FORCE ");

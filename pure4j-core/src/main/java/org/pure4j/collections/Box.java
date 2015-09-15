@@ -12,6 +12,9 @@
 
 package org.pure4j.collections;
 
+import org.pure4j.annotations.pure.Pure;
+
+@Pure
 class Box {
 
 	public Object val;

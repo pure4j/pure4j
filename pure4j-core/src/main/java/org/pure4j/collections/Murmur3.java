@@ -41,12 +41,13 @@ import org.pure4j.annotations.pure.Pure;
  * @author Kurt Alfred Kluever
  */
 
-@Pure
+
 public final class Murmur3 {
 	private static final int seed = 0;
 	private static final int C1 = 0xcc9e2d51;
 	private static final int C2 = 0x1b873593;
 
+	@Pure
 	public static int hashInt(int input) {
 		if (input == 0)
 			return 0;
@@ -56,6 +57,7 @@ public final class Murmur3 {
 		return fmix(h1, 4);
 	}
 
+	@Pure
 	public static int hashLong(long input) {
 		if (input == 0)
 			return 0;
@@ -71,6 +73,7 @@ public final class Murmur3 {
 		return fmix(h1, 8);
 	}
 
+	@Pure
 	public static int hashUnencodedChars(CharSequence input) {
 		int h1 = seed;
 
@@ -91,6 +94,7 @@ public final class Murmur3 {
 		return fmix(h1, 2 * input.length());
 	}
 
+	@Pure
 	public static int mixCollHash(int hash, int count) {
 		int h1 = seed;
 		int k1 = mixK1(hash);
@@ -98,6 +102,7 @@ public final class Murmur3 {
 		return fmix(h1, count);
 	}
 
+	@Pure
 	public static int hashOrdered(Iterable<?> xs) {
 		int n = 0;
 		int hash = 1;
@@ -110,6 +115,7 @@ public final class Murmur3 {
 		return mixCollHash(hash, n);
 	}
 
+	@Pure
 	public static int hashUnordered(Iterable<?> xs) {
 		int hash = 0;
 		int n = 0;
@@ -121,6 +127,7 @@ public final class Murmur3 {
 		return mixCollHash(hash, n);
 	}
 
+	@Pure
 	private static int mixK1(int k1) {
 		k1 *= C1;
 		k1 = Integer.rotateLeft(k1, 15);
@@ -128,6 +135,7 @@ public final class Murmur3 {
 		return k1;
 	}
 
+	@Pure
 	private static int mixH1(int h1, int k1) {
 		h1 ^= k1;
 		h1 = Integer.rotateLeft(h1, 13);
@@ -136,6 +144,7 @@ public final class Murmur3 {
 	}
 
 	// Finalization mix - force all bits of a hash block to avalanche
+	@Pure
 	private static int fmix(int h1, int length) {
 		h1 ^= length;
 		h1 ^= h1 >>> 16;

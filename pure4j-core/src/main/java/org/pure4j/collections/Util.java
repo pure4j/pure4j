@@ -69,6 +69,7 @@ public class Util {
 		return ret;
 	}
 
+	@Pure
 	static public RuntimeException runtimeException(String s) {
 		return new RuntimeException(s);
 	}

@@ -6,12 +6,14 @@ import java.util.Vector;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.EnumerationSeq;
 import org.pure4j.collections.ISeq;
 
 public class EnumerationSeqExample extends AbstractChecker {
 
 	@Pure
+	@ShouldBePure
 	public <K> void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
 		
 		assertEquals(expectedLength, in.count());

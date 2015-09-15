@@ -10,13 +10,17 @@
 
 package org.pure4j.collections;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
 
+@ImmutableValue
 public class MapEntry<K, V> extends AMapEntry<K, V> {
 	
 	final K _key;
 	final V _val;
 
 	public MapEntry(K key, V val) {
+		Pure4J.immutable(key, val);
 		this._key = key;
 		this._val = val;
 	}

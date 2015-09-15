@@ -1,4 +1,4 @@
-package org.pure4j.checker.basic.corners.mutable_enun;
+package org.pure4j.checker.basic.corners.mutable_enum;
 
 import java.io.IOException;
 

@@ -29,6 +29,12 @@ public class AbstractChecker {
 		super();
 	}
 
+	
+	@Pure(Enforcement.NOT_PURE)
+	protected void checkThisPackage(Class<?> ofClass, int defaultConstructors, int covariants,  Class<?>... otherExceptions) throws IOException {
+		checkThisPackage(ofClass, defaultConstructors+covariants, otherExceptions);
+	}
+	
 	@Pure(Enforcement.NOT_PURE)
 	protected void checkThisPackage(Class<?> ofClass, int defaultConstructors, Class<?>... otherExceptions) throws IOException {
 		final Set<String> pures = new LinkedHashSet<String>();

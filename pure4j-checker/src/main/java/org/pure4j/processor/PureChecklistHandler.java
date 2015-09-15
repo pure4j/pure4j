@@ -117,14 +117,11 @@ public class PureChecklistHandler {
 						return true;
 					}
 				}
-				
-				// finish now if abstract/interface
-				if (declaration.getDeclaringClass(cl).isInterface()) {
-					return true;
-				}
-				
+
+				boolean staticMethod = false;
 				if (declaration instanceof MethodHandle) {
 					Method m = ((MethodHandle) declaration).hydrate(cl);
+					staticMethod = Modifier.isStatic(m.getModifiers());
 					if (Modifier.isAbstract(m.getModifiers())) {
 						return true;
 					}
@@ -136,7 +133,7 @@ public class PureChecklistHandler {
 				for (int i = 0; i < genericTypes.length; i++) {
 					Type t = genericTypes[i];
 					if (!immutables.typeIsMarkedImmutable(t, cb)) {
-						if (!isRuntimeChecked(i, pm, cb)) {
+						if (!isRuntimeChecked((staticMethod ? 0 : 1) + i, pm, cb)) {
 							cb.registerError(new PureMethodArgumentNotImmutableException(this, t));
 							pureImplementation = false;
 							return false;
@@ -144,16 +141,17 @@ public class PureChecklistHandler {
 					}
 				}
 				
-				for (MemberHandle mh: pm.getCalls(declaration)) {
-					boolean staticMethod = false;
+				List<MemberHandle> calls = pm.getCalls(declaration);
+				for (MemberHandle mh: calls) {
+					boolean staticCall = false;
 					if (mh instanceof MethodHandle) {
 						Method m = ((MethodHandle) mh).hydrate(cl);
-						staticMethod = Modifier.isStatic(m.getModifiers());
+						staticCall = Modifier.isStatic(m.getModifiers());
 					}
 					if (mh instanceof CallHandle) {
 						if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object")) ){
 							// we can skip this one
-						} else if (!isMarkedPure(mh, cb, staticMethod)) {
+						} else if (!isMarkedPure(mh, cb, staticCall)) {
 							cb.registerError(new PureMethodCallsImpureException(this, (CallHandle) mh));
 							pureImplementation = false;
 						}
@@ -213,6 +211,9 @@ public class PureChecklistHandler {
 		 */
 		private boolean isRuntimeChecked(int paramNo, ProjectModel pm, Callback cb) {
 			List<MemberHandle> calls = pm.getCalls(declaration);
+			if (isCovariantMethod(calls)) {
+				return true;
+			}
 			boolean found = false;
 			boolean checkTried = false;
 			for (MemberHandle memberHandle : calls) {
@@ -223,7 +224,7 @@ public class PureChecklistHandler {
 						if (!icmh.isFirstCall()) {
 							cb.registerError(new IncorrectPure4JImmutableCallException(this));
 							return false;
-						} else if ((icmh.getLocalVariables().contains(paramNo+1)) && (icmh.getName().equals("immutable"))) {
+						} else if ((icmh.getLocalVariables().contains(paramNo)) && (icmh.getName().equals("immutable"))) {
 							found = true;
 						}
 					} else if (icmh.getName().equals("unsupported")) {
@@ -240,6 +241,21 @@ public class PureChecklistHandler {
 			}
 			
 			return checkTried;
+		}
+
+		/**
+		 * If this is a covariant return type implementation, we don't need to bother with checking, it'll be done in 
+		 * the more specific method.
+		 */
+		private boolean isCovariantMethod(List<MemberHandle> calls) {
+			if (calls.size() == 1) {
+				MemberHandle theCall  = calls.get(0);
+				if (theCall.getSignature().equals(this.declaration.getSignature())) {
+					return true;
+				}
+			}
+			
+			return false;
 		}	
 	}
 	

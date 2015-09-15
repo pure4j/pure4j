@@ -3,12 +3,14 @@ package org.pure4j.checker.collections;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.PersistentHashSet;
 
 public class PersistentHashSetExample extends AbstractChecker {
 
 	@Pure
+	@ShouldBePure
 	public void pureMethod(IPersistentSet<String> in, int expected) {
 		log("keys:");
 		for (String entry : in) {

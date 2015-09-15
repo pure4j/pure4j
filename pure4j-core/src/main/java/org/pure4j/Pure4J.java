@@ -1,8 +1,5 @@
 package org.pure4j;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.Util;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
@@ -19,6 +16,7 @@ public class Pure4J {
 
 	@Pure
 	public static int hashCode(Object a) {
+		Pure4J.immutable(a);
 		return Util.hash(a);
 	}
 	
@@ -48,29 +46,37 @@ public class Pure4J {
 	
 	@Pure
 	public static final void immutable(Object a) {
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
+		immutableClass(a);
 	}
 	
+	private static void immutableClass(Object o) {
+		if (o == null) {
+			return;
+		}
+		
+		RuntimeImmutabilityChecker.throwIfClassNotImmutable(o.getClass());
+	}
+
 	@Pure
 	public static final void immutable(Object a, Object b) {
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
+		immutableClass(a);
+		immutableClass(b);
 		
 	}
 	
 	@Pure
 	public static final void immutable(Object a, Object b, Object c) {
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(c.getClass());
+		immutableClass(a);
+		immutableClass(b);
+		immutableClass(c);
 	}
 	
 	@Pure
 	public static final void immutable(Object a, Object b, Object c, Object d) {
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(a.getClass());
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(b.getClass());
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(c.getClass());
-		RuntimeImmutabilityChecker.throwIfClassNotImmutable(d.getClass());
+		immutableClass(a);
+		immutableClass(b);
+		immutableClass(c);
+		immutableClass(d);
 	}
 	
 	/**
@@ -95,7 +101,7 @@ public class Pure4J {
 	}
 	
 	@Pure
-	public static final void unsupported() {
-		throw new UnsupportedOperationException();
+	public static final UnsupportedOperationException unsupported() {
+		return new UnsupportedOperationException();
 	}
 }
