@@ -36,7 +36,7 @@ import org.pure4j.annotations.pure.Pure;
 public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		Reversible<Entry<K, V>>, Sorted<K, Entry<K, V>> {
 	
-	private static final Comparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
+	private static final DefaultComparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
 	
 	@ImmutableValue
 	private static final class DefaultComparator<K> implements Comparator<K>, Serializable {
@@ -114,10 +114,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	public boolean containsKey(Object key) {
+		Pure4J.immutable(key);
 		return entryAt(key) != null;
 	}
 
 	public PersistentTreeMap<K, V> assocEx(K key, V val) {
+		Pure4J.immutable(key, val);
 		Box found = new Box(null);
 		Node t = add(tree, key, val, found);
 		if (t == null) // null == already contains key
@@ -127,7 +129,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return new PersistentTreeMap<K, V>(comp, t.blacken(), _count + 1);
 	}
 
+	@Pure(Enforcement.FORCE)	// due to use of Box
 	public PersistentTreeMap<K, V> assoc(K key, V val) {
+		Pure4J.immutable(key, val);
 		Box found = new Box(null);
 		Node t = add(tree, key, val, found);
 		if (t == null) // null == already contains key
@@ -141,7 +145,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return new PersistentTreeMap<K, V>(comp, t.blacken(), _count + 1);
 	}
 
+	@Pure(Enforcement.FORCE)
 	public PersistentTreeMap<K, V> without(Object key) {
+		Pure4J.immutable(key);
 		Box found = new Box(null);
 		Node t = remove(tree, key, found);
 		if (t == null) {
@@ -175,6 +181,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	public K entryKey(Map.Entry<K, V> entry) {
+		Pure4J.immutable(entry);
 		return entry.getKey();
 	}
 
@@ -185,6 +192,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	public ISeq<Entry<K, V>> seqFrom(K key, boolean ascending) {
+		Pure4J.immutable(key);
 		if (_count > 0) {
 			ISeq<Node> stack = null;
 			Node t = tree;
@@ -229,11 +237,13 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return vals(iterator());
 	}
 
-	public Iterator<K> keys(NodeIterator<K, V> it) {
+	@Pure
+	public static <K, V> Iterator<K> keys(NodeIterator<K, V> it) {
 		return new KeyIterator<K, V>(it);
 	}
 
-	public Iterator<V> vals(NodeIterator<K, V> it) {
+	@Pure
+	public static <K, V> Iterator<V> vals(NodeIterator<K, V> it) {
 		return new ValIterator<K, V>(it);
 	}
 
@@ -269,7 +279,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return depth(tree);
 	}
 
-	int depth(Node t) {
+	private int depth(Node t) {
 		if (t == null)
 			return 0;
 		return 1 + Math.max(depth(t.left()), depth(t.right()));
@@ -277,11 +287,13 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 
 	@SuppressWarnings("unchecked")
 	public V valAt(Object key, Object notFound) {
+		Pure4J.immutable(key, notFound);
 		Node n = (Node) entryAt(key);
 		return (V) ((n != null) ? n.val() : notFound);
 	}
 
 	public V valAt(Object key) {
+		Pure4J.immutable(key);
 		return valAt(key, null);
 	}
 
@@ -295,6 +307,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 
 	@SuppressWarnings("unchecked")
 	public IMapEntry<K, V> entryAt(Object key) {
+		Pure4J.immutable(key);
 		Node t = tree;
 		while (t != null) {
 			int c = doCompare(key, t.key);
@@ -310,10 +323,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 
 	@SuppressWarnings("unchecked")
 	public int doCompare(Object k1, Object k2) {
+		Pure4J.immutable(k1, k2);
 		return comp.compare((K) k1, (K) k2);
 	}
 
-	Node add(Node t, K key, V val, Box found) {
+	@Pure(Enforcement.FORCE)
+	private Node add(Node t, K key, V val, Box found) {
 		if (t == null) {
 			if (val == null)
 				return new Red(key);
@@ -332,8 +347,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			return t.addLeft(ins);
 		return t.addRight(ins);
 	}
-
-	Node remove(Node t, Object key, Box found) {
+	
+	@Pure(Enforcement.FORCE)	// use of box
+	private Node remove(Node t, Object key, Box found) {
 		if (t == null)
 			return null; // not found indicator
 		int c = doCompare(key, t.key);
@@ -454,7 +470,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			return black(key, val, left, ins);
 	}
 
-	Node replace(Node t, K key, V val) {
+	private Node replace(Node t, K key, V val) {
 		int c = doCompare(key, t.key);
 		return t.replace(t.key, c == 0 ? val : t.val(),
 				c < 0 ? replace(t.left(), key, val) : t.left(),
@@ -483,7 +499,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return new BlackBranchVal(key, val, left, right);
 	}
 
+	@ImmutableValue
 	static abstract class Node extends AMapEntry<Object, Object> {
+		@ImmutableValue(Enforcement.FORCE)
 		final Object key;
 
 		Node(Object key) {
@@ -764,6 +782,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
+	@ImmutableValue
 	static private class Seq<K, V> extends ASeq<Entry<K, V>> {
 		final ISeq<Node> stack;
 		final boolean asc;
@@ -781,10 +800,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			this.cnt = cnt;
 		}
 
+		@Pure
 		static <K, V> Seq<K, V> create(Node t, boolean asc, int cnt) {
 			return new Seq<K, V>(push(t, null, asc), asc, cnt);
 		}
 
+		@Pure
 		static ISeq<Node> push(Node t, ISeq<Node> stack, boolean asc) {
 			while (t != null) {
 				stack = PureCollections.cons(t, stack);
@@ -814,7 +835,8 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
-	static class NodeIterator<K, V> implements Iterator<Entry<K, V>> {
+	@ImmutableValue
+	static class NodeIterator<K, V> implements IPureIterator<Entry<K, V>> {
 		Stack<Node> stack = new Stack<Node>();
 		boolean asc;
 
@@ -846,6 +868,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
+	@Pure
 	static class KeyIterator<K, V> implements Iterator<K> {
 		NodeIterator<K, V> it;
 
@@ -853,6 +876,10 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			this.it = it;
 		}
 
+		public void doSomething(Object o) {
+
+		}
+		
 		public boolean hasNext() {
 			return it.hasNext();
 		}
@@ -866,6 +893,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
+	@Pure
 	static class ValIterator<K, V> implements Iterator<V> {
 		NodeIterator<K, V> it;
 

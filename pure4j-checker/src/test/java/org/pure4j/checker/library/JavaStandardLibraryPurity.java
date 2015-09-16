@@ -41,6 +41,7 @@ import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentQueue;
 import org.pure4j.collections.PersistentTreeMap;
+import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.exception.Pure4JException;
@@ -78,14 +79,16 @@ public class JavaStandardLibraryPurity {
 			@Override
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
-						ArraySeq.class, 
-						PersistentHashMap.class, 
-						PersistentHashSet.class,
-						PersistentList.class,
+//						ArraySeq.class,
+//						PersistentHashMap.class, 
+//						PersistentHashSet.class,
+//						PersistentList.class,
 						PureCollections.class,
-						PersistentQueue.class,
-						PersistentArrayMap.class,
-						PersistentTreeMap.class);
+//						PersistentQueue.class,
+//						PersistentArrayMap.class,
+						PersistentTreeMap.class 
+//						PersistentTreeSet.class
+						);
 			}
 		}, "org.pure4j", false);
 	}

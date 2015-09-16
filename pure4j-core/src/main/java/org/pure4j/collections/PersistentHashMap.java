@@ -1111,7 +1111,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	static final class NodeIter implements Iterator<Object> {
+	private static final class NodeIter implements Iterator<Object> {
 		private static final Object NULL = new Object();
 		final Object[] array;
 		private int i = 0;

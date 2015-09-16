@@ -27,6 +27,7 @@ import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
 import org.pure4j.exception.PureMethodAccessesSharedFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodNotInProjectScopeException;
+import org.pure4j.exception.PureMethodReturnNotImmutableException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
@@ -145,6 +146,17 @@ public class PureChecklistHandler {
 								}
 							}
 						}
+						
+						/* RETURN TYPE CHECKING 
+						if (declaration instanceof MethodHandle) {
+							Method m = ((MethodHandle) declaration).hydrate(cl);
+							Type t = m.getGenericReturnType();
+							if (!immutables.typeIsMarkedImmutable(t, cb)) {
+								cb.registerError(new PureMethodReturnNotImmutableException(this, t));
+								pureImplementation = false;
+								return false;
+							}
+						} */
 					}
 
 					
@@ -261,10 +273,20 @@ public class PureChecklistHandler {
 		 * bother with checking, it'll be done in the more specific method.
 		 */
 		private boolean isCovariantMethod(List<MemberHandle> calls) {
-			if (calls.size() == 1) {
-				MemberHandle theCall = calls.get(0);
-				if (theCall.getSignature().equals(this.declaration.getSignature())) {
-					return true;
+			if (!(this.declaration instanceof MethodHandle)) {
+				return false;
+			}
+			
+			if ((calls.size() == 1) && (calls.get(0) instanceof MethodHandle)) {
+				MethodHandle theCall = (MethodHandle) calls.get(0);
+				if (theCall.getName().equals(this.declaration.getName())) {
+					Method theCallMethod = theCall.hydrate(cl);
+					Method fromMethod = ((MethodHandle) this.declaration).hydrate(cl);
+					if (theCallMethod.getReturnType().isAssignableFrom(fromMethod.getReturnType())) {
+						if (theCallMethod.getParameters().length == fromMethod.getParameters().length) {
+							return true;
+						}
+					}
 				}
 			}
 

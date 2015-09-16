@@ -56,7 +56,7 @@ public class ClassFileModelBuilder {
 	}
 
 	public ClassVisitor createClassVisitor(final ProjectModelImpl model) {
-		return new ClassVisitor(Opcodes.ASM4) {
+		return new ClassVisitor(Opcodes.ASM5) {
 
 			String className;
 			String sup;
@@ -199,7 +199,8 @@ public class ClassFileModelBuilder {
 	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className,
 			final MemberHandle mh, final String superName) {
 		
-		output(mh.getName());
+		final String methodName = mh.getName();
+		output(methodName);
 		
 		return new MethodVisitor(Opcodes.ASM4) {
 
@@ -221,6 +222,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
+				String callerName = methodName;
 				MemberHandle remoteMethod = null;
 				if (owner.equals(Type.getInternalName(Pure4J.class))) {
 					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);

@@ -259,8 +259,10 @@ public class PureCollections {
 		return new APersistentVector.SubVector<K>(v, start, end);
 	}
 
+	@Pure
 	@SuppressWarnings("unchecked")
 	static public <K> ISeq<K> cons(K x, Object coll) {
+		Pure4J.immutable(x, coll);
 		if (coll == null)
 			return new PersistentList<K>(x, null, 1);
 		else if (coll instanceof ISeq)
