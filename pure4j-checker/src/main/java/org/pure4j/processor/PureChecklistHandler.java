@@ -286,6 +286,7 @@ public class PureChecklistHandler {
 							found = true;
 						}
 					} else if (icmh.getName().equals("unsupported")) {
+						checkTried = true;
 						found = true;
 					} else if (icmh.getName().equals("<init>")) {
 						if (icmh.getLocalVariables().contains(paramNo)) {
