@@ -79,15 +79,15 @@ public class JavaStandardLibraryPurity {
 			@Override
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
-//						ArraySeq.class,
-//						PersistentHashMap.class, 
-//						PersistentHashSet.class,
-//						PersistentList.class,
+						ArraySeq.class,
+						PersistentHashMap.class, 
+						PersistentHashSet.class,
+						PersistentList.class,
 						PureCollections.class,
-//						PersistentQueue.class,
-//						PersistentArrayMap.class,
-						PersistentTreeMap.class 
-//						PersistentTreeSet.class
+						PersistentQueue.class,
+						PersistentArrayMap.class,
+						PersistentTreeMap.class, 
+						PersistentTreeSet.class
 						);
 			}
 		}, "org.pure4j", false);

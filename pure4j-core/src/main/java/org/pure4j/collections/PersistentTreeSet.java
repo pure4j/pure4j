@@ -14,6 +14,8 @@ package org.pure4j.collections;
 
 import java.util.Comparator;
 
+import org.pure4j.Pure4J;
+
 public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversible<K>, Sorted<K, K> {
 
 	static private final PersistentTreeSet<Object> EMPTY = new PersistentTreeSet<Object>(PersistentTreeMap.emptyMap());
@@ -47,12 +49,14 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 
 	public PersistentTreeSet<K> disjoin(Object key) {
+		Pure4J.immutable(key);
 		if (contains(key))
 			return new PersistentTreeSet<K>(impl.without(key));
 		return this;
 	}
 
 	public PersistentTreeSet<K> cons(K o) {
+		Pure4J.immutable(o);
 		if (contains(o))
 			return this;
 		return new PersistentTreeSet<K>(impl.assoc(o, o));
@@ -79,6 +83,7 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 
 	@SuppressWarnings("unchecked")
 	public K entryKey(Object entry) {
+		Pure4J.immutable(entry);
 		return (K) entry;
 	}
 
@@ -88,6 +93,7 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 
 	public ISeq<K> seqFrom(K key, boolean ascending) {
+		Pure4J.immutable(key);
 		PersistentTreeMap<K, K> m = (PersistentTreeMap<K, K>) impl;
 		return APersistentMap.KeySeq.create(m.seq());
 	}
