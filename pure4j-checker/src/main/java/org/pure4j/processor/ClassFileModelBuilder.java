@@ -12,7 +12,8 @@ import org.pure4j.model.AnnotationHandle;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
-import org.pure4j.model.ImmutableCallMemberHandle;
+import org.pure4j.model.StackArgumentsConstructorCall;
+import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
@@ -37,7 +38,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static final boolean OUTPUT_ASM = false;
+	public static final boolean OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -140,7 +141,8 @@ public class ClassFileModelBuilder {
 					value = f.getInt(null);
 					
 					if ((value == in) 
-							&& (f.getName().charAt(1)!='_')) { // not opcodes, other flags
+							&& (f.getName().charAt(1)!='_')// not opcodes, other flags
+							&& (!f.getName().startsWith("ACC_"))) { 
 						return f.getName();
 					}
 				}
@@ -225,11 +227,13 @@ public class ClassFileModelBuilder {
 				String callerName = methodName;
 				MemberHandle remoteMethod = null;
 				if (owner.equals(Type.getInternalName(Pure4J.class))) {
-					remoteMethod = new ImmutableCallMemberHandle(owner, name, desc, line, arguments, firstCall);
+					remoteMethod = new StackArgumentsMethodCall(owner, name, desc, line, arguments, firstCall);
 					arguments = new Stack<Integer>();
 				} else if (name.equals("<init>") && mh.getName().equals("<init>") && owner.equals(superName)) {
-					// calling the superclass constructor.  DON'T turn off firstCall
-					remoteMethod = createHandle(owner, name, desc, line);	
+					// calling the superclass constructor.  Reactivate first call for possible immutable after it.
+					remoteMethod = new StackArgumentsConstructorCall(owner, desc, line, arguments, true);	
+					arguments = new Stack<Integer>();
+					firstCall = true;
 				} else {
 					remoteMethod = createHandle(owner, name, desc, line);	
 					firstCall = false;
@@ -288,7 +292,6 @@ public class ClassFileModelBuilder {
 
 			public void visitInsn(int arg0) {
 				output("  "+getOpcode(arg0));
-				firstCall = false;
 			}
 
 			public void visitIntInsn(int arg0, int arg1) {

@@ -17,6 +17,36 @@ public class CheckParameterImmutability extends AbstractChecker {
 
 	private String s = "blah";
 	
+	@Pure
+	static class InnerClass {
+
+		Object o;
+		
+		@ShouldBePure
+		public InnerClass(int i, Object o) {
+			super();
+			Pure4J.immutable(o);
+			this.o = o;
+		}
+		
+	}
+	
+	@Pure
+	class InnerClass2 extends InnerClass {
+
+		@ShouldBePure
+		public InnerClass2(Object o, Object o2) {
+			super(5, o);
+			Pure4J.immutable(o2);
+		}
+		
+		@ShouldBePure
+		public void callParentThing() {
+			testParam1Bad(null, null);
+		}
+		
+	}
+	
 	/**
 	 * Not going to be pure as we do something before checking
 	 * @param in1

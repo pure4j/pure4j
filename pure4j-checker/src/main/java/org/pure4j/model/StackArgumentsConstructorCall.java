@@ -2,7 +2,7 @@ package org.pure4j.model;
 
 import java.util.List;
 
-public class ImmutableCallMemberHandle extends MethodHandle {
+public class StackArgumentsConstructorCall extends ConstructorHandle implements StackArgumentsCall {
 
 	private boolean firstCall;
 
@@ -10,8 +10,8 @@ public class ImmutableCallMemberHandle extends MethodHandle {
 		return firstCall;
 	}
 
-	public ImmutableCallMemberHandle(String className, String name, String desc, int line, List<Integer> localVariables, boolean firstCall) {
-		super(className, name, desc, line);
+	public StackArgumentsConstructorCall(String className, String desc, int line, List<Integer> localVariables, boolean firstCall) {
+		super(className, desc, line);
 		this.localVariables = localVariables == null ? this.localVariables : localVariables;
 		this.firstCall = firstCall;
 	}

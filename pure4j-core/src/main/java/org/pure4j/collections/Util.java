@@ -14,6 +14,7 @@ package org.pure4j.collections;
 
 import java.math.BigInteger;
 
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public class Util {
@@ -28,6 +29,7 @@ public class Util {
 		return null;
 	}
 
+	@Pure
 	@SuppressWarnings("unchecked")
 	static public int compare(Object k1, Object k2) {
 		if (k1 == k2)
@@ -40,6 +42,7 @@ public class Util {
 		return -1;
 	}
 
+	@Pure
 	static public int hash(Object o) {
 		if (o == null)
 			return 0;

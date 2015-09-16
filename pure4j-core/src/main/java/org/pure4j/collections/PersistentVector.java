@@ -18,8 +18,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
+/**
+ * Purity notes: I've heavily used FORCE on this class and it's abstract just because I 
+ * don't want to change the implementation and I trust the clojure guys.  
+ *
+ * @param <K>
+ */
 public class PersistentVector<K> extends APersistentVector<K> {
 
 	public static class Node implements Serializable {
@@ -38,12 +47,18 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		}
 	}
 
+	@ImmutableValue(Enforcement.FORCE)
 	final static AtomicReference<Thread> NOEDIT = new AtomicReference<Thread>(null);
+	@ImmutableValue(Enforcement.FORCE)
 	public final static Node EMPTY_NODE = new Node(NOEDIT, new Object[32]);
 
 	final int cnt;
 	public final int shift;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	public final Node root;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	public final K[] tail;
 
 	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>(0, 5,
@@ -106,13 +121,15 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return ret.persistent();
 	}
 
-	PersistentVector(int cnt, int shift, Node root, K[] tail) {
+	@Pure(Enforcement.FORCE)
+	private PersistentVector(int cnt, int shift, Node root, K[] tail) {
 		this.cnt = cnt;
 		this.shift = shift;
 		this.root = root;
 		this.tail = tail;
 	}
 
+	@Pure(Enforcement.NOT_PURE)
 	public TransientVector<K> asTransient() {
 		return new TransientVector<K>(this);
 	}
@@ -123,6 +140,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return ((cnt - 1) >>> 5) << 5;
 	}
 
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
 	public K[] arrayFor(int i) {
 		if (i >= 0 && i < cnt) {
@@ -142,13 +160,16 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	}
 
 	public K nth(int i, K notFound) {
+		Pure4J.immutable(notFound);
 		if (i >= 0 && i < cnt)
 			return nth(i);
 		return notFound;
 	}
 
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
 	public PersistentVector<K> assocN(int i, K val) {
+		Pure4J.immutable(val);
 		if (i >= 0 && i < cnt) {
 			if (i >= tailoff()) {
 				K[] newTail = (K[]) new Object[tail.length];
@@ -166,6 +187,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		throw new IndexOutOfBoundsException();
 	}
 
+	@Pure(Enforcement.FORCE)
 	private static Node doAssoc(int level, Node node, int i, Object val) {
 		Node ret = new Node(node.edit, node.array.clone());
 		if (level == 0) {
@@ -182,8 +204,10 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return cnt;
 	}
 
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
 	public PersistentVector<K> cons(K val) {
+		Pure4J.immutable(val);
 		// room in tail?
 		// if(tail.length < 32)
 		if (cnt - tailoff() < 32) {
@@ -208,6 +232,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 				(K[]) new Object[] { val });
 	}
 
+	@Pure(Enforcement.FORCE)
 	private Node pushTail(int level, Node parent, Node tailnode) {
 		// if parent is leaf, insert node,
 		// else does it map to an existing child? -> nodeToInsert = pushNode one
@@ -247,9 +272,8 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return chunkedSeq();
 	}
 
-	@Override
 	Iterator<K> rangedIterator(final int start, final int end) {
-		return new Iterator<K>() {
+		return new IPureIterator<K>() {
 			int i = start;
 			int base = i - (i % 32);
 			K[] array = (start < count()) ? arrayFor(i) : null;
@@ -280,24 +304,27 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			Counted {
 
 		public final PersistentVector<K> vec;
+		@ImmutableValue(Enforcement.FORCE)
 		final K[] node;
 		final int i;
 		public final int offset;
 
 		public ChunkedSeq(PersistentVector<K> vec, int i, int offset) {
+			Pure4J.immutable(vec);
 			this.vec = vec;
 			this.i = i;
 			this.offset = offset;
 			this.node = vec.arrayFor(i);
 		}
 
-		ChunkedSeq(PersistentVector<K> vec, K[] node, int i, int offset) {
+		private ChunkedSeq(PersistentVector<K> vec, K[] node, int i, int offset) {
 			this.vec = vec;
 			this.node = node;
 			this.i = i;
 			this.offset = offset;
 		}
 
+		@Pure(Enforcement.FORCE)
 		public IChunk<K> chunkedFirst() {
 			return new ArrayChunk<K>(node, offset);
 		}
@@ -341,6 +368,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return (PersistentVector<K>) EMPTY;
 	}
 
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
 	public PersistentVector<K> pop() {
 		if (cnt == 0)
@@ -367,6 +395,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return new PersistentVector<K>(cnt - 1, newshift, newroot, newtail);
 	}
 
+	@Pure(Enforcement.FORCE)
 	private Node popTail(int level, Node node) {
 		int subidx = ((cnt - 2) >>> level) & 0x01f;
 		if (level > 5) {

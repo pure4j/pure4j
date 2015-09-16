@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -32,7 +33,8 @@ import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
-import org.pure4j.model.ImmutableCallMemberHandle;
+import org.pure4j.model.StackArgumentsCall;
+import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
@@ -119,10 +121,8 @@ public class PureChecklistHandler {
 						}
 					}
 
-					boolean staticMethod = false;
 					if (declaration instanceof MethodHandle) {
 						Method m = ((MethodHandle) declaration).hydrate(cl);
-						staticMethod = Modifier.isStatic(m.getModifiers());
 						if (Modifier.isAbstract(m.getModifiers())) {
 							return true;
 						}
@@ -136,10 +136,12 @@ public class PureChecklistHandler {
 					
 					if (pub || ((!priv) && (!prot))) {
 						Type[] genericTypes = declaration.getGenericTypes(cl);
-						for (int i = 0; i < genericTypes.length; i++) {
+						int argOffset = getArgOffset();
+						for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
 							Type t = genericTypes[i];
 							if (!immutables.typeIsMarkedImmutable(t, cb)) {
-								if (!isRuntimeChecked((staticMethod ? 0 : 1) + i, pm, cb)) {
+								int argNo = i+ argOffset;
+								if (!isRuntimeChecked(argNo, pm, cb)) {
 									cb.registerError(new PureMethodParameterNotImmutableException(this, t));
 									pureImplementation = false;
 									return false;
@@ -166,7 +168,6 @@ public class PureChecklistHandler {
 						if (mh instanceof MethodHandle) {
 							Method m = ((MethodHandle) mh).hydrate(cl);
 							staticCall = Modifier.isStatic(m.getModifiers());
-
 						}
 						if (mh instanceof CallHandle) {
 							if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object"))) {
@@ -202,6 +203,38 @@ public class PureChecklistHandler {
 
 			}
 			return pureImplementation;
+		}
+
+		private int thisFieldSkip() {
+			if (declaration instanceof ConstructorHandle) {
+				Constructor<?> c = ((ConstructorHandle)declaration).hydrate(cl);
+				int countOfThisFields = 0;	// for 'this'
+				for (Field f : c.getDeclaringClass().getDeclaredFields()) {
+					if (f.getName().startsWith("this$")) {
+						System.out.println("this field:"+f.getName());
+						countOfThisFields++;
+					}
+				}
+				
+				return countOfThisFields > 0 ? 1 : 0;
+			}
+			
+			return 0;
+		}
+		
+		private int getArgOffset() {
+			if (declaration instanceof ConstructorHandle) {
+				return 1;
+			} else {
+				// method handle
+				Method m = ((MethodHandle) declaration).hydrate(cl);
+				if (Modifier.isStatic(m.getModifiers())) {
+					return 0;
+				} else {
+					return 1;
+				}
+				
+			}
 		}
 
 		private boolean forcedImmutable(Field f) {
@@ -242,18 +275,22 @@ public class PureChecklistHandler {
 			boolean found = false;
 			boolean checkTried = false;
 			for (MemberHandle memberHandle : calls) {
-				if (memberHandle instanceof ImmutableCallMemberHandle) {
-					checkTried = true;
-					ImmutableCallMemberHandle icmh = (ImmutableCallMemberHandle) memberHandle;
+				if (memberHandle instanceof StackArgumentsCall) {
+					StackArgumentsCall icmh = (StackArgumentsCall) memberHandle;
 					if (icmh.getName().equals("immutable")) {
+						checkTried = true;
 						if (!icmh.isFirstCall()) {
 							cb.registerError(new IncorrectPure4JImmutableCallException(this));
 							return false;
-						} else if ((icmh.getLocalVariables().contains(paramNo)) && (icmh.getName().equals("immutable"))) {
+						} else if (icmh.getLocalVariables().contains(paramNo)) {
 							found = true;
 						}
 					} else if (icmh.getName().equals("unsupported")) {
 						found = true;
+					} else if (icmh.getName().equals("<init>")) {
+						if (icmh.getLocalVariables().contains(paramNo)) {
+							found = true;
+						}
 					}
 				}
 			}
@@ -267,7 +304,7 @@ public class PureChecklistHandler {
 
 			return checkTried;
 		}
-
+		
 		/**
 		 * If this is a covariant return type implementation, we don't need to
 		 * bother with checking, it'll be done in the more specific method.
@@ -347,6 +384,10 @@ public class PureChecklistHandler {
 		}
 
 		if (staticMethod) {
+			if (isInnerClassAccessMethod(mh, cb)) {
+				return true;
+			}
+			
 			return false;
 		}
 
@@ -368,6 +409,21 @@ public class PureChecklistHandler {
 		return false;
 	}
 
+	private boolean isInnerClassAccessMethod(MemberHandle mh, Callback cb) {
+		if (mh instanceof MethodHandle) {
+			Method m = ((MethodHandle) mh).hydrate(cl);
+			if ((m.getName().startsWith("access$")) && 
+					(m.getParameterTypes().length == 1)) {
+				
+				Type t = m.getGenericParameterTypes()[0];
+				if (t instanceof Class<?>) {
+					return isMarkedPure((Class<?>) t, cb);
+				}
+			}
+		}	
+		return false;
+	}
+	
 	public boolean isMarkedPure(Class<?> in, Callback cb) {
 		if ((in == null) || (in == Object.class)) {
 			return false;

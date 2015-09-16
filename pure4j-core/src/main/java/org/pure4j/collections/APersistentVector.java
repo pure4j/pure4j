@@ -19,11 +19,18 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 public abstract class APersistentVector<K> implements
 		IPersistentVector<K>, Iterable<K>, List<K>, RandomAccess, Comparable<IPersistentVector<K>>,
 		Serializable {
 
 	private static final long serialVersionUID = 3143509526367951707L;
+	
+	@ImmutableValue(Enforcement.FORCE)
 	int _hasheq = -1;
 
 	public String toString() {
@@ -103,6 +110,7 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public K nth(int i, K notFound) {
+		Pure4J.immutable(notFound);
 		if (i >= 0 && i < count())
 			return nth(i);
 		return notFound;
@@ -113,6 +121,7 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public int indexOf(Object o) {
+		Pure4J.immutable(o);
 		for (int i = 0; i < count(); i++)
 			if (Util.equals(nth(i), o))
 				return i;
@@ -120,6 +129,7 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public int lastIndexOf(Object o) {
+		Pure4J.immutable(o);
 		for (int i = count() - 1; i >= 0; i--)
 			if (Util.equals(nth(i), o))
 				return i;
@@ -131,7 +141,7 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public ListIterator<K> listIterator(final int index) {
-		return new ListIterator<K>() {
+		return new IPureListIterator<K>() {
 			int nexti = index;
 
 			public boolean hasNext() {
@@ -172,8 +182,8 @@ public abstract class APersistentVector<K> implements
 		};
 	}
 
-	Iterator<K> rangedIterator(final int start, final int end) {
-		return new Iterator<K>() {
+	private Iterator<K> rangedIterator(final int start, final int end) {
+		return new IPureIterator<K>() {
 			int i = start;
 
 			public boolean hasNext() {
@@ -195,26 +205,22 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public K set(int i, K o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return null;
 	}
 
 	public void add(int i, K o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
 	}
 
 	public boolean addAll(int i, Collection<? extends K> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	public Object invoke(Object arg1) {
-		if (Util.isInteger(arg1))
-			return nth(((Number) arg1).intValue());
-		throw new IllegalArgumentException("Key must be integer");
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public Iterator<K> iterator() {
 		// todo - something more efficient
-		return new Iterator<K>() {
+		return new IPureIterator<K>() {
 			int i = 0;
 
 			public boolean hasNext() {
@@ -237,28 +243,10 @@ public abstract class APersistentVector<K> implements
 		return null;
 	}
 
-	public boolean containsKey(Object key) {
-		if (!(Util.isInteger(key)))
-			return false;
-		int i = ((Number) key).intValue();
-		return i >= 0 && i < count();
-	}
-
-	public Object valAt(Object key, Object notFound) {
-		if (Util.isInteger(key)) {
-			int i = ((Number) key).intValue();
-			if (i >= 0 && i < count())
-				return nth(i);
-		}
-		return notFound;
-	}
-
-	public Object valAt(Object key) {
-		return valAt(key, null);
-	}
 
 	// java.util.Collection implementation
 
+	@Pure(Enforcement.NOT_PURE)
 	public Object[] toArray() {
 		Object[] ret = new Object[count()];
 		for (int i = 0; i < count(); i++)
@@ -267,32 +255,39 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public boolean add(Object o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public boolean remove(Object o) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public boolean addAll(Collection<? extends K> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	public void clear() {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
 	}
 
 	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
+		Pure4J.unsupported();
+		return false;
 	}
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
+		Pure4J.immutable(c);
+
 		for (Object o : c) {
 			if (!contains(o))
 				return false;
@@ -301,6 +296,7 @@ public abstract class APersistentVector<K> implements
 	}
 
 	@SuppressWarnings("unchecked")
+	@Pure(Enforcement.NOT_PURE)
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return (T[]) PureCollections.seqToNewArray(seq(), a);
@@ -315,6 +311,8 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public boolean contains(Object o) {
+		Pure4J.immutable(o);
+
 		for (ISeq<K> s = seq(); s != null; s = s.next()) {
 			if (Util.equals(s.first(), o))
 				return true;
@@ -328,6 +326,7 @@ public abstract class APersistentVector<K> implements
 
 	@Override
 	public int compareTo(IPersistentVector<K> v) {
+		Pure4J.immutable(v);
 		if (count() < v.count())
 			return -1;
 		else if (count() > v.count())
@@ -398,6 +397,7 @@ public abstract class APersistentVector<K> implements
 		}
 	}
 
+	@ImmutableValue
 	public static class SubVector<K> extends APersistentVector<K> {
 		
 		public final IPersistentVector<K> v;
@@ -431,6 +431,7 @@ public abstract class APersistentVector<K> implements
 		}
 
 		public IPersistentVector<K> assocN(int i, K val) {
+			Pure4J.immutable(val);
 			if (start + i > end)
 				throw new IndexOutOfBoundsException();
 			else if (start + i == end)
@@ -443,6 +444,7 @@ public abstract class APersistentVector<K> implements
 		}
 
 		public IPersistentVector<K> cons(K o) {
+			Pure4J.immutable(o);
 			return new SubVector<K>(v.assocN(end, o), start, end + 1);
 		}
 

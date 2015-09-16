@@ -24,7 +24,7 @@ import org.pure4j.processor.SpringProjectModelFactory;
 public class AbstractChecker {
 	
 	
-	@Pure
+	@Pure(Enforcement.FORCE)
 	public AbstractChecker() {
 		super();
 	}
@@ -121,6 +121,7 @@ public class AbstractChecker {
 		Assert.assertFalse(fail);
 	}
 
+	@Pure(Enforcement.NOT_PURE)
 	@SuppressWarnings("unchecked")
 	protected boolean countException(
 			final Map<Class<? extends Pure4JException>, Integer> errorSet,

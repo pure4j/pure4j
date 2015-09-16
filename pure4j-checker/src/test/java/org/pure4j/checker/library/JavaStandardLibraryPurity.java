@@ -79,15 +79,16 @@ public class JavaStandardLibraryPurity {
 			@Override
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
-						ArraySeq.class,
+						PureCollections.class,
+						/*ArraySeq.class,
 						PersistentHashMap.class, 
 						PersistentHashSet.class,
 						PersistentList.class,
-						PureCollections.class,
 						PersistentQueue.class,
 						PersistentArrayMap.class,
 						PersistentTreeMap.class, 
-						PersistentTreeSet.class
+						PersistentTreeSet.class, */
+						PersistentVector.class
 						);
 			}
 		}, "org.pure4j", false);
@@ -107,7 +108,7 @@ public class JavaStandardLibraryPurity {
 		Set<Resource> resources = new HashSet<Resource>();
 		
 		for (Class<?> c : clp.topLevelClasses()) {
-			visitAllOf(c, drl, cfmb, packageStem, resources);
+			visitAllOf(c, drl, cfmb, packageStem, new HashSet<Class<?>>(), resources);
 		}
 		
 		for (Resource resource : resources) {
@@ -180,20 +181,22 @@ public class JavaStandardLibraryPurity {
 		Enum.class);
 	}
 	
-	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Resource> resources) throws IOException {
-		if ((c != Object.class) && (c != null)) {
+	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Class<?>> done, Set<Resource> resources) throws IOException {
+		if ((c != Object.class) && (c != null) && (!done.contains(c))) {
+			done.add(c);
+			System.out.println("visiting: "+c);
 			if (c.getName().startsWith(packageStem)) {
 				resources.add(drl.getResource("classpath:/"+c.getName().replace(".", "/")+".class"));
 				for (Class<?> intf : c.getInterfaces()) {
-					visitAllOf(intf, drl, cfmb, packageStem, resources);
+					visitAllOf(intf, drl, cfmb, packageStem, done,  resources);
 				}
 				
 				for (Class<?> cl : c.getClasses()) {				
-					visitAllOf(cl, drl, cfmb, packageStem, resources);
+					visitAllOf(cl, drl, cfmb, packageStem, done, resources);
 				}
 				
 				
-				visitAllOf(c.getSuperclass(), drl, cfmb, packageStem, resources);
+				visitAllOf(c.getSuperclass(), drl, cfmb, packageStem, done, resources);
 			}
 		}
 	}

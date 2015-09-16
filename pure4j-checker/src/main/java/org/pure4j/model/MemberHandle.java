@@ -60,7 +60,7 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 		return true;
 	    if (obj == null)
 		return false;
-	    if (getClass() != obj.getClass())
+	    if (!(obj instanceof MemberHandle)) 
 		return false;
 	    MemberHandle other = (MemberHandle) obj;
 	    if (className == null) {
