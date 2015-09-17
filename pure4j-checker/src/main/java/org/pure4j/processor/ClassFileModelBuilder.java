@@ -119,7 +119,7 @@ public class ClassFileModelBuilder {
 	}
 
 	private FieldVisitor createFieldVisitor(final ProjectModelImpl model, final String className, final FieldHandle mh) {
-		return new FieldVisitor(Opcodes.ASM4) {
+		return new FieldVisitor(Opcodes.ASM5) {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
@@ -160,7 +160,7 @@ public class ClassFileModelBuilder {
 
 	private AnnotationVisitor createAnnotationVisitor(final ProjectModelImpl model,
 			final AnnotatedElementHandle<?> handle, final String desc) {
-		return new AnnotationVisitor(Opcodes.ASM4) {
+		return new AnnotationVisitor(Opcodes.ASM5) {
 
 			String field = null;
 
@@ -206,7 +206,7 @@ public class ClassFileModelBuilder {
 		final String methodName = mh.getName();
 		output(methodName);
 		
-		return new MethodVisitor(Opcodes.ASM4) {
+		return new MethodVisitor(Opcodes.ASM5) {
 
 			Stack<Integer> arguments = new Stack<Integer>();
 			int line = 0;
@@ -225,7 +225,7 @@ public class ClassFileModelBuilder {
 				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
 			}
 
-			public void visitMethodInsn(int arg0, String owner, String name, String desc) {
+			public void visitMethodInsn(int arg0, String owner, String name, String desc, boolean itf) {
 				String callerName = methodName;
 				MemberHandle remoteMethod = null;
 				if (owner.equals(Type.getInternalName(Pure4J.class))) {
