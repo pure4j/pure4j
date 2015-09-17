@@ -38,6 +38,7 @@ import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
+import org.springframework.asm.Opcodes;
 
 /**
  * The responsibility of this class is to keep track of all the methods we want
@@ -104,6 +105,13 @@ public class PureChecklistHandler {
 						// has been forced already.
 						cb.registerError(new PureMethodNotInProjectScopeException(this));
 						pureImplementation = false;
+					}
+					
+					if (declaration instanceof CallHandle) {
+						if ((pm.getOpcodes((CallHandle) declaration) & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC) {
+							pureImplementation = true;
+							return true;
+						}
 					}
 
 					if (this.declaration.getDeclaringClass(cl).isInterface()) {
@@ -414,7 +422,7 @@ public class PureChecklistHandler {
 		if (mh instanceof MethodHandle) {
 			Method m = ((MethodHandle) mh).hydrate(cl);
 			if ((m.getName().startsWith("access$")) && 
-					(m.getParameterTypes().length == 1)) {
+					(m.getParameterTypes().length >= 1)) {
 				
 				Type t = m.getGenericParameterTypes()[0];
 				if (t instanceof Class<?>) {

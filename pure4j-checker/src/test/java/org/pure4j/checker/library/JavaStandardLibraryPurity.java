@@ -33,6 +33,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.PersistentArrayMap;
@@ -68,7 +70,7 @@ public class JavaStandardLibraryPurity {
 				out.addAll(javaUtilClasses());
 				return out;
 			}
-		}, "java.", true);
+		}, "java.", true, false);
 	}
 	
 	@Test
@@ -80,18 +82,18 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
 						PureCollections.class,
-						/*ArraySeq.class,
+						ArraySeq.class,
 						PersistentHashMap.class, 
 						PersistentHashSet.class,
 						PersistentList.class,
 						PersistentQueue.class,
 						PersistentArrayMap.class,
 						PersistentTreeMap.class, 
-						PersistentTreeSet.class, */
+						PersistentTreeSet.class, 
 						PersistentVector.class
 						);
 			}
-		}, "org.pure4j", false);
+		}, "org.pure4j", false, true);
 	}
 	
 	interface ClassListProvider {
@@ -100,7 +102,7 @@ public class JavaStandardLibraryPurity {
 		
 	}
 
-	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem, boolean assumePurity) throws IOException {
+	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem, boolean assumePurity, boolean expectNoErrors) throws IOException {
 		FileCallback fc = new FileCallback(new File(outputName));
 		ClassFileModelBuilder cfmb = new ClassFileModelBuilder();
 		ClassLoader cl = this.getClass().getClassLoader();
@@ -125,6 +127,10 @@ public class JavaStandardLibraryPurity {
 		}
 		checker.checkModel(pm, fc);
 		fc.close();
+		
+		if (expectNoErrors) {
+			Assert.assertEquals(0, fc.errors.size());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
