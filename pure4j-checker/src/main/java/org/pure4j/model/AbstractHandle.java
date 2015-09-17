@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.pure4j.exception.MethodCantBeHydratedException;
+import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.exception.Pure4JException;
 
 
@@ -136,7 +136,7 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 		Method m = getDeclaredMethod(method.getName(), c, params, cl);
 
 		if (m == null) {
-			throw new MethodCantBeHydratedException(method);
+			throw new MemberCantBeHydratedException(method);
 		}
 		return m;
 
@@ -186,7 +186,7 @@ public abstract class AbstractHandle<X> implements Handle<X> {
 		Class<?> c = hydrateClass(field.getClassName(), cl);
 		Field f = hydrateFieldOn(c, field.getName());
 		if (f==null) {	
-			throw new Pure4JException("Could not find field: "+field);
+			throw new MemberCantBeHydratedException(field);
 		}
 		return f;
 	}

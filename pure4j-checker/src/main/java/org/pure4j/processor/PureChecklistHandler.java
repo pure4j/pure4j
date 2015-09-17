@@ -21,7 +21,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
-import org.pure4j.exception.MethodCantBeHydratedException;
+import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
@@ -202,7 +202,7 @@ public class PureChecklistHandler {
 							}
 						}
 					}
-				} catch (MethodCantBeHydratedException e) {
+				} catch (MemberCantBeHydratedException e) {
 					cb.registerError(e);
 					pureImplementation = false;
 				}
