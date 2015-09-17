@@ -10,4 +10,5 @@ target/*
 *.class
 */.settings/*
 /core/.settings/org.eclipse.wst.common.component
+pure4j-checker/*.pure
 ~                                                    

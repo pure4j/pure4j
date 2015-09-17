@@ -9,15 +9,16 @@ import org.pure4j.Pure4J;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
+import org.pure4j.model.CallHandle;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
-import org.pure4j.model.StackArgumentsConstructorCall;
-import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
 import org.pure4j.model.ProjectModelImpl;
+import org.pure4j.model.StackArgumentsConstructorCall;
+import org.pure4j.model.StackArgumentsMethodCall;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.Attribute;
 import org.springframework.asm.ClassReader;
@@ -93,7 +94,8 @@ public class ClassFileModelBuilder {
 			}
 
 			public MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] exceptions) {
-				final MemberHandle mh = createHandle(className, name, desc, 0);
+				final CallHandle mh = createHandle(className, name, desc, 0);
+				model.setOpcodes(mh, access);
 				addDependency(className, model, desc, true);
 				return createMethodVisitor(model, className, mh, sup);
 
@@ -117,7 +119,7 @@ public class ClassFileModelBuilder {
 	}
 
 	private FieldVisitor createFieldVisitor(final ProjectModelImpl model, final String className, final FieldHandle mh) {
-		return new FieldVisitor(Opcodes.ASM4) {
+		return new FieldVisitor(Opcodes.ASM5) {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
@@ -158,7 +160,7 @@ public class ClassFileModelBuilder {
 
 	private AnnotationVisitor createAnnotationVisitor(final ProjectModelImpl model,
 			final AnnotatedElementHandle<?> handle, final String desc) {
-		return new AnnotationVisitor(Opcodes.ASM4) {
+		return new AnnotationVisitor(Opcodes.ASM5) {
 
 			String field = null;
 
@@ -204,7 +206,7 @@ public class ClassFileModelBuilder {
 		final String methodName = mh.getName();
 		output(methodName);
 		
-		return new MethodVisitor(Opcodes.ASM4) {
+		return new MethodVisitor(Opcodes.ASM5) {
 
 			Stack<Integer> arguments = new Stack<Integer>();
 			int line = 0;
@@ -327,7 +329,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitMaxs(int arg0, int arg1) {
-				output("  maxs "+arg0+" "+arg1);
+				output("  visitMaxs "+arg0+" "+arg1);
 				firstCall = false;
 			}
 
@@ -386,7 +388,7 @@ public class ClassFileModelBuilder {
 		return name.substring(0, li);
 	}
 	
-	private MemberHandle createHandle(String owner, String name, String desc, int line) {
+	private CallHandle createHandle(String owner, String name, String desc, int line) {
 		if (name.equals("<init>")) {
 			return new ConstructorHandle(owner, desc, line);			
 		} else {

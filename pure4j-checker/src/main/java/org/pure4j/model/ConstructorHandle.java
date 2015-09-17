@@ -14,9 +14,6 @@ public class ConstructorHandle extends CallHandle {
 
 	public ConstructorHandle(String className, String desc, int line) {
 		super(className, "<init>", desc, line);
-	    this.className = className;
-	    this.desc = desc;
-	    this.name = "<init>";
 	}
 
 	public Constructor<?> hydrate(ClassLoader cl) {

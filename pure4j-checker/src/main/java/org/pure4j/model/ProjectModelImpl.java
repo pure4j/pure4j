@@ -23,6 +23,7 @@ public class ProjectModelImpl implements ProjectModel {
 	private Map<PackageHandle, Set<PackageHandle>> dependedOnPackages = new HashMap<PackageHandle, Set<PackageHandle>>(100);
 	private Map<String, Set<String>> packageContents = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<AnnotationHandle>> annotationReferences = new HashMap<String, Set<AnnotationHandle>>(100);
+	private Map<CallHandle, Integer> opcodes = new HashMap<CallHandle, Integer>(100);
 
 	private LinkedHashSet<String> classes = new LinkedHashSet<String>(100);
 
@@ -169,4 +170,16 @@ public class ProjectModelImpl implements ProjectModel {
 		this.finality.put(thing, finality);
 	}
 
+	@Override
+	public int getOpcodes(CallHandle ch) {
+		Integer out = opcodes.get(ch);
+		return out == null ? 0 : out;
+	}
+
+	public void setOpcodes(CallHandle ch, int o) {
+		opcodes.remove(ch);
+		if (o != 0) {
+			opcodes.put(ch, o);
+		}
+	}
 }

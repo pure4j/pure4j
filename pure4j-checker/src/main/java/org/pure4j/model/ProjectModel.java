@@ -84,4 +84,9 @@ public interface ProjectModel {
      */
     public Set<AnnotationHandle> getAnnotationReferences(String className);
     
+    /**
+     * Return the opcodes for this definition
+     */
+    public int getOpcodes(CallHandle ch);
+    
 }
