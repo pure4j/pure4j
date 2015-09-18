@@ -26,18 +26,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	final int i;
 
 	// ISeq _rest;
-
-	static public <K> ArraySeq<K> create() {
-		return null;
-	}
-
-	@Pure(Enforcement.FORCE)
-	static public <K> ArraySeq<K> create(K... array) {
-		if (array == null || array.length == 0)
-			return null;
-				
-		return new ArraySeq<K>(array, 0, true);
-	}
 	
 	@Pure(Enforcement.FORCE)
 	public static ASeq<?> createFromArray(Object o) {
@@ -67,7 +55,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 				return create((float[]) o);
 			} 
 			
-			return create((Object[]) o);
+			return new ArraySeq<Object>((Object[]) o);
 		} else {
 			throw new IllegalArgumentException("Was expecting array type but got "+class1.getName());
 		}
@@ -113,6 +101,11 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return new ArraySeq_double(array, 0, true);
 	}
 
+	@Pure(Enforcement.FORCE)
+	public ArraySeq(K... array) {
+		this(array, 0, true);
+	}
+	
 	@Pure(Enforcement.FORCE)
 	private ArraySeq(K[] array, int i, boolean copy) {
 		this.i = i;

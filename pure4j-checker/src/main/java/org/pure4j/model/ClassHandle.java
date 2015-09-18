@@ -61,5 +61,5 @@ public class ClassHandle extends AbstractHandle<Class<?>> implements AnnotatedEl
 	public Class<?> getDeclaringClass(ClassLoader cl) {
 		return hydrate(cl);
 	}
-
+	
 }

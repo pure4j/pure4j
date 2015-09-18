@@ -23,21 +23,19 @@ import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
-import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
 import org.pure4j.exception.PureMethodAccessesSharedFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodNotInProjectScopeException;
-import org.pure4j.exception.PureMethodReturnNotImmutableException;
+import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
-import org.pure4j.model.StackArgumentsCall;
-import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.model.StackArgumentsCall;
 import org.springframework.asm.Opcodes;
 
 /**
@@ -375,6 +373,12 @@ public class PureChecklistHandler {
 		}
 	}
 
+	private static boolean isAnonymousInnerClass(String className) {
+		String tail = className.substring(className.lastIndexOf("$")+1);
+		return tail.matches("[0-9]*");
+	}
+	
+	
 	public boolean isMarkedPure(MemberHandle mh, Callback cb, boolean staticMethod) {
 		if (pureChecklist.containsKey(mh)) {
 			PureMethod pm = pureChecklist.get(mh);
@@ -386,6 +390,13 @@ public class PureChecklistHandler {
 				return true;
 			}
 		}
+		
+		if ((mh instanceof ConstructorHandle) && (isAnonymousInnerClass(mh.getClassName()))) {
+			// because you can't add the pure annotation to anonymous inner classes, we assume it is pure.
+			return true;
+		}
+			
+		
 
 		Pure p = mh.getAnnotation(cl, Pure.class);
 		if (p != null) {
@@ -441,7 +452,7 @@ public class PureChecklistHandler {
 		if (immutables.classIsMarkedImmutable(in, cb)) {
 			return true;
 		}
-
+		
 		Pure p = in.getAnnotation(Pure.class);
 		if ((p != null) && (p.value() != Enforcement.NOT_PURE)) {
 			return true;

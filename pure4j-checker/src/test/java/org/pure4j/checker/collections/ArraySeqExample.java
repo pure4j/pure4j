@@ -34,15 +34,15 @@ public class ArraySeqExample extends AbstractChecker{
 	
 	@Test
 	public void testSanity() {
-		checkSeq(ArraySeq.create("A", "B", "C"), 3, "A");		// strings (i.e. objects)
-		checkSeq(ArraySeq.create(new int[] { 5, 5, 3 }), 3, 5);	// ints
-		ISeq<Character> chars = ArraySeq.create(new char[] { 'd', 'e', 'f', 'g' });	//chars
+		checkSeq(new ArraySeq<String>("A", "B", "C"), 3, "A");		// strings (i.e. objects)
+		checkSeq(ArraySeq.create( 5, 5, 3 ), 3, 5);	// ints
+		ISeq<Character> chars = ArraySeq.create('d', 'e', 'f', 'g' );	//chars
 		checkSeq(chars, 4, 'd');
 		checkSeq(chars.next(), 3, 'e');
 		
-		checkSeq(ArraySeq.create(new float[] {5f, 4f, 9f }), 3, 5f);  // float
-		checkSeq(ArraySeq.create(new double[] {5d, 4d, 9d }), 3, 5d);  // double
-		checkSeq(ArraySeq.create(new boolean[] {true, false }), 2, true);  // boolean
+		checkSeq(ArraySeq.create(5f, 4f, 9f), 3, 5f);  // float
+		checkSeq(ArraySeq.create(5d, 4d, 9d ), 3, 5d);  // double
+		checkSeq(ArraySeq.create(true, false ), 2, true);  // boolean
 		
 		
 	}

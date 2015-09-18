@@ -2,12 +2,13 @@ package org.pure4j.checker.basic.corners.visitor;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 
+@Ignore("Problem here is one of the definition of a pure object.  We need to fix this first.")
 public class VisitorExample extends AbstractChecker {
 	
 	@Pure

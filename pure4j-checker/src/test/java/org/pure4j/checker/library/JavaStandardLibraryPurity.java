@@ -46,6 +46,7 @@ import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.collections.PureCollectors;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
@@ -60,7 +61,7 @@ public class JavaStandardLibraryPurity {
 	
 	@Test
 	public void createJavaStandardPurityList() throws IOException, ClassNotFoundException {
-		checkPurityOfClasses("java-builtins.pure", new ClassListProvider() {
+		checkPurityOfClasses("target/java-builtins.pure", new ClassListProvider() {
 
 			@Override
 			public List<Class<?>> topLevelClasses() {
@@ -75,7 +76,7 @@ public class JavaStandardLibraryPurity {
 	
 	@Test
 	public void createPure4JCollectionsPurityList() throws IOException, ClassNotFoundException {
-		checkPurityOfClasses("pure4j-collections.pure", new ClassListProvider() {
+		checkPurityOfClasses("target/pure4j-collections.pure", new ClassListProvider() {
 
 			@SuppressWarnings("unchecked")
 			@Override
@@ -90,7 +91,8 @@ public class JavaStandardLibraryPurity {
 						PersistentArrayMap.class,
 						PersistentTreeMap.class, 
 						PersistentTreeSet.class, 
-						PersistentVector.class
+						PersistentVector.class,
+						PureCollectors.class
 						);
 			}
 		}, "org.pure4j", false, true);
