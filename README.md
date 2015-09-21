@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/concordion/concordion-excel-extension.svg?branch=master)](https://travis-ci.org/concordion/concordion-excel-extension)
+[![Build Status](https://travis-ci.org/robmoffat/pure4j.svg?branch=master)](https://travis-ci.org/robmoffat/pure4j)
 
 
 = Some Stuff Here =
