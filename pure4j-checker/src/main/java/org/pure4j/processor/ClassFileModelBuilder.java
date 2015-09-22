@@ -228,11 +228,12 @@ public class ClassFileModelBuilder {
 			public void visitMethodInsn(int arg0, String owner, String name, String desc, boolean itf) {
 				//String callerName = methodName;
 				MemberHandle remoteMethod = null;
-				if (name.equals("<init>") && mh.getName().equals("<init>") && owner.equals(superName)) {
-					// calling the superclass constructor.  Reactivate first call for possible immutable after it.
+				if (name.equals("<init>")) {
 					remoteMethod = new StackArgumentsConstructorCall(owner, desc, line, arguments, true);	
 					arguments = new Stack<Integer>();
-					firstCall = true;
+					
+					// check calling the superclass constructor:  Reactivate first call for possible immutable after it.
+					firstCall = mh.getName().equals("<init>") && owner.equals(superName);
 				} else {
 					remoteMethod = new StackArgumentsMethodCall(owner, name, desc, line, arguments, firstCall);
 					arguments = new Stack<Integer>();

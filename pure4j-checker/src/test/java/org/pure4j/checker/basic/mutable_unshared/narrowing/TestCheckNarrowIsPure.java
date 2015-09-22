@@ -1,4 +1,4 @@
-package org.pure4j.checker.basic.pure.narrowing;
+package org.pure4j.checker.basic.mutable_unshared.narrowing;
 
 import java.io.IOException;
 
