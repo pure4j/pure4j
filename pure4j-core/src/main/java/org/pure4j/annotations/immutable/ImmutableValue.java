@@ -29,8 +29,10 @@ import org.pure4j.annotations.pure.Pure;
  * <li>The fields on the class are <code>final</code>, and therefore unalterable
  * once set by the constructor.
  * <li>The fields must only contain other immutable value objects/primitives (see below).
- * <li>Concrete classes inheriting or declaring this annotation must be
- * <code>final</code>.
+ * <li><strike>Concrete classes inheriting or declaring this annotation must be
+ * <code>final</code></strike>.
+ * <li>Any generic type parameters supplied to an <code>ImmutableValue</code> annotated
+ * class must also be immutable value types.
  * </ul>
  * 
  * <p>
@@ -39,9 +41,11 @@ import org.pure4j.annotations.pure.Pure;
  * 
  * <h3>Value Contract</h3>
  * 
- * <p>
+ * <ul>
+ * <li>
  * Any instance (i.e. non-static) methods on the class must be pure. (see {@link Pure} for what
  * this entails).
+ * </ul>
  * 
  * <p>
  * In normal operation this will therefore mean that
@@ -51,11 +55,6 @@ import org.pure4j.annotations.pure.Pure;
  * 
  * <p>If these methods are not implemented in with pure functions, this will be
  * reported and cause failures in your build.
- * <p>
- * <h3>Generic Type Parameters</h3>
- * 
- * <p>Any generic type parameters supplied to an <code>ImmutableValue</code> annotated
- * class must also be immutable value types. 
  * <h3>What Qualifies As An Immutable Value?</h3>
  * <ul>
  * <li><code>String</code>s.
@@ -63,7 +62,7 @@ import org.pure4j.annotations.pure.Pure;
  * <li>Instances of other classes labelled <code>@ImmutableValue</code>. 
  * <li>BigDecimal, BigInteger
  * <li>Anything extending <code>Throwable</code>.  e.g. checked and unchecked exceptions.  Clients are warned that 
- * <code>toString</code>, <code>hashCode</code> and <code>equals</code> are <b>not</b> pure functions and you should not 
+ * <code>toString</code> and <code>hashCode</code> are <b>not</b> pure functions and you should not 
  * rely on them as such.  Exceptions are included for convenience only. 
  * </ul>
  * 

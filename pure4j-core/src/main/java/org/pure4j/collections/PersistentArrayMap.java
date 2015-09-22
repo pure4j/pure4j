@@ -280,11 +280,11 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return new Iter<K, V>(array);
 	}
 
-	public Iterator<K> keyIterator() {
+	public IPureIterator<K> keyIterator() {
 		return KeySeq.create(seq()).iterator();
 	}
 
-	public Iterator<V> valIterator() {
+	public IPureIterator<V> valIterator() {
 		return ValSeq.create(seq()).iterator();
 	}
 

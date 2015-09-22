@@ -2,10 +2,11 @@ package org.pure4j.checker.basic.immutable.broken_extend;
 
 import java.math.BigInteger;
 
-import org.pure4j.Pure4J;
-import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.basic.pure.methods.SomePureStuff;
+import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.exception.ClassExpectingPureMethod;
+import org.pure4j.exception.PureMethodCallsImpureException;
 
 public final class SomeValueObject extends AbstractVO {
 
@@ -58,7 +59,7 @@ public final class SomeValueObject extends AbstractVO {
 	}
 
 	@Override
-	@ShouldBePure
+	@CausesError({ClassExpectingPureMethod.class, PureMethodCallsImpureException.class})
 	public int hashCode() {
 		return super.hashCode();
 	}
