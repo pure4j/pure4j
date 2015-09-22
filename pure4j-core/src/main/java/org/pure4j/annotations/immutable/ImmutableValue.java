@@ -41,11 +41,13 @@ import org.pure4j.annotations.pure.Pure;
  * 
  * <h3>Value Contract</h3>
  * 
+ * <p>
  * <ul>
  * <li>
  * Any instance (i.e. non-static) methods on the class must be pure. (see {@link Pure} for what
  * this entails).
  * </ul>
+ * 
  * 
  * <p>
  * In normal operation this will therefore mean that
@@ -57,7 +59,7 @@ import org.pure4j.annotations.pure.Pure;
  * reported and cause failures in your build.
  * <h3>What Qualifies As An Immutable Value?</h3>
  * <ul>
- * <li><code>String</code>s.
+ * <p><li><code>String</code>s.
  * <li>Java primitives and their wrapper classes.
  * <li>Instances of other classes labelled <code>@ImmutableValue</code>. 
  * <li>BigDecimal, BigInteger

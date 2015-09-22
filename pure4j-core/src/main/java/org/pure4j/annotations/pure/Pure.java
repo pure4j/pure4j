@@ -26,6 +26,21 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * <li>Only call other methods (or constructors) marked <code>Pure</code>.
  * </ol></p>
  * 
+ * <h3>Mutability</h3>
+ * 
+ * <p>By default, adding @Pure will check that the method only accepts and returns @ImmutableValue parameters, 
+ * in concordance with the contract for @MutableUnshared.  However, by setting mutability to <code>ANYTHING</code>
+ * you are using the purity contract for @ImmutableValue objects.  
+ * 
+ * <h3>Overriding Purity</h3>
+ * 
+ * <p>This is the most common use-case for this annotation.  Having specified @ImmutableValue or @MutableUnshared 
+ * at the class level, you may want to override the purity of individual instance methods within the class.
+ * <ul><li><b>CHECKED: </b> The default, purity is checked at compile-time.
+ * <li><b>FORCE: </b>Purity checking is disabled, and the method is registered as pure.
+ * <li><b>NOT_PURE: </b>Purity checking is disasbled, the method is marked as not pure.
+ * </ul>
+ * 
  * <h3>Caveats</h3>
  * <p>
  * Use of reflection within your code can break these guarantees.  The compile-time checker will make no attempt
