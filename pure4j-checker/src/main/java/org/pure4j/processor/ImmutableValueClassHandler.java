@@ -19,9 +19,6 @@ public class ImmutableValueClassHandler extends AbstractClassAnnoatationCache im
 
 	public static final boolean CHECK_FOR_FINAL_CLASSES = false;
 	
-	/* (non-Javadoc)
-	 * @see org.pure4j.processor.ClassAnnotationCache#doClassChecks(java.lang.Class, org.pure4j.processor.Callback)
-	 */
 	@Override
 	public void doClassChecks(Class<?> immutableClass, Callback cb) {
 		if (CHECK_FOR_FINAL_CLASSES) {

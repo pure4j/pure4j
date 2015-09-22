@@ -9,6 +9,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
@@ -21,8 +22,9 @@ public class CheckParameterImmutability extends AbstractChecker {
 	@MutableUnshared
 	static class InnerClass {
 
-		Object o;
+		private Object o;
 		
+		@CausesError(FieldTypeNotImmutableException.class)
 		@ShouldBePure
 		public InnerClass(int i, Object o) {
 			super();

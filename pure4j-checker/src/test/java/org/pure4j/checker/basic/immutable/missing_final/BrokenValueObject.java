@@ -8,7 +8,6 @@ import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.FieldTypeNotImmutableException;
-import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 
 @ImmutableValue

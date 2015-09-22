@@ -9,13 +9,13 @@ import java.util.Set;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Mutability;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.exception.ClassHasConflictingAnnotationsException;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
-import org.pure4j.model.StackArgumentsConstructorCall;
 import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.processor.PureChecklistHandler.PureMethod;
 
@@ -23,7 +23,7 @@ public class PurityChecker implements Rule {
 	
 		
 	private ClassAnnotationCache immutables = new ImmutableValueClassHandler();
-	private ClassAnnotationCache mutableUnshared = new MutableUnsharedClassHandler();
+	private ClassAnnotationCache mutableUnshared = new MutableUnsharedClassHandler(immutables);
 	private PureChecklistHandler pureChecklist;
 	private ClassLoader cl;
 
@@ -78,10 +78,15 @@ public class PurityChecker implements Rule {
 	private void addMethodsFromMutableUnsharedToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {
 			Class<?> cl = hydrate(className);
-			if (pureChecklist.isMarkedPure(cl, cb)) {
-				Class<?> pureClass = hydrate(className);
-				if (isConcrete(pureClass)) {
-					addMethodsFromClassToPureList(pureClass, cb, pm, false, Mutability.ALLOW_IMMUTABLE_ONLY);
+			if (mutableUnshared.classIsMarked(cl, cb)) {
+				if (immutables.classIsMarked(cl, cb)) {
+					cb.registerError(new ClassHasConflictingAnnotationsException(cl));
+				} else {
+					Class<?> pureClass = hydrate(className);
+					if (isConcrete(pureClass)) {
+						mutableUnshared.doClassChecks(pureClass, cb);
+						addMethodsFromClassToPureList(pureClass, cb, pm, false, Mutability.ALLOW_IMMUTABLE_ONLY);
+					}
 				}
 			}
 		}

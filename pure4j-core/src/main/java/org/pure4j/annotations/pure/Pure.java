@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.mutable.MutableUnshared;
 
 /**
  * Declares that a method is "Pure".   
@@ -24,17 +25,27 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * This is indicated by applying the <code>Pure</code> annotation to a single method.  A pure method will:
  * <ol>
  * <li>Only call other methods (or constructors) marked <code>Pure</code>.
+ * <li>Can access only immutable static state within the system (for prevention of side-effects).
  * </ol></p>
+ * 
+ * <h3>On Static Methods</h3>
+ * 
+ * <p>Since {@link ImmutableValue} and {@link MutableUnshared} are class-level annotations, and specify the purity requirements for
+ * instance methods only, one common use-case for the <code>@Pure</code> annotation is in declaring static methods as being pure.
  * 
  * <h3>Mutability</h3>
  * 
- * <p>By default, adding @Pure will check that the method only accepts and returns @ImmutableValue parameters, 
- * in concordance with the contract for @MutableUnshared.  However, by setting mutability to <code>ANYTHING</code>
- * you are using the purity contract for @ImmutableValue objects.  
+ * <p>By default, adding <code>@Pure</code> will check that the method only accepts and returns immutable parameters (see {@link ImmutableValue}), 
+ * in concordance with the contract for {@link MutableUnshared}.  However, by setting mutability to <code>ANYTHING</code>
+ * you are using the relaxed purity contract for {@link ImmutableValue} objects.  
+ * 
+ * <p>In general, you will <b>not</b> want to override this.   For thread safety, if impure code is calling pure code, 
+ * you will want to pass in only immutable values otherwise you can't be sure that the pure code will have consistent
+ * behaviour:  other threads may change the state of the objects being passed in, breaking the determinism of the pure code.
  * 
  * <h3>Overriding Purity</h3>
  * 
- * <p>This is the most common use-case for this annotation.  Having specified @ImmutableValue or @MutableUnshared 
+ * <p>This is the most common use-case for this annotation.  Having specified <code>@ImmutableValue</code> or <code>@MutableUnshared</code> 
  * at the class level, you may want to override the purity of individual instance methods within the class.
  * <ul><li><b>CHECKED: </b> The default, purity is checked at compile-time.
  * <li><b>FORCE: </b>Purity checking is disabled, and the method is registered as pure.

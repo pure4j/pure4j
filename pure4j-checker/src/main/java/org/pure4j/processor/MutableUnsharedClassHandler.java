@@ -1,9 +1,11 @@
 package org.pure4j.processor;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.exception.ClassNotFinalException;
+import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 /**
@@ -15,13 +17,37 @@ public class MutableUnsharedClassHandler extends AbstractClassAnnoatationCache i
 
 	public static final boolean CHECK_FOR_FINAL_CLASSES = false;
 	
+	private ClassAnnotationCache immutableHandler;
+	
+	public MutableUnsharedClassHandler(ClassAnnotationCache ivch) {
+		this.immutableHandler = ivch;
+	}
+	
 	@Override
-	public void doClassChecks(Class<?> immutableClass, Callback cb) {
+	public void doClassChecks(Class<?> mutableSharedClass, Callback cb) {
 		
 		if (CHECK_FOR_FINAL_CLASSES) {
-			if (!Modifier.isFinal(immutableClass.getModifiers())) {
-				cb.registerError(new ClassNotFinalException(immutableClass));
+			if (!Modifier.isFinal(mutableSharedClass.getModifiers())) {
+				cb.registerError(new ClassNotFinalException(mutableSharedClass));
 			}
+		}
+		
+		while (mutableSharedClass != Object.class) {
+			for (Field f : mutableSharedClass.getDeclaredFields()) {
+				if (!Modifier.isStatic(f.getModifiers())) {
+					boolean pub = Modifier.isPublic(f.getModifiers());
+					boolean priv = Modifier.isPrivate(f.getModifiers());
+					boolean prot = Modifier.isProtected(f.getModifiers());
+					boolean accessible = pub || ((!priv) && (!prot));
+					if (accessible) {
+						if (!immutableHandler.typeIsMarked(f.getGenericType(), cb)) {
+							cb.registerError(new FieldTypeNotImmutableException(f, mutableSharedClass));
+						}
+					}
+				}
+			}
+			
+			mutableSharedClass = mutableSharedClass.getSuperclass();
 		}
 		
 	}

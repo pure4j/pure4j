@@ -61,6 +61,7 @@ public class PureChecklistHandler {
 		public Enforcement e;
 		public Mutability m;
 		private Boolean pureImplementation = null;
+		//private Boolean pureInterface = null;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 
 		private PureMethod(MemberHandle declaration, Enforcement e, Mutability m) {
@@ -108,6 +109,16 @@ public class PureChecklistHandler {
 			
 			return sb.toString();
 		}
+//		
+//		public boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
+//			id (pureInterface == null) {
+//				pureInterface = true;
+//				
+//				
+//				
+//			}
+//			
+//		}
 
 		public boolean checkImplementationPurity(Callback cb, ProjectModel pm) {
 			if (pureImplementation == null) {
@@ -153,7 +164,7 @@ public class PureChecklistHandler {
 					
 					// check the signature of accessible pure method
 					
-					if (isAccessibleOutsideClass(declaration)) {
+					if (isAccessibleOutsideClass(declaration, cl)) {
 						Type[] genericTypes = declaration.getGenericTypes(cl);
 						int argOffset = getArgOffset();
 						for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
@@ -173,7 +184,7 @@ public class PureChecklistHandler {
 							if (declaration.getAnnotation(cl, IgnoreNonImmutableTypeCheck.class) == null) {
 								Method m = ((MethodHandle) declaration).hydrate(cl);
 								Type t = m.getGenericReturnType();
-								if (typeFailsCheck(cb, t)) {
+								if (typeFailsCheck(cb, t) && (!returnsOwnType()))  {
 									cb.registerError(new PureMethodReturnNotImmutableException(this, t));
 									pureImplementation = false;
 									return false; 
@@ -200,19 +211,22 @@ public class PureChecklistHandler {
 						} else if (mh instanceof FieldHandle) {
 							FieldHandle fieldHandle = (FieldHandle) mh;
 							Field f = fieldHandle.hydrate(cl);
-							if (!onCurrentObject(fieldHandle, f)) {
-								if ((!Modifier.isFinal(f.getModifiers()))) {
+							boolean isStatic = Modifier.isStatic(f.getModifiers());
+							boolean isFinal = Modifier.isFinal(f.getModifiers());
+							
+							if (isStatic) {
+								if (!isFinal) {
 									cb.registerError(new PureMethodAccessesSharedFieldException(this, fieldHandle));
 									pureImplementation = false;
 								}
-
+								
 								if (!immutables.typeIsMarked(f.getGenericType(), cb)) {
-									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle))) {
+									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle, cl))) {
 										cb.registerError(new PureMethodAccessesNonImmutableFieldException(this, fieldHandle));
 										pureImplementation = false;
 									}
 								}
-							}
+							} 
 						}
 					}
 				} catch (MemberCantBeHydratedException e) {
@@ -225,12 +239,10 @@ public class PureChecklistHandler {
 			}
 			return pureImplementation;
 		}
-		
-		protected boolean isAccessibleOutsideClass(MemberHandle handle) {
-			boolean pub = Modifier.isPublic(handle.getModifiers(cl));
-			boolean priv = Modifier.isPrivate(handle.getModifiers(cl));
-			boolean prot = Modifier.isProtected(handle.getModifiers(cl));
-			return pub || ((!priv) && (!prot));
+
+		private boolean returnsOwnType() {
+			String returnedType = declaration.getDesc().substring(declaration.getDesc().lastIndexOf(")"));
+			return (returnedType.contains(declaration.getDeclaringClass()));
 		}
 
 		protected boolean typeFailsCheck(Callback cb, Type t) {
@@ -277,21 +289,6 @@ public class PureChecklistHandler {
 			IgnoreNonImmutableTypeCheck iv = f.getAnnotation(IgnoreNonImmutableTypeCheck.class);
 			if ((iv != null)) {
 				return true;
-			}
-
-			return false;
-		}
-
-		private boolean onCurrentObject(FieldHandle fh, Field f) {
-			if (fh.getDeclaringClass().equals(declaration.getDeclaringClass())) {
-				// ok, it's the same class, but is it the same instance? This is
-				// a cheap way to work it out, but not the best.
-				// TODO: prevent package access?
-				boolean pub = Modifier.isPublic(f.getModifiers());
-				boolean stat = Modifier.isStatic(f.getModifiers());
-
-				boolean out = !pub && !stat;
-				return out;
 			}
 
 			return false;
@@ -556,6 +553,7 @@ public class PureChecklistHandler {
 
 	public void doPureMethodChecks(Callback cb, ProjectModel pm) {
 		for (PureMethod pureCandidate : pureChecklist.values()) {
+			//pureCandidate.c
 			pureCandidate.checkImplementationPurity(cb, pm);
 		}
 	}
@@ -564,4 +562,10 @@ public class PureChecklistHandler {
 		return pureChecklist.values();
 	}
 
+	public static boolean isAccessibleOutsideClass(MemberHandle handle, ClassLoader cl) {
+		boolean pub = Modifier.isPublic(handle.getModifiers(cl));
+		boolean priv = Modifier.isPrivate(handle.getModifiers(cl));
+		boolean prot = Modifier.isProtected(handle.getModifiers(cl));
+		return pub || ((!priv) && (!prot));
+	}
 }

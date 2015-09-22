@@ -7,7 +7,9 @@ import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
+import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.exception.FieldTypeNotImmutableException;
 
 @MutableUnshared
 public class InnerClassAccess extends AbstractChecker {
@@ -18,6 +20,7 @@ public class InnerClassAccess extends AbstractChecker {
 	class InnerClass {
  
 		@ShouldBePure
+		@CausesError(FieldTypeNotImmutableException.class)	// inner classes don't work with MutableUnshared
 		public InnerClass() {
 			// this has a hidden parameter of the parent object, since this is a non-static inner class
 		}
@@ -31,26 +34,7 @@ public class InnerClassAccess extends AbstractChecker {
 		public int doSomething() {
 			return 5;
 		}
-		
-		@MutableUnshared
-		class InnerInnerClass {
-			
-			@ShouldBePure
-			public InnerInnerClass() {
-			}
-			
-			
-			@ShouldBePure
-			public String callSomething2() {
-				return InnerClassAccess.this.myPrivate();
-			}
-			
-			@ShouldBePure
-			public int callSomething3() {
-				return doSomething();
-			}
-		}
-		
+	
 	}
 	
 	@ShouldBePure

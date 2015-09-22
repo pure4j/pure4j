@@ -22,10 +22,15 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * <ul>
  * <li>Public / Package accessible fields of the class must be immutable (see: {@link ImmutableValue} for what qualifies).
  * <li>Public / Package accessible methods must only receive immutable parameters or return immutable values
- * as results ). 
+ * as results.  (The one exception is returning <code>this</code>, which is allowed for convenience building fluent APIs).
  * <li>Where the interface restricts the arguments of the method, the <code>Pure4J.immutable()</code> function must
  * be used to test the parameters for immutability at the start of the method.
  * </ul>
+ * 
+ * <h3>Inner Classes (non-static)</h3>
+ * 
+ * In Java, inner classes will be constructed with a reference to their parent class.  Because of the rule on
+ * non-static arguments, 
  * 
  * @see {@link Pure4J} immutable method.
  * @author robmoffat

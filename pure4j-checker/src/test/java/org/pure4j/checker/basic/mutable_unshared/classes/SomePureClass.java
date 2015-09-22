@@ -7,7 +7,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
-import org.pure4j.exception.PureMethodAccessesSharedFieldException;
+import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodReturnNotImmutableException;
 
@@ -17,8 +17,10 @@ public class SomePureClass {
 	public int state_too_public = 0;
 	private int state_private = 0;
 	
+	@CausesError(FieldTypeNotImmutableException.class)
+	public Object some_non_immutable;
 	
-	@CausesError(PureMethodAccessesSharedFieldException.class)
+	
 	public SomePureClass() {
 		super();
 	}
@@ -34,8 +36,8 @@ public class SomePureClass {
 		return otherOp(in) + otherOp(in) + state_private;
 	}
 	
-	@CausesError(PureMethodAccessesSharedFieldException.class)
-	public int notPureEnough() {
+	@ShouldBePure
+	public int pureAsItReturnsSomethingImmutable() {
 		return state_too_public;
 	}
 
