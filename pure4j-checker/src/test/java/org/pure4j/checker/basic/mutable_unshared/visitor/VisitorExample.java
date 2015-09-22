@@ -19,7 +19,7 @@ public class VisitorExample extends AbstractChecker {
 
 	public static class Impl1 implements Visitor {
 		
-		public int someState;
+		private int someState;
 
 		@Override
 		public void visit(Object o) {

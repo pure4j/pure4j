@@ -1,4 +1,4 @@
-package org.pure4j.checker.basic.mutable_unshared.return_type;
+package org.pure4j.checker.basic.immutable.return_type;
 
 import org.pure4j.Pure4J;
 import org.pure4j.checker.basic.support.ShouldBePure;
@@ -16,4 +16,18 @@ public class Class2 implements Class1 {
 		Pure4J.immutable(in);
 		return "cow";
 	}
+
+	@ShouldBePure
+	@Override
+	public int hashCode() {
+		return 6;
+	}
+
+	@ShouldBePure
+	@Override
+	public String toString() {
+		return "blah";
+	}
+	
+	
 }

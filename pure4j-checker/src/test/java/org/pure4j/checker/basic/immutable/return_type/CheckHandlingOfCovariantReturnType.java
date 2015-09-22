@@ -1,4 +1,4 @@
-package org.pure4j.checker.basic.mutable_unshared.return_type;
+package org.pure4j.checker.basic.immutable.return_type;
 
 import java.io.IOException;
 
