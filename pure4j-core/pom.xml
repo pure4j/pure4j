@@ -1,5 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+
+        <parent>
+                <groupId>org.pure4j</groupId>
+                <artifactId>pure4j-parent</artifactId>
+                <version>1.0-SNAPSHOT</version>
+        </parent>
+
+
 	<modelVersion>4.0.0</modelVersion>
 	
 	<artifactId>pure4j-core</artifactId>
@@ -8,7 +16,6 @@
 	<packaging>jar</packaging>
 
 	<name>Pure4J Core</name>
-	<url>http://www.kite9.org/org.kite9.core</url>
 	<description>Pure Functional Programming Semantics For Java</description>
 
 	<properties>
