@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
-import org.pure4j.checker.basic.pure.classes.SomePureClass;
+import org.pure4j.checker.basic.mutable_unshared.classes.SomePureClass;
 import org.pure4j.checker.basic.support.ShouldBePure;
 
 public class TestPureUse extends AbstractChecker {

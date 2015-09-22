@@ -1,6 +1,7 @@
 package org.pure4j.checker.basic.immutable.forced2;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -12,9 +13,10 @@ import org.pure4j.checker.basic.support.ShouldBePure;
 @ImmutableValue
 public final class SomeValueObject {
 
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	private final int[] someArray;
 
+	@IgnoreNonImmutableTypeCheck
 	@ShouldBePure
 	public int[] getSomeArray() {
 		return someArray;

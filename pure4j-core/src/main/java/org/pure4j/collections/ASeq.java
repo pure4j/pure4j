@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -27,7 +27,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 
 	private static final long serialVersionUID = 220865945544862915L;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	protected transient int _hasheq = -1;
 
 	public String toString() {
@@ -151,7 +151,7 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 		return false;
 	}
 
-	public Iterator<K> iterator() {
+	public IPureIterator<K> iterator() {
 		return new SeqIterator<K>(this);
 	}
 
@@ -190,12 +190,13 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 		return reify().lastIndexOf(o);
 	}
 
-	public ListIterator<K> listIterator() {
-		return reify().listIterator();
+	
+	public IPureListIterator<K> listIterator() {
+		return new PureListIterator<K>(reify().listIterator());
 	}
 
-	public ListIterator<K> listIterator(int index) {
-		return reify().listIterator(index);
+	public IPureListIterator<K> listIterator(int index) {
+		return new PureListIterator<K>(reify().listIterator(index));
 	}
 
 	@SuppressWarnings("unchecked")

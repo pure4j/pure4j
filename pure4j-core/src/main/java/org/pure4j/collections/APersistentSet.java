@@ -19,14 +19,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		Collection<K>, Set<K>, Serializable {
 
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	int _hasheq = -1;
 	
 	final IPersistentMap<K, K> impl;
@@ -129,7 +129,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	@SuppressWarnings("unchecked")
-	@Pure(Enforcement.FORCE)
+	@Pure(Enforcement.FORCE)	// due to param
 	public <T> T[] toArray(T[] a) {
 		return (T[]) PureCollections.seqToNewArray(seq(), a);
 	}

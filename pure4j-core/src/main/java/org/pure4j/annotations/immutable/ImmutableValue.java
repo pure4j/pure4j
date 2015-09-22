@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
 
 /**
  * Declares that instances of this class are immutable and are value objects.
@@ -71,8 +71,7 @@ import org.pure4j.annotations.pure.Enforcement;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.TYPE})
 public @interface ImmutableValue {
 
-	Enforcement value() default Enforcement.CHECKED;
 }

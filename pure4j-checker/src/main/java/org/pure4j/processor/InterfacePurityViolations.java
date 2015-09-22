@@ -36,43 +36,43 @@ public class InterfacePurityViolations {
 		return impureClasses;
 	}
 
-	private Class<?> overridesPureMethod(Method m, Class<?> c, PureChecklistHandler pch, Callback cb, ProjectModel pm) throws SecurityException {
-		if ((m.getDeclaringClass() != c) && (c != null)) {
-			// get same method from c, then.
-			Class<?>[] args = m.getParameterTypes();
-			String name = m.getName();
-			
-			Method parent = null;
-			try {
-				parent = c.getDeclaredMethod(name, args);
-			} catch (NoSuchMethodException e) {
-			}
-			
-			if (parent != null) {
-				MethodHandle mh = new MethodHandle(parent);
-				PureMethod pure = pch.getElementFor(mh);
-				
-				if (!pure.checkImplementationPurity(cb, pm)) {
-					return c;
-				}
-				
-			}
-
-			Class<?> fromSuper = overridesPureMethod(m, c.getSuperclass(), pch, cb, pm);
-			if (fromSuper != null) {
-				return fromSuper;
-			}
-			
-			for (Class<?> class1 : c.getInterfaces()) {
-				Class<?> fromInt = overridesPureMethod(m, class1, pch, cb, pm);
-				if (fromInt != null) {
-					return fromInt;
-				}
-			}
-		}
-		
-		return null;
-	}
+//	private Class<?> overridesPureMethod(Method m, Class<?> c, PureChecklistHandler pch, Callback cb, ProjectModel pm) throws SecurityException {
+//		if ((m.getDeclaringClass() != c) && (c != null)) {
+//			// get same method from c, then.
+//			Class<?>[] args = m.getParameterTypes();
+//			String name = m.getName();
+//			
+//			Method parent = null;
+//			try {
+//				parent = c.getDeclaredMethod(name, args);
+//			} catch (NoSuchMethodException e) {
+//			}
+//			
+//			if (parent != null) {
+//				MethodHandle mh = new MethodHandle(parent);
+//				PureMethod pure = pch.getElementFor(mh);
+//				
+//				if (!pure.checkImplementationPurity(cb, pm)) {
+//					return c;
+//				}
+//				
+//			}
+//
+//			Class<?> fromSuper = overridesPureMethod(m, c.getSuperclass(), pch, cb, pm);
+//			if (fromSuper != null) {
+//				return fromSuper;
+//			}
+//			
+//			for (Class<?> class1 : c.getInterfaces()) {
+//				Class<?> fromInt = overridesPureMethod(m, class1, pch, cb, pm);
+//				if (fromInt != null) {
+//					return fromInt;
+//				}
+//			}
+//		}
+//		
+//		return null;
+//	}
 	
 	
 }

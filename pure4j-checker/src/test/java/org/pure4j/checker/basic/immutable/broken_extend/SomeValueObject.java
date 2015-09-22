@@ -60,7 +60,7 @@ public final class SomeValueObject extends AbstractVO {
 	@Override
 	@ShouldBePure
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
 
 	@Override

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -26,7 +26,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	int _hasheq = -1;
 
 	 /**
@@ -93,7 +93,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		
 		final ISeq<Entry<K, V>> seq;
 
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		final Iterable<Entry<K, V>> iterable;
 
 		@Pure
@@ -128,12 +128,12 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		}
 
 		@SuppressWarnings("unchecked")
-		public Iterator<K> iterator() {
+		public IPureIterator<K> iterator() {
 			if (iterable == null)
 				return super.iterator();
 
 			if (iterable instanceof IMapIterable)
-				return (Iterator<K>) ((IMapIterable<?,?>) iterable).keyIterator();
+				return (IPureIterator<K>) ((IMapIterable<?,?>) iterable).keyIterator();
 
 			final Iterator<Entry<K, V>> mapIter = iterable.iterator();
 			
@@ -157,7 +157,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		
 		final ISeq<Entry<K, V>> seq;
 		
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		final Iterable<Entry<K,V>> iterable;
 
 		@Pure
@@ -192,12 +192,12 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		}
 		
 		@SuppressWarnings("unchecked")
-		public Iterator<V> iterator() {
+		public IPureIterator<V> iterator() {
 			if (iterable == null)
 				return super.iterator();
 
 			if (iterable instanceof IMapIterable)
-				return (Iterator<V>) ((IMapIterable<?,?>) iterable).valIterator();
+				return (IPureIterator<V>) ((IMapIterable<?,?>) iterable).valIterator();
 
 			final Iterator<Entry<K,V>> mapIter = iterable.iterator();
 			return new IPureIterator<V>() {

@@ -226,20 +226,22 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc, boolean itf) {
-				String callerName = methodName;
+				//String callerName = methodName;
 				MemberHandle remoteMethod = null;
-				if (owner.equals(Type.getInternalName(Pure4J.class))) {
-					remoteMethod = new StackArgumentsMethodCall(owner, name, desc, line, arguments, firstCall);
-					arguments = new Stack<Integer>();
-				} else if (name.equals("<init>") && mh.getName().equals("<init>") && owner.equals(superName)) {
+				if (name.equals("<init>") && mh.getName().equals("<init>") && owner.equals(superName)) {
 					// calling the superclass constructor.  Reactivate first call for possible immutable after it.
 					remoteMethod = new StackArgumentsConstructorCall(owner, desc, line, arguments, true);	
 					arguments = new Stack<Integer>();
 					firstCall = true;
 				} else {
-					remoteMethod = createHandle(owner, name, desc, line);	
-					firstCall = false;
+					remoteMethod = new StackArgumentsMethodCall(owner, name, desc, line, arguments, firstCall);
+					arguments = new Stack<Integer>();
+					
+					if (!owner.equals(Type.getInternalName(Pure4J.class))) {
+						firstCall = false;
+					}
 				}
+
 				model.addCalls(mh, remoteMethod);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
@@ -249,13 +251,13 @@ public class ClassFileModelBuilder {
 			public void visitTypeInsn(int arg0, String type) {
 				model.addClassDependency(className, type);
 				output("  "+getOpcode(arg0)+" "+type);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitMultiANewArrayInsn(String desc, int arg1) {
 				addDependency(className, model, desc, false);
 				output("  Multi New Array"+desc+" "+arg1);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			/**
@@ -267,7 +269,7 @@ public class ClassFileModelBuilder {
 
 			public void visitVarInsn(int arg0, int arg1) {
 				output("  "+getOpcode(arg0)+" "+arg1);
-				if ((Opcodes.ALOAD == arg0) && (firstCall)) {
+				if (Opcodes.ALOAD == arg0) {
 					arguments.push(arg1);
 				} else {
 					firstCall = false;
@@ -289,7 +291,7 @@ public class ClassFileModelBuilder {
 
 			public void visitIincInsn(int arg0, int arg1) {
 				output("  "+getOpcode(arg0)+ " "+arg1);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitInsn(int arg0) {
@@ -298,11 +300,11 @@ public class ClassFileModelBuilder {
 
 			public void visitIntInsn(int arg0, int arg1) {
 				output("  "+getOpcode(arg0)+ " "+arg1);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitJumpInsn(int arg0, Label arg1) {
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitLabel(Label arg0) {
@@ -310,7 +312,7 @@ public class ClassFileModelBuilder {
 
 			public void visitLdcInsn(Object arg0) {
 				output("  "+arg0);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitLineNumber(int arg0, Label arg1) {
@@ -320,27 +322,32 @@ public class ClassFileModelBuilder {
 
 			public void visitLocalVariable(String arg0, String arg1, String arg2, Label arg3, Label arg4, int arg5) {
 				output("  visitLocalVariable "+arg0+" "+arg1+" "+arg2+" "+arg3+" "+arg4+" "+arg5);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitLookupSwitchInsn(Label arg0, int[] arg1, Label[] arg2) {
 				output("  lookupswitch");
-				firstCall = false;
+				resetCallDetails();
 			}
 
 			public void visitMaxs(int arg0, int arg1) {
 				output("  visitMaxs "+arg0+" "+arg1);
-				firstCall = false;
+				resetCallDetails();
 			}
 
-			public void visitTableSwitchInsn(int arg0, int arg1, Label arg2, Label[] arg3) {
+			public void visitTableSwitchInsn(int arg0, int arg1, Label arg2, Label... arg3) {
 				output("  lookupswitch");
+				resetCallDetails();
+			}
+
+			protected void resetCallDetails() {
 				firstCall = false;
+				arguments = new Stack<Integer>();
 			}
 
 			public void visitTryCatchBlock(Label arg0, Label arg1, Label arg2, String arg3) {
 				output("  try/catch: "+arg0+" "+arg1+" "+arg2+" "+arg3);
-				firstCall = false;
+				resetCallDetails();
 			}
 
 		};

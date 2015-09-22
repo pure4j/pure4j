@@ -15,13 +15,13 @@ package org.pure4j.collections;
 import java.util.Arrays;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.immutable.ImmutableValue;
 
 public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	private final K[] array;
 	final int i;
 
@@ -163,7 +163,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	// ///////////////////////////////
 
 	static public class ArraySeq_int extends ASeq<Integer> implements IndexedSeq<Integer>  {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final int[] array;
 		final int i;
 
@@ -218,7 +218,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 
 	static public class ArraySeq_float extends ASeq<Float> implements IndexedSeq<Float>  {
 		
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final float[] array;
 		final int i;
 
@@ -270,7 +270,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_double extends ASeq<Double> implements IndexedSeq<Double> {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final double[] array;
 		final int i;
 
@@ -324,7 +324,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_long extends ASeq<Long> implements IndexedSeq<Long> {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final long[] array;
 		final int i;
 
@@ -378,7 +378,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_byte extends ASeq<Byte> implements IndexedSeq<Byte>  {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final byte[] array;
 		final int i;
 
@@ -442,7 +442,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_char extends ASeq<Character> implements IndexedSeq<Character> {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final char[] array;
 		final int i;
 
@@ -506,7 +506,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_short extends ASeq<Short> implements IndexedSeq<Short> {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final short[] array;
 		final int i;
 
@@ -570,7 +570,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	}
 
 	static public class ArraySeq_boolean extends ASeq<Boolean> implements IndexedSeq<Boolean> {
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		public final boolean[] array;
 		final int i;
 

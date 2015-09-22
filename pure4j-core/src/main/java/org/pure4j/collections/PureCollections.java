@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Mutability;
 import org.pure4j.annotations.pure.Pure;
 
 public class PureCollections {
@@ -94,7 +95,7 @@ public class PureCollections {
 		}
 	}
 
-	@Pure
+	@Pure(params=Mutability.ANYTHING)
 	@SuppressWarnings("rawtypes")
 	static public Object[] seqToArray(ISeq seq) {
 		int len = length(seq);
@@ -114,7 +115,7 @@ public class PureCollections {
 		return i;
 	}
 
-	@Pure
+	@Pure(params=Mutability.ANYTHING)
 	@SuppressWarnings("rawtypes")
 	static public Object first(Object x) {
 		Pure4J.immutable(x);

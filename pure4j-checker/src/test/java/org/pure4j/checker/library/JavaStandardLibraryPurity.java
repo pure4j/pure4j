@@ -89,8 +89,8 @@ public class JavaStandardLibraryPurity {
 						PersistentList.class,
 						PersistentQueue.class,
 						PersistentArrayMap.class,
-						PersistentTreeMap.class, 
-						PersistentTreeSet.class, 
+						PersistentTreeMap.class,
+						PersistentTreeSet.class,
 						PersistentVector.class,
 						PureCollectors.class
 						);
@@ -122,10 +122,10 @@ public class JavaStandardLibraryPurity {
 		ProjectModel pm = cfmb.getModel();
 		PurityChecker checker = new PurityChecker(cl);
 		if (assumePurity) {
-			for (String classInModel : pm.getAllClasses()) {
-				ClassHandle ch = new ClassHandle(classInModel);
-				checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true);	
-			}
+//			for (String classInModel : pm.getAllClasses()) {
+//				ClassHandle ch = new ClassHandle(classInModel);
+//				checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true);	
+//			}
 		}
 		checker.checkModel(pm, fc);
 		fc.close();

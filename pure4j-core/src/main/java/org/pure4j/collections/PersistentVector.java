@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -31,34 +32,34 @@ import org.pure4j.annotations.pure.Pure;
  */
 public class PersistentVector<K> extends APersistentVector<K> {
 
+	@MutableUnshared
 	public static class Node implements Serializable {
 		
-		transient public final AtomicReference<Thread> edit;
-		public final Object[] array;
+		transient private final AtomicReference<Thread> edit;
+		@IgnoreNonImmutableTypeCheck
+		private final Object[] array;
 
-		public Node(AtomicReference<Thread> edit, Object[] array) {
+		private Node(AtomicReference<Thread> edit, Object[] array) {
 			this.edit = edit;
 			this.array = array;
 		}
 
-		Node(AtomicReference<Thread> edit) {
+		private Node(AtomicReference<Thread> edit) {
 			this.edit = edit;
 			this.array = new Object[32];
 		}
 	}
-
-	@ImmutableValue(Enforcement.FORCE)
 	final static AtomicReference<Thread> NOEDIT = new AtomicReference<Thread>(null);
-	@ImmutableValue(Enforcement.FORCE)
+
 	public final static Node EMPTY_NODE = new Node(NOEDIT, new Object[32]);
 
 	final int cnt;
 	public final int shift;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	public final Node root;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	public final K[] tail;
 
 	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>(0, 5,
@@ -304,7 +305,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			Counted {
 
 		public final PersistentVector<K> vec;
-		@ImmutableValue(Enforcement.FORCE)
+		@IgnoreNonImmutableTypeCheck
 		final K[] node;
 		final int i;
 		public final int offset;

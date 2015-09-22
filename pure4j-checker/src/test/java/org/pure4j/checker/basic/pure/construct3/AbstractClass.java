@@ -1,9 +1,9 @@
 package org.pure4j.checker.basic.pure.construct3;
 
-import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.checker.basic.support.ShouldBePure;
 
-@Pure
+@MutableUnshared
 public abstract class AbstractClass {
 
 	private String in;

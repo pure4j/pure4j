@@ -1,11 +1,11 @@
 package org.pure4j.checker.basic.pure.narrowing;
 
-import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
-@Pure
+@ImmutableValue
 public class PureNarrowingTest {
 
 	@CausesError(PureMethodParameterNotImmutableException.class)

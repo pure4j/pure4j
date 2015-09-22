@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Mutability;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
@@ -28,7 +29,7 @@ import org.pure4j.exception.PureMethodAccessesSharedFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodNotInProjectScopeException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
-import org.pure4j.immutable.RuntimeImmutabilityChecker;
+import org.pure4j.exception.PureMethodReturnNotImmutableException;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
@@ -58,13 +59,15 @@ public class PureChecklistHandler {
 
 		public MemberHandle declaration;
 		public Enforcement e;
+		public Mutability m;
 		private Boolean pureImplementation = null;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 
-		private PureMethod(MemberHandle declaration, Enforcement e) {
+		private PureMethod(MemberHandle declaration, Enforcement e, Mutability m) {
 			super();
 			this.declaration = declaration;
 			this.e = e;
+			this.m = m;
 			setupEnforcements(e);
 		}
 
@@ -90,7 +93,20 @@ public class PureChecklistHandler {
 
 		@Override
 		public String toString() {
-			return "PureMethod [declaration=" + declaration + ", e=" + e + ", usedIn=" + usedIn + "]";
+			return "   See:[declaration=" + declaration + "\n        e=" + e + "\n        m=" + m + ", \n        usedIn=\n" + lines(usedIn, 10) + "       ]";
+		}
+
+		private String lines(Set<Class<?>> usedIn2, int i) {
+			StringBuilder sb = new StringBuilder();
+			for (Class<?> class1 : usedIn2) {
+				for (int j = 0; j < i; j++) {
+					sb.append(' ');
+				}
+				sb.append(class1.toString());
+				sb.append("\n");
+			}
+			
+			return sb.toString();
 		}
 
 		public boolean checkImplementationPurity(Callback cb, ProjectModel pm) {
@@ -136,16 +152,13 @@ public class PureChecklistHandler {
 
 					
 					// check the signature of accessible pure method
-					boolean pub = Modifier.isPublic(declaration.getModifiers(cl));
-					boolean priv = Modifier.isPrivate(declaration.getModifiers(cl));
-					boolean prot = Modifier.isProtected(declaration.getModifiers(cl));
 					
-					if (pub || ((!priv) && (!prot))) {
+					if (isAccessibleOutsideClass(declaration)) {
 						Type[] genericTypes = declaration.getGenericTypes(cl);
 						int argOffset = getArgOffset();
 						for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
 							Type t = genericTypes[i];
-							if (!immutables.typeIsMarkedImmutable(t, cb)) {
+							if (typeFailsCheck(cb, t)) {
 								int argNo = i+ argOffset;
 								if (!isRuntimeChecked(argNo, pm, cb)) {
 									cb.registerError(new PureMethodParameterNotImmutableException(this, t));
@@ -155,16 +168,18 @@ public class PureChecklistHandler {
 							}
 						}
 						
-						/* RETURN TYPE CHECKING 
+						// RETURN TYPE CHECKING 
 						if (declaration instanceof MethodHandle) {
-							Method m = ((MethodHandle) declaration).hydrate(cl);
-							Type t = m.getGenericReturnType();
-							if (!immutables.typeIsMarkedImmutable(t, cb)) {
-								cb.registerError(new PureMethodReturnNotImmutableException(this, t));
-								pureImplementation = false;
-								return false;
+							if (declaration.getAnnotation(cl, IgnoreNonImmutableTypeCheck.class) == null) {
+								Method m = ((MethodHandle) declaration).hydrate(cl);
+								Type t = m.getGenericReturnType();
+								if (typeFailsCheck(cb, t)) {
+									cb.registerError(new PureMethodReturnNotImmutableException(this, t));
+									pureImplementation = false;
+									return false; 
+								}
 							}
-						} */
+						} 
 					}
 
 					
@@ -191,8 +206,8 @@ public class PureChecklistHandler {
 									pureImplementation = false;
 								}
 
-								if (!immutables.typeIsMarkedImmutable(f.getGenericType(), cb)) {
-									if (!forcedImmutable(f)) {
+								if (!immutables.typeIsMarked(f.getGenericType(), cb)) {
+									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle))) {
 										cb.registerError(new PureMethodAccessesNonImmutableFieldException(this, fieldHandle));
 										pureImplementation = false;
 									}
@@ -209,6 +224,21 @@ public class PureChecklistHandler {
 
 			}
 			return pureImplementation;
+		}
+		
+		protected boolean isAccessibleOutsideClass(MemberHandle handle) {
+			boolean pub = Modifier.isPublic(handle.getModifiers(cl));
+			boolean priv = Modifier.isPrivate(handle.getModifiers(cl));
+			boolean prot = Modifier.isProtected(handle.getModifiers(cl));
+			return pub || ((!priv) && (!prot));
+		}
+
+		protected boolean typeFailsCheck(Callback cb, Type t) {
+			if (m == Mutability.ALLOW_IMMUTABLE_ONLY) {
+				return !immutables.typeIsMarked(t, cb);
+			} 
+			
+			return false;
 		}
 
 		private int thisFieldSkip() {
@@ -244,14 +274,12 @@ public class PureChecklistHandler {
 		}
 
 		private boolean forcedImmutable(Field f) {
-			ImmutableValue iv = f.getAnnotation(ImmutableValue.class);
-			if ((iv != null) && (iv.value() == Enforcement.FORCE)) {
+			IgnoreNonImmutableTypeCheck iv = f.getAnnotation(IgnoreNonImmutableTypeCheck.class);
+			if ((iv != null)) {
 				return true;
 			}
 
-			// try the class level
-			iv = RuntimeImmutabilityChecker.classImmutableValueAnnotation(f.getDeclaringClass());
-			return (iv != null);
+			return false;
 		}
 
 		private boolean onCurrentObject(FieldHandle fh, Field f) {
@@ -339,12 +367,14 @@ public class PureChecklistHandler {
 	}
 
 	private ClassLoader cl;
-	private ImmutableClassHandler immutables;
+	private ClassAnnotationCache immutables;
+	private ClassAnnotationCache mutableUnshared;
 
-	public PureChecklistHandler(ClassLoader cl, ImmutableClassHandler immutables) {
+	public PureChecklistHandler(ClassLoader cl, ClassAnnotationCache immutables, ClassAnnotationCache mutableUnshared) {
 		super();
 		this.cl = cl;
 		this.immutables = immutables;
+		this.mutableUnshared = mutableUnshared;
 		loadPureLists();
 	}
 
@@ -449,7 +479,11 @@ public class PureChecklistHandler {
 			return false;
 		}
 
-		if (immutables.classIsMarkedImmutable(in, cb)) {
+		if (immutables.classIsMarked(in, cb)) {
+			return true;
+		}
+		
+		if (mutableUnshared.classIsMarked(in, cb)) {
 			return true;
 		}
 		
@@ -471,12 +505,12 @@ public class PureChecklistHandler {
 		return false;
 	}
 
-	public void addMethod(CallHandle declaration, Enforcement e, Class<?> usedIn, Callback cb) {
+	public void addMethod(CallHandle declaration, Enforcement e, Mutability m, Class<?> usedIn, Callback cb) {
 		PureMethod pm;
 		if (pureChecklist.containsKey(declaration)) {
 			pm = pureChecklist.get(declaration);
 		} else {
-			pm = new PureMethod(declaration, e);
+			pm = new PureMethod(declaration, e, m);
 			pureChecklist.put(declaration, pm);
 			cb.send("Adding new method for testing: " + declaration + " " + e);
 		}

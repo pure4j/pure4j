@@ -15,12 +15,12 @@ package org.pure4j.collections;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -51,12 +51,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	    }
 	}
 
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	public final Comparator<K> comp;
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	public final Node tree;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	public final int _count;
 
 	final static private PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
@@ -229,21 +229,19 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return new NodeIterator<K, V>(tree, false);
 	}
 
-	public Iterator<K> keyIterator() {
+	public IPureIterator<K> keyIterator() {
 		return keys(iterator());
 	}
 
-	public Iterator<V> valIterator() {
+	public IPureIterator<V> valIterator() {
 		return vals(iterator());
 	}
 
-	@Pure
-	public static <K, V> Iterator<K> keys(NodeIterator<K, V> it) {
+	public IPureIterator<K> keys(NodeIterator<K, V> it) {
 		return new KeyIterator<K, V>(it);
 	}
 
-	@Pure
-	public static <K, V> Iterator<V> vals(NodeIterator<K, V> it) {
+	public IPureIterator<V> vals(NodeIterator<K, V> it) {
 		return new ValIterator<K, V>(it);
 	}
 
@@ -499,10 +497,10 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return new BlackBranchVal(key, val, left, right);
 	}
 
+	
 	@ImmutableValue
 	static abstract class Node extends AMapEntry<Object, Object> {
-		@ImmutableValue(Enforcement.FORCE)
-		final Object key;
+		final protected Object key;
 
 		Node(Object key) {
 			this.key = key;
@@ -868,8 +866,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		}
 	}
 
-	@Pure
-	static class KeyIterator<K, V> implements Iterator<K> {
+	static class KeyIterator<K, V> implements IPureIterator<K> {
 		NodeIterator<K, V> it;
 
 		KeyIterator(NodeIterator<K, V> it) {
@@ -892,9 +889,8 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 			throw new UnsupportedOperationException();
 		}
 	}
-
-	@Pure
-	static class ValIterator<K, V> implements Iterator<V> {
+	
+	static class ValIterator<K, V> implements IPureIterator<V> {
 		NodeIterator<K, V> it;
 
 		ValIterator(NodeIterator<K, V> it) {

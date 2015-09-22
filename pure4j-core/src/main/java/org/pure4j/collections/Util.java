@@ -14,7 +14,6 @@ package org.pure4j.collections;
 
 import java.math.BigInteger;
 
-import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public class Util {

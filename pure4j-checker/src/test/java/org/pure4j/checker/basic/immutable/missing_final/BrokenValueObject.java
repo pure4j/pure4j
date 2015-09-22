@@ -5,6 +5,7 @@ import java.io.InputStream;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
@@ -20,7 +21,7 @@ public class BrokenValueObject extends AnotherBrokenObject {
 	@CausesError(FieldTypeNotImmutableException.class)
 	final InputStream is;
 	
-	@CausesError(PureMethodParameterNotImmutableException.class)
+	@ShouldBePure // parameters can be anything - they won't be stored
 	public BrokenValueObject(Integer in, Integer int2, String b, InputStream is) {
 		super(in);
 		this.int2 = int2;
@@ -63,7 +64,12 @@ public class BrokenValueObject extends AnotherBrokenObject {
 	@ShouldBePure
 	public InputStream getIs() {
 		return is;
-	}
+	} 
 	
+	@ShouldBePure
+	@CausesError(ClassExpectingPureMethod.class)  // because we should've overridden toString.
+	public String notToString() {
+		return "";
+	}
 	
 }

@@ -12,13 +12,12 @@
 
 package org.pure4j.collections;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.mutable.MutableUnshared;
 
-@Pure
-public class SeqIterator<K> implements Iterator<K> {
+@MutableUnshared
+public class SeqIterator<K> implements IPureIterator<K> {
 	
 	ISeq<K> next;
 

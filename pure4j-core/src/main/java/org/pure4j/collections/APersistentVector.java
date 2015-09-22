@@ -20,6 +20,7 @@ import java.util.ListIterator;
 import java.util.RandomAccess;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -30,7 +31,7 @@ public abstract class APersistentVector<K> implements
 
 	private static final long serialVersionUID = 3143509526367951707L;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	int _hasheq = -1;
 
 	public String toString() {
@@ -246,7 +247,6 @@ public abstract class APersistentVector<K> implements
 
 	// java.util.Collection implementation
 
-	@Pure(Enforcement.NOT_PURE)
 	public Object[] toArray() {
 		Object[] ret = new Object[count()];
 		for (int i = 0; i < count(); i++)

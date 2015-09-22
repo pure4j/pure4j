@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Mutability;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ClassHandle;
@@ -14,25 +15,29 @@ import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.model.StackArgumentsConstructorCall;
+import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.processor.PureChecklistHandler.PureMethod;
 
 public class PurityChecker implements Rule {
 	
 		
-	private ImmutableClassHandler immutables = new ImmutableClassHandler();
+	private ClassAnnotationCache immutables = new ImmutableValueClassHandler();
+	private ClassAnnotationCache mutableUnshared = new MutableUnsharedClassHandler();
 	private PureChecklistHandler pureChecklist;
 	private ClassLoader cl;
 
 	public PurityChecker(ClassLoader cl) {
 		this.cl = cl;
-		pureChecklist = new PureChecklistHandler(cl, immutables);
+		pureChecklist = new PureChecklistHandler(cl, immutables, mutableUnshared);
+		
 	}
 	
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
 		addPureMethodsToPureList(pm, cb);
 		addMethodsFromImmutableValueClassToPureList(pm, cb);
-		addMethodsFromPureClassToPureList(pm, cb);
+		addMethodsFromMutableUnsharedToPureList(pm, cb);
 		pureChecklist.doPureMethodChecks(cb, pm);
 		identifyImpureImplementations(pm, cb);
 		outputPureMethodList(cb, pm);	
@@ -60,29 +65,29 @@ public class PurityChecker implements Rule {
 	private void addMethodsFromImmutableValueClassToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {
 			Class<?> cl = hydrate(className);
-			if (immutables.classIsMarkedImmutable(cl, cb)) {
+			if (immutables.classIsMarked(cl, cb)) {
 				Class<?> immutableClass = hydrate(className);
 				if (isConcrete(immutableClass)) {
-					immutables.doClassImmutabilityChecks(immutableClass, cb);
-					addMethodsFromClassToPureList(immutableClass, cb, pm, true); 
+					immutables.doClassChecks(immutableClass, cb);
+					addMethodsFromClassToPureList(immutableClass, cb, pm, true, Mutability.ANYTHING); 
 				}
 			}
 		}
 	}
 
-	private void addMethodsFromPureClassToPureList(ProjectModel pm, Callback cb) {
+	private void addMethodsFromMutableUnsharedToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {
 			Class<?> cl = hydrate(className);
 			if (pureChecklist.isMarkedPure(cl, cb)) {
 				Class<?> pureClass = hydrate(className);
 				if (isConcrete(pureClass)) {
-					addMethodsFromClassToPureList(pureClass, cb, pm, false);
+					addMethodsFromClassToPureList(pureClass, cb, pm, false, Mutability.ALLOW_IMMUTABLE_ONLY);
 				}
 			}
 		}
 	}
 	
-	public void addMethodsFromClassToPureList(Class<?> pureClass, Callback cb, ProjectModel pm, boolean includeObject) {
+	public void addMethodsFromClassToPureList(Class<?> pureClass, Callback cb, ProjectModel pm, boolean includeObject, Mutability mut) {
 		Set<String> overrides = new LinkedHashSet<String>();
 		Class<?> in = pureClass;
 		
@@ -92,7 +97,7 @@ public class PurityChecker implements Rule {
 				ConstructorHandle ch = new ConstructorHandle(c);
 				Pure p = c.getAnnotation(Pure.class);
 				Enforcement e = p == null ? Enforcement.CHECKED : p.value();
-				pureChecklist.addMethod(ch, e, pureClass, cb);
+				pureChecklist.addMethod(ch, e, mut, pureClass, cb);
 			}
 			
 			for (Method m : in.getDeclaredMethods()) {
@@ -102,9 +107,9 @@ public class PurityChecker implements Rule {
 				if (!isStaticMethod(m)) {
 					String signature = mh.getSignature();
 					boolean overridden = overrides.contains(signature);
-					boolean calledByThisClass = false; //calledWithin(pm.getCalledBy(mh), pureClass);
+					boolean calledByThisClass = calledWithin(pm.getCalledBy(mh), pureClass, pm, mh);
 					if ((!overridden) || (calledByThisClass)) {
-						pureChecklist.addMethod(mh, e, pureClass, cb);
+						pureChecklist.addMethod(mh, e, mut, pureClass, cb);
 						implementations.add(signature);
 					}
 				}
@@ -122,10 +127,19 @@ public class PurityChecker implements Rule {
 	/**
 	 * Even if a class overrides a method, it can still use super to call it.
 	 */
-	private boolean calledWithin(Set<MemberHandle> calledBy, Class<?> pureClass) {
+	private boolean calledWithin(Set<MemberHandle> calledBy, Class<?> pureClass, ProjectModel pm, MethodHandle callTo) {
 		for (MemberHandle memberHandle : calledBy) {
 			if (calledWithin(memberHandle, pureClass)) {
-				return true;
+				for (MemberHandle call : pm.getCalls(memberHandle)) {
+					if (call.equals(callTo)) {
+						// is it a call to "this"?
+						if (call instanceof StackArgumentsMethodCall) {
+							if (((StackArgumentsMethodCall) call).getLocalVariables().contains(0)) {
+								return true;
+							}
+						}
+					}
+				}
 			}
 		}
 		
@@ -154,7 +168,7 @@ public class PurityChecker implements Rule {
 				Class<?> class1 = ((CallHandle)handle).getDeclaringClass(cl);
 				Pure p = ((CallHandle)handle).getAnnotation(cl, Pure.class);
 				if (p.value() != Enforcement.NOT_PURE) {
-					pureChecklist.addMethod((CallHandle) handle, p.value(), class1, cb);
+					pureChecklist.addMethod((CallHandle) handle, p.value(), p.params(), class1, cb);
 				}
 			}
 		}

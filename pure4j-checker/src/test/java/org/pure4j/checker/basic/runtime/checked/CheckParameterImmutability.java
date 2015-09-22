@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.CausesError;
@@ -17,7 +18,7 @@ public class CheckParameterImmutability extends AbstractChecker {
 
 	private String s = "blah";
 	
-	@Pure
+	@MutableUnshared
 	static class InnerClass {
 
 		Object o;
@@ -31,7 +32,6 @@ public class CheckParameterImmutability extends AbstractChecker {
 		
 	}
 	
-	@Pure
 	class InnerClass2 extends InnerClass {
 
 		@ShouldBePure
@@ -54,10 +54,10 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodParameterNotImmutableException.class})
-	public Object testParam1Bad(Object in1, Object in2) {
+	public String testParam1Bad(Object in1, Object in2) {
 		Object in3 = in2;
 		Pure4J.immutable(in1, in2);
-		return in3;
+		return in3.toString();
 	}
 	
 	/**
@@ -65,9 +65,9 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@ShouldBePure
-	public Object testParam2Good(Object in1, Object in2) {
+	public String testParam2Good(Object in1, Object in2) {
 		Pure4J.immutable(in1, in2);
-		return in1;
+		return in1.toString() + in2.toString();
 	}
 	
 	/**
@@ -75,9 +75,9 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@ShouldBePure
-	public Object testParam3Good(Object in1, int in2) {
+	public String testParam3Good(Object in1, int in2) {
 		Pure4J.immutable(in1);
-		return in1;
+		return in1.toString();
 	}
 	
 	/**
@@ -85,9 +85,9 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@CausesError({MissingImmutableParameterCheckException.class, PureMethodParameterNotImmutableException.class})
-	public Object testParam4Bad(Object in1, Object in2) {
+	public String testParam4Bad(Object in1, Object in2) {
 		Pure4J.immutable(in1);
-		return in1;
+		return in1.toString() + in2.toString();
 	}
 	
 	/**
@@ -95,9 +95,9 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodParameterNotImmutableException.class})
-	public Object testParam5Bad(Object in1) {
+	public String testParam5Bad(Object in1) {
 		Pure4J.immutable(in1, 6);
-		return in1;
+		return in1.toString();
 	}
 	
 	/**
@@ -105,10 +105,10 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@ShouldBePure
-	public Object testParam6Good(Object in1, Object in2,Object in3, Object in4, Object in5, Object in6) {
+	public String testParam6Good(Object in1, Object in2,Object in3, Object in4, Object in5, Object in6) {
 		Pure4J.immutable(in1,in2, in3, in4);
 		Pure4J.immutable(in5, in6);
-		return in1;
+		return in1.toString();
 	}
 	
 	/**
@@ -116,9 +116,9 @@ public class CheckParameterImmutability extends AbstractChecker {
 	 */
 	@Pure
 	@ShouldBePure
-	public Object testParam7Good(Object in1) {
+	public String testParam7Good(Object in1) {
 		Pure4J.immutable(in1, s);
-		return in1;
+		return in1.toString();
 	}
 	
 	@Test

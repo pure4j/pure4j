@@ -1,8 +1,8 @@
 package org.pure4j.checker.basic.immutable.forced1;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
@@ -10,9 +10,10 @@ import org.pure4j.exception.PureMethodParameterNotImmutableException;
 /**
  * Broken immutable value implementation, but it's forced good.
  */
-@ImmutableValue(Enforcement.FORCE)
+@ImmutableValue
 public final class SomeValueObject {
 
+	@IgnoreNonImmutableTypeCheck
 	private final int[] someArray;
 
 	@ShouldBePure

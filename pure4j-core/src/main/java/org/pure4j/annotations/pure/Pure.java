@@ -63,10 +63,12 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * @author robmoffat
  *
  */
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Pure {
 	
 	Enforcement value() default Enforcement.CHECKED;
+	
+	Mutability params() default Mutability.ALLOW_IMMUTABLE_ONLY;
 
 }

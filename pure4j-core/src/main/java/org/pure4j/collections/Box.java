@@ -12,9 +12,9 @@
 
 package org.pure4j.collections;
 
-import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.mutable.MutableUnshared;
 
-@Pure
+@MutableUnshared
 class Box {
 
 	public Object val;

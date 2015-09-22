@@ -9,7 +9,6 @@ import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
-import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
 /**
  * A really bad java edge-case where you can create a mutable enum.  
@@ -32,7 +31,7 @@ public class MutableEnum extends AbstractChecker {
 		}
 		
 		@CausesError(FieldTypeNotImmutableException.class)
-		final public int[] someState;
+		final private int[] someState;
 	}
 	
 	@Pure

@@ -1,5 +1,6 @@
 package org.pure4j.immutable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -110,6 +111,28 @@ public class RuntimeImmutabilityChecker {
 			return classImmutableValueAnnotation(immutableClass.getSuperclass());
 		}
 	}
+	
+	public static <X> X classHierarchyAnnotation(Class<?> immutableClass, Class<X> ac) {
+		if ((immutableClass == Object.class) || (immutableClass == null)) {
+			return null;
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		X ann = (X) immutableClass.getDeclaredAnnotation((Class) ac);
+		if (ann != null) {
+			return ann;
+		} else {
+			for (Class<?> interf : immutableClass.getInterfaces()) {
+				ann = classHierarchyAnnotation(interf, ac);
+				if (ann != null) {
+					return ann;
+				}
+			}
+			return classHierarchyAnnotation(immutableClass.getSuperclass(), ac);
+		}
+	}
+	
+	
 	
 	
 	public static void throwIfTypeNotImmutable(Type t) {

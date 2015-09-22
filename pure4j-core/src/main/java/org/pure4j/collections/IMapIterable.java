@@ -19,8 +19,8 @@ import java.util.Iterator;
  */
 public interface IMapIterable<K, V> {
 
-	Iterator<K> keyIterator();
+	IPureIterator<K> keyIterator();
 
-	Iterator<V> valIterator();
+	IPureIterator<V> valIterator();
 
 }

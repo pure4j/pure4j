@@ -17,7 +17,8 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -36,17 +37,17 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	private static final long serialVersionUID = -5413707354958055094L;
 	final int count;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	final INode root;
 	final boolean hasNull;
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	final V nullValue;
 
 	final private static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
 			null, false, null);
 	
-	@ImmutableValue(Enforcement.FORCE)
+	@IgnoreNonImmutableTypeCheck
 	final private static Object NOT_FOUND = new Object();
 
 	static public <K, V> PersistentHashMap<K, V> create(Map<K,V> other) {
@@ -191,8 +192,8 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 				nullValue);
 	}
 
-	@ImmutableValue(Enforcement.FORCE)
-	static final Iterator<Object> EMPTY_ITER = new Iterator<Object>() {
+	@IgnoreNonImmutableTypeCheck
+	static final IPureIterator<Object> EMPTY_ITER = new IPureIterator<Object>() {
 		public boolean hasNext() {
 			return false;
 		}
@@ -206,10 +207,9 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	};
 	
-	@Pure
 	@SuppressWarnings("unchecked")
-	public static <X> Iterator<X> emptyIter() {
-		return (Iterator<X>) EMPTY_ITER;
+	public static <X> IPureIterator<X> emptyIter() {
+		return (IPureIterator<X>) EMPTY_ITER;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -243,11 +243,11 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return (Iterator<Entry<K, V>>) rootIter;
 	}
 
-	public Iterator<K> keyIterator() {
+	public IPureIterator<K> keyIterator() {
 		return KeySeq.create(seq()).iterator();
 	}
 	
-	public Iterator<V> valIterator() {
+	public IPureIterator<V> valIterator() {
 		return ValSeq.create(seq()).iterator();
 	}
 
@@ -371,6 +371,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
+	@MutableUnshared
 	@SuppressWarnings({"rawtypes"})
 	static interface INode extends Serializable {
 		INode assoc(int shift, int hash, Object key, Object val, Box addedLeaf);
@@ -606,7 +607,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
-	@ImmutableValue(Enforcement.FORCE)
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	final static class BitmapIndexedNode implements INode {
 		static final BitmapIndexedNode EMPTY = new BitmapIndexedNode(null, 0,
@@ -891,7 +891,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		}
 	}
 
-	@ImmutableValue(Enforcement.FORCE)
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	final static class HashCollisionNode implements INode {
 
