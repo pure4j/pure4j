@@ -16,7 +16,7 @@ import org.pure4j.collections.Util;
 public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 	
 	@MutableUnshared
-	interface Visitor {
+	protected interface Visitor {
 		
 		public void visit(Object o, Object o2);
 	}
