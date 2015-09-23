@@ -3,6 +3,7 @@ package org.pure4j.immutable;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.mutable.MutableUnshared;
+import org.pure4j.collections.Util;
 
 /**
  * Save yourself the bother of writing all the boilerplate for your immutable
@@ -15,25 +16,77 @@ import org.pure4j.annotations.mutable.MutableUnshared;
 public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 	
 	@MutableUnshared
-	protected interface Visitor {
+	interface Visitor {
 		
 		public void visit(Object o, Object o2);
 	}
 
+	private static class HashCodeVisitor implements Visitor {
+		int result = 0;
+		
+		@Override
+		public void visit(Object o, Object o2) {
+			result = (result * Pure4J.SOME_PRIME) + o.hashCode();
+		}
+	}
+	
+	private static class EqualsVisitor implements Visitor {
+		boolean result = true;
+		
+		@Override
+		public void visit(Object o, Object o2) {
+			if (result != false) {
+				result = Util.equals(o, o2);
+			}
+		}
+	}
+	
+	private static class ToStringVisitor implements Visitor {
+		
+		StringBuilder in;
+		boolean addComma = false;
+		
+		private ToStringVisitor(StringBuilder in) {
+			this.in = in;
+		}
+		
+		public void visit(Object o, Object o2) {
+			if (addComma) {
+				in.append(",");
+			}
+			if (o != null) {
+				in.append(o.toString());
+			}
+			addComma = true;
+		}
+	}
+	
+	private static class ComparisonVisitor implements Visitor {
+		
+		int result = 0;
+		
+		@SuppressWarnings("unchecked")
+		public void visit(Object o, Object o2) {
+			if (result == 0) {
+				if (o instanceof Comparable) {
+					if (o2 == null) {
+						result = -1;
+					} else {
+						if (o2.getClass() == o.getClass()) {
+							result = ((Comparable<Object>) o).compareTo(o2);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public int hashCode() {
-		final int[] hc = new int[1];
-		fields(new Visitor() {
-
-			@Override
-			public void visit(Object o, Object o2) {
-				hc[0] = (hc[0] * Pure4J.SOME_PRIME) + o.hashCode();
-			}
-			
-		}, (M) this);
-		
-		return hc[0];
+		HashCodeVisitor v = new HashCodeVisitor();
+		fields(v, (M) this);
+		return v.result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -44,19 +97,9 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 		} else if (obj == this) {
 			return true;
 		} else if (obj.getClass() == this.getClass()) {
-			final boolean[] result = { true };
-			
-			fields(new Visitor() {
-				
-				@Override
-				public void visit(Object o, Object o2) {
-					if (result[0] != false) {
-						result[0] = o.equals(o2);
-					}
-				}
-			}, (M) obj);
-			
-			return result[0];
+			final EqualsVisitor v = new EqualsVisitor();
+			fields(v, (M) obj);
+			return v.result;
 		} else {
 			return false;
 		}
@@ -67,15 +110,7 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 	public String toString() {
 		final StringBuilder out = new StringBuilder();
 		out.append(this.getClass().getName()+"[");
-		fields(new Visitor() {
-
-			@Override
-			public void visit(Object o, Object o2) {
-				out.append(o.toString());
-			}
-			
-		}, (M) this);
-		
+		fields(new ToStringVisitor(out), (M) this);
 		out.append("]");
 		return out.toString();
 	}
@@ -88,24 +123,8 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 
 	@Override
 	public int compareTo(M o) {
-		int[] result = { 0 };
-		
-		fields(new Visitor() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void visit(Object o, Object o2) {
-				if (result[0] == 0) {
-					if (o instanceof Comparable) {
-						if (o2.getClass() == o.getClass()) {
-							result[0] = ((Comparable<Object>) o).compareTo(o2);
-						}
-					}
-				}
-			}
-			
-		}, o);
-		
-		return result[0];
+		ComparisonVisitor cv = new ComparisonVisitor();
+		fields(cv, o);
+		return cv.result;
 	}
 }
