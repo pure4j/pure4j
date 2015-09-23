@@ -27,7 +27,7 @@ import org.pure4j.annotations.pure.Pure;
  * no reversing or suspensions required for persistent use
  */
 
-public class PersistentQueue<K> implements IPersistentList<K>, Collection<K>, Counted {
+public class PersistentQueue<K> implements IPersistentStack<K>, Collection<K>, Counted {
 
 	final private static PersistentQueue<Object> EMPTY = new PersistentQueue<Object>(0,null, null);
 

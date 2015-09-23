@@ -261,6 +261,16 @@ public final class PureCollectors {
     			(in) -> (ISeq<T>) PersistentList.create(in)
     			, CH_NOID);
     }
+    
+    @Pure
+    public static <T> CollectorImpl<T, List<T>, IPersistentList<T>> toPersistentList() {
+    	return new CollectorImpl<>(
+    			(Supplier<List<T>>) ArrayList::new, 
+    			List::add,
+    			(left, right)  -> { left.addAll(right); return left; }, 
+    			(in) -> (IPersistentList<T>) PersistentList.create(in)
+    			, CH_NOID);
+    }
 
     /**
      * Returns a {@code Collector} that accumulates the input elements into a

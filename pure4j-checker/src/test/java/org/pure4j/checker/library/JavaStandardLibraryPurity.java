@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -153,7 +154,8 @@ public class JavaStandardLibraryPurity {
 		Iterator.class,
 		StringTokenizer.class,
 		Stack.class,
-		Collections.class);
+		Collections.class, 
+		Currency.class);
 	}
 
 	@SuppressWarnings("unchecked")

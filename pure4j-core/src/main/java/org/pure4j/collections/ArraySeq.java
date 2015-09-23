@@ -101,13 +101,12 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return new ArraySeq_double(array, 0, true);
 	}
 
-	@Pure(Enforcement.FORCE)
 	public ArraySeq(K... array) {
 		this(array, 0, true);
 	}
 	
-	@Pure(Enforcement.FORCE)
 	private ArraySeq(K[] array, int i, boolean copy) {
+		Pure4J.immutableArray(array);
 		this.i = i;
 		this.array = copy ? Arrays.copyOf(array, array.length) : array;
 	}

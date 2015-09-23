@@ -18,9 +18,12 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * 
  */
 public class SpringProjectModelFactory {
+	
+	boolean logging = false;
 
-	public SpringProjectModelFactory(String[] classpathElements) {
+	public SpringProjectModelFactory(String[] classpathElements, boolean logging) {
 		this.paths = classpathElements;
+		this.logging = logging;
 	}
 	
 	
@@ -28,7 +31,7 @@ public class SpringProjectModelFactory {
 
 	public ProjectModel createProjectModel(Callback cb) throws IOException {
 		int fileCount = 0; 
-		ClassFileModelBuilder cfmb = new ClassFileModelBuilder();
+		ClassFileModelBuilder cfmb = new ClassFileModelBuilder(logging);
 		for (int i = 0; i < paths.length; i++) {
 			cb.send("Path: "+paths[i]);
 			FileSystemResourceLoader loader = new FileSystemResourceLoader();

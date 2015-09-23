@@ -4,18 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.kite9</groupId>
-		<artifactId>kite9-java</artifactId>
-		<version>1.11-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>		
+		<groupId>org.pure4j</groupId>
+		<artifactId>pure4j-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>		
 	</parent>
 
 
-	<artifactId>kite9-java-examples</artifactId>
+	<artifactId>pure4j-examples</artifactId>
 	<packaging>jar</packaging>
-	<name>Kite9 Java Examples</name>
-	<url>http://www.kite9.org/java-examples</url>
-	<description>This is a standalone maven project containing some examples showing how to use the Kite9 toolkit in a Java project</description>
+	<name>Pure4J Java Examples</name>
 
 	<build>
 		<plugins>
@@ -23,61 +21,25 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
+			
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>project</descriptorRef>
-					</descriptorRefs>
-				</configuration>
+				<groupId>org.pure4j</groupId>
+				<artifactId>pure4j-maven-plugin</artifactId>
+				<version>1.0-SNAPSHOT</version>
 				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- append to the packaging phase. -->
-						<goals>
-							<goal>single</goal> <!-- goals == mojos -->
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>2.2</version>
+		         	<execution>
+	                    <goals>
+	                        <goal>pure4j</goal>
+	                    </goals>   
+			         </execution>
+			     </executions>
 			</plugin>
 		</plugins>
 	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
-			</plugin>
-			<plugin>
-				<groupId>org.kite9</groupId>
-				<artifactId>kite9-java-maven-plugin</artifactId>
-       		                <version>${project.version}</version>
-				<configuration>
-					<userProperties>
-						<property>
-							<name>context.projectId</name>
-							<value>${kite9.projectId}</value>
-						</property>
-						<property>
-							<name>context.secretKey</name>
-							<value>${kite9.secretKey}</value>
-						</property>
-					</userProperties>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
 
 	<dependencies>
 		<dependency>
@@ -86,9 +48,9 @@
 			<version>4.8.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.kite9</groupId>
-			<artifactId>kite9-java-core</artifactId>
-	                <version>${project.version}</version>
+			<groupId>org.pure4j</groupId>
+			<artifactId>pure4j-core</artifactId>
+	        <version>${project.version}</version>
 			<scope />
 		</dependency>
 	</dependencies>

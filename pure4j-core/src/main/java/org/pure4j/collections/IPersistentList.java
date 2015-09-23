@@ -10,8 +10,10 @@
 
 package org.pure4j.collections;
 
+import java.util.List;
 
 
-public interface IPersistentList<K> extends Sequential, IPersistentStack<K> {
+
+public interface IPersistentList<K> extends Sequential, IPersistentStack<K>, List<K> {
 
 }

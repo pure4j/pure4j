@@ -12,9 +12,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
-import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.Pure4JException;
-import org.pure4j.model.AnnotationHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
@@ -69,7 +67,7 @@ public class AbstractChecker {
 		};
 
 		
-		SpringProjectModelFactory spmf = new SpringProjectModelFactory(new String[] { "target/classes", "target/test-classes" });
+		SpringProjectModelFactory spmf = new SpringProjectModelFactory(new String[] { "target/classes", "target/test-classes" }, true);
 		spmf.setBasePackage(ofClass.getPackage().getName());
 		spmf.setPattern("*.class");
 		ProjectModel pm = spmf.createProjectModel(cb);

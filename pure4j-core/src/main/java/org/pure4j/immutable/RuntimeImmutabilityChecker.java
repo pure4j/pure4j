@@ -1,6 +1,5 @@
 package org.pure4j.immutable;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -10,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,11 +29,10 @@ public class RuntimeImmutabilityChecker {
 	
 	public static final Set<Class<?>> INBUILT_IMMUTABLE_CLASSES = createInbuiltImmutableSet();
 
-	@SuppressWarnings("unchecked")
 	public static Set<Class<?>> createInbuiltImmutableSet() {
 		HashSet<Class<?>> out = new HashSet<Class<?>>();
 		List<Class<?>> l = Arrays.asList((Class<?>) Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class);
+			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class);
 		out.addAll(l);
 		return Collections.unmodifiableSet(out);
 	}

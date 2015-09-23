@@ -39,7 +39,15 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static final boolean OUTPUT_ASM = true;
+	public ClassFileModelBuilder() {
+		this(OUTPUT_ASM);
+	}
+	
+	public ClassFileModelBuilder(boolean output) {
+		this.output = output;
+	}
+	
+	public static boolean OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -353,9 +361,11 @@ public class ClassFileModelBuilder {
 
 		};
 	}
+	
+	private boolean output = OUTPUT_ASM;
 
 	private void output(String name) {
-		if (OUTPUT_ASM) {
+		if (output) {
 			System.out.println(name);
 		}
 	}

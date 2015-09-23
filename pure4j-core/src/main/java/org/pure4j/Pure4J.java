@@ -12,7 +12,7 @@ import org.pure4j.immutable.RuntimeImmutabilityChecker;
  */
 public class Pure4J {
 
-	private static final int SOME_PRIME = 31;
+	public static final int SOME_PRIME = 31;
 
 	@Pure
 	public static int hashCode(Object a) {
@@ -103,5 +103,36 @@ public class Pure4J {
 	@Pure
 	public static final UnsupportedOperationException unsupported() {
 		return new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Handy equals builder.  Feel free to use or not. Other equals-builders are available.
+	 * @Param parts An array with even number of elements, where the first n/2 elements are from the 
+	 * first object to be compared, and the second n/2 are from the other object.
+	 */
+	@Pure
+	public static boolean equals(Object... parts) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Checks that the elements in an array (if not the array itself) are all immutable.
+	 * Works quickly O(1) if the base element type is itself immutable.  Otherwise checks
+	 * each element in O(n) time.
+	 */
+	@Pure
+	public static void immutableArray(Object[] fields) {
+		Class<?> cl = fields.getClass();
+		Class<?> component = cl.getComponentType();
+		if (RuntimeImmutabilityChecker.isClassImmutable(component)) {
+			return;
+		}
+		
+		// ok, we have to check each element in turn
+		for (int i = 0; i < fields.length; i++) {
+			component = fields[i].getClass();
+			RuntimeImmutabilityChecker.throwIfClassNotImmutable(component);
+		}
 	}
 }
