@@ -118,6 +118,8 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 	/**
 	 * Plug in all the fields of your object here, and then they will be included in
 	 * equals, hashcode and toString.
+	 * @param v pass your fields into this.  will not be null.
+	 * @param other the object to compare with or, "this" in the case of hashCode, toString.
 	 */
 	public abstract void fields(Visitor v, M other);
 
