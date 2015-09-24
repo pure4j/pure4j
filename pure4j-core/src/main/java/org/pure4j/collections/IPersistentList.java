@@ -14,6 +14,6 @@ import java.util.List;
 
 
 
-public interface IPersistentList<K> extends Sequential, IPersistentStack<K>, List<K> {
+public interface IPersistentList<K> extends ISeq<K>, IPersistentStack<K>, List<K>, Transientable<K> {
 
 }

@@ -5,6 +5,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.PersistentList;
+import org.pure4j.collections.PureCollections;
 
 public class PersistentListExample extends AbstractChecker {
 	
@@ -30,5 +31,6 @@ public class PersistentListExample extends AbstractChecker {
 		int j = sumPersistentList(pl);
 		assertEquals(15,j);
 		assertEquals(2, pl.size());
+		assertEquals(new PersistentList<Integer>(10).cons(5), PureCollections.sort(pl));
 	}
 }

@@ -12,9 +12,12 @@
 
 package org.pure4j.collections;
 
-public interface ITransientCollection<K> {
+import java.util.Collection;
 
-	ITransientCollection<K> conj(K val);
+import org.pure4j.annotations.mutable.MutableUnshared;
+
+@MutableUnshared
+public interface ITransientCollection<K> extends Collection<K> {
 
 	IPersistentCollection<K> persistent();
 	

@@ -12,10 +12,11 @@
 
 package org.pure4j.collections;
 
+import java.util.List;
+import java.util.RandomAccess;
 
-public interface ITransientVector<V> extends ITransientCollection<V>, Indexed<V>{
 
-	ITransientVector<V> assocN(int i, V val);
-
-	ITransientVector<V> pop();
+public interface ITransientVector<V> extends ITransientCollection<V>, List<V>, RandomAccess {
+	
+	IPersistentVector<V> persistent();
 }

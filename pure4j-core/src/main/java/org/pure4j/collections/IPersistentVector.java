@@ -1,6 +1,7 @@
 package org.pure4j.collections;
 
 import java.util.List;
+import java.util.RandomAccess;
 
 /**
  * Copyright (c) Rich Hickey. All rights reserved. The use and distribution
@@ -11,12 +12,14 @@ import java.util.List;
  * must not remove this notice, or any other, from this software.
  */
 
-public interface IPersistentVector<K> extends Sequential, IPersistentStack<K>, Reversible<K>, Indexed<K>, List<K> {
+public interface IPersistentVector<K> extends IPersistentStack<K>, Reversible<K>, Indexed<K>, List<K>, RandomAccess, Transientable<K> {
 
 	int length();
 
 	IPersistentVector<K> assocN(int i, K val);
 
 	IPersistentVector<K> cons(K o);
+	
+	ITransientVector<K> asTransient();
 
 }

@@ -22,7 +22,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Pure;
 
-public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, List<K>, Counted {
+public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -102,9 +102,8 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 	public static <X> ISeq<X> emptySeq() {
 		return (ISeq<X>) EMPTY;
 	}
-
-	static class EmptyList<K> implements IPersistentList<K>, List<K>, ISeq<K>,
-			Counted {
+	
+	static class EmptyList<K> implements IPersistentList<K> {
 		private static final Object[] EMPTY_ARRAY = new Object[] {};
 		static final int hasheq = Murmur3.hashOrdered(Collections.EMPTY_LIST);
 
@@ -113,7 +112,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 		}
 		
 		public boolean equals(Object o) {
-			return (o instanceof Sequential || o instanceof List)
+			return (o instanceof ISeq || o instanceof List)
 					&& PureCollections.seq(o) == null;
 		}
 
@@ -125,9 +124,9 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 			return null;
 		}
 
-		public ISeq<K> more() {
-			return this;
-		}
+//		public ISeq<K> more() {
+//			return this;
+//		}
 
 		public PersistentList<K> cons(K o) {
 			return new PersistentList<K>(o, null, 1);
@@ -271,6 +270,21 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K>, Li
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public ISeq<K> more() {
+			return null;
+		}
+
+		@Override
+		public ITransientCollection<K> asTransient() {
+			return new TransientList<K>();
+		}
+
+	}
+
+	@Override
+	public ITransientCollection<K> asTransient() {
+		return new TransientList<K>(this);
 	}
 
 }

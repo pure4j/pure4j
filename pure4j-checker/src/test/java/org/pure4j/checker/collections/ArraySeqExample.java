@@ -2,14 +2,15 @@ package org.pure4j.checker.collections;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.ArraySeq;
-import org.pure4j.collections.ArraySeq.ArraySeq_float;
 import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PureCollections;
 
 public class ArraySeqExample extends AbstractChecker{
 
@@ -44,6 +45,8 @@ public class ArraySeqExample extends AbstractChecker{
 		checkSeq(ArraySeq.create(5f, 4f, 9f), 3, 5f);  // float
 		checkSeq(ArraySeq.create(5d, 4d, 9d ), 3, 5d);  // double
 		checkSeq(ArraySeq.create(true, false ), 2, true);  // boolean
+		
+		Assert.assertEquals(PureCollections.sort(ArraySeq.create('d', 'e', 'g', 'f' )), ArraySeq.create('d', 'e', 'f', 'g'));
 	}
 }
 

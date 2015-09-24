@@ -21,7 +21,7 @@ import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializable {
+public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 
 	private static final long serialVersionUID = 220865945544862915L;
 	
@@ -43,9 +43,9 @@ public abstract class ASeq<K> implements ISeq<K>, Sequential, List<K>, Serializa
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof ISeq))
+		if (!(obj instanceof Seqable))
 			return false;
-		ISeq<?> ms = (ISeq<?>) obj;
+		ISeq<?> ms = ((Seqable<?>)obj).seq();
 		for (ISeq<K> s = seq(); s != null; s = s.next(), ms = ms.next()) {
 			if (ms == null || !Util.equals(s.first(), ms.first()))
 				return false;

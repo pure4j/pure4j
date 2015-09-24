@@ -3,12 +3,15 @@ package org.pure4j.checker.collections;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.IterableSeq;
+import org.pure4j.collections.PureCollections;
 
 public class IteratorSeqExample extends AbstractChecker {
 
@@ -34,8 +37,11 @@ public class IteratorSeqExample extends AbstractChecker {
 		checkSeq(seq.next(), 2, "second");
 		checkSeq(seq, 3, "first");
 		
-		
-		
+		List<String> items2 = new ArrayList<String>();
+		items2.add("third");
+		items2.add("first");
+		items2.add("second");
+		Assert.assertEquals(PureCollections.sort(new IterableSeq<String>(items2)), seq);
 		
 	}
 }

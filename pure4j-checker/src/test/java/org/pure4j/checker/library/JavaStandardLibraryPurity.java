@@ -48,8 +48,10 @@ import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.PureCollectors;
+import org.pure4j.collections.TransientHashSet;
+import org.pure4j.collections.TransientList;
+import org.pure4j.collections.TransientVector;
 import org.pure4j.exception.Pure4JException;
-import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.ClassFileModelBuilder;
@@ -83,7 +85,15 @@ public class JavaStandardLibraryPurity {
 			@Override
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
-						PureCollections.class,
+						// transient array seq.
+						// tranisent hash map
+//						TransientHashSet.class
+////						TransientList.class,
+////						//TransientQueue.class,
+////						//TransientTreeMap.class,
+////						//TransientTreeSet.class, 
+//						TransientVector.class,
+//						PureCollections.class,
 						ArraySeq.class,
 						PersistentHashMap.class, 
 						PersistentHashSet.class,
@@ -94,6 +104,8 @@ public class JavaStandardLibraryPurity {
 						PersistentTreeSet.class,
 						PersistentVector.class,
 						PureCollectors.class
+					
+						
 						);
 			}
 		}, "org.pure4j", false, true);
@@ -107,7 +119,7 @@ public class JavaStandardLibraryPurity {
 
 	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem, boolean assumePurity, boolean expectNoErrors) throws IOException {
 		FileCallback fc = new FileCallback(new File(outputName));
-		ClassFileModelBuilder cfmb = new ClassFileModelBuilder();
+		ClassFileModelBuilder cfmb = new ClassFileModelBuilder(false);
 		ClassLoader cl = this.getClass().getClassLoader();
 		DefaultResourceLoader drl = new DefaultResourceLoader(cl);
 		Set<Resource> resources = new HashSet<Resource>();
@@ -223,7 +235,7 @@ public class JavaStandardLibraryPurity {
 		
 		@Override
 		public void send(String s) {
-			//System.out.println(s);
+			System.out.println(s);
 		}
 		
 		@Override

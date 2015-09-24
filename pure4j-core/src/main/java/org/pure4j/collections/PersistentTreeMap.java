@@ -33,8 +33,7 @@ import org.pure4j.annotations.pure.Pure;
  * See Okasaki, Kahrs, Larsen et al
  */
 
-public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
-		Reversible<Entry<K, V>>, Sorted<K, Entry<K, V>> {
+public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Reversible<Entry<K, V>>, Sorted<K, Entry<K, V>> {
 	
 	private static final DefaultComparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
 	
@@ -237,47 +236,15 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 		return vals(iterator());
 	}
 
-	public IPureIterator<K> keys(NodeIterator<K, V> it) {
+	private IPureIterator<K> keys(NodeIterator<K, V> it) {
 		return new KeyIterator<K, V>(it);
 	}
 
-	public IPureIterator<V> vals(NodeIterator<K, V> it) {
+	private IPureIterator<V> vals(NodeIterator<K, V> it) {
 		return new ValIterator<K, V>(it);
 	}
 
-	public Object minKey() {
-		Node t = min();
-		return t != null ? t.key : null;
-	}
-
-	public Node min() {
-		Node t = tree;
-		if (t != null) {
-			while (t.left() != null)
-				t = t.left();
-		}
-		return t;
-	}
-
-	public Object maxKey() {
-		Node t = max();
-		return t != null ? t.key : null;
-	}
-
-	public Node max() {
-		Node t = tree;
-		if (t != null) {
-			while (t.right() != null)
-				t = t.right();
-		}
-		return t;
-	}
-
-	public int depth() {
-		return depth(tree);
-	}
-
-	private int depth(Node t) {
+	int depth(Node t) {
 		if (t == null)
 			return 0;
 		return 1 + Math.max(depth(t.left()), depth(t.right()));
@@ -834,7 +801,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	@ImmutableValue
-	static class NodeIterator<K, V> implements IPureIterator<Entry<K, V>> {
+	public static class NodeIterator<K, V> implements IPureIterator<Entry<K, V>> {
 		Stack<Node> stack = new Stack<Node>();
 		boolean asc;
 

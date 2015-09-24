@@ -4,10 +4,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.IterableSeq;
 import org.pure4j.collections.PersistentTreeMap;
 
 public class PersistentTreeMapExample extends AbstractChecker {
@@ -52,6 +56,7 @@ public class PersistentTreeMapExample extends AbstractChecker {
 		pureMethod(phm, 3, 3);
 		phm = phm.assoc("testy", "mctest");
 		pureMethod(phm, 4, 4);
+		Assert.assertEquals(new ArraySeq<>("fiona", "peter","rob", "testy"), new IterableSeq<>(phm.keyIterator()));
 	}
 	
 }

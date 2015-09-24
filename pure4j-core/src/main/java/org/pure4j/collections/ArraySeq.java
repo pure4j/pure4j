@@ -101,6 +101,7 @@ public class ArraySeq<K> extends ASeq<K> {
 		return new ArraySeq_double(array, 0, true);
 	}
 
+	@SafeVarargs
 	public ArraySeq(K... array) {
 		this(array, 0, true);
 	}

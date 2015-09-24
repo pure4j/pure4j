@@ -1,7 +1,9 @@
 package org.pure4j.collections;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
@@ -181,7 +183,7 @@ public class PureCollections {
 			throw new IndexOutOfBoundsException();
 		}
 
-		else if (coll instanceof Sequential) {
+		else if (coll instanceof ISeq) {
 			ISeq seq = PureCollections.seq(coll);
 			coll = null;
 			for (int i = 0; i <= n && seq != null; ++i, seq = seq.next()) {
@@ -237,7 +239,7 @@ public class PureCollections {
 			if (n < m.groupCount())
 				return m.group(n);
 			return notFound;
-		} else if (coll instanceof Sequential) {
+		} else if (coll instanceof ISeq) {
 			ISeq seq = PureCollections.seq(coll);
 			coll = null;
 			for (int i = 0; i <= n && seq != null; ++i, seq = seq.next()) {
@@ -281,7 +283,18 @@ public class PureCollections {
 	/**
 	 * Provides a pure implementation for sorting
 	 */	
-	public static <T extends Comparable<? super T>> void sort(ISeq<T> list) {
-//	     return null;
+	@Pure
+	public static <T extends Comparable<? super T>> IPersistentVector<T> sort(IPersistentVector<T> list) {
+		ITransientVector<T> tv = list.asTransient();
+		Collections.sort(tv);
+		return tv.persistent();
 	}
+	
+	public static <T extends Comparable<? super T>> IPersistentVector<T> sort(ISeq<T> list) {
+		TransientVector<T> tl = new TransientVector<>(list);
+		Collections.sort(tl);
+		return tl.persistent();
+	}
+
+	
 }

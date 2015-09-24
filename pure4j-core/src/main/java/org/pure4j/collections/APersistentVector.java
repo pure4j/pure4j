@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.RandomAccess;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
@@ -26,7 +25,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public abstract class APersistentVector<K> implements
-		IPersistentVector<K>, RandomAccess, Comparable<IPersistentVector<K>>,
+		IPersistentVector<K>,
 		Serializable {
 
 	private static final long serialVersionUID = 3143509526367951707L;
@@ -71,7 +70,7 @@ public abstract class APersistentVector<K> implements
 			}
 			return true;
 		} else {
-			if (!(obj instanceof Sequential))
+			if (!(obj instanceof ISeq))
 				return false;
 			ISeq<?> ms = PureCollections.seq(obj);
 			for (int i = 0; i < v.count(); i++, ms = ms.next()) {
@@ -324,21 +323,6 @@ public abstract class APersistentVector<K> implements
 		return count();
 	}
 
-	@Override
-	public int compareTo(IPersistentVector<K> v) {
-		Pure4J.immutable(v);
-		if (count() < v.count())
-			return -1;
-		else if (count() > v.count())
-			return 1;
-		for (int i = 0; i < count(); i++) {
-			int c = Util.compare(nth(i), v.nth(i));
-			if (c != 0)
-				return c;
-		}
-		return 0;
-	}
-
 	static class Seq<K> extends ASeq<K> {
 		// todo - something more efficient
 		final IPersistentVector<K> v;
@@ -455,6 +439,11 @@ public abstract class APersistentVector<K> implements
 				return (IPersistentStack<K>) PersistentVector.EMPTY;
 			}
 			return new SubVector<K>(v, start, end - 1);
+		}
+
+		@Override
+		public ITransientVector<K> asTransient() {
+			return new TransientVector<>(this);
 		}
 	}
 }

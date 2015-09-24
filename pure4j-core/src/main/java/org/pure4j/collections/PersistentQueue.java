@@ -27,7 +27,7 @@ import org.pure4j.annotations.pure.Pure;
  * no reversing or suspensions required for persistent use
  */
 
-public class PersistentQueue<K> implements IPersistentStack<K>, Collection<K>, Counted {
+public class PersistentQueue<K> implements IPersistentStack<K> {
 
 	final private static PersistentQueue<Object> EMPTY = new PersistentQueue<Object>(0,null, null);
 
@@ -46,7 +46,7 @@ public class PersistentQueue<K> implements IPersistentStack<K>, Collection<K>, C
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Sequential))
+		if (!(obj instanceof ISeq))
 			return false;
 		ISeq<K> ms = PureCollections.seq(obj);
 		for (ISeq<K> s = seq(); s != null; s = s.next(), ms = ms.next()) {

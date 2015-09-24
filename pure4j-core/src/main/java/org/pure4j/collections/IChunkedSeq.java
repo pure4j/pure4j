@@ -12,7 +12,7 @@
 
 package org.pure4j.collections;
 
-public interface IChunkedSeq<K> extends ISeq<K>, Sequential {
+public interface IChunkedSeq<K> extends ISeq<K> {
 
 	IChunk<K> chunkedFirst();
 

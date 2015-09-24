@@ -12,11 +12,11 @@
 
 package org.pure4j.collections;
 
+import java.util.Set;
 
-public interface ITransientSet<K> extends ITransientCollection<K>, Counted{
-	
-	public ITransientSet<K> disjoin(Object key);
-	
-	public boolean contains(Object key);
+
+public interface ITransientSet<K> extends ITransientCollection<K>, Set<K> {
+		
+	public IPersistentSet<K> persistent();
 
 }

@@ -21,5 +21,9 @@ public interface IMapIterable<K, V> {
 	IPureIterator<K> keyIterator();
 
 	IPureIterator<V> valIterator();
+	
+//	ISeq<K> keys();		// need to add these in.
+//	
+//	ISeq<V> values();
 
 }

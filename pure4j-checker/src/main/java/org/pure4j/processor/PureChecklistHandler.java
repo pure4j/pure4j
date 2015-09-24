@@ -516,7 +516,7 @@ public class PureChecklistHandler {
 		} else {
 			pm = new PureMethod(declaration, e, m);
 			pureChecklist.put(declaration, pm);
-			cb.send("Adding new method for testing: " + declaration + " " + e);
+			cb.send("  - " + declaration + " " + e);
 		}
 
 		if (pm.e != e) {

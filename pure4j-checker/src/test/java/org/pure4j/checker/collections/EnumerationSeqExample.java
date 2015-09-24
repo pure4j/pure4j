@@ -1,14 +1,18 @@
 package org.pure4j.checker.collections;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.EnumerationSeq;
 import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PureCollections;
 
 public class EnumerationSeqExample extends AbstractChecker {
 
@@ -35,6 +39,13 @@ public class EnumerationSeqExample extends AbstractChecker {
 		checkSeq(seq.next(), 2, "second");
 		checkSeq(seq, 3, "first");
 		checkSeq(seq.next().next(), 1, "third");
+		
+		Collections.shuffle(items);
+	
+		Assert.assertEquals(
+				PureCollections.sort(new EnumerationSeq<String>(items.elements())),
+				new ArraySeq<>("first", "second", "third")
+				);
 		
 		log("seq: "+seq);		
 	}
