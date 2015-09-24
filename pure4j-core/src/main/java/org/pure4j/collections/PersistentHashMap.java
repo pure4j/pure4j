@@ -159,16 +159,16 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 
 	@SuppressWarnings("unchecked")
-	public V valAt(Object key, V notFound) {
+	public V get(Object key, V notFound) {
 		Pure4J.immutable(key, notFound);
 		if (key == null)
 			return hasNull ? nullValue : notFound;
 		return (V) (root != null ? root.find(0, hash(key), key, notFound) : notFound);
 	}
 
-	public V valAt(Object key) {
+	public V get(Object key) {
 		Pure4J.immutable(key);
-		return valAt(key, null);
+		return get(key, null);
 	}
 
 	public PersistentHashMap<K,V> assocEx(K key, V val) {

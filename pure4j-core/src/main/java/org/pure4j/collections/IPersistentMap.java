@@ -16,19 +16,17 @@ import java.util.Map.Entry;
 import org.pure4j.annotations.immutable.ImmutableValue;
 
 @ImmutableValue
-public interface IPersistentMap<K, V> extends Iterable<Map.Entry<K, V>>, Associative<K, V>, Counted, IMapIterable<K, V>, Map<K, V>, Seqable<Entry<K, V>> {
+public interface IPersistentMap<K, V> extends Iterable<Map.Entry<K, V>>, Counted, IMapIterable<K, V>, Map<K, V>, Seqable<Entry<K, V>> {
 
 	IPersistentMap<K, V> assoc(K key, V val);
 
 	IPersistentMap<K, V> assocEx(K key, V val);
 
 	IPersistentMap<K, V> without(Object key);
-	
-//	IPersistentSet<Map.Entry<K, V>> entrySet();
-//	
-//	IPersistentSet<K> keySet();
-//	
-//	IPersistentCollection<V> values();
+
+	IMapEntry<K, V> entryAt(Object key);
+
+	V get(Object key, V notFound);
 	
 	
 	

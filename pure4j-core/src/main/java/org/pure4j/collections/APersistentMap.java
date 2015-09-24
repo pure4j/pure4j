@@ -22,7 +22,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
-		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable, MapEquivalence {
+		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -253,11 +253,6 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 				return false;
 			}
 		};
-	}
-
-	public V get(Object key) {
-		Pure4J.immutable(key);
-		return valAt(key);
 	}
 
 	public boolean isEmpty() {

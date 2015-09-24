@@ -241,7 +241,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	@SuppressWarnings("unchecked")
-	final public V valAt(Object key, V notFound) {
+	final public V get(Object key, V notFound) {
 		Pure4J.immutable(key, notFound);
 		int i = indexOf(key);
 		if (i >= 0)
@@ -249,9 +249,9 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return notFound;
 	}
 
-	public V valAt(Object key) {
+	public V get(Object key) {
 		Pure4J.immutable(key);
-		return valAt(key, null);
+		return get(key, null);
 	}
 
 	public int capacity() {

@@ -1,5 +1,7 @@
 package org.pure4j.collections;
 
+import java.util.List;
+
 /**
  * Copyright (c) Rich Hickey. All rights reserved. The use and distribution
  * terms for this software are covered by the Eclipse Public License 1.0
@@ -9,7 +11,7 @@ package org.pure4j.collections;
  * must not remove this notice, or any other, from this software.
  */
 
-public interface IPersistentVector<K> extends Sequential, IPersistentStack<K>, Reversible<K>, Indexed<K> {
+public interface IPersistentVector<K> extends Sequential, IPersistentStack<K>, Reversible<K>, Indexed<K>, List<K> {
 
 	int length();
 

@@ -13,7 +13,7 @@
 package org.pure4j.collections;
 
 
-public interface Seqable<K> {
+public interface Seqable<K> extends Iterable<K> {
 	
     ISeq<K> seq();
     

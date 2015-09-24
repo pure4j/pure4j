@@ -20,8 +20,6 @@ public interface IPersistentSet<K> extends IPersistentCollection<K>, Counted, Se
 	public IPersistentSet<K> disjoin(Object key) ;
 
 	public boolean contains(Object key);
-
-	public K get(Object key);
 	
 	public IPersistentSet<K> cons(K key);
 }

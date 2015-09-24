@@ -284,15 +284,15 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public V valAt(Object key, Object notFound) {
+	public V get(Object key, Object notFound) {
 		Pure4J.immutable(key, notFound);
 		Node n = (Node) entryAt(key);
 		return (V) ((n != null) ? n.val() : notFound);
 	}
 
-	public V valAt(Object key) {
+	public V get(Object key) {
 		Pure4J.immutable(key);
-		return valAt(key, null);
+		return get(key, null);
 	}
 
 	public int capacity() {

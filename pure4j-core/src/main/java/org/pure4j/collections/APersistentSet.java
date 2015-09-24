@@ -44,11 +44,6 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return impl.containsKey(key);
 	}
 
-	public K get(Object key) {
-		Pure4J.immutable(key);
-		return impl.valAt(key);
-	}
-
 	public int count() {
 		return impl.count();
 	}

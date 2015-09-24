@@ -26,7 +26,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public abstract class APersistentVector<K> implements
-		IPersistentVector<K>, Iterable<K>, List<K>, RandomAccess, Comparable<IPersistentVector<K>>,
+		IPersistentVector<K>, RandomAccess, Comparable<IPersistentVector<K>>,
 		Serializable {
 
 	private static final long serialVersionUID = 3143509526367951707L;
