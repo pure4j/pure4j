@@ -339,7 +339,7 @@ public abstract class APersistentVector<K> implements
 		return 0;
 	}
 
-	static class Seq<K> extends ASeq<K> implements IndexedSeq<K> {
+	static class Seq<K> extends ASeq<K> {
 		// todo - something more efficient
 		final IPersistentVector<K> v;
 		final int i;
@@ -369,7 +369,7 @@ public abstract class APersistentVector<K> implements
 
 	}
 
-	public static class RSeq<K> extends ASeq<K> implements IndexedSeq<K>, Counted {
+	public static class RSeq<K> extends ASeq<K> implements Counted {
 		final IPersistentVector<K> v;
 		final int i;
 
@@ -386,10 +386,6 @@ public abstract class APersistentVector<K> implements
 			if (i > 0)
 				return new APersistentVector.RSeq<K>(v, i - 1);
 			return null;
-		}
-
-		public int index() {
-			return i;
 		}
 
 		public int count() {

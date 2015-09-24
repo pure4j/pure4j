@@ -6,7 +6,6 @@ import org.pure4j.checker.basic.immutable.broken_extend.SomeValueObject;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
-import org.pure4j.exception.PureMethodReturnNotImmutableException;
 
 @MutableUnshared
 public class FieldSetting {
@@ -16,7 +15,6 @@ public class FieldSetting {
 	
 	@CausesError(FieldTypeNotImmutableException.class)
 	public Object a;
-	private Object b;
 	
 	public SomeValueObject c;
 	

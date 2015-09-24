@@ -19,7 +19,7 @@ import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
+public class ArraySeq<K> extends ASeq<K> {
 	
 	@IgnoreNonImmutableTypeCheck
 	private final K[] array;
@@ -129,10 +129,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		return 0;
 	}
 
-	public int index() {
-		return i;
-	}
-
 	public int indexOf(Object o) {
 		Pure4J.immutable(o);
 		if (array != null)
@@ -161,7 +157,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 	// ////////////////////////////////// specialized primitive versions
 	// ///////////////////////////////
 
-	static public class ArraySeq_int extends ASeq<Integer> implements IndexedSeq<Integer>  {
+	static public class ArraySeq_int extends ASeq<Integer>  {
 		@IgnoreNonImmutableTypeCheck
 		public final int[] array;
 		final int i;
@@ -184,10 +180,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 
 		public int count() {
 			return array.length - i;
-		}
-
-		public int index() {
-			return i;
 		}
 
 		public int indexOf(Object o) {
@@ -215,7 +207,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_float extends ASeq<Float> implements IndexedSeq<Float>  {
+	static public class ArraySeq_float extends ASeq<Float>   {
 		
 		@IgnoreNonImmutableTypeCheck
 		public final float[] array;
@@ -241,10 +233,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 			return array.length - i;
 		}
 
-		public int index() {
-			return i;
-		}
-
 		public int indexOf(Object o) {
 			Pure4J.immutable(o);
 			if (o instanceof Number) {
@@ -268,7 +256,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_double extends ASeq<Double> implements IndexedSeq<Double> {
+	static public class ArraySeq_double extends ASeq<Double> {
 		@IgnoreNonImmutableTypeCheck
 		public final double[] array;
 		final int i;
@@ -293,10 +281,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 			return array.length - i;
 		}
 
-		public int index() {
-			return i;
-		}
-
 		public int indexOf(Object o) {
 			Pure4J.immutable(o);
 			if (o instanceof Number) {
@@ -322,7 +306,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_long extends ASeq<Long> implements IndexedSeq<Long> {
+	static public class ArraySeq_long extends ASeq<Long> {
 		@IgnoreNonImmutableTypeCheck
 		public final long[] array;
 		final int i;
@@ -347,10 +331,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 			return array.length - i;
 		}
 
-		public int index() {
-			return i;
-		}
-
 		public int indexOf(Object o) {
 			Pure4J.immutable(o);
 			if (o instanceof Number) {
@@ -376,7 +356,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_byte extends ASeq<Byte> implements IndexedSeq<Byte>  {
+	static public class ArraySeq_byte extends ASeq<Byte>  {
 		@IgnoreNonImmutableTypeCheck
 		public final byte[] array;
 		final int i;
@@ -399,10 +379,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 
 		public int count() {
 			return array.length - i;
-		}
-
-		public int index() {
-			return i;
 		}
 
 		public int indexOf(Object o) {
@@ -440,7 +416,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_char extends ASeq<Character> implements IndexedSeq<Character> {
+	static public class ArraySeq_char extends ASeq<Character> {
 		@IgnoreNonImmutableTypeCheck
 		public final char[] array;
 		final int i;
@@ -463,10 +439,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 
 		public int count() {
 			return array.length - i;
-		}
-
-		public int index() {
-			return i;
 		}
 
 		public int indexOf(Object o) {
@@ -504,7 +476,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_short extends ASeq<Short> implements IndexedSeq<Short> {
+	static public class ArraySeq_short extends ASeq<Short> {
 		@IgnoreNonImmutableTypeCheck
 		public final short[] array;
 		final int i;
@@ -527,10 +499,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 
 		public int count() {
 			return array.length - i;
-		}
-
-		public int index() {
-			return i;
 		}
 
 		public int indexOf(Object o) {
@@ -568,7 +536,7 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 		}
 	}
 
-	static public class ArraySeq_boolean extends ASeq<Boolean> implements IndexedSeq<Boolean> {
+	static public class ArraySeq_boolean extends ASeq<Boolean> {
 		@IgnoreNonImmutableTypeCheck
 		public final boolean[] array;
 		final int i;
@@ -593,10 +561,6 @@ public class ArraySeq<K> extends ASeq<K> implements IndexedSeq<K> {
 			return array.length - i;
 		}
 
-		public int index() {
-			return i;
-		}
-		
 		public int indexOf(Object o) {
 			Pure4J.immutable(o);
 			if (o instanceof Boolean) {

@@ -566,28 +566,6 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			throw new IndexOutOfBoundsException();
 		}
 
-		public Object valAt(Object key) {
-			// note - relies on ensureEditable in 2-arg valAt
-			return valAt(key, null);
-		}
-
-		public Object valAt(Object key, Object notFound) {
-			ensureEditable();
-			if (Util.isInteger(key)) {
-				int i = ((Number) key).intValue();
-				if (i >= 0 && i < cnt)
-					return nth(i);
-			}
-			return notFound;
-		}
-
-		public Object invoke(Object arg1) {
-			// note - relies on ensureEditable in nth
-			if (Util.isInteger(arg1))
-				return nth(((Number) arg1).intValue());
-			throw new IllegalArgumentException("Key must be integer");
-		}
-
 		public K nth(int i) {
 			ensureEditable();
 			K[] node = arrayFor(i);

@@ -3,7 +3,6 @@ package org.pure4j.immutable;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.mutable.MutableUnshared;
-import org.pure4j.collections.Util;
 
 /**
  * Save yourself the bother of writing all the boilerplate for your immutable
@@ -36,7 +35,7 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 		@Override
 		public void visit(Object o, Object o2) {
 			if (result != false) {
-				result = Util.equals(o, o2);
+				result = Pure4J.equals(o, o2);
 			}
 		}
 	}

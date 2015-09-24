@@ -12,7 +12,6 @@
 
 package org.pure4j.collections;
 
-import java.util.Iterator;
 
 /**
  * Indicate a map can provide more efficient key and val iterators.

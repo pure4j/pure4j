@@ -8,6 +8,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.AbstractChecker;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.ArraySeq.ArraySeq_float;
 import org.pure4j.collections.ISeq;
 
 public class ArraySeqExample extends AbstractChecker{
@@ -43,8 +44,6 @@ public class ArraySeqExample extends AbstractChecker{
 		checkSeq(ArraySeq.create(5f, 4f, 9f), 3, 5f);  // float
 		checkSeq(ArraySeq.create(5d, 4d, 9d ), 3, 5d);  // double
 		checkSeq(ArraySeq.create(true, false ), 2, true);  // boolean
-		
-		
 	}
 }
 

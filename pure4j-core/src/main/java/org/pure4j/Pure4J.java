@@ -1,7 +1,6 @@
 package org.pure4j;
 
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.collections.Util;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 
@@ -17,7 +16,7 @@ public class Pure4J {
 	@Pure
 	public static int hashCode(Object a) {
 		Pure4J.immutable(a);
-		return Util.hash(a);
+		return a == null ? 0 : a.hashCode();
 	}
 	
 	@Pure
@@ -105,6 +104,27 @@ public class Pure4J {
 		return new UnsupportedOperationException();
 	}
 	
+	@Pure
+	public static boolean equals(Object a1, Object b1) {
+		if (a1==b1) {
+			return true;
+		} else if (a1 == null) {
+			return false;
+		} else {
+			return a1.equals(b1);
+		}
+	}
+	
+	@Pure
+	public static boolean equals(Object a1, Object a2, Object b1, Object b2) {
+		return equals(a1, b1) && equals(a2, b2);
+	}
+	
+	@Pure
+	public static boolean equals(Object a1, Object a2, Object a3, Object b1, Object b2, Object b3) {
+		return equals(a1, b1) && equals(a2, b2) && equals(a3, b3);
+	}
+	
 	/**
 	 * Handy equals builder.  Feel free to use or not. Other equals-builders are available.
 	 * @Param parts An array with even number of elements, where the first n/2 elements are from the 
@@ -112,8 +132,17 @@ public class Pure4J {
 	 */
 	@Pure
 	public static boolean equals(Object... parts) {
-		// TODO Auto-generated method stub
-		return false;
+		if (parts.length % 2 != 0) {
+			throw new IllegalArgumentException("Should have even number of parameters");
+		}
+		int half = parts.length / 2;
+		for (int i = 0; i < half; i++) {
+			if (!equals(parts[i], parts[i+half])) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	/**

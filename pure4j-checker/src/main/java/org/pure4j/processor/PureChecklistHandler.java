@@ -128,7 +128,9 @@ public class PureChecklistHandler {
 					if (!pm.withinModel(declaration.getClassName())) {
 						// we can't confirm that the method is pure, unless it
 						// has been forced already.
-						cb.registerError(new PureMethodNotInProjectScopeException(this));
+						if (!isMarkedPure(declaration, cb)) {
+							cb.registerError(new PureMethodNotInProjectScopeException(this));
+						}
 						pureImplementation = false;
 					}
 					
@@ -204,7 +206,7 @@ public class PureChecklistHandler {
 						if (mh instanceof CallHandle) {
 							if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object"))) {
 								// we can skip this one
-							} else if (!isMarkedPure(mh, cb, staticCall)) {
+							} else if (!isMarkedPure(mh, cb)) {
 								cb.registerError(new PureMethodCallsImpureException(this, (CallHandle) mh));
 								pureImplementation = false;
 							}
@@ -406,7 +408,12 @@ public class PureChecklistHandler {
 	}
 	
 	
-	public boolean isMarkedPure(MemberHandle mh, Callback cb, boolean staticMethod) {
+	public boolean isMarkedPure(MemberHandle mh, Callback cb) {
+		boolean staticMethod = false;
+		if (mh instanceof MethodHandle) {
+			staticMethod = Modifier.isStatic(mh.getModifiers(cl));
+		}
+		
 		if (pureChecklist.containsKey(mh)) {
 			PureMethod pm = pureChecklist.get(mh);
 			return pm.e != Enforcement.NOT_PURE;

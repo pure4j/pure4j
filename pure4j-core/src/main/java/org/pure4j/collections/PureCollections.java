@@ -277,4 +277,11 @@ public class PureCollections {
 		Pure4J.immutable(arg1);
 		return new PersistentList<K>(arg1);
 	}
+	
+	/**
+	 * Provides a pure implementation for sorting
+	 */	
+	public static <T extends Comparable<? super T>> void sort(ISeq<T> list) {
+//	     return null;
+	}
 }

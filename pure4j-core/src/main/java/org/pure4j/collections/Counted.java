@@ -10,9 +10,11 @@ package org.pure4j.collections;
  * You must not remove this notice, or any other, from this software.
  */
 
-/* A class that implements Counted promises that it is a collection
- * that implement a constant-time count() */
-
+/** 
+ * A class that implements Counted promises that it is a collection
+ * that implement a constant-time count() 
+ */
 public interface Counted {
-    int count();
+    
+	int count();
 }

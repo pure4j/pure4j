@@ -29,6 +29,7 @@ public class Pure4JProcessMojo extends AbstractMojo {
 	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		MojoCallback mc = new MojoCallback(getLog());
 		try {
 			getLog().info("Beginning Pure4J Analysis");
 			String output = project.getBuild().getOutputDirectory();
@@ -36,20 +37,20 @@ public class Pure4JProcessMojo extends AbstractMojo {
 			PurityChecker pc = new PurityChecker(getClassLoader(project));
 			SpringProjectModelFactory spmf = new SpringProjectModelFactory(
 				new String[] { output, testOutput }, false);
-			
 			spmf.setPattern("**/*.class");
-			
-			MojoCallback mc = new MojoCallback(getLog());
-			
 			pc.checkModel(spmf.createProjectModel(mc), mc);
 			getLog().info("Finished Pure4J Analysis");
 		} catch (Exception e) {
 			throw new MojoExecutionException("Pure4J Checker Failed: ", e);
 		}
+		
+		if (mc.hasErrors()) {
+			throw new MojoExecutionException("Pure4J Analysis completed with one or more errors");
+		}
 	}
 
 	public static ClassLoader getClassLoader(MavenProject project) throws Exception {
-	    List<String> classPathElements = compileClassPathElements(project);
+	    List<String> classPathElements = getClassPathElements(project);
 	    List<URL> classpathElementUrls = new ArrayList<>(classPathElements.size());
 	    for (String classPathElement : classPathElements) {
 	        classpathElementUrls.add(new File(classPathElement).toURI().toURL());
@@ -61,7 +62,11 @@ public class Pure4JProcessMojo extends AbstractMojo {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<String> compileClassPathElements(MavenProject project) throws Exception {
-	    return new ArrayList<String>(project.getCompileClasspathElements());
+	private static List<String> getClassPathElements(MavenProject project) throws Exception {
+		ArrayList<String> out = new ArrayList<>();
+		out.addAll(project.getCompileClasspathElements());
+		out.add(project.getBuild().getOutputDirectory());
+		out.add(project.getBuild().getTestOutputDirectory());
+	    return out;
 	}
 }

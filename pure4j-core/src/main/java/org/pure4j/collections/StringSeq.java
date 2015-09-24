@@ -12,7 +12,7 @@
 
 package org.pure4j.collections;
 
-public class StringSeq extends ASeq<Character> implements IndexedSeq<Character> {
+public class StringSeq extends ASeq<Character> {
 	public final CharSequence s;
 	public final int i;
 
@@ -35,10 +35,6 @@ public class StringSeq extends ASeq<Character> implements IndexedSeq<Character> 
 		if (i + 1 < s.length())
 			return new StringSeq(s, i + 1);
 		return null;
-	}
-
-	public int index() {
-		return i;
 	}
 
 	public int count() {

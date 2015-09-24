@@ -7,7 +7,12 @@ import org.pure4j.processor.Callback;
 public class MojoCallback implements Callback {
 
 	Log l;
+	boolean hasErrors = false;
 	
+	public boolean hasErrors() {
+		return hasErrors;
+	}
+
 	public MojoCallback(Log log) {
 		this.l = log;
 	}
@@ -20,6 +25,7 @@ public class MojoCallback implements Callback {
 	@Override
 	public void registerError(Pure4JException optional) {
 		l.error(optional.getMessage());
+		hasErrors = true;
 	}
 
 	@Override
