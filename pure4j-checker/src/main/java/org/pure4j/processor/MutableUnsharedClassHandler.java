@@ -59,10 +59,8 @@ public class MutableUnsharedClassHandler extends AbstractClassAnnoatationCache i
 			boolean mu = (ann != null);
 	
 			if (mu) {
-				cb.send("mutable unshared:    "+in.getName());
-			} else {
-				cb.send("not mutable unshared:"+in.getName());
-			}
+				cb.send("@MutableUnshared "+in.getName());
+			} 
 			classMap.put(in.getName(), mu);
 			return mu;
 		} else {

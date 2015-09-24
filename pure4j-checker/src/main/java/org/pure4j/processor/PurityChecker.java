@@ -35,9 +35,13 @@ public class PurityChecker implements Rule {
 	
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
+		cb.send("Method Scanning");
+		cb.send("---------------");
 		addPureMethodsToPureList(pm, cb);
 		addMethodsFromImmutableValueClassToPureList(pm, cb);
 		addMethodsFromMutableUnsharedToPureList(pm, cb);
+		cb.send("Method Purity Testing");
+		cb.send("---------------------");
 		pureChecklist.doPureMethodChecks(cb, pm);
 		identifyImpureImplementations(pm, cb);
 		outputPureMethodList(cb, pm);	
@@ -53,6 +57,7 @@ public class PurityChecker implements Rule {
 	}
 	
 	public void outputPureMethodList(Callback cb, ProjectModel pm) {
+		cb.send("@Pure:");
 		for (PureMethod pureMethod : pureChecklist.getMethodList()) {
 			if ((pureMethod.checkImplementationPurity(cb, pm))) {
 				if (pm.getAllClasses().contains(pureMethod.declaration.getDeclaringClass())) {

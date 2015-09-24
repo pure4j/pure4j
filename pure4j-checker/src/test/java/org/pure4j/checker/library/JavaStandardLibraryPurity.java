@@ -87,23 +87,23 @@ public class JavaStandardLibraryPurity {
 				return Arrays.asList((Class<?>) 
 						// transient array seq.
 						// tranisent hash map
-//						TransientHashSet.class
+						TransientHashSet.class
 ////						TransientList.class,
 ////						//TransientQueue.class,
 ////						//TransientTreeMap.class,
 ////						//TransientTreeSet.class, 
 //						TransientVector.class,
 //						PureCollections.class,
-						ArraySeq.class,
-						PersistentHashMap.class, 
-						PersistentHashSet.class,
-						PersistentList.class,
-						PersistentQueue.class,
-						PersistentArrayMap.class,
-						PersistentTreeMap.class,
-						PersistentTreeSet.class,
-						PersistentVector.class,
-						PureCollectors.class
+//						ArraySeq.class,
+//						PersistentHashMap.class, 
+//						PersistentHashSet.class,
+//						PersistentList.class,
+//						PersistentQueue.class,
+//						PersistentArrayMap.class,
+//						PersistentTreeMap.class,
+//						PersistentTreeSet.class,
+//						PersistentVector.class,
+//						PureCollectors.class
 					
 						
 						);

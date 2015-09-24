@@ -73,10 +73,8 @@ public class ImmutableValueClassHandler extends AbstractClassAnnoatationCache im
 			immutable = (ann != null);
 	
 			if (immutable) {
-				cb.send("immutable:           "+in.getName());
-			} else {
-				cb.send("not immutable:       "+in.getName());
-			}
+				cb.send("@ImmutableValue: "+in.getName());
+			} 
 			classMap.put(in.getName(), immutable);
 			return immutable;
 		} else {
