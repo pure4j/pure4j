@@ -1,0 +1,79 @@
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+<link href="../../../concordion.css" rel="stylesheet" type="text/css" />
+<body>
+
+    <h1><code>@ImmutableValue</code> Specification</h1>
+
+	<p>This annotation declares that instances of this class are immutable and are value objects.</p>
+
+	<p>That is, In object-oriented and functional programming:</p>
+	<ul>
+		<li><b>An immutable object</b> is an object whose state cannot be modified after it is created.</li>
+		<li>A <b>Value object</b> is one where the identity of the object is defined by the state (i.e. fields) of the object itself. </li>
+	</ul>
+
+	<h3>Immutability Contract</h3>
+
+	<p>This class declares the immutability contract, which is then checked by the JPure compile-time checker. </p>
+	
+	<ul>
+		<li concordion:execute="annotationIsInherited()">Concrete classes inherit <code>@ImmutableValue</code> from any superclass or interface with the annotation. </li>
+		<li concordion:execute="fieldsMustBeFinal()">The fields on the class  <strong>must</strong> be declared <code>final</code>, and therefore unalterable once set by the constructor.</li>
+		<li concordion:execute="fieldsMustBeImmutable()">The fields must only contain other immutable value objects/primitives (see below). </li>
+		<li><del>Concrete classes inheriting or declaring this annotation must be <code>final</code></del>.</li>
+		<li concordion:execute="genericParamsMustBeImmutable()">Any generic type parameters supplied to an <code>ImmutableValue</code> annotated class must also be immutable value types.</li>
+		<li concordion:execute="parametersMustBeImmutable()">To ensure thread-safety, arguments to methods on the class must also be immutable. </li>
+		<li concordion:execute="methodsMustBePure()">Any instance (i.e. non-static) methods on the class must be implementation-pure. (see {@link Pure} for what this entails).</li>
+		<li concordion:execute="overriddenMethodPurityNotChecked()">Methods (inherited from a base-class) which are overridden need not be pure.</li>
+		<li concordion:execute="staticMethodsNotPure()">The purity (or otherwise) of static methods in the class hierarchy are not affected by this annotation</li>
+		<li concordion:execute="privateMethodsNeedNotBeInterfacePure()">Public / Package accessible methods of the class must only take immutable parameters (interface pure).</li>
+	</ul>
+
+	<h3>What Qualifies As An Immutable Value?</h3>
+	<p>Various classes from the Java platform are already immutable, and recognized as such by Pure4J.</p>
+	
+	<ul>
+		<li concordion:execute="stringsAreImmutable()"><code>String</code>s.</li>
+		<li concordion:execute="primitivesAreImmutable()">Java primitives and their wrapper classes. e.g. <code>int</code> and <code>Integer</code></li>
+		<li concordion:execute="immutableValuesCanBeParameters()">Instances of other classes labeled <code>@ImmutableValue</code>. </li>
+		<li concordion:execute="bigDecimalIsImmutable()">BigDecimal, BigInteger</li>
+		<li concordion:execute="currencyIsImmutable()">Currency</li>
+		<li concordion:execute="exceptionsTreatedImmutable()">Anything extending <code>Throwable</code>.  e.g. checked and unchecked exceptions.</li>
+	</ul>
+	
+	<h4>Notable Exceptions To Immutable Values</h4>
+	
+	<ul>
+		<li concordion:execute="arrayNotImmutable()">Arrays.</li>
+		<li concordion:execute="collectionsNotImmutable()">Java Collection Classes (use the provided PersistentCollections instead)</li>
+	</ul>
+	
+	<h3>Implementing <code>toString()</code> and <code>HashCode()</code></h3>
+		
+	<p>Clients are warned that  <code>toString</code> and <code>hashCode</code> are <b>not</b> pure functions, as they are 
+	not deterministic (being dependent on the system hash code, which is based on object id). </p>
+	
+	<ul>
+		<li concordion:execute="hashCodeAndEqualsMustBeImplemented()">Implementations with the <code>@ImmutableValue</code> annotation will need to implement these.</li>
+		<li concordion:execute="abstractImmutableValueImplementsHashCodeAndEquals()"><code>AbstractImmutableValue</code> is provided as a convenience class, which can be used to reduce boiler-plate code
+	in implementation classes.</li>
+	</ul>
+	
+
+	<h3>Implementing <code>equals()</code></h3>
+	
+	<p concordion:execute="equalsNeedNotBeImplemented()"><code>equals()</code> by default <em>is</em> pure.</p>
+	<p>Your code is expected to observe the contract of <code>equals()</code> and not modify the state of the parameter object
+	being passed to it.  Unfortunately, this case is not checked by the system.</p>
+	
+	<h3>Exceptions</h3>
+	
+	<p>Exceptions are regarded as being immutable for convenience only.  You should not use exceptions for passing system state. </p>
+	
+	<h3>Extending / Using Other Code</h3>
+	
+	<p concordion:execute="usingLibrary()">Pure4J will check code in your code base, but assume that anything tagged <code>@ImmutableValue</code> in a library has been correctly verified
+	by the build process of that library.</p>
+
+</body>
+</html>

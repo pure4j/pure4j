@@ -16,9 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.Mutability;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
@@ -58,29 +57,37 @@ public class PureChecklistHandler {
 	public class PureMethod {
 
 		public MemberHandle declaration;
-		public Enforcement e;
-		public Mutability m;
+		public Enforcement implPurity;
+		public Enforcement intfPurity;
 		private Boolean pureImplementation = null;
-		//private Boolean pureInterface = null;
+		private Boolean pureInterface = null;
+		private boolean immutableReturnType;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 
-		private PureMethod(MemberHandle declaration, Enforcement e, Mutability m) {
+		private PureMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, boolean immutableReturnType) {
 			super();
 			this.declaration = declaration;
-			this.e = e;
-			this.m = m;
-			setupEnforcements(e);
+			this.implPurity = impl;
+			this.intfPurity = intf;
+			setupEnforcements(intf, impl);
+			this.immutableReturnType = immutableReturnType;
 		}
 
-		protected void setupEnforcements(Enforcement e) {
-			if (e == Enforcement.FORCE) {
+		protected void setupEnforcements(Enforcement intf, Enforcement impl) {
+			if (impl == Enforcement.FORCE) {
 				pureImplementation = true;
-			} else if (e == Enforcement.NOT_PURE) {
+			} else if (impl == Enforcement.NOT_PURE) {
 				pureImplementation = false;
+			}
+			
+			if (intf == Enforcement.FORCE) {
+				pureInterface = true;
+			} else if (intf == Enforcement.NOT_PURE) {
+				pureInterface = false;
 			}
 		}
 
-		private PureMethod(String description, Enforcement e) throws ClassNotFoundException {
+		private PureMethod(String description, Enforcement impl, Enforcement intf) throws ClassNotFoundException {
 			int firstDot = description.indexOf(".");
 			int firstBracket = description.indexOf("(");
 			String classPart = description.substring(0, firstDot);
@@ -88,13 +95,14 @@ public class PureChecklistHandler {
 			String descPart = description.substring(firstBracket);
 			this.declaration = (methodPart.equals("<init>")) ? new ConstructorHandle(classPart, descPart, 0) : new MethodHandle(classPart, methodPart, descPart, 0);
 
-			this.e = e;
-			setupEnforcements(e);
+			this.implPurity = impl;
+			this.intfPurity = intf;
+			setupEnforcements(intf, impl);
 		}
 
 		@Override
 		public String toString() {
-			return "   See:[declaration=" + declaration + "\n        e=" + e + "\n        m=" + m + ", \n        usedIn=\n" + lines(usedIn, 10) + "       ]";
+			return "   See:[declaration=" + declaration + "\n     impl=" + implPurity + "\n     intf=" + intfPurity + ", \n        usedIn=\n" + lines(usedIn, 10) + "       ]";
 		}
 
 		private String lines(Set<Class<?>> usedIn2, int i) {
@@ -109,16 +117,62 @@ public class PureChecklistHandler {
 			
 			return sb.toString();
 		}
-//		
-//		public boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
-//			id (pureInterface == null) {
-//				pureInterface = true;
-//				
-//				
-//				
-//			}
-//			
-//		}
+		
+		public boolean checkPurity(Callback cb, ProjectModel pm) {
+			return checkImplementationPurity(cb, pm) && checkInterfacePurity(cb, pm);
+		}
+		
+		public boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
+			if (pureInterface == null) {
+				pureInterface = true;
+				
+				if (!pm.withinModel(declaration.getClassName())) {
+					return pureInterface;
+				}
+				
+				if (IGNORE_EQUALS_PARAMETER_PURITY) {
+					if (("equals".equals(declaration.getName())) && ("(Ljava/lang/Object;)Z".equals(declaration.getDesc()))) {
+						return true;
+					}
+				}
+
+				
+				// check the signature of accessible pure method.
+				// only public/package visible methods need to be checked.
+				
+				if (isAccessibleOutsideClass(declaration, cl)) {
+					Type[] genericTypes = declaration.getGenericTypes(cl);
+					int argOffset = getArgOffset();
+					for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
+						Type t = genericTypes[i];
+						if (typeFailsCheck(cb, t)) {
+							int argNo = i+ argOffset;
+							if (!isRuntimeChecked(argNo, pm, cb)) {
+								cb.registerError(new PureMethodParameterNotImmutableException(this, t));
+								pureInterface = false;
+								return false;
+							}
+						}
+					}
+					
+					if (immutableReturnType) {
+						if (declaration instanceof MethodHandle) {
+							if (declaration.getAnnotation(cl, IgnoreImmutableTypeCheck.class) == null) {
+								Method m = ((MethodHandle) declaration).hydrate(cl);
+								Type t = m.getGenericReturnType();
+								if (typeFailsCheck(cb, t) && (!returnsOwnType()))  {
+									cb.registerError(new PureMethodReturnNotImmutableException(this, t));
+									pureInterface = false;
+									return false; 
+								}
+							}
+						} 
+					}
+				}
+			}
+			
+			return pureInterface;
+		}
 
 		public boolean checkImplementationPurity(Callback cb, ProjectModel pm) {
 			if (pureImplementation == null) {
@@ -136,6 +190,7 @@ public class PureChecklistHandler {
 					
 					if (declaration instanceof CallHandle) {
 						if ((pm.getOpcodes((CallHandle) declaration) & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC) {
+							// synthetics are always pure.
 							pureImplementation = true;
 							return true;
 						}
@@ -150,59 +205,15 @@ public class PureChecklistHandler {
 						return true;
 					}
 
-					if (IGNORE_EQUALS_PARAMETER_PURITY) {
-						if (("equals".equals(declaration.getName())) && ("(Ljava/lang/Object;)Z".equals(declaration.getDesc()))) {
-							return true;
-						}
-					}
-
 					if (declaration instanceof MethodHandle) {
 						Method m = ((MethodHandle) declaration).hydrate(cl);
 						if (Modifier.isAbstract(m.getModifiers())) {
 							return true;
 						}
 					}
-
-					
-					// check the signature of accessible pure method
-					
-					if (isAccessibleOutsideClass(declaration, cl)) {
-						Type[] genericTypes = declaration.getGenericTypes(cl);
-						int argOffset = getArgOffset();
-						for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
-							Type t = genericTypes[i];
-							if (typeFailsCheck(cb, t)) {
-								int argNo = i+ argOffset;
-								if (!isRuntimeChecked(argNo, pm, cb)) {
-									cb.registerError(new PureMethodParameterNotImmutableException(this, t));
-									pureImplementation = false;
-									return false;
-								}
-							}
-						}
-						
-						// RETURN TYPE CHECKING 
-						if (declaration instanceof MethodHandle) {
-							if (declaration.getAnnotation(cl, IgnoreNonImmutableTypeCheck.class) == null) {
-								Method m = ((MethodHandle) declaration).hydrate(cl);
-								Type t = m.getGenericReturnType();
-								if (typeFailsCheck(cb, t) && (!returnsOwnType()))  {
-									cb.registerError(new PureMethodReturnNotImmutableException(this, t));
-									pureImplementation = false;
-									return false; 
-								}
-							}
-						} 
-					}
-
 					
 					List<MemberHandle> calls = pm.getCalls(declaration);
 					for (MemberHandle mh : calls) {
-						boolean staticCall = false;
-						if (mh instanceof MethodHandle) {
-							Method m = ((MethodHandle) mh).hydrate(cl);
-							staticCall = Modifier.isStatic(m.getModifiers());
-						}
 						if (mh instanceof CallHandle) {
 							if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object"))) {
 								// we can skip this one
@@ -248,7 +259,7 @@ public class PureChecklistHandler {
 		}
 
 		protected boolean typeFailsCheck(Callback cb, Type t) {
-			if (m == Mutability.ALLOW_IMMUTABLE_ONLY) {
+			if (intfPurity == Enforcement.CHECKED) {
 				return !immutables.typeIsMarked(t, cb);
 			} 
 			
@@ -288,7 +299,7 @@ public class PureChecklistHandler {
 		}
 
 		private boolean forcedImmutable(Field f) {
-			IgnoreNonImmutableTypeCheck iv = f.getAnnotation(IgnoreNonImmutableTypeCheck.class);
+			IgnoreImmutableTypeCheck iv = f.getAnnotation(IgnoreImmutableTypeCheck.class);
 			if ((iv != null)) {
 				return true;
 			}
@@ -395,9 +406,16 @@ public class PureChecklistHandler {
 		String line = br.readLine();
 		while (line != null) {
 			String[] parts = line.trim().split(" ");
-			Enforcement e = Enforcement.valueOf(parts[0]);
-			PureMethod pureMethod = new PureMethod(parts[1], e);
-			pureChecklist.put(pureMethod.declaration, pureMethod);
+			if (parts.length == 2) {
+				Enforcement impl = Enforcement.valueOf(parts[0]);
+				PureMethod pureMethod = new PureMethod(parts[1], impl, impl);
+				pureChecklist.put(pureMethod.declaration, pureMethod);
+			} else {
+				Enforcement impl = Enforcement.valueOf(parts[0]);
+				Enforcement intf = Enforcement.valueOf(parts[1]);
+				PureMethod pureMethod = new PureMethod(parts[2], impl, intf);
+				pureChecklist.put(pureMethod.declaration, pureMethod);
+			}
 			line = br.readLine();
 		}
 	}
@@ -416,7 +434,7 @@ public class PureChecklistHandler {
 		
 		if (pureChecklist.containsKey(mh)) {
 			PureMethod pm = pureChecklist.get(mh);
-			return pm.e != Enforcement.NOT_PURE;
+			return pm.implPurity != Enforcement.NOT_PURE;
 		}
 
 		if (IGNORE_EQUALS_PARAMETER_PURITY) {
@@ -509,18 +527,18 @@ public class PureChecklistHandler {
 		return false;
 	}
 
-	public void addMethod(CallHandle declaration, Enforcement e, Mutability m, Class<?> usedIn, Callback cb) {
+	public void addMethod(CallHandle declaration, Enforcement impl, Enforcement intf, boolean immutableReturnType, Class<?> usedIn, Callback cb) {
 		PureMethod pm;
 		if (pureChecklist.containsKey(declaration)) {
 			pm = pureChecklist.get(declaration);
 		} else {
-			pm = new PureMethod(declaration, e, m);
+			pm = new PureMethod(declaration, impl, intf, immutableReturnType);
 			pureChecklist.put(declaration, pm);
-			cb.send("  - " + declaration + " " + e);
+			cb.send("  - " + declaration + " " + impl);
 		}
 
-		if (pm.e != e) {
-			if (pm.e != Enforcement.FORCE) {
+		if (pm.implPurity != impl) {
+			if (pm.implPurity != Enforcement.FORCE) {
 				cb.registerError(new ClassExpectingPureMethod(usedIn, pm));
 			}
 		}
@@ -560,8 +578,7 @@ public class PureChecklistHandler {
 
 	public void doPureMethodChecks(Callback cb, ProjectModel pm) {
 		for (PureMethod pureCandidate : pureChecklist.values()) {
-			//pureCandidate.c
-			pureCandidate.checkImplementationPurity(cb, pm);
+			pureCandidate.checkPurity(cb, pm);
 		}
 	}
 

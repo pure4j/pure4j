@@ -3,7 +3,7 @@ package org.pure4j.processor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.exception.ClassNotFinalException;
 import org.pure4j.exception.FieldNotFinalException;
@@ -29,7 +29,7 @@ public class ImmutableValueClassHandler extends AbstractClassAnnoatationCache im
 		
 		while (immutableClass != Object.class) {
 			for (Field f : immutableClass.getDeclaredFields()) {
-				IgnoreNonImmutableTypeCheck fieldIV = f.getAnnotation(IgnoreNonImmutableTypeCheck.class);
+				IgnoreImmutableTypeCheck fieldIV = f.getAnnotation(IgnoreImmutableTypeCheck.class);
 				boolean skip = false;
 				skip |= (fieldIV != null);
 				skip |= (immutableClass.isEnum() && f.getName().equals("ENUM$VALUES"));

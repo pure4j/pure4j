@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -25,7 +25,7 @@ public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 
 	private static final long serialVersionUID = 220865945544862915L;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	protected transient int _hasheq = -1;
 
 	public String toString() {

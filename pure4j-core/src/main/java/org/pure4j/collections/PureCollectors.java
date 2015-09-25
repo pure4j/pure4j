@@ -59,7 +59,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Pure;
 
@@ -111,25 +111,25 @@ import org.pure4j.annotations.pure.Pure;
  */
 public final class PureCollectors {
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
     static final Set<Collector.Characteristics> CH_CONCURRENT_ID
             = Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.CONCURRENT,
                                                      Collector.Characteristics.UNORDERED,
                                                      Collector.Characteristics.IDENTITY_FINISH));
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	static final Set<Collector.Characteristics> CH_CONCURRENT_NOID
             = Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.CONCURRENT,
                                                      Collector.Characteristics.UNORDERED));
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	static final Set<Collector.Characteristics> CH_ID
             = Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.IDENTITY_FINISH));
     
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	static final Set<Collector.Characteristics> CH_UNORDERED_ID
             = Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.UNORDERED,
                                                      Collector.Characteristics.IDENTITY_FINISH));
     
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	static final Set<Collector.Characteristics> CH_NOID = Collections.emptySet();
 
     private PureCollectors() { }

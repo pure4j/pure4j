@@ -33,11 +33,10 @@ import org.pure4j.annotations.mutable.MutableUnshared;
  * <p>Since {@link ImmutableValue} and {@link MutableUnshared} are class-level annotations, and specify the purity requirements for
  * instance methods only, one common use-case for the <code>@Pure</code> annotation is in declaring static methods as being pure.
  * 
- * <h3>Mutability</h3>
+ * <h3>Parameter Mutability (Interface Purity)</h3>
  * 
  * <p>By default, adding <code>@Pure</code> will check that the method only accepts and returns immutable parameters (see {@link ImmutableValue}), 
- * in concordance with the contract for {@link MutableUnshared}.  However, by setting mutability to <code>ANYTHING</code>
- * you are using the relaxed purity contract for {@link ImmutableValue} objects.  
+ * in concordance with the contract for {@link ImmutableValue}.  YOu can disable the parameter check with the PureParameters annotation.
  * 
  * <p>In general, you will <b>not</b> want to override this.   For thread safety, if impure code is calling pure code, 
  * you will want to pass in only immutable values otherwise you can't be sure that the pure code will have consistent
@@ -67,8 +66,9 @@ import org.pure4j.annotations.mutable.MutableUnshared;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Pure {
 	
+	/**
+	 * Sets the level of implementation purity.
+	 */
 	Enforcement value() default Enforcement.CHECKED;
 	
-	Mutability params() default Mutability.ALLOW_IMMUTABLE_ONLY;
-
 }

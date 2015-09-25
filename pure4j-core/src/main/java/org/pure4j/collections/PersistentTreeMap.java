@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -50,12 +50,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 	    }
 	}
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	public final Comparator<K> comp;
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	public final Node tree;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	public final int _count;
 
 	final static private PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();

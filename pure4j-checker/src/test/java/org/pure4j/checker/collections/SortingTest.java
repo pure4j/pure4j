@@ -18,6 +18,6 @@ public class SortingTest {
 	
 	@Test(expected=UnsupportedOperationException.class) 
 	public void doASort() {
-		new ArraySeq<>(5f, 3f, 2f).sort(null);
+		Assert.assertEquals(new ArraySeq<>(5f, 3f, 2f).sort(null), ;
 	}
 }

@@ -19,14 +19,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		Collection<K>, Set<K>, Serializable {
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	int _hasheq = -1;
 	
 	final IPersistentMap<K, K> impl;

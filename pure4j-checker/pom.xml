@@ -49,6 +49,11 @@
 			<artifactId>spring-context</artifactId>
 			<version>4.2.0.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>org.concordion</groupId>
+			<artifactId>concordion</artifactId>
+			<version>1.5.1</version>
+		</dependency>
 	</dependencies>
 
 

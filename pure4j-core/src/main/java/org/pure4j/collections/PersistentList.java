@@ -19,14 +19,14 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Pure;
 
 public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 
 	private static final long serialVersionUID = 1L;
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	private final K _first;
 	private final IPersistentList<K> _rest;
 	private final int _count;

@@ -33,6 +33,7 @@ import org.pure4j.annotations.pure.Pure;
  * <code>final</code></strike>.
  * <li>Any generic type parameters supplied to an <code>ImmutableValue</code> annotated
  * class must also be immutable value types.
+ * <li>To ensure thread-safety, arguments to methods on the class must also be immutable.
  * </ul>
  * 
  * <p>

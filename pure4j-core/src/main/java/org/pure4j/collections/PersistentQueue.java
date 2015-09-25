@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -36,7 +36,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	final PersistentVector<K> r;
 	// static final int INITIAL_REAR_SIZE = 4;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	private int _hasheq = -1;
 
 	PersistentQueue(int cnt, ISeq<K> f, PersistentVector<K> r) {

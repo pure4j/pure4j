@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -36,7 +36,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	public static class Node implements Serializable {
 		
 		transient private final AtomicReference<Thread> edit;
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		private final Object[] array;
 
 		private Node(AtomicReference<Thread> edit, Object[] array) {
@@ -56,10 +56,10 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	final int cnt;
 	public final int shift;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	public final Node root;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	public final K[] tail;
 
 	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>(0, 5,
@@ -305,7 +305,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			Counted {
 
 		public final PersistentVector<K> vec;
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		final K[] node;
 		final int i;
 		public final int offset;

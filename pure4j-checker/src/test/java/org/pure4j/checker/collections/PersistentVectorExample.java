@@ -35,6 +35,7 @@ public class PersistentVectorExample extends AbstractChecker {
 		int j = sumPersistentVector(pl);
 		Assert.assertEquals(150*301,j);
 		Assert.assertEquals(301, pl.size());
+		
 	}
 
 }

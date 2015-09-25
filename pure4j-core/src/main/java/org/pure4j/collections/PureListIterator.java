@@ -2,7 +2,7 @@ package org.pure4j.collections;
 
 import java.util.ListIterator;
 
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.mutable.MutableUnshared;
 
 /**
@@ -25,7 +25,7 @@ final class PureListIterator<E> implements IPureListIterator<E>{
 		return wraps.hasNext();
 	}
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	@Override
 	public E next() {
 		return wraps.next();
@@ -36,7 +36,7 @@ final class PureListIterator<E> implements IPureListIterator<E>{
 		return wraps.hasPrevious();
 	}
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	@Override
 	public E previous() {
 		return wraps.previous();

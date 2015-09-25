@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -35,7 +35,7 @@ import org.pure4j.annotations.pure.Pure;
 
 public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IMapIterable<K, V> {
 
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	private final Object[] array;
 	static final int HASHTABLE_THRESHOLD = 16;
 

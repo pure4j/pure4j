@@ -19,7 +19,7 @@ import org.pure4j.processor.Callback;
 import org.pure4j.processor.PurityChecker;
 import org.pure4j.processor.SpringProjectModelFactory;
 
-public class AbstractChecker {
+public final class AbstractChecker {
 	
 	
 	@Pure(Enforcement.FORCE)

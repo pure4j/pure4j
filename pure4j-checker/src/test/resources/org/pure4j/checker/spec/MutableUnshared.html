@@ -1,0 +1,58 @@
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+<link href="../../../concordion.css" rel="stylesheet" type="text/css" />
+<body>
+
+    <h1><code>@MutableUnshared</code> Specification</h1>
+
+	<p>Declares that instances of this class contain mutable state, which, in order 
+	to preserve the no-side-effects clause of the purity contract, will not be shared with 
+	other classes during pure method calls.</p>
+
+	<p>The typical use case for objects marked with this annotation is likely to be collectors, iterators, 
+	enumerations and some types of inner class, where the scope of use is limited to within a single pure 
+	method.</p>
+
+	<h3>Contract</h3>
+
+	<ul>
+		<li>Concrete classes inherit <code>@UnsharedImmutable</code> from any superclass or interface with the annotation. </li>
+		<li>Public / Package accessible fields of the class must be immutable (see: {@link ImmutableValue} for what qualifies). </li>
+		<li>Public / Package accessible methods must only receive immutable parameters. (interface purity).	</li>
+		<li>Public / Package accessible methods must only return immutable values as results.  
+			(The one exception is returning <code>this</code>, which is allowed for convenience building fluent APIs).</li>
+	</ul>
+
+	<h3>Inner Classes (non-static)</h3>
+	
+	<p>In Java, inner classes will be constructed with a reference to their parent class.  Because of the rule on
+	non-static arguments, any parent class must be immutable.</p>
+	
+	<h3>Covariant Return Types</h3>
+	
+	<p>Since there is a requirement that values <em>leaving</em> the <code>@MutableUnshared</code> instances must be
+	immutable (to prevent sharing of state, and thus, side-effects) you can use covariant return types to narrow the 
+	result of a method.  For example, if you are implementing an interface like:</p>
+	
+	<pre>
+		interface Result {
+		
+			Object get();
+			
+		}
+	</pre>
+	
+	<p>You can elect to return a narrower result such as:</p>
+	
+	<pre>
+		public SomeImmutableValue get() {
+			// blah
+		}
+	</pre>
+
+	<h3>Runtime Return Value Checking</h3>
+	
+	<p>If it is not possible to narrow the result in this way (perhaps you are using generics) you can
+	check the result at runtime. TBC</p>
+
+</body>
+</html>

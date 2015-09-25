@@ -15,13 +15,13 @@ package org.pure4j.collections;
 import java.util.Arrays;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
 public class ArraySeq<K> extends ASeq<K> {
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	private final K[] array;
 	final int i;
 
@@ -159,7 +159,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	// ///////////////////////////////
 
 	static public class ArraySeq_int extends ASeq<Integer>  {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final int[] array;
 		final int i;
 
@@ -210,7 +210,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 	static public class ArraySeq_float extends ASeq<Float>   {
 		
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final float[] array;
 		final int i;
 
@@ -258,7 +258,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 
 	static public class ArraySeq_double extends ASeq<Double> {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final double[] array;
 		final int i;
 
@@ -308,7 +308,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 
 	static public class ArraySeq_long extends ASeq<Long> {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final long[] array;
 		final int i;
 
@@ -358,7 +358,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 
 	static public class ArraySeq_byte extends ASeq<Byte>  {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final byte[] array;
 		final int i;
 
@@ -418,7 +418,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 
 	static public class ArraySeq_char extends ASeq<Character> {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final char[] array;
 		final int i;
 
@@ -478,7 +478,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 
 	static public class ArraySeq_short extends ASeq<Short> {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final short[] array;
 		final int i;
 
@@ -538,7 +538,7 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 
 	static public class ArraySeq_boolean extends ASeq<Boolean> {
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		public final boolean[] array;
 		final int i;
 

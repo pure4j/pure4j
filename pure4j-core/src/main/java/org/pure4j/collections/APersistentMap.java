@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
@@ -26,7 +26,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	
 	private static final long serialVersionUID = 1L;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	int _hasheq = -1;
 
 	 /**
@@ -93,7 +93,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		
 		final ISeq<Entry<K, V>> seq;
 
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		final Iterable<Entry<K, V>> iterable;
 
 		@Pure
@@ -157,7 +157,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		
 		final ISeq<Entry<K, V>> seq;
 		
-		@IgnoreNonImmutableTypeCheck
+		@IgnoreImmutableTypeCheck
 		final Iterable<Entry<K,V>> iterable;
 
 		@Pure

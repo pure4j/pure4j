@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.immutable.IgnoreNonImmutableTypeCheck;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -30,7 +30,7 @@ public abstract class APersistentVector<K> implements
 
 	private static final long serialVersionUID = 3143509526367951707L;
 	
-	@IgnoreNonImmutableTypeCheck
+	@IgnoreImmutableTypeCheck
 	int _hasheq = -1;
 
 	public String toString() {
