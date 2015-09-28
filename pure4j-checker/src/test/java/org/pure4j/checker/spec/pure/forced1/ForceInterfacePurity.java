@@ -3,7 +3,7 @@ package org.pure4j.checker.spec.pure.forced1;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.PureParameters;
-import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.checker.support.ShouldBePure;
 
 /**
  * Broken immutable value implementation, but it's forced good.

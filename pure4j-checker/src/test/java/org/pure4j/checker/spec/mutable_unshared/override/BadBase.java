@@ -5,7 +5,7 @@ import org.pure4j.annotations.mutable.MutableUnshared;
 @MutableUnshared
 public abstract class BadBase {
 
-	public int somethingNotPure() {
+	public Object somethingNotPure() {
 		return new Object().hashCode();
 	}
 }

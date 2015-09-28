@@ -1,8 +1,8 @@
 package org.pure4j.checker.spec.mutable_unshared.narrowing;
 
 import org.pure4j.annotations.mutable.MutableUnshared;
-import org.pure4j.checker.basic.support.CausesError;
-import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.checker.support.CausesError;
+import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
 @MutableUnshared

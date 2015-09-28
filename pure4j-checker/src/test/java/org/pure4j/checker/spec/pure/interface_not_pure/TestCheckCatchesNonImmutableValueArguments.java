@@ -3,7 +3,7 @@ package org.pure4j.checker.spec.pure.interface_not_pure;
 import java.io.InputStream;
 
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.checker.basic.support.CausesError;
+import org.pure4j.checker.support.CausesError;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
 public class TestCheckCatchesNonImmutableValueArguments {

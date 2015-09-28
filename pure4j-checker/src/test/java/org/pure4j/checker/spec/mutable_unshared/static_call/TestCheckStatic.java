@@ -1,19 +1,13 @@
 package org.pure4j.checker.spec.mutable_unshared.static_call;
 
-import java.io.IOException;
-
-import org.junit.Test;
-import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.mutable.MutableUnshared;
-import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.checker.AbstractChecker;
-import org.pure4j.checker.basic.support.CausesError;
-import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.checker.support.CausesError;
+import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.exception.PureMethodAccessesSharedFieldException;
 
 
-public class TestCheckStatic extends AbstractChecker {
+public class TestCheckStatic {
 	
 	@MutableUnshared
 	public static class TestClass {
@@ -54,11 +48,5 @@ public class TestCheckStatic extends AbstractChecker {
 		public int shouldBeOK() {
 			return callOK();
 		}
-	}
-
-	@Pure(Enforcement.NOT_PURE)
-	@Test
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1);
 	}
 }

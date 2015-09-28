@@ -8,7 +8,7 @@
 	to preserve the no-side-effects clause of the purity contract, will not be shared with 
 	other classes during pure method calls.</p>
 
-	<p>The typical use case for objects marked with this annotation is likely to be collectors, iterators, 
+	<p concordion:execute="visitorExample()">The typical use case for objects marked with this annotation is likely to be collectors, iterators, 
 	enumerations and some types of inner class, where the scope of use is limited to within a single pure 
 	method.</p>
 
@@ -19,7 +19,7 @@
 		<li concordion:execute="publicFieldsImmutable()">Public / Package accessible fields of the class must be immutable (see: {@link ImmutableValue} for what qualifies). </li>
 		<li concordion:execute="publicParametersImmutable()">Public / Package accessible methods must only receive immutable parameters. (interface purity).	</li>
 		<li concordion:execute="immutableOnlyReturned()">Public / Package accessible methods must only return immutable values as results.  
-			(The one exception is returning <code>this</code>, which is allowed for convenience building fluent APIs).</li>
+			(The one exception is returning <code concordion:execute="thisAllowedAsReturn()">this</code>, which is allowed for convenience building fluent APIs).</li>
 		<li>Mutable Unshared objects are not thread-safe.  If you use them in multiple threads, you are likely to end up with a 
 		non-deterministic state.</li>
 	</ul>
@@ -53,8 +53,12 @@
 
 	<h3>Runtime Return Value Checking</h3>
 	
-	<p>If it is not possible to narrow the result in this way (perhaps you are using generics) you can
+	<p concordion:execute="runtimeResultNarrowing()">If it is not possible to narrow the result in this way (perhaps you are using generics) you can
 	check the result at runtime. TBC</p>
+	
+	<h3>Libraries</h3>
+	
+	<p concordion:execute="libraryReference()">You can use <code>@MutableUnshared</code> annotated classes from another project or library.  The classes are assumed to have been purity-checked.</p>
 
 </body>
 </html>

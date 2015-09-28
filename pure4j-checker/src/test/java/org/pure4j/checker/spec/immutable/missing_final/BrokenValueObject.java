@@ -3,15 +3,13 @@ package org.pure4j.checker.spec.immutable.missing_final;
 import java.io.InputStream;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.checker.basic.support.CausesError;
-import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.checker.support.CausesError;
+import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
-
-import com.sun.org.glassfish.gmbal.ParameterNames;
 
 @ImmutableValue
 public class BrokenValueObject extends AnotherBrokenObject {

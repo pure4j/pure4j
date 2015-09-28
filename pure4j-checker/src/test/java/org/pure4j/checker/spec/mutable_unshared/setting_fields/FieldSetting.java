@@ -2,9 +2,9 @@ package org.pure4j.checker.spec.mutable_unshared.setting_fields;
 
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.checker.basic.support.CausesError;
-import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.checker.spec.immutable.broken_extend.SomeValueObjectBrokenExtend;
+import org.pure4j.checker.support.CausesError;
+import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 
 @MutableUnshared

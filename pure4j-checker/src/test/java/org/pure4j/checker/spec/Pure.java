@@ -3,6 +3,7 @@ package org.pure4j.checker.spec;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.pure4j.checker.spec.pure.bad_references.client.TestBadLibraryReference;
 import org.pure4j.checker.spec.pure.callingnotinterfacepure.InterfaceNotPureOkCall;
 import org.pure4j.checker.spec.pure.callingnotpure.TestIllegalObjectUse;
 import org.pure4j.checker.spec.pure.construct.TestPureUse;
@@ -16,7 +17,6 @@ import org.pure4j.checker.spec.pure.runtime_checked.CheckParameterImmutability;
 import org.pure4j.checker.spec.pure.runtime_unsupported.SimpleUnsupported;
 import org.pure4j.checker.spec.pure.state.SomeNonPureObject;
 import org.pure4j.checker.spec.pure.strings2.StringBuilding;
-import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 
 @RunWith(ConcordionRunner.class)
 public class Pure {
@@ -93,5 +93,10 @@ public class Pure {
 	@Test
 	public void stringBuilding() {
 		Helper.check(0, StringBuilding.class);
+	}
+	
+	@Test
+	public void testLibraryReference() {
+		Helper.check(0, TestBadLibraryReference.class);
 	}
 }
