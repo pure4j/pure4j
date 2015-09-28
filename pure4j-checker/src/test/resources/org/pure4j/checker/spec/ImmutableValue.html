@@ -54,7 +54,7 @@
 	not deterministic (being dependent on the system hash code, which is based on object id). </p>
 	
 	<ul>
-		<li concordion:execute="hashCodeAndEqualsMustBeImplemented()">Implementations with the <code>@ImmutableValue</code> annotation will need to implement these.</li>
+		<li concordion:execute="hashCodeAndToStringMustBeImplemented()">Implementations with the <code>@ImmutableValue</code> annotation will need to implement these.</li>
 		<li concordion:execute="abstractImmutableValueImplementsHashCodeAndEquals()"><code>AbstractImmutableValue</code> is provided as a convenience class, which can be used to reduce boiler-plate code
 	in implementation classes.</li>
 	</ul>

@@ -26,6 +26,7 @@ public class ExceptionGenerating {
 	}
 
 	@ShouldBePure
-	public void someHandler(Exception e) {
+	public void someHandler() throws Exception {
+		throw new Exception();
 	}
 }

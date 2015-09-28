@@ -6,7 +6,7 @@ import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 
 @MutableUnshared
-public class Class1 {
+public class DifferentMethodAccessors {
 
 	@CausesError(PureMethodParameterNotImmutableException.class)
 	public void process1(Object in) {

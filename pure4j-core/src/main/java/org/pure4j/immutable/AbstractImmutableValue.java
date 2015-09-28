@@ -120,7 +120,7 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 	 * @param v pass your fields into this.  will not be null.
 	 * @param other the object to compare with or, "this" in the case of hashCode, toString.
 	 */
-	public abstract void fields(Visitor v, M other);
+	protected abstract void fields(Visitor v, M other);
 
 	@Override
 	public int compareTo(M o) {

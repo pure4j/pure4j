@@ -1,9 +1,11 @@
 package org.pure4j.checker.spec.immutable.mutable_field;
 
+import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.checker.basic.support.CausesError;
 import org.pure4j.checker.basic.support.ShouldBePure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 
+@ImmutableValue
 public class NotImmutable {
 
 	@CausesError(FieldTypeNotImmutableException.class)
@@ -15,11 +17,13 @@ public class NotImmutable {
 	}
 
 	@Override
+	@ShouldBePure
 	public int hashCode() {
 		return 1;
 	}
 
 	@Override
+	@ShouldBePure
 	public String toString() {
 		return null;
 	}

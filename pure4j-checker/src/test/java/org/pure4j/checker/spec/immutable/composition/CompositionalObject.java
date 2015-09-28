@@ -10,6 +10,7 @@ public final class CompositionalObject {
 	
 	private final SomeGoodValueObject svo;
 
+	@ShouldBePure
 	public CompositionalObject(SomeGoodValueObject svo) {
 		super();
 		this.svo = svo;

@@ -40,14 +40,14 @@ import org.springframework.core.io.Resource;
 public class ClassFileModelBuilder {
 	
 	public ClassFileModelBuilder() {
-		this(OUTPUT_ASM);
+		this(ALWAYS_OUTPUT_ASM);
 	}
 	
 	public ClassFileModelBuilder(boolean output) {
-		this.output = output;
+		this.output = output || ALWAYS_OUTPUT_ASM;
 	}
 	
-	public static boolean OUTPUT_ASM = true;
+	public static boolean ALWAYS_OUTPUT_ASM = true;
 
 	ProjectModelImpl model = new ProjectModelImpl();
 
@@ -231,6 +231,7 @@ public class ClassFileModelBuilder {
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
 				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
+				resetCallDetails();
 			}
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc, boolean itf) {
@@ -362,7 +363,7 @@ public class ClassFileModelBuilder {
 		};
 	}
 	
-	private boolean output = OUTPUT_ASM;
+	private boolean output;
 
 	private void output(String name) {
 		if (output) {

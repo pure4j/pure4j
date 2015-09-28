@@ -1,6 +1,12 @@
 package org.pure4j.checker.spec;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashSet;
+
 import org.concordion.integration.junit4.ConcordionRunner;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pure4j.checker.spec.generics.holder_immutable.GenericHolderImm;
@@ -25,9 +31,11 @@ import org.pure4j.checker.spec.immutable.non_pure_param.NonPureParameter;
 import org.pure4j.checker.spec.immutable.overriding.SomeClass1;
 import org.pure4j.checker.spec.immutable.overriding.SomeClass2;
 import org.pure4j.checker.spec.immutable.parent_class_a_library.SomeBeanLibraryBased;
+import org.pure4j.checker.spec.immutable.private_method.DifferentMethodAccessors;
 import org.pure4j.checker.spec.immutable.static_example.StaticExample;
 import org.pure4j.checker.spec.immutable.using_super.UsingSuper;
 import org.pure4j.exception.ClassExpectingPureMethod;
+import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 @RunWith(ConcordionRunner.class)
 public class ImmutableValue {
@@ -88,7 +96,7 @@ public class ImmutableValue {
 
 	@Test
 	public void privateMethodsNeedNotBeInterfacePure() {
-
+		Helper.check(1, DifferentMethodAccessors.class);
 	}
 
 	@Test
@@ -108,12 +116,12 @@ public class ImmutableValue {
 
 	@Test
 	public void bigDecimalIsImmutable() {
-
+		Assert.assertTrue(RuntimeImmutabilityChecker.isClassImmutable(BigDecimal.class));
 	}
 
 	@Test
 	public void currencyIsImmutable() {
-
+		Assert.assertTrue(RuntimeImmutabilityChecker.isClassImmutable(Currency.class));
 	}
 
 	@Test
@@ -123,7 +131,8 @@ public class ImmutableValue {
 
 	@Test
 	public void collectionsNotImmutable() {
-
+		Assert.assertFalse(RuntimeImmutabilityChecker.isClassImmutable(ArrayList.class));
+		Assert.assertFalse(RuntimeImmutabilityChecker.isClassImmutable(HashSet.class));
 	}
 
 	@Test

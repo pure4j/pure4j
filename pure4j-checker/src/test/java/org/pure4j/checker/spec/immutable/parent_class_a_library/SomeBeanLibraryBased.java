@@ -28,7 +28,7 @@ public class SomeBeanLibraryBased extends AbstractImmutableValue<SomeBeanLibrary
 
 	@Override
 	@ShouldBePure
-	public void fields(Visitor v, SomeBeanLibraryBased other) {
+	protected void fields(Visitor v, SomeBeanLibraryBased other) {
 		v.visit(name, other.name);
 		v.visit(age, other.age);
 	}

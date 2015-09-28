@@ -20,6 +20,8 @@
 		<li>Public / Package accessible methods must only receive immutable parameters. (interface purity).	</li>
 		<li>Public / Package accessible methods must only return immutable values as results.  
 			(The one exception is returning <code>this</code>, which is allowed for convenience building fluent APIs).</li>
+		<li>Mutable Unshared objects are not thread-safe.  If you use them in multiple threads, you are likely to end up with a 
+		non-deterministic state.</li>
 	</ul>
 
 	<h3>Inner Classes (non-static)</h3>
