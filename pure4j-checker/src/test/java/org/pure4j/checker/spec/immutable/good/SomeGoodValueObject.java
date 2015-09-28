@@ -3,8 +3,8 @@ package org.pure4j.checker.spec.immutable.good;
 import java.math.BigInteger;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.checker.basic.pure.methods.SomePureStuff;
 import org.pure4j.checker.basic.support.ShouldBePure;
+import org.pure4j.checker.spec.pure.static_methods.StaticPureMethods;
 
 /**
  * Decent immutable value implementation.
@@ -56,7 +56,7 @@ public final class SomeGoodValueObject {
 		super();
 		this.name = name;
 		this.age = age;
-		this.nameLength = SomePureStuff.getLetterCount(name);
+		this.nameLength = StaticPureMethods.getLetterCount(name);
 	}
 
 	@ShouldBePure

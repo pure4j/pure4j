@@ -20,19 +20,20 @@
 	
 	<p>A pure implementation will:</p>
 	<ol>
-		<li>Only call other methods (or constructors) regarded to be implementation<code>Pure</code>.</li>
-		<li>Errors will be reported if a pure method accesses code not regarded to be implementation pure.</li>
-		<li>Can access only immutable, final state within the system (for prevention of side-effects).  (see <a href="ImmutableValueSpecification.html"><code>@ImmutableValue</code> Specification</a>)</li>
+		<li concordion:execute="onlyCallsOtherPures()">Only call other methods (or constructors) regarded to be implementation<code>Pure</code>.  
+		Errors will be reported if a pure method accesses code not regarded to be implementation pure.</li>
+		<li concordion:execute="accessesOnlyImmutableState()">Can access only immutable, final state within the system (for prevention of side-effects).  (see <a href="ImmutableValueSpecification.html"><code>@ImmutableValue</code> Specification</a>)</li>
 	</ol>
 
 	<h4>2.  Parameter Mutability (Interface Purity)</h4>
 
 	<ol>
-		<li>By default, adding <code>@Pure</code> will check that the method only accepts immutable parameters (see {@link ImmutableValue}).
+		<li concordion:execute="onlyAcceptsImmutableParameters()">By default, adding <code>@Pure</code> will check that the method only accepts immutable parameters (see {@link ImmutableValue}).
 		This ensures that the pure methods are <b>Thread Safe</b> and means that, once invoked the state of their arguments cannot be changed while the 
 	method is running.  Otherwise, this would impact the determinism constraint. </li>
- 		<li>Pure methods are allowed to access other methods that are not interface pure.  (e.g. pure private methods on a class can be only implementation pure)</li>
- 		<li>Only methods which are both implementation pure and interface pure are reported in the resulting public pure interface of the class.</li>
+ 		<li concordion:execute="canAccessNonInterfacePure()">Pure methods are allowed to access other methods that are not interface pure.  (e.g. pure private methods on a class can be only implementation pure)</li>
+ 		<li concordion:execute="nonPureCodeAccessingOnlyImplementationPure()">Only methods which are both implementation pure and interface pure are reported in the resulting public pure interface of the class.  Thus, non-pure
+ 		code should only access pure code that is both implementation and interface pure.</li>
 	</ol>
  	 
  	<h3>Defaults</h3> 
@@ -45,8 +46,8 @@
  	<p>You can disable purity checking (of both kinds) by adding the <code>Enforcement</code> argument on this annotation.</p>
  	
  	<ul>
- 		<li><em>FORCE</em>: Disable purity checking,  and force purity on.</li>
- 		<li><em>NOT_PURE</em>: Disable the purity check and force purity off.</li>
+ 		<li concordion:execute="canOverrideAndForcePure()"><em>FORCE</em>: Disable purity checking,  and force purity on.</li>
+ 		<li concordion:execute="canOverrideAndForceNotPure()"><em>NOT_PURE</em>: Disable the purity check and force purity off.</li>
  	</ul>
  	
  	<h3>Overriding Interface Purity Only</h3>
@@ -55,8 +56,8 @@
  	By setting the <code>Enforcement</code> argument on this annotation you can either:</p>
  	
  	<ul>
- 		<li><em>FORCE</em>: Disable the interface purity check and force interface purity on.</li>
- 		<li><em>NOT_PURE</em>: Disable the interface purity check and force interface purity off.</li>
+ 		<li concordion:execute="canOverrideAndForceInterfacePure()"><em>FORCE</em>: Disable the interface purity check and force interface purity on.</li>
+ 		<li concordion:execute="canOverrideAndForceInterfaceNotPure()"><em>NOT_PURE</em>: Disable the interface purity check and force interface purity off.</li>
  	</ul>
  	
  	<h3>Runtime Interface Purity Checking</h3>
@@ -65,13 +66,15 @@
  	test the interface purity at runtime.  </p>
  	
  	<p>You can do this by adding <code>Pure4J.immutable(&lt;<em>args</em>&gt;)</code> as:</p>
- 	<ul>
+ 	<ul concordion:execute="runtimePurityChecking()">
  		<li> the <strong>first call</strong> of the method.</li>
  		<li> the <strong>first call</strong> after the <code>this</code> or <code>super</code> call in a constructor.</li>
  		<li>All non-immutable arguments must be supplied to <code>Pure4J.immutable</code>.</li>
  		<li>A <code>ClassNotImmutableException</code> will be thrown for arguments that prove to be not immutable</li>
  	</ul>
- 	
+ 	 
+ 	<p concordion:execute="unsupportedOperationCheck()">Alternatively, you can use the <code>Pure4J.unsupported()</code> method to throw an <code>UnsupportedOperationException</code>
+ 	which will also disable parameter checking.</p>
  	
  	
  	<h4>Example</h4>
@@ -85,15 +88,31 @@
  	 	
 	<h3>On Static Methods</h3>
 
-	<p>Since <code>@ImmutableValue</code> and <code>@MutableUnshared</code> are class-level annotations, and specify the purity requirements for
+	<p concordion:execute="staticUse()">Since <code>@ImmutableValue</code> and <code>@MutableUnshared</code> are class-level annotations, and specify the purity requirements for
 	instance methods only, one common use-case for the <code>@Pure</code> annotation is in declaring static methods as being pure.</p>
-
 
 	<h3>Caveats</h3>
 	<p>
 	Use of reflection within your code can break these guarantees.  The compile-time checker will make no attempt
 	to ensure semantics where reflection is involved. (In fact, this is undecideable).  
 	</p>
+	
+	<h3>Java Language Purity</h3>
+	<p>
+	Lots of the methods in the Java language are pure, and can be used by your pure code.  For example:
+	</p>
+	<ul>
+		<li concordion:execute="mathIsPure()">Methods in the <code>java.lang.Math</code> class.</li>
+		<li concordion:execute="stringBuilding()">Most methods ofthe <code>java.lang.StringBuilder</code> class.  This is automatically used
+		by the Java Compile when concatenating strings.</li>
+	</ul>
+	
+	<h3>Construction and Use</h3>
+	
+	<p concordion:execute="useOfObjects()">Pure code is free to construct <code>@MutableUnshared</code> objects, or <code>@ImmutableValue</code> objects,
+	since the constructors for both of these types of objects are registed pure.</p>
+	
+	
 
 </body>
 </html>
