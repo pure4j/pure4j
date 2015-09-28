@@ -76,8 +76,10 @@ public class PureChecklistHandler {
 		protected void setupEnforcements(Enforcement intf, Enforcement impl) {
 			if (impl == Enforcement.FORCE) {
 				pureImplementation = true;
+				pureInterface = true;
 			} else if (impl == Enforcement.NOT_PURE) {
 				pureImplementation = false;
+				pureInterface = false;
 			}
 			
 			if (intf == Enforcement.FORCE) {

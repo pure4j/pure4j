@@ -19,7 +19,6 @@ import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.ClassFileModelBuilder;
 import org.pure4j.processor.PurityChecker;
-import org.pure4j.processor.SpringProjectModelFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 

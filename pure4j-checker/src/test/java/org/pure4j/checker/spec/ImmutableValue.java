@@ -21,6 +21,7 @@ import org.pure4j.checker.spec.immutable.composition.CompositionalObject;
 import org.pure4j.checker.spec.immutable.equals.ConfusingEquals;
 import org.pure4j.checker.spec.immutable.equals.ConfusingEquals2;
 import org.pure4j.checker.spec.immutable.exception.ExceptionGenerating;
+import org.pure4j.checker.spec.immutable.forced2.ArrayBeingUsed;
 import org.pure4j.checker.spec.immutable.good.SomeGoodValueObject;
 import org.pure4j.checker.spec.immutable.interface_ann.SomeValueObject1;
 import org.pure4j.checker.spec.immutable.missing_final.AnotherBrokenObject;
@@ -43,6 +44,11 @@ public class ImmutableValue {
 	@Test
 	public void arrayNotImmutable() {
 		Helper.check(1, HasPrivateArray.class);
+	}
+	
+	@Test
+	public void returnTypeAnything() {
+		Helper.check(0, ArrayBeingUsed.class);
 	}
 
 	@Test
