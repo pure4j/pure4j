@@ -103,7 +103,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 		return (ISeq<X>) EMPTY;
 	}
 	
-	static class EmptyList<K> implements IPersistentList<K> {
+	static class EmptyList<K> implements IPersistentList<K>, ISeq<K> {
 		private static final Object[] EMPTY_ARRAY = new Object[] {};
 		static final int hasheq = Murmur3.hashOrdered(Collections.EMPTY_LIST);
 
@@ -149,7 +149,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 		}
 
 		public ISeq<K> seq() {
-			return null;
+			return this;
 		}
 
 		public int size() {

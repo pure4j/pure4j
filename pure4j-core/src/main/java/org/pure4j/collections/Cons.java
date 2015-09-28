@@ -30,7 +30,7 @@ final public class Cons<K> extends ASeq<K> implements Serializable {
 	}
 
 	public ISeq<K> next() {
-		return more().seq();
+		return more();
 	}
 
 	public ISeq<K> more() {

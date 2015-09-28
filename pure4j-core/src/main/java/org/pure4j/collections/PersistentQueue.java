@@ -217,7 +217,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 			private final Iterator<K> riter = r != null ? r.iterator() : null;
 
 			public boolean hasNext() {
-				return ((fseq != null && fseq.seq() != null) || (riter != null && riter
+				return ((fseq != null) || (riter != null && riter
 						.hasNext()));
 			}
 

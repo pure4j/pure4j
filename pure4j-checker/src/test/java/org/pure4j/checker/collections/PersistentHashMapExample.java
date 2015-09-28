@@ -3,11 +3,14 @@ package org.pure4j.checker.collections;
 import java.util.Collection;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.collections.IPersistentMap;
+import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.PersistentHashMap;
 
 public class PersistentHashMapExample extends AbstractChecker {
@@ -45,6 +48,12 @@ public class PersistentHashMapExample extends AbstractChecker {
 		pureMethod(phm, 3, 3);
 		phm = phm.assoc("testy", "mctest");
 		pureMethod(phm, 4, 4);
+		
+		String toStringMap = phm.toString();
+		ITransientMap<String, String> theTransVer = phm.asTransient();
+		theTransVer = theTransVer.assoc("new", "Stuff");
+		Assert.assertEquals(toStringMap, phm.toString());
+		Assert.assertEquals(phm, theTransVer.persistent().without("new"));
 	}
 	
 }

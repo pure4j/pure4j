@@ -19,6 +19,8 @@ public interface IPersistentCollection<K> extends Seqable<K>, Collection<K>, Cou
 
 	IPersistentCollection<K> empty();
 	
+	ITransientCollection<K> asTransient();
+	
 	
 
 }

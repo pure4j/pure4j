@@ -44,7 +44,7 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		return ret;
 	}
 
-	PersistentTreeSet(IPersistentMap<K, K> impl) {
+	private PersistentTreeSet(IPersistentMap<K, K> impl) {
 		super(impl);
 	}
 

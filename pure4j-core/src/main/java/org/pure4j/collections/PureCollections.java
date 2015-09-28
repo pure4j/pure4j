@@ -288,8 +288,9 @@ public class PureCollections {
 		return tv.persistent();
 	}
 	
+	@Pure
 	public static <T extends Comparable<? super T>> IPersistentVector<T> sort(ISeq<T> list) {
-		TransientVector<T> tl = new TransientVector<>(list);
+		TransientVector<T> tl = new TransientVector<T>(list);
 		Collections.sort(tl);
 		return tl.persistent();
 	}

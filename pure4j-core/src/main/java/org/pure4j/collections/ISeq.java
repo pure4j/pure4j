@@ -14,20 +14,30 @@ import org.pure4j.annotations.immutable.ImmutableValue;
 
 
 /**
- * A persistent, functional, sequence interface
- * <p/>
- * ISeqs are immutable values, i.e. neither first(), nor rest() changes or
- * invalidates the ISeq
+ * A persistent, functional, sequence interface.
+ * 
+ * <p>ISeqs are immutable values, i.e. neither first(), nor rest() changes or
+ * invalidates the ISeq.
+ * 
+ * <p>This is the equivalent of <code>java.util.Iterator</code> for persistent collections.
+ * 
+ * <p>An empty seq is null.  
  */
 @ImmutableValue
-public interface ISeq<K> extends IPersistentCollection<K> {
+public interface ISeq<K> extends Counted, Seqable<K> {
 
 	K first();
 
+	/**
+	 * Returns a seq for the remainder of the list. If there are no more elements, returns null.
+	 */
 	ISeq<K> next();
 
 	ISeq<K> more();
 
+	/**
+	 * Adds an element to the front of the seq.
+	 */
 	ISeq<K> cons(K o);
 
 }

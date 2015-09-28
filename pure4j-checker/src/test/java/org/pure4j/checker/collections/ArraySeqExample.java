@@ -22,7 +22,7 @@ public class ArraySeqExample extends AbstractChecker{
 		
 		log("seq: "+in.toString());
 		
-		log(in.iterator().next().toString());
+		log(in.next().toString());
 		
 		assertEquals(expectedLength, in.count());
 		assertEquals(expectedFirst, in.first());

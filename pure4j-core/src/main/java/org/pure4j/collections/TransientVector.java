@@ -17,6 +17,13 @@ final public class TransientVector<K> extends ArrayList<K> implements ITransient
 		super(initialCapacity);
 	}
 
+	public TransientVector(ISeq<K> list) {
+		super(list.count());
+		for (K k : list) {
+			add(k);
+		}
+	}
+
 	@Override
 	public IPersistentVector<K> persistent() {
 		return PersistentVector.create(this);

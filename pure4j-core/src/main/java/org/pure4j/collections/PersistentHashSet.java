@@ -31,40 +31,42 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 
 	@SuppressWarnings("unchecked")
 	public static <K> PersistentHashSet<K> create(K... init) {
-		ITransientSet<K> ret = (ITransientSet<K>) new TransientHashSet<>();
+		ITransientMap<K, K> map = (ITransientMap<K, K>) PersistentHashMap.emptyMap().asTransient();
 		for (int i = 0; i < init.length; i++) {
-			ret.add(init[i]);
+			map = map.assoc(init[i], init[i]);
 		}
-		return (PersistentHashSet<K>) ret.persistent();
+		return new PersistentHashSet<K>(map.persistent());
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <K> PersistentHashSet<K> create(Collection<K> init) {
-		ITransientSet<K> ret = (ITransientSet<K>)  new TransientHashSet<>();
+		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
 		for (K key : init) {
-			ret.add(key);
+			map = map.assoc(key, key);
 		}
-		return (PersistentHashSet<K>) ret.persistent();
+		
+		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
 	}
 
 	@SuppressWarnings("unchecked")
 	static public <K> PersistentHashSet<K> create(ISeq<K> items) {
-		ITransientSet<K> ret = (ITransientSet<K>)  new TransientHashSet<>();
+		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
 		for (; items != null; items = items.next()) {
-			ret.add(items.first());
+			K first = items.first();
+			map = map.assoc(first, first);
 		}
-		return (PersistentHashSet<K>) ret.persistent();
+		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <K> PersistentHashSet<K> createWithCheck(K... init) {
-		ITransientSet<K> ret = (ITransientSet<K>)  new TransientHashSet<>();
+		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
 		for (int i = 0; i < init.length; i++) {
-			ret.add(init[i]);
-			if (ret.size() != i + 1)
+			map = map.assoc(init[i], init[i]);
+			if (map.count() != i + 1)
 				throw new IllegalArgumentException("Duplicate key: " + init[i]);
 		}
-		return (PersistentHashSet<K>) ret.persistent();
+		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
 	}
 
 	@SuppressWarnings("unchecked")
