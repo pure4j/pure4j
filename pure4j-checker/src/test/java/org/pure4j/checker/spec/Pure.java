@@ -10,6 +10,7 @@ import org.pure4j.checker.spec.pure.construct.TestPureUse;
 import org.pure4j.checker.spec.pure.forced1.ForceInterfacePurity;
 import org.pure4j.checker.spec.pure.forced2.SomeForcedPure;
 import org.pure4j.checker.spec.pure.forced3.SomeForcedImpure;
+import org.pure4j.checker.spec.pure.forced4.ForceInterfaceNotPure;
 import org.pure4j.checker.spec.pure.implementation_only.SomeImplementationOnlyPure;
 import org.pure4j.checker.spec.pure.interface_not_pure.TestCheckCatchesNonImmutableValueArguments;
 import org.pure4j.checker.spec.pure.math.PureMathsTests;
@@ -63,6 +64,7 @@ public class Pure {
 	
 	@Test
 	public void canOverrideAndForceInterfaceNotPure() {
+		Helper.check(0, ForceInterfaceNotPure.class);
 	}
 	
 	@Test

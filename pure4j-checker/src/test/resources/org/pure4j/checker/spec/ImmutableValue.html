@@ -23,7 +23,7 @@
 		<li><del>Concrete classes inheriting or declaring this annotation must be <code>final</code></del>.</li>
 		<li concordion:execute="genericParamsMustBeImmutable()">Any generic type parameters supplied to an <code>ImmutableValue</code> annotated class must also be immutable value types.</li>
 		<li concordion:execute="parametersMustBeImmutable()">To ensure thread-safety, arguments to methods on the class must also be immutable. </li>
-		<li concordion:execute="returnTypeAnything()">Returned values from <code>@ImmutableValue</code> objects can be of any type.</code></li>
+		<li concordion:execute="returnTypeAnything()">Returned values from <code>@ImmutableValue</code> objects can be of any type.</li>
 		<li concordion:execute="methodsMustBePure()">Any instance (i.e. non-static) methods on the class must be implementation-pure. (see {@link Pure} for what this entails).</li>
 		<li concordion:execute="overriddenMethodPurityNotChecked()">Methods (inherited from a base-class) which are overridden need not be pure.</li>
 		<li concordion:execute="staticMethodsNotPure()">The purity (or otherwise) of static methods in the class hierarchy are not affected by this annotation</li>
