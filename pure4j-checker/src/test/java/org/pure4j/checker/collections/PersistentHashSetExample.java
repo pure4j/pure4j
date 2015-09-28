@@ -5,6 +5,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.collections.IPersistentSet;
+import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentHashSet;
 
 public class PersistentHashSetExample extends AbstractChecker {
@@ -24,6 +25,7 @@ public class PersistentHashSetExample extends AbstractChecker {
 	@Test
 	public void sanityTestOfSet() {
 		
+		// check persistence
 		IPersistentSet<String> phm = PersistentHashSet.create("bob", "jeff", "gogo");
 		phm = phm.cons("spencer");
 		pureMethod(phm, 4);
@@ -32,6 +34,13 @@ public class PersistentHashSetExample extends AbstractChecker {
 		phm = phm.cons("spencerc");
 		phm = phm.cons("spencerc");		
 		pureMethod(phm, 7);
+		
+		// check transient
+		ITransientSet<String> set = phm.asTransient();
+		set.add("something");
+		set.remove("spencera");
+		IPersistentSet<String> out = set.persistent();
+		System.out.println(out);
 	}
 	
 }

@@ -12,7 +12,7 @@ import java.util.RandomAccess;
  * must not remove this notice, or any other, from this software.
  */
 
-public interface IPersistentVector<K> extends IPersistentStack<K>, Reversible<K>, Indexed<K>, List<K>, RandomAccess, Transientable<K> {
+public interface IPersistentVector<K> extends IPersistentStack<K>, Reversible<K>, Indexed<K>, List<K>, RandomAccess {
 
 	int length();
 

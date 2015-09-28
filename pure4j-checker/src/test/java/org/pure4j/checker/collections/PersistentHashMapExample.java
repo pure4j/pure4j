@@ -41,6 +41,7 @@ public class PersistentHashMapExample extends AbstractChecker {
 	@Test
 	@Pure
 	public void sanityTestOfMap() {
+		// test persistence
 		PersistentHashMap<String, String> phm = PersistentHashMap.emptyMap();
 		phm = phm.assoc("rob", "moffat");
 		phm = phm.assoc("peter", "moffat");
@@ -49,6 +50,8 @@ public class PersistentHashMapExample extends AbstractChecker {
 		phm = phm.assoc("testy", "mctest");
 		pureMethod(phm, 4, 4);
 		
+		
+		// test transient version
 		String toStringMap = phm.toString();
 		ITransientMap<String, String> theTransVer = phm.asTransient();
 		theTransVer = theTransVer.assoc("new", "Stuff");

@@ -1,10 +1,14 @@
 package org.pure4j.checker.collections;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
+import org.pure4j.collections.ITransientQueue;
 import org.pure4j.collections.PersistentQueue;
+import org.pure4j.collections.TransientQueue;
 
 public class PersistentQueueExample extends AbstractChecker {
 
@@ -23,6 +27,8 @@ public class PersistentQueueExample extends AbstractChecker {
 	@Test
 	@Pure
 	public void sanityTestOfQueue() {
+		
+		// check persistence
 		PersistentQueue<String> q = PersistentQueue.emptyQueue();
 		q = q.cons("first");
 		q = q.cons("second");
@@ -33,6 +39,16 @@ public class PersistentQueueExample extends AbstractChecker {
 		q= q.cons("chicken");
 		q = q.cons("basket");
 		checkIt(q, 4, "second");
+		
+		// check transient
+		ITransientQueue<String> tq = q.asTransient();
+		tq.add("something");
+		tq.add("else");
+		
+		Assert.assertEquals("queue:[second, third, chicken, basket]", tq.persistent());
+		
+		System.out.println(tq);
+		
 	}
 
 	

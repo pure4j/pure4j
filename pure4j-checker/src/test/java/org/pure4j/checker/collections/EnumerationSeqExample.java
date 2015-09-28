@@ -32,6 +32,8 @@ public class EnumerationSeqExample extends AbstractChecker {
 		items.add("second");
 		items.add("third");
 		
+		
+		// check out seq persistence
 		Enumeration<String> elements = items.elements();
 		ISeq<String> seq = new EnumerationSeq<String>(elements);
 		checkSeq(seq, 3, "first");
@@ -40,13 +42,14 @@ public class EnumerationSeqExample extends AbstractChecker {
 		checkSeq(seq, 3, "first");
 		checkSeq(seq.next().next(), 1, "third");
 		
+		// check out sorting
 		Collections.shuffle(items);
-	
 		Assert.assertEquals(
 				PureCollections.sort(new EnumerationSeq<String>(items.elements())),
 				new ArraySeq<>("first", "second", "third")
 				);
 		
 		log("seq: "+seq);		
+
 	}
 }

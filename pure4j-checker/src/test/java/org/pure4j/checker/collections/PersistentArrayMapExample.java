@@ -2,11 +2,13 @@ package org.pure4j.checker.collections;
 
 import java.util.Collection;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.collections.IPersistentMap;
+import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.PersistentArrayMap;
 
 public class PersistentArrayMapExample extends AbstractChecker {
@@ -38,6 +40,7 @@ public class PersistentArrayMapExample extends AbstractChecker {
 	@Pure
 	@ShouldBePure
 	public void sanityTestOfMap() {
+		// test persistence
 		IPersistentMap<String, String> phm = PersistentArrayMap.createWithCheck("a", "b");
 		phm = phm.assoc("rob", "moffat");
 		phm = phm.assoc("peter", "moffat");
@@ -45,6 +48,11 @@ public class PersistentArrayMapExample extends AbstractChecker {
 		pureMethod(phm, 4, 4);
 		phm = phm.assoc("testy", "mctest");
 		pureMethod(phm, 5, 5);
+		
+		// test transient version
+		ITransientMap<String, String> trans = phm.asTransient();
+		trans = trans.assoc("named", "valued");
+		Assert.assertEquals("{a=b, rob=moffat, peter=moffat, fiona=pauli, testy=mctest, named=valued}", trans.persistent().toString());
 	}
 
 	

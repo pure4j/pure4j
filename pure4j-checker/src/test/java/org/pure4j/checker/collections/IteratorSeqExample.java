@@ -31,12 +31,15 @@ public class IteratorSeqExample extends AbstractChecker {
 		items.add("first");
 		items.add("second");
 		items.add("third");
+		
+		// check persistence
 		ISeq<String> seq = new IterableSeq<String>(items);
 		checkSeq(seq, 3, "first");
 		checkSeq(seq, 3, "first");
 		checkSeq(seq.next(), 2, "second");
 		checkSeq(seq, 3, "first");
 		
+		// check sorting
 		List<String> items2 = new ArrayList<String>();
 		items2.add("third");
 		items2.add("first");

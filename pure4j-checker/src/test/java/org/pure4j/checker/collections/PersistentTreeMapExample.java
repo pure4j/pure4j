@@ -11,6 +11,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.IterableSeq;
 import org.pure4j.collections.PersistentTreeMap;
 
@@ -49,6 +50,7 @@ public class PersistentTreeMapExample extends AbstractChecker {
 	@Test
 	@Pure
 	public void sanityTestOfMap() {
+		// check persistence
 		PersistentTreeMap<String, String> phm = new PersistentTreeMap<String, String>();
 		phm = phm.assoc("rob", "moffat");
 		phm = phm.assoc("peter", "moffat");
@@ -56,7 +58,16 @@ public class PersistentTreeMapExample extends AbstractChecker {
 		pureMethod(phm, 3, 3);
 		phm = phm.assoc("testy", "mctest");
 		pureMethod(phm, 4, 4);
+		
+		// check sorting (of keys)
 		Assert.assertEquals(new ArraySeq<>("fiona", "peter","rob", "testy"), new IterableSeq<>(phm.keyIterator()));
+		
+		// check transient version
+		ITransientMap<String, String> tm = phm.asTransient();
+		tm = tm.assoc("blah", "grommet");
+		
+		Assert.assertEquals(new ArraySeq<>("blah", "fiona", "peter","rob", "testy"), new IterableSeq<>(tm.persistent().keyIterator()));
+		
 	}
 	
 }

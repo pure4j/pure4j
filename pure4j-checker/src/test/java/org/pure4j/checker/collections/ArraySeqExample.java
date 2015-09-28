@@ -36,6 +36,8 @@ public class ArraySeqExample extends AbstractChecker{
 	
 	@Test
 	public void testSanity() {
+		
+		// check persistence
 		checkSeq(new ArraySeq<String>("A", "B", "C"), 3, "A");		// strings (i.e. objects)
 		checkSeq(ArraySeq.create( 5, 5, 3 ), 3, 5);	// ints
 		ISeq<Character> chars = ArraySeq.create('d', 'e', 'f', 'g' );	//chars
@@ -46,6 +48,8 @@ public class ArraySeqExample extends AbstractChecker{
 		checkSeq(ArraySeq.create(5d, 4d, 9d ), 3, 5d);  // double
 		checkSeq(ArraySeq.create(true, false ), 2, true);  // boolean
 		
+		
+		// check sorting
 		Assert.assertEquals(PureCollections.sort(ArraySeq.create('d', 'e', 'g', 'f' )), ArraySeq.create('d', 'e', 'f', 'g'));
 	}
 }

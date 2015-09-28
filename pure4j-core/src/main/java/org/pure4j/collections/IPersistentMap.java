@@ -28,7 +28,7 @@ public interface IPersistentMap<K, V> extends Iterable<Map.Entry<K, V>>, Counted
 
 	V get(Object key, V notFound);
 	
-	
+	ITransientMap<K, V> asTransient();
 	
 
 }

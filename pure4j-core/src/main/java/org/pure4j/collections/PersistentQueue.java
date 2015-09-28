@@ -241,6 +241,12 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	public String toString() {
 		return ToStringFunctions.toString(this);
 	}
+
+	@Override
+	public ITransientQueue<K> asTransient() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 }

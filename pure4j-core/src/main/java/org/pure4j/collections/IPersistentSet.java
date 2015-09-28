@@ -22,4 +22,6 @@ public interface IPersistentSet<K> extends IPersistentCollection<K>, Counted, Se
 	public boolean contains(Object key);
 	
 	public IPersistentSet<K> cons(K key);
+	
+	public ITransientSet<K> asTransient();
 }
