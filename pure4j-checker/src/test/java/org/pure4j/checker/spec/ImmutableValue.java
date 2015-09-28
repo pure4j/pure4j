@@ -142,7 +142,7 @@ public class ImmutableValue {
 
 	@Test
 	public void abstractImmutableValueImplementsHashCodeAndEquals() {
-		Helper.check(0, SomeBeanLibraryBased.class);
+		Helper.check(1, SomeBeanLibraryBased.class);
 	}
 	
 	@Test
