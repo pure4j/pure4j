@@ -105,10 +105,11 @@ public class PurityChecker implements Rule {
 	}
 	
 	public void addMethodsFromClassToPureList(Class<?> pureClass, Callback cb, ProjectModel pm, boolean includeObject, boolean includeStatics) {
+		cb.send(pureClass.toString()+" methods: ");
 		Set<String> overrides = new LinkedHashSet<String>();
 		Class<?> in = pureClass;
 		
-		while (includeObject ? (in != null) : (in != Object.class)) {
+		while (includeObject ? (in != null) : ((in != Object.class) && (in != null))) {
 			Set<String> implementations = new LinkedHashSet<String>();
 			for (Constructor<?> c : in.getDeclaredConstructors()) {
 				ConstructorHandle ch = new ConstructorHandle(c);
@@ -117,8 +118,6 @@ public class PurityChecker implements Rule {
 			
 			for (Method m : in.getDeclaredMethods()) {
 				MethodHandle mh = new MethodHandle(m);
-				Pure p = mh.getAnnotation(cl, Pure.class);
-				Enforcement e = p == null ? Enforcement.CHECKED : p.value();
 				if ((!isStaticMethod(m)) || includeStatics) {
 					String signature = mh.getSignature();
 					boolean overridden = overrides.contains(signature);

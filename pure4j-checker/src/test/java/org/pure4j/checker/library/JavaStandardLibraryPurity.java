@@ -13,6 +13,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.AbstractCollection;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -37,6 +40,7 @@ import java.util.Vector;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.pure4j.collections.APersistentMap;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.PersistentArrayMap;
 import org.pure4j.collections.PersistentHashMap;
@@ -48,6 +52,7 @@ import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.PureCollectors;
+import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientVector;
@@ -87,8 +92,8 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
 						// transient array seq.
-						// tranisent hash map
-						TransientHashSet.class
+						TransientHashSet.class,
+						TransientHashMap.class,
 ////						TransientList.class,
 ////						//TransientQueue.class,
 ////						//TransientTreeMap.class,
@@ -96,7 +101,8 @@ public class JavaStandardLibraryPurity {
 //						TransientVector.class,
 //						PureCollections.class,
 //						ArraySeq.class,
-//						PersistentHashMap.class, 
+						APersistentMap.class,
+						PersistentHashMap.class
 //						PersistentHashSet.class,
 //						PersistentList.class,
 //						PersistentQueue.class,
@@ -138,7 +144,9 @@ public class JavaStandardLibraryPurity {
 		if (assumePurity) {
 			for (String classInModel : pm.getAllClasses()) {
 				ClassHandle ch = new ClassHandle(classInModel);
-				checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true, true);	
+				if (!ch.hydrate(cl).isInterface()) {
+					checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, false, true);	
+				}
 			}
 		}
 		checker.checkModel(pm, fc);
@@ -152,6 +160,9 @@ public class JavaStandardLibraryPurity {
 	@SuppressWarnings("unchecked")
 	protected List<Class<?>> javaUtilClasses() {
 		return Arrays.asList(
+		Objects.class, 
+		AbstractSet.class,
+		AbstractCollection.class, 
 //		ArrayList.class,
 //		ListIterator.class,
 //		Arrays.class,

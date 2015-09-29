@@ -22,6 +22,8 @@ public abstract class AbstractClassAnnoatationCache implements ClassAnnotationCa
 			if (t instanceof Class) {
 				if (((Class<?>) t).isArray()) {
 					return false;
+				} else if (((Class<?>)t).isEnum()) {
+					return true;
 				} else {
 					return classIsMarked((Class<?>) t, cb);
 				}

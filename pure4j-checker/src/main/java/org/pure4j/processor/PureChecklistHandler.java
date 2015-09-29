@@ -213,6 +213,7 @@ public class PureChecklistHandler {
 					List<MemberHandle> calls = pm.getCalls(declaration);
 					for (MemberHandle mh : calls) {
 						if (mh instanceof CallHandle) {
+							mh = ensureCorrectClass(mh);
 							if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object"))) {
 								// we can skip this one
 							} else if (!isMarkedPure(mh, cb)) {
@@ -481,6 +482,18 @@ public class PureChecklistHandler {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Normalize so that we are calling the class where the method is declared.
+	 */
+	private MemberHandle ensureCorrectClass(MemberHandle mh) {
+		if (mh instanceof MethodHandle) {
+			Method m = ((MethodHandle)mh).hydrate(cl);
+			MethodHandle m2 = new MethodHandle(m);
+			return m2;
+		}
+		return mh;
 	}
 
 	private boolean isInnerClassAccessMethod(MemberHandle mh, Callback cb) {

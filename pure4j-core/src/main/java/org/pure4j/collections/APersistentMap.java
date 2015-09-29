@@ -55,7 +55,9 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		return mapEquals(this, obj);
 	}
 
+	@Pure
 	static public <K2, V2> boolean mapEquals(IPersistentMap<K2,V2> m1, Object obj) {
+		Pure4J.immutable(m1, obj);
 		if (m1 == obj)
 			return true;
 		if (!(obj instanceof Map))

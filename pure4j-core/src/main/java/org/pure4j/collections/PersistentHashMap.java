@@ -46,11 +46,11 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	@IgnoreImmutableTypeCheck
 	final V nullValue;
 
-	final private static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
+	final static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
 			null, false, null);
 	
 	@IgnoreImmutableTypeCheck
-	final private static Object NOT_FOUND = new Object();
+	final static Object NOT_FOUND = new Object();
 
 	static public <K, V> PersistentHashMap<K, V> create(Map<K,V> other) {
 		@SuppressWarnings("unchecked")
@@ -137,12 +137,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (root != null) ? root.find(0, hash(key), key) : null;
 	}
 
-	@Pure(Enforcement.FORCE)
-	/*
-	 * Not pure, specifically because of Box.
-	 * It would be fairly easy to re-write Box so that it has getters and setters, and 
-	 * assures it's purity.  However, it's part of the implementation, so I won't do this now.
-	 */
+	
 	public PersistentHashMap<K, V> assoc(K key, V val) {
 		Pure4J.immutable(key, val);
 		if (key == null) {
@@ -273,7 +268,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (hash >>> shift) & 0x01f;
 	}
 
-	@Pure(Enforcement.NOT_PURE)
 	public TransientHashMap<K, V> asTransient() {
 		return new TransientHashMap<K, V>(this);
 	}
@@ -389,7 +383,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return values().contains(value);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public void clear() {
 			this.root = EMPTY.root;
