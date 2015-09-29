@@ -16,9 +16,22 @@ import java.util.Collection;
 
 import org.pure4j.annotations.mutable.MutableUnshared;
 
+/**
+ * ITransientCollection hierarchy defines classes which, in general are extensions of regular Java collections
+ * classes but have a pure constructor (taking a Seq or an IPersistent something), and have the persistent() 
+ * method below.
+ * 
+ * This means that you can use the existing Java collections classes as @MutableUnshareds.
+ * 
+ * @author robmoffat
+ *
+ * @param <K>
+ */
 @MutableUnshared
 public interface ITransientCollection<K> extends Collection<K> {
 
 	IPersistentCollection<K> persistent();
+	
+	
 	
 }

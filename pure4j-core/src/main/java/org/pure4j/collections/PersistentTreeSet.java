@@ -28,12 +28,21 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		return ret;
 	}
 	
-	public static <K> PersistentTreeSet<K> create(K... init) {
-		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>());
+	public static <K> PersistentTreeSet<K> create(Comparator<? super K> comp) {
+		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
+		return ret;
+	}
+	
+	public static <K> PersistentTreeSet<K> create(Comparator<? super K> comp, K... init) {
+		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
 		for (int i = 0; i < init.length; i++) {
 			ret = ret.cons(init[i]);
 		}
 		return ret;
+	}
+	
+	public static <K> PersistentTreeSet<K> create(K... init) {
+		return create(PersistentTreeMap.DEFAULT_COMPARATOR, init);
 	}
 
 	static public <K> PersistentTreeSet<K> create(Comparator<K> comp, ISeq<K> items) {
@@ -77,7 +86,7 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 
 
-	public Comparator<K> comparator() {
+	public Comparator<? super K> comparator() {
 		return ((PersistentTreeMap<K, K>) impl).comparator();
 	}
 
@@ -96,5 +105,10 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		Pure4J.immutable(key);
 		PersistentTreeMap<K, K> m = (PersistentTreeMap<K, K>) impl;
 		return APersistentMap.KeySeq.create(m.seq());
+	}
+
+	@Override
+	public ITransientSet<K> asTransient() {
+		return new TransientTreeSet<K>(comparator(), this.seq());
 	}
 }

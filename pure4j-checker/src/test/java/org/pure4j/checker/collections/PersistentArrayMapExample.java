@@ -51,7 +51,7 @@ public class PersistentArrayMapExample extends AbstractChecker {
 		
 		// test transient version
 		ITransientMap<String, String> trans = phm.asTransient();
-		trans = trans.assoc("named", "valued");
+		trans.put("named", "valued");
 		Assert.assertEquals("{a=b, rob=moffat, peter=moffat, fiona=pauli, testy=mctest, named=valued}", trans.persistent().toString());
 	}
 

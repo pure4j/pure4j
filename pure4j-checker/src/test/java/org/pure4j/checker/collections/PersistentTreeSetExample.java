@@ -12,6 +12,7 @@ import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.IPersistentSet;
+import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentTreeSet;
 
 public class PersistentTreeSetExample extends AbstractChecker {
@@ -33,6 +34,7 @@ public class PersistentTreeSetExample extends AbstractChecker {
 	@Test
 	public void sanityTestOfSet() {
 		
+		// test persistence
 		IPersistentSet<String> phm1 = PersistentTreeSet.create("bob", "jeff", "gogo", "zzap");
 		IPersistentSet<String> phm = phm1.cons("spencer");
 		pureMethod(phm, 4);
@@ -41,8 +43,15 @@ public class PersistentTreeSetExample extends AbstractChecker {
 		phm = phm.cons("spencerc");
 		phm = phm.cons("spencerc");
 		pureMethod(phm, 7);
-		
+	
+		// test equality
 		Assert.assertEquals(phm1, PersistentTreeSet.create("bob", "gogo", "jeff", "zzap"));
+		
+		ITransientSet<String> trans = phm1.asTransient();
+		trans.add("boggins");
+		Assert.assertEquals(PersistentTreeSet.create("bob", "boggins", "gogo", "jeff", "zzap"), trans.persistent());
+		
+		
 	}
 	
 }

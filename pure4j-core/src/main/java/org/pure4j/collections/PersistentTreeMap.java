@@ -35,7 +35,7 @@ import org.pure4j.annotations.pure.Pure;
 
 public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Reversible<Entry<K, V>>, Sorted<K, Entry<K, V>> {
 	
-	private static final DefaultComparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
+	static final DefaultComparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
 	
 	@ImmutableValue
 	private static final class DefaultComparator<K> implements Comparator<K>, Serializable {
@@ -51,7 +51,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 	}
 
 	@IgnoreImmutableTypeCheck
-	public final Comparator<K> comp;
+	public final Comparator<? super K> comp;
 	@IgnoreImmutableTypeCheck
 	public final Node tree;
 	
@@ -60,10 +60,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 
 	final static private PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
 
-	@SuppressWarnings("unchecked")
-	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
-		IPersistentMap<K, V> ret = (IPersistentMap<K, V>) EMPTY;
-		for (Entry<K, V> e : other.entrySet()) {
+	static public <K, V> IPersistentMap<K, V> create(Comparator<? super K> comp, ITransientMap<K, V> other) {
+		IPersistentMap<K, V> ret = new PersistentTreeMap<K, V>(comp);
+		for (Map.Entry<K, V> e : other.entrySet()) {
 			ret = ret.assoc(e.getKey(), e.getValue());
 		}
 		return ret;
@@ -74,7 +73,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this((Comparator<K>) DEFAULT_COMPARATOR);
 	}
 
-	public PersistentTreeMap(Comparator<K> comp) {
+	public PersistentTreeMap(Comparator<? super K> comp) {
 		Pure4J.immutable(comp);
 		this.comp = comp;
 		tree = null;
@@ -82,7 +81,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 	}
 
 	@Pure(Enforcement.FORCE)	// since it's private
-	private PersistentTreeMap(Comparator<K> comp, Node tree, int _count) {
+	private PersistentTreeMap(Comparator<? super K> comp, Node tree, int _count) {
 		this.comp = comp;
 		this.tree = tree;
 		this._count = _count;
@@ -101,7 +100,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 	}
 
 	@SuppressWarnings("unchecked")
-	static public <K> PersistentTreeMap<K, K> create(Comparator<K> comp, ISeq<K> items) {
+	static public <K> PersistentTreeMap<K, K> create(Comparator<? super K> comp, ISeq<K> items) {
 		IPersistentMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
 		for (; items != null; items = items.next().next()) {
 			if (items.next() == null)
@@ -175,7 +174,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		return null;
 	}
 
-	public Comparator<K> comparator() {
+	public Comparator<? super K> comparator() {
 		return comp;
 	}
 
@@ -875,5 +874,10 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public ITransientMap<K, V> asTransient() {
+		return new TransientTreeMap<K, V>(this);
 	}
 }

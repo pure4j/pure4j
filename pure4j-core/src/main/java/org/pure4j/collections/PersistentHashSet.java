@@ -33,7 +33,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	public static <K> PersistentHashSet<K> create(K... init) {
 		ITransientMap<K, K> map = (ITransientMap<K, K>) PersistentHashMap.emptyMap().asTransient();
 		for (int i = 0; i < init.length; i++) {
-			map = map.assoc(init[i], init[i]);
+			map.put(init[i], init[i]);
 		}
 		return new PersistentHashSet<K>(map.persistent());
 	}
@@ -42,7 +42,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	public static <K> PersistentHashSet<K> create(Collection<K> init) {
 		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
 		for (K key : init) {
-			map = map.assoc(key, key);
+			map.put(key, key);
 		}
 		
 		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
@@ -53,7 +53,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
 		for (; items != null; items = items.next()) {
 			K first = items.first();
-			map = map.assoc(first, first);
+			map.put(first, first);
 		}
 		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
 	}
@@ -62,7 +62,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	public static <K> PersistentHashSet<K> createWithCheck(K... init) {
 		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
 		for (int i = 0; i < init.length; i++) {
-			map = map.assoc(init[i], init[i]);
+			map.put(init[i], init[i]);
 			if (map.count() != i + 1)
 				throw new IllegalArgumentException("Duplicate key: " + init[i]);
 		}
@@ -118,7 +118,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	}
 
 	@Pure(Enforcement.NOT_PURE)
-	public ITransientCollection<K> asTransient() {
+	public ITransientSet<K> asTransient() {
 		return new TransientHashSet<>(this);
 	}
 

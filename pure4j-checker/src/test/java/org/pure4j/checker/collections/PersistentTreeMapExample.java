@@ -64,7 +64,7 @@ public class PersistentTreeMapExample extends AbstractChecker {
 		
 		// check transient version
 		ITransientMap<String, String> tm = phm.asTransient();
-		tm = tm.assoc("blah", "grommet");
+		tm.put("blah", "grommet");
 		
 		Assert.assertEquals(new ArraySeq<>("blah", "fiona", "peter","rob", "testy"), new IterableSeq<>(tm.persistent().keyIterator()));
 		

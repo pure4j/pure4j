@@ -10,9 +10,11 @@
 
 package org.pure4j.collections;
 
-import java.util.Map.Entry;
+import java.util.Map;
+
 
 abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
+
 	abstract void ensureEditable();
 	abstract ITransientMap<K, V> doAssoc(K key, V val);
 	abstract ITransientMap<K, V> doWithout(Object key);
@@ -53,4 +55,37 @@ abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 		ensureEditable();
 		return doCount();
 	}
+	@Override
+	public int size() {
+		return count();
+	}
+	@Override
+	public boolean isEmpty() {
+		return count() == 0;
+	}
+	
+	@Override
+	public V get(Object key) {
+		return doValAt(key, null);
+	}
+	@Override
+	public V put(K key, V value) {
+		doAssoc(key, value);
+		return value;
+	}
+	@Override
+	public V remove(Object key) {
+		V value = doValAt(key, null);
+		doWithout(key);
+		return value;
+	}
+	
+	@Override
+	public void putAll(Map<? extends K, ? extends V> m) {
+		for (Map.Entry<? extends K, ? extends V> elem : m.entrySet()) {
+			doAssoc(elem.getKey(), elem.getValue());
+		}
+	}
+
+	
 }

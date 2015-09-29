@@ -45,7 +45,7 @@ public class PersistentQueueExample extends AbstractChecker {
 		tq.add("something");
 		tq.add("else");
 		
-		Assert.assertEquals("queue:[second, third, chicken, basket]", tq.persistent());
+		Assert.assertEquals("[second, third, chicken, basket, something, else]", tq.persistent().toString());
 		
 		System.out.println(tq);
 		

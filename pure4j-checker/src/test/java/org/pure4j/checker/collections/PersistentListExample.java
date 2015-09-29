@@ -40,6 +40,6 @@ public class PersistentListExample extends AbstractChecker {
 		// test transient
 		ITransientCollection<Integer> tran = pl.asTransient();
 		tran.add(77);
-		assertEquals("sdkfjhsdk:", tran.persistent().toString());
+		assertEquals("[10, 5, 77]", tran.persistent().toString());
 	}
 }

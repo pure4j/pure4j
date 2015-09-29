@@ -12,16 +12,13 @@
 
 package org.pure4j.collections;
 
+import java.util.Map;
 
-public interface ITransientMap<K, V> extends Counted {
+import org.pure4j.annotations.mutable.MutableUnshared;
 
-	ITransientMap<K, V> assoc(K key, V val);
-
-	ITransientMap<K, V> without(Object key);
+@MutableUnshared
+public interface ITransientMap<K, V> extends Counted, Map<K, V> {
 
 	IPersistentMap<K, V> persistent();
-
-	V valAt(Object key, V object);
-
-	V valAt(Object key);
+	
 }

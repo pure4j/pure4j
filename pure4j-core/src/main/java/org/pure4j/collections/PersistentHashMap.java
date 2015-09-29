@@ -11,9 +11,11 @@
 package org.pure4j.collections;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.pure4j.Pure4J;
@@ -66,7 +68,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			throw new IllegalArgumentException("Argument must supply key/value pairs");
 		}
 		for (int i = 0; i < pairs.length; i=i+2) {
-			ret = ret.assoc((K) pairs[i], (V) pairs[i+1]);	
+			ret.put((K) pairs[i], (V) pairs[i+1]);	
 		}
 		return ret.persistent();
 	}
@@ -93,7 +95,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
+			ret.put(items.first(), (K) PureCollections.second(items));
 		}
 		return (PersistentHashMap<K, K>) ret.persistent();
 	}
@@ -105,7 +107,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			if (items.next() == null)
 				throw new IllegalArgumentException(String.format(
 						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
+			ret.put(items.first(), (K) PureCollections.second(items));
 			if (ret.count() != i + 1)
 				throw new IllegalArgumentException("Duplicate key: "
 						+ items.first());
@@ -368,6 +370,47 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			if (edit.get() == null)
 				throw new IllegalAccessError(
 						"Transient used after persistent! call");
+		}
+
+		@Override
+		public boolean containsKey(Object key) {
+			Pure4J.immutable(key);
+			if (key == null)
+				return hasNull;
+			return (root != null) ? root.find(0, hash(key), key, NOT_FOUND) != NOT_FOUND
+					: false;
+		}
+
+		/**
+		 * Currently very expensive
+		 */
+		@Override
+		public boolean containsValue(Object value) {
+			return values().contains(value);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void clear() {
+			this.root = EMPTY.root;
+			this.count = 0;
+			this.hasNull = EMPTY.hasNull;
+			this.nullValue = (V) EMPTY.nullValue;
+		}
+
+		@Override
+		public Set<K> keySet() {
+			return persistent().keySet();
+		}
+
+		@Override
+		public Collection<V> values() {
+			return persistent().values();
+		}
+
+		@Override
+		public Set<java.util.Map.Entry<K, V>> entrySet() {
+			return persistent().entrySet();
 		}
 	}
 

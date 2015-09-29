@@ -11,8 +11,10 @@
 package org.pure4j.collections;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
@@ -46,7 +48,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		Pure4J.immutable(other);
 		ITransientMap<K, V> ret = (ITransientMap<K, V>) EMPTY.asTransient();
 		for (Entry<K, V> e : other.entrySet()) {
-			ret = ret.assoc(e.getKey(), e.getValue());
+			ret.put(e.getKey(), e.getValue());
 		}
 		return ret.persistent();
 	}
@@ -430,6 +432,57 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 			if (owner == null)
 				throw new IllegalAccessError(
 						"Transient used after persistent! call");
+		}
+
+		@Override
+		public boolean containsKey(Object key) {
+			return indexOf(key) != -1;
+		}
+
+		@Override
+		public boolean containsValue(Object value) {
+			for (int i = 1; i < len; i += 2) {
+				if (equalKey(array[i], value)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public void clear() {
+			this.len = 0;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Set<K> keySet() {
+			IPersistentSet<K> set = PersistentHashSet.emptySet();
+			for (int i = 0; i < len; i += 2) {
+				set = set.cons((K) array[i]);
+			}
+			return set;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Collection<V> values() {
+			PersistentList<V> out = (PersistentList<V>) PersistentList.emptyList();
+			for (int i = 1; i < len; i += 2) {
+				out = out.cons((V) array[i]);
+			}
+			
+			return out;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public IPersistentSet<Entry<K, V>> entrySet() {
+			IPersistentSet<Entry<K, V>> set = PersistentHashSet.emptySet();
+			for (int i = 0; i < len; i += 2) {
+				set = set.cons(new MapEntry<K, V>((K) array[i], (V) array[i+1]));
+			}
+			return set;
 		}
 	}
 }

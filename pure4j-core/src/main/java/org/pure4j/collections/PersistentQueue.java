@@ -244,8 +244,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 
 	@Override
 	public ITransientQueue<K> asTransient() {
-		// TODO Auto-generated method stub
-		return null;
+		return new TransientQueue<K>(this.seq());
 	}
 	
 

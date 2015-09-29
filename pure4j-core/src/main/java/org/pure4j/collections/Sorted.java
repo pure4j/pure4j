@@ -16,7 +16,7 @@ import java.util.Comparator;
 
 public interface Sorted<K, E> {
 	
-	Comparator<K> comparator();
+	Comparator<? super K> comparator();
 
 	K entryKey(E entry);
 

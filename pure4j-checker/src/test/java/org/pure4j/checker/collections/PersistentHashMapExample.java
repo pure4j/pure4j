@@ -54,7 +54,7 @@ public class PersistentHashMapExample extends AbstractChecker {
 		// test transient version
 		String toStringMap = phm.toString();
 		ITransientMap<String, String> theTransVer = phm.asTransient();
-		theTransVer = theTransVer.assoc("new", "Stuff");
+		theTransVer.put("new", "Stuff");
 		Assert.assertEquals(toStringMap, phm.toString());
 		Assert.assertEquals(phm, theTransVer.persistent().without("new"));
 	}
