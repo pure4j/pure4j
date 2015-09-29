@@ -120,12 +120,8 @@ public class PureChecklistHandler {
 			return sb.toString();
 		}
 		
-		public boolean checkPurity(Callback cb, ProjectModel pm) {
-			return checkImplementationPurity(cb, pm) && checkInterfacePurity(cb, pm);
-		}
-		
-		public boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
-			if (pureInterface == null) {
+		public Boolean checkInterfacePurity(Callback cb, ProjectModel pm) {
+			if ((pureInterface == null) && (checkInterface)) {
 				pureInterface = true;
 				
 				if (!pm.withinModel(declaration.getClassName())) {
@@ -176,8 +172,8 @@ public class PureChecklistHandler {
 			return pureInterface;
 		}
 
-		public boolean checkImplementationPurity(Callback cb, ProjectModel pm) {
-			if (pureImplementation == null) {
+		public Boolean checkImplementationPurity(Callback cb, ProjectModel pm) {
+			if ((pureImplementation == null) && (checkImpl)) {
 				try {
 					pureImplementation = true;
 
@@ -242,7 +238,7 @@ public class PureChecklistHandler {
 									}
 								}
 							} 
-						}
+						} 
 					}
 				} catch (MemberCantBeHydratedException e) {
 					cb.registerError(e);
@@ -381,12 +377,16 @@ public class PureChecklistHandler {
 	private ClassLoader cl;
 	private ClassAnnotationCache immutables;
 	private ClassAnnotationCache mutableUnshared;
+	private boolean checkInterface;
+	private boolean checkImpl;
 
-	public PureChecklistHandler(ClassLoader cl, ClassAnnotationCache immutables, ClassAnnotationCache mutableUnshared) {
+	public PureChecklistHandler(ClassLoader cl, ClassAnnotationCache immutables, ClassAnnotationCache mutableUnshared, boolean intf, boolean impl) {
 		super();
 		this.cl = cl;
 		this.immutables = immutables;
 		this.mutableUnshared = mutableUnshared;
+		this.checkInterface = intf;
+		this.checkImpl = impl;
 		loadPureLists();
 	}
 
@@ -410,7 +410,7 @@ public class PureChecklistHandler {
 			String[] parts = line.trim().split(" ");
 			if (parts.length == 2) {
 				Enforcement impl = Enforcement.valueOf(parts[0]);
-				PureMethod pureMethod = new PureMethod(parts[1], impl, impl);
+				PureMethod pureMethod = new PureMethod(parts[1], impl, null);
 				pureChecklist.put(pureMethod.declaration, pureMethod);
 			} else {
 				Enforcement impl = Enforcement.valueOf(parts[0]);
@@ -580,7 +580,12 @@ public class PureChecklistHandler {
 
 	public void doPureMethodChecks(Callback cb, ProjectModel pm) {
 		for (PureMethod pureCandidate : pureChecklist.values()) {
-			pureCandidate.checkPurity(cb, pm);
+			if (checkImpl) {
+				pureCandidate.checkImplementationPurity(cb, pm);
+			}
+			if (checkInterface) {
+				pureCandidate.checkInterfacePurity(cb, pm);
+			}
 		}
 	}
 

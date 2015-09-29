@@ -69,8 +69,10 @@ public final class Helper {
 				}
 
 				@Override
-				public void registerPure(String signature) {
-					pures.add(signature);
+				public void registerPure(String signature, Boolean intf, Boolean impl) {
+					if (intf && impl) {
+						pures.add(signature);
+					}
 				}
 			};
 

@@ -8,6 +8,6 @@ public interface Callback {
 	
 	public void registerError(Pure4JException optional);
 	
-	public void registerPure(String signature);
+	public void registerPure(String signature, Boolean interfacePure, Boolean implementationPure);
 	
 }

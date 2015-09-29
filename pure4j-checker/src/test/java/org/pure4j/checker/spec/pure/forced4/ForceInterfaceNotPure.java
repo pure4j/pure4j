@@ -13,7 +13,6 @@ import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 @ImmutableValue
 public final class ForceInterfaceNotPure {
 
-	@ShouldBePure
 	@PureParameters(Enforcement.NOT_PURE)		// but, really should be pure
 	public ForceInterfaceNotPure(String in) {
 		super();
@@ -33,7 +32,7 @@ public final class ForceInterfaceNotPure {
 	
 	
 	@CausesError(ImpureCodeCallingPureCodeWithoutInterfacePurity.class)
-	public void someNotPureCode() {
+	public static void someNotPureCode() {
 		new ForceInterfaceNotPure("blah");
 	}
 	

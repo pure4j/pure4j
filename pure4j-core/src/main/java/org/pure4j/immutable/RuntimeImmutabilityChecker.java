@@ -32,7 +32,7 @@ public class RuntimeImmutabilityChecker {
 	public static Set<Class<?>> createInbuiltImmutableSet() {
 		HashSet<Class<?>> out = new HashSet<Class<?>>();
 		List<Class<?>> l = Arrays.asList((Class<?>) Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class);
+			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class, Void.class);
 		out.addAll(l);
 		return Collections.unmodifiableSet(out);
 	}

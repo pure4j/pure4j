@@ -52,6 +52,7 @@ import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.exception.Pure4JException;
+import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.ClassFileModelBuilder;
@@ -70,7 +71,7 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				List<Class<?>> out = new ArrayList<Class<?>>();
 				out.addAll(javaLangClasses());
-				out.addAll(javaIOClasses());
+			//	out.addAll(javaIOClasses());
 				out.addAll(javaUtilClasses());
 				return out;
 			}
@@ -133,12 +134,12 @@ public class JavaStandardLibraryPurity {
 		}
 		
 		ProjectModel pm = cfmb.getModel();
-		PurityChecker checker = new PurityChecker(cl);
+		PurityChecker checker = new PurityChecker(cl, false, true);
 		if (assumePurity) {
-//			for (String classInModel : pm.getAllClasses()) {
-//				ClassHandle ch = new ClassHandle(classInModel);
-//				checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true);	
-//			}
+			for (String classInModel : pm.getAllClasses()) {
+				ClassHandle ch = new ClassHandle(classInModel);
+				checker.addMethodsFromClassToPureList(ch.hydrate(cl), fc, pm, true, true);	
+			}
 		}
 		checker.checkModel(pm, fc);
 		fc.close();
@@ -150,24 +151,26 @@ public class JavaStandardLibraryPurity {
 
 	@SuppressWarnings("unchecked")
 	protected List<Class<?>> javaUtilClasses() {
-		return Arrays.asList(ArrayList.class,
-		ListIterator.class,
-		Arrays.class,
-		LinkedList.class,
+		return Arrays.asList(
+//		ArrayList.class,
+//		ListIterator.class,
+//		Arrays.class,
+//		LinkedList.class,
 		HashMap.class,
-		HashSet.class,
-		TreeMap.class,
-		TreeSet.class,
-		Deque.class,
-		EnumMap.class,
-		EnumSet.class,
-		Hashtable.class,
-		Vector.class,
-		Iterator.class,
-		StringTokenizer.class,
-		Stack.class,
-		Collections.class, 
-		Currency.class);
+		HashSet.class
+//		TreeMap.class,
+//		TreeSet.class,
+//		Deque.class,
+//		EnumMap.class,
+//		EnumSet.class,
+//		Hashtable.class,
+//		Vector.class,
+//		Iterator.class,
+//		StringTokenizer.class,
+//		Stack.class,
+//		Collections.class, 
+//		Currency.class
+		);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -200,7 +203,8 @@ public class JavaStandardLibraryPurity {
 		Long.class,
 		String.class, 
 		Class.class, 
-		Enum.class);
+		Enum.class, 
+		Void.class);
 	}
 	
 	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Class<?>> done, Set<Resource> resources) throws IOException {
@@ -246,8 +250,10 @@ public class JavaStandardLibraryPurity {
 		List<String> pureSignatures = new ArrayList<String>();
 		
 		@Override
-		public void registerPure(String signature) {
-			pureSignatures.add(signature);
+		public void registerPure(String signature, Boolean interfacePure, Boolean implementationPure) {
+			if (implementationPure) {
+				pureSignatures.add(signature);
+			}
 		}
 
 		@Override
