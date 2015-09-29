@@ -13,7 +13,6 @@
 package org.pure4j.collections;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
@@ -43,15 +42,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		this(createMap(init));
 	}
 
-	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
-	private static <K> IPersistentMap<K, K> createMap(Collection<K> init) {
-		ITransientMap<K, K> map = new TransientHashMap<K, K>();
-		for (K key : init) {
-			map.put(key, key);
-		}
-		return map.persistent();
-	}
+	
 
 	public PersistentHashSet(ISeq<K> items) {
 		this(createMap(items));
@@ -64,6 +55,16 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		for (; items != null; items = items.next()) {
 			K first = items.first();
 			map.put(first, first);
+		}
+		return map.persistent();
+	}
+	
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	private static <K> IPersistentMap<K, K> createMap(Collection<K> init) {
+		ITransientMap<K, K> map = new TransientHashMap<K, K>();
+		for (K key : init) {
+			map.put(key, key);
 		}
 		return map.persistent();
 	}

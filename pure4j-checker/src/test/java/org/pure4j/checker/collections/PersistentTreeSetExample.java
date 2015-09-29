@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
-import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentTreeSet;

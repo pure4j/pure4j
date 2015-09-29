@@ -22,6 +22,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 
 public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		Collection<K>, Set<K>, Serializable {
@@ -156,6 +157,25 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 					throw new UnsupportedOperationException();
 				}
 			};
+	}
+	
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	protected static <K> IPersistentMap<K, K> createMap(ISeq<K> items, ITransientMap<K, K> map) {
+		for (; items != null; items = items.next()) {
+			K first = items.first();
+			map.put(first, first);
+		}
+		return map.persistent();
+	}
+	
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	private static <K> IPersistentMap<K, K> createMap(Collection<K> init, ITransientMap<K, K> map ) {
+		for (K key : init) {
+			map.put(key, key);
+		}
+		return map.persistent();
 	}
 
 }

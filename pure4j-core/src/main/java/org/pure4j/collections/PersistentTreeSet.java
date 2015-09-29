@@ -15,24 +15,24 @@ package org.pure4j.collections;
 import java.util.Comparator;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 
 public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversible<K>, Sorted<K, K> {
 
 	static private final PersistentTreeSet<Object> EMPTY = new PersistentTreeSet<Object>(PersistentTreeMap.emptyMap());
 
-	static public <K> PersistentTreeSet<K> create(ISeq<K> items) {
-		PersistentTreeSet<K> ret = emptySet();
-		for (; items != null; items = items.next()) {
-			ret = (PersistentTreeSet<K>) ret.cons(items.first());
-		}
-		return ret;
+	public PersistentTreeSet(ISeq<K> items) {
+		this(APersistentSet.createMap(items, new TransientTreeMap<K, K>()));
 	}
 	
-	public static <K> PersistentTreeSet<K> create(Comparator<? super K> comp) {
-		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
-		return ret;
+	public PersistentTreeSet(Comparator<? super K> comp) {
+		this(new PersistentTreeMap<K, K>(comp));
 	}
 	
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
 	public static <K> PersistentTreeSet<K> create(Comparator<? super K> comp, K... init) {
 		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
 		for (int i = 0; i < init.length; i++) {
@@ -41,16 +41,14 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		return ret;
 	}
 	
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
 	public static <K> PersistentTreeSet<K> create(K... init) {
 		return create(PersistentTreeMap.DEFAULT_COMPARATOR, init);
 	}
 
-	static public <K> PersistentTreeSet<K> create(Comparator<K> comp, ISeq<K> items) {
-		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
-		for (; items != null; items = items.next()) {
-			ret = (PersistentTreeSet<K>) ret.cons(items.first());
-		}
-		return ret;
+	public PersistentTreeSet(Comparator<? super K> comp, ISeq<K> items) {
+		super(APersistentSet.createMap(items, new TransientTreeMap<>(comp)));
 	}
 
 	private PersistentTreeSet(IPersistentMap<K, K> impl) {

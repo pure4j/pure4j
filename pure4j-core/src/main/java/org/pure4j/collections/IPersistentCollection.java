@@ -9,8 +9,8 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * <ul>
  * <li>A no-args constructor for the empty collection</li>
  * <li>A constructor taking an ISeq.</li>
- * <li>A constructor taking a varargs array (impure)</li>
- * <li>A constructor taking another IPersistentCollection (for copy)</li>
+ * <li>A static create method taking a varargs array (impure)</li>
+ * <li>An impure method taking another Collection (for copy)</li>
  * </ul>
  * 
  * @author robmoffat

@@ -1,12 +1,9 @@
 package org.pure4j.processor;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
-import org.pure4j.processor.PureChecklistHandler.PureMethod;
 
 /**
  * This looks for occasions where a PureMethod 

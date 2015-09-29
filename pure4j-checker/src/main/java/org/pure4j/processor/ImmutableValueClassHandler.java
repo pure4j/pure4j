@@ -10,7 +10,6 @@ import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.ProjectModel;
-import org.springframework.asm.Type;
 
 /**
  * Keeps track of the classes that have been registered as immutable

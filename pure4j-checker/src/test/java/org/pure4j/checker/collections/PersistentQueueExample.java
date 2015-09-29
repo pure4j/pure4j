@@ -8,7 +8,6 @@ import org.pure4j.checker.support.AbstractChecker;
 import org.pure4j.checker.support.ShouldBePure;
 import org.pure4j.collections.ITransientQueue;
 import org.pure4j.collections.PersistentQueue;
-import org.pure4j.collections.TransientQueue;
 
 public class PersistentQueueExample extends AbstractChecker {
 
