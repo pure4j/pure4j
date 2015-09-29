@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.AbstractCollection;
+import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +81,7 @@ public class JavaStandardLibraryPurity {
 				out.addAll(javaUtilClasses());
 				return out;
 			}
-		}, "java.", true, false);
+		}, "java.", true, false, false);
 	}
 	
 	@Test
@@ -115,7 +116,7 @@ public class JavaStandardLibraryPurity {
 						
 						);
 			}
-		}, "org.pure4j", false, true);
+		}, "org.pure4j", false, true, true);
 	}
 	
 	interface ClassListProvider {
@@ -124,7 +125,7 @@ public class JavaStandardLibraryPurity {
 		
 	}
 
-	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem, boolean assumePurity, boolean expectNoErrors) throws IOException {
+	protected void checkPurityOfClasses(String outputName, ClassListProvider clp, String packageStem, boolean assumePurity, boolean checkInterface, boolean expectNoErrors) throws IOException {
 		FileCallback fc = new FileCallback(new File(outputName));
 		ClassFileModelBuilder cfmb = new ClassFileModelBuilder(false);
 		ClassLoader cl = this.getClass().getClassLoader();
@@ -140,7 +141,7 @@ public class JavaStandardLibraryPurity {
 		}
 		
 		ProjectModel pm = cfmb.getModel();
-		PurityChecker checker = new PurityChecker(cl, false, true);
+		PurityChecker checker = new PurityChecker(cl, checkInterface, true);
 		if (assumePurity) {
 			for (String classInModel : pm.getAllClasses()) {
 				ClassHandle ch = new ClassHandle(classInModel);
@@ -163,24 +164,25 @@ public class JavaStandardLibraryPurity {
 		Objects.class, 
 		AbstractSet.class,
 		AbstractCollection.class, 
-//		ArrayList.class,
-//		ListIterator.class,
-//		Arrays.class,
-//		LinkedList.class,
+		AbstractMap.class,
+		ArrayList.class,
+		ListIterator.class,
+		Arrays.class,
+		LinkedList.class,
 		HashMap.class,
-		HashSet.class
-//		TreeMap.class,
-//		TreeSet.class,
-//		Deque.class,
-//		EnumMap.class,
-//		EnumSet.class,
-//		Hashtable.class,
-//		Vector.class,
-//		Iterator.class,
-//		StringTokenizer.class,
-//		Stack.class,
-//		Collections.class, 
-//		Currency.class
+		HashSet.class,
+		TreeMap.class,
+		TreeSet.class,
+		Deque.class,
+		EnumMap.class,
+		EnumSet.class,
+		Hashtable.class,
+		Vector.class,
+		Iterator.class,
+		StringTokenizer.class,
+		Stack.class,
+		Collections.class, 
+		Currency.class
 		);
 	}
 

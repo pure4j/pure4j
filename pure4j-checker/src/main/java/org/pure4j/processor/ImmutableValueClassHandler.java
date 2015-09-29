@@ -9,6 +9,8 @@ import org.pure4j.exception.ClassNotFinalException;
 import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
+import org.pure4j.model.ProjectModel;
+import org.springframework.asm.Type;
 
 /**
  * Keeps track of the classes that have been registered as immutable
@@ -19,13 +21,15 @@ public class ImmutableValueClassHandler extends AbstractClassAnnoatationCache im
 
 	public static final boolean CHECK_FOR_FINAL_CLASSES = false;
 	
+	
 	@Override
-	public void doClassChecks(Class<?> immutableClass, Callback cb) {
+	public void doClassChecks(Class<?> immutableClass, Callback cb, ProjectModel pm) {
 		if (CHECK_FOR_FINAL_CLASSES) {
 			if (!Modifier.isFinal(immutableClass.getModifiers())) {
 				cb.registerError(new ClassNotFinalException(immutableClass));
 			}
 		}
+		
 		
 		while (immutableClass != Object.class) {
 			for (Field f : immutableClass.getDeclaredFields()) {

@@ -11,10 +11,8 @@
 package org.pure4j.collections;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
@@ -57,11 +55,12 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		this.array = new Object[] {};
 	}
 
-	@Pure(Enforcement.FORCE)	// only used privately
+	@SuppressWarnings("unchecked")
 	private IPersistentMap<K, V> createHT(Object[] init) {
-		return PersistentHashMap.create(init);
+		return (IPersistentMap<K, V>) PersistentHashMap.create(init);
 	}
 
+	@SafeVarargs
 	static public <K> PersistentArrayMap<K, K> createWithCheck(K... init) {
 		for (int i = 0; i < init.length; i += 2) {
 			for (int j = i + 2; j < init.length; j += 2) {
@@ -353,136 +352,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	@Pure(Enforcement.NOT_PURE)
-	public TransientArrayMap<K, V> asTransient() {
-		return new TransientArrayMap<K, V>(array);
-	}
-
-	static final class TransientArrayMap<K, V> extends ATransientMap<K, V> {
-		volatile int len;
-		final Object[] array;
-		volatile Thread owner;
-
-		public TransientArrayMap(Object[] array) {
-			this.owner = Thread.currentThread();
-			this.array = new Object[Math.max(HASHTABLE_THRESHOLD, array.length)];
-			System.arraycopy(array, 0, this.array, 0, array.length);
-			this.len = array.length;
-		}
-
-		private int indexOf(Object key) {
-			for (int i = 0; i < len; i += 2) {
-				if (equalKey(array[i], key))
-					return i;
-			}
-			return -1;
-		}
-
-		@SuppressWarnings("unchecked")
-		ITransientMap<K, V> doAssoc(K key, V val) {
-			int i = indexOf(key);
-			if (i >= 0) // already have key,
-			{
-				if (array[i + 1] != val) // no change, no op
-					array[i + 1] = val;
-			} else // didn't have key, grow
-			{
-				if (len >= array.length)
-					return ((PersistentHashMap<K, V>) PersistentHashMap.create(array)).asTransient()
-							.assoc(key, val);
-				array[len++] = key;
-				array[len++] = val;
-			}
-			return this;
-		}
-
-		ITransientMap<K, V> doWithout(Object key) {
-			int i = indexOf(key);
-			if (i >= 0) // have key, will remove
-			{
-				if (len >= 2) {
-					array[i] = array[len - 2];
-					array[i + 1] = array[len - 1];
-				}
-				len -= 2;
-			}
-			return this;
-		}
-
-		@SuppressWarnings("unchecked")
-		V doValAt(Object key, V notFound) {
-			int i = indexOf(key);
-			if (i >= 0)
-				return (V) array[i + 1];
-			return notFound;
-		}
-
-		int doCount() {
-			return len / 2;
-		}
-
-		IPersistentMap<K, V> doPersistent() {
-			ensureEditable();
-			owner = null;
-			Object[] a = new Object[len];
-			System.arraycopy(array, 0, a, 0, len);
-			return new PersistentArrayMap<K, V>(a);
-		}
-
-		void ensureEditable() {
-			if (owner == null)
-				throw new IllegalAccessError(
-						"Transient used after persistent! call");
-		}
-
-		@Override
-		public boolean containsKey(Object key) {
-			return indexOf(key) != -1;
-		}
-
-		@Override
-		public boolean containsValue(Object value) {
-			for (int i = 1; i < len; i += 2) {
-				if (equalKey(array[i], value)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void clear() {
-			this.len = 0;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public Set<K> keySet() {
-			IPersistentSet<K> set = PersistentHashSet.emptySet();
-			for (int i = 0; i < len; i += 2) {
-				set = set.cons((K) array[i]);
-			}
-			return set;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public Collection<V> values() {
-			PersistentList<V> out = (PersistentList<V>) PersistentList.emptyList();
-			for (int i = 1; i < len; i += 2) {
-				out = out.cons((V) array[i]);
-			}
-			
-			return out;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public IPersistentSet<Entry<K, V>> entrySet() {
-			IPersistentSet<Entry<K, V>> set = PersistentHashSet.emptySet();
-			for (int i = 0; i < len; i += 2) {
-				set = set.cons(new MapEntry<K, V>((K) array[i], (V) array[i+1]));
-			}
-			return set;
-		}
+	public ITransientMap<K, V> asTransient() {
+		return new TransientHashMap<K, V>(this);
 	}
 }

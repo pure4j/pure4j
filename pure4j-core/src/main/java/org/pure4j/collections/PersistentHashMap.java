@@ -23,6 +23,7 @@ import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 
 /*
  A persistent rendition of Phil Bagwell's Hash Array Mapped Trie
@@ -46,29 +47,49 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	@IgnoreImmutableTypeCheck
 	final V nullValue;
 
-	final static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
+	final private static PersistentHashMap<Object, Object> EMPTY = new PersistentHashMap<Object, Object>(0,
 			null, false, null);
 	
 	@IgnoreImmutableTypeCheck
-	final static Object NOT_FOUND = new Object();
+	final private static Object NOT_FOUND = new Object();
 
-	static public <K, V> PersistentHashMap<K, V> create(Map<K,V> other) {
-		@SuppressWarnings("unchecked")
-		TransientHashMap<K, V> ret = ((PersistentHashMap<K, V>) emptyMap()).asTransient();
+	@PureParameters(Enforcement.NOT_PURE)
+	public PersistentHashMap(Map<K,V> other) {
+		this(createTemporary(other));
+	}
+
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	private static <K, V> TemporaryHashMap<K, V> createTemporary(Map<K, V> other) {
+		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K,V>();
 		for (Entry<K,V> o : other.entrySet()) {
-			ret = (TransientHashMap<K, V>) ret.assoc(o.getKey(), o.getValue());
+			ret = (TemporaryHashMap<K, V>) ret.assoc(o.getKey(), o.getValue());
 		}
-		return (PersistentHashMap<K, V>) ret.persistent();
+		return ret;
 	}
 	
-	@SuppressWarnings("unchecked")
-	static public <K, V> IPersistentMap<K, V> create(Object... pairs) {
-		ITransientMap<K, V> ret = ((PersistentHashMap<K, V>) emptyMap()).asTransient();
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	private static <K, V> TemporaryHashMap<K, V> createTemporary(ISeq<Map.Entry<K, V>> other) {
+		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K,V>();
+		for (Entry<K,V> o : other) {
+			ret = (TemporaryHashMap<K, V>) ret.assoc(o.getKey(), o.getValue());
+		}
+		return ret;
+	}
+	
+	private PersistentHashMap(TemporaryHashMap<K, V> in) {
+		this(in.count, in.root, in.hasNull, in.nullValue);
+	}
+	
+	@SafeVarargs
+	static public <K> IPersistentMap<K, K> create(K... pairs) {
+		ITransientMap<K, K> ret = new TemporaryHashMap<K, K>();
 		if (pairs.length % 2 != 0) {
 			throw new IllegalArgumentException("Argument must supply key/value pairs");
 		}
 		for (int i = 0; i < pairs.length; i=i+2) {
-			ret.put((K) pairs[i], (V) pairs[i+1]);	
+			ret.put((K) pairs[i], (K) pairs[i+1]);	
 		}
 		return ret.persistent();
 	}
@@ -79,40 +100,15 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (PersistentHashMap<K, V>) EMPTY;
 	}
 
-	@Pure(Enforcement.FORCE)
-	PersistentHashMap(int count, INode root, boolean hasNull, V nullValue) {
+	private PersistentHashMap(int count, INode root, boolean hasNull, V nullValue) {
 		this.count = count;
 		this.root = root;
 		this.hasNull = hasNull;
 		this.nullValue = nullValue;
 	}
-	
 
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentHashMap<K, K> create(ISeq<K> items) {
-		ITransientMap<K, K> ret = ((PersistentHashMap<K, K>) emptyMap()).asTransient();
-		for (; items != null; items = items.next().next()) {
-			if (items.next() == null)
-				throw new IllegalArgumentException(String.format(
-						"No value supplied for key: %s", items.first()));
-			ret.put(items.first(), (K) PureCollections.second(items));
-		}
-		return (PersistentHashMap<K, K>) ret.persistent();
-	}
-
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentHashMap<K, K> createWithCheck(ISeq<K> items) {
-		ITransientMap<K, K> ret = ((PersistentHashMap<K, K>) emptyMap()).asTransient();
-		for (int i = 0; items != null; items = items.next().next(), ++i) {
-			if (items.next() == null)
-				throw new IllegalArgumentException(String.format(
-						"No value supplied for key: %s", items.first()));
-			ret.put(items.first(), (K) PureCollections.second(items));
-			if (ret.count() != i + 1)
-				throw new IllegalArgumentException("Duplicate key: "
-						+ items.first());
-		}
-		return (PersistentHashMap<K, K>) ret.persistent();
+	public PersistentHashMap(ISeq<Map.Entry<K, V>> items) {
+		this(createTemporary(items));
 	}
 
 	@Pure
@@ -137,7 +133,12 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (root != null) ? root.find(0, hash(key), key) : null;
 	}
 
-	
+	@Pure(Enforcement.FORCE)
+	/*
+	 * Not pure, specifically because of Box.
+	 * It would be fairly easy to re-write Box so that it has getters and setters, and 
+	 * assures it's purity.  However, it's part of the implementation, so I won't do this now.
+	 */
 	public PersistentHashMap<K, V> assoc(K key, V val) {
 		Pure4J.immutable(key, val);
 		if (key == null) {
@@ -268,25 +269,28 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (hash >>> shift) & 0x01f;
 	}
 
-	public TransientHashMap<K, V> asTransient() {
-		return new TransientHashMap<K, V>(this);
+	@Pure(Enforcement.NOT_PURE)
+	public TemporaryHashMap<K, V> asTransient() {
+		return new TemporaryHashMap<K, V>(this);
 	}
 
 	
-	static final class TransientHashMap<K, V> extends ATransientMap<K, V> {
+	private static final class TemporaryHashMap<K, V> extends ATransientMap<K, V> {
 		final AtomicReference<Thread> edit;
 		volatile INode root;
 		volatile int count;
 		volatile boolean hasNull;
 		volatile V nullValue;
 		final Box leafFlag = new Box(null);
+		
+		
 
-		TransientHashMap(PersistentHashMap<K, V> m) {
+		TemporaryHashMap(PersistentHashMap<K, V> m) {
 			this(new AtomicReference<Thread>(Thread.currentThread()), m.root,
 					m.count, m.hasNull, m.nullValue);
 		}
 
-		TransientHashMap(AtomicReference<Thread> edit, INode root, int count,
+		TemporaryHashMap(AtomicReference<Thread> edit, INode root, int count,
 				boolean hasNull, V nullValue) {
 			this.edit = edit;
 			this.root = root;
@@ -295,9 +299,11 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			this.nullValue = nullValue;
 		}
 		
-		
+		TemporaryHashMap() {
+			this(new AtomicReference<Thread>(Thread.currentThread()), null, 0, false, null);
+		}
 
-		TransientHashMap<K, V> doAssoc(K key, V val) {
+		TemporaryHashMap<K, V> doAssoc(K key, V val) {
 			if (key == null) {
 				if (this.nullValue != val)
 					this.nullValue = val;
@@ -318,7 +324,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return this;
 		}
 
-		TransientHashMap<K, V> doWithout(Object key) {
+		TemporaryHashMap<K, V> doWithout(Object key) {
 			if (key == null) {
 				if (!hasNull)
 					return this;
@@ -383,6 +389,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return values().contains(value);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void clear() {
 			this.root = EMPTY.root;

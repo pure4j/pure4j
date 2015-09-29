@@ -18,6 +18,7 @@ import java.util.List;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 
 public class PersistentHashSet<K> extends APersistentSet<K> {
 
@@ -38,63 +39,36 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return new PersistentHashSet<K>(map.persistent());
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <K> PersistentHashSet<K> create(Collection<K> init) {
-		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
+	public PersistentHashSet(Collection<K> init) {
+		this(createMap(init));
+	}
+
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	private static <K> IPersistentMap<K, K> createMap(Collection<K> init) {
+		ITransientMap<K, K> map = new TransientHashMap<K, K>();
 		for (K key : init) {
 			map.put(key, key);
 		}
-		
-		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
+		return map.persistent();
 	}
 
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentHashSet<K> create(ISeq<K> items) {
-		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
+	public PersistentHashSet(ISeq<K> items) {
+		this(createMap(items));
+	}
+
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	private static <K> IPersistentMap<K, K> createMap(ISeq<K> items) {
+		ITransientMap<K, K> map = new TransientHashMap<K, K>();
 		for (; items != null; items = items.next()) {
 			K first = items.first();
 			map.put(first, first);
 		}
-		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
+		return map.persistent();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <K> PersistentHashSet<K> createWithCheck(K... init) {
-		ITransientMap<Object, Object> map = PersistentHashMap.emptyMap().asTransient();
-		for (int i = 0; i < init.length; i++) {
-			map.put(init[i], init[i]);
-			if (map.count() != i + 1)
-				throw new IllegalArgumentException("Duplicate key: " + init[i]);
-		}
-		return new PersistentHashSet<K>((IPersistentMap<K, K>) map.persistent());
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <K> PersistentHashSet<K> createWithCheck(List<K> init) {
-		ITransientSet<K> ret = (ITransientSet<K>)  new TransientHashSet<>();
-		int i = 0;
-		for (K key : init) {
-			ret.add(key);
-			if (ret.size() != i + 1)
-				throw new IllegalArgumentException("Duplicate key: " + key);
-			++i;
-		}
-		return (PersistentHashSet<K>) ret.persistent();
-	}
-
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentHashSet<K> createWithCheck(ISeq<K> items) {
-		ITransientSet<K> ret = (ITransientSet<K>)  new TransientHashSet<>();
-		for (int i = 0; items != null; items = items.next(), ++i) {
-			ret.add(items.first());
-			if (ret.size() != i + 1)
-				throw new IllegalArgumentException("Duplicate key: "
-						+ items.first());
-		}
-		return (PersistentHashSet<K>) ret.persistent();
-	}
-
-	PersistentHashSet(IPersistentMap<K, K> impl) {
+	private PersistentHashSet(IPersistentMap<K, K> impl) {
 		super(impl);
 	}
 
@@ -117,7 +91,6 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return (PersistentHashSet<K>) EMPTY;
 	}
 
-	@Pure(Enforcement.NOT_PURE)
 	public ITransientSet<K> asTransient() {
 		return new TransientHashSet<>(this);
 	}

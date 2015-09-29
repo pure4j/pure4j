@@ -78,7 +78,7 @@ public class PurityChecker implements Rule {
 			if (immutables.classIsMarked(cl, cb)) {
 				Class<?> immutableClass = hydrate(className);
 				if (isConcrete(immutableClass) && (!RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(immutableClass))) {
-					immutables.doClassChecks(immutableClass, cb);
+					immutables.doClassChecks(immutableClass, cb, pm);
 					cb.send("@ImmutableValue: "+immutableClass);
 					addMethodsFromClassToPureList(immutableClass, cb, pm, true, false); 
 				}
@@ -95,7 +95,7 @@ public class PurityChecker implements Rule {
 				} else {
 					Class<?> pureClass = hydrate(className);
 					if (isConcrete(pureClass)) {
-						mutableUnshared.doClassChecks(pureClass, cb);
+						mutableUnshared.doClassChecks(pureClass, cb, pm);
 						cb.send("@MutableUnshared: "+pureClass);
 						addMethodsFromClassToPureList(pureClass, cb, pm, false, false);
 					}
