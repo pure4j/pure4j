@@ -14,7 +14,7 @@ public final class Ticker extends AbstractImmutableValue<Ticker> {
 		return name;
 	}
 	
-	public void fields(Visitor v, Ticker t) {
+	protected void fields(Visitor v, Ticker t) {
 		v.visit(name, t.name);
 	}
 	

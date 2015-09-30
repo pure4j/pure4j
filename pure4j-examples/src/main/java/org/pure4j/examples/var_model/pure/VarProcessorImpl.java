@@ -6,7 +6,9 @@ import java.util.Currency;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.collections.IPersistentList;
 import org.pure4j.collections.IPersistentMap;
+import org.pure4j.collections.IPersistentVector;
 import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.PureCollectors;
 
 @ImmutableValue
@@ -48,13 +50,13 @@ public class VarProcessorImpl implements VarProcessor {
 		
 		// collect the results + sort (probably highly inefficient)
 		IPersistentList<Float> results = combined.getPnls().values().stream().collect(PureCollectors.toPersistentList());
-		Collections.sort(results);
+		IPersistentVector<Float> sorted = PureCollections.sort(results.seq());
 		
 		// work out confidence level
-		float members = results.size();
+		float members = sorted.size();
 		float index = members * confidenceLevel;
 		
-		return new Amount(homeCurrency, results.get((int) index));
+		return new Amount(homeCurrency, sorted.get((int) index));
 	}
 
 	@Override

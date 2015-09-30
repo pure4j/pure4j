@@ -121,8 +121,12 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			ret.add(item);
 		return ret.persistent();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public PersistentVector() {
+		this(0, 5, EMPTY_NODE, (K[]) EMPTY.tail);
+	}
 
-	@Pure(Enforcement.FORCE)
 	private PersistentVector(int cnt, int shift, Node root, K[] tail) {
 		this.cnt = cnt;
 		this.shift = shift;

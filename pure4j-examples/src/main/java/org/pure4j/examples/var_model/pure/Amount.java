@@ -26,9 +26,9 @@ public final class Amount extends AbstractImmutableValue<Amount> {
 	}
 
 	@Override
-	public void fields(Visitor v, Amount a) {
-		v.visit(ccy, a.amount);
-		v.visit(amount, a.ccy);
+	protected void fields(Visitor v, Amount a) {
+		v.visit(ccy, a.ccy);
+		v.visit(amount, a.amount);
 	}
 
 }

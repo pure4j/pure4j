@@ -57,6 +57,10 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	public PersistentHashMap(Map<K,V> other) {
 		this(createTemporary(other));
 	}
+	
+	public PersistentHashMap() {
+		this(0, null, false, null);
+	}
 
 	@Pure
 	@PureParameters(Enforcement.NOT_PURE)

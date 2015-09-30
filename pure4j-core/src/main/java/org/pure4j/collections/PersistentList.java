@@ -32,6 +32,10 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 	private final int _count;
 
 	final private static EmptyList<?> EMPTY = new EmptyList<Object>();
+	
+	public PersistentList() {
+		this(null, null, 0);
+	}
 
 	public PersistentList(K first) {
 		Pure4J.immutable(first);

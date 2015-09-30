@@ -7,6 +7,11 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.MonthDay;
+import java.time.chrono.IsoChronology;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
@@ -32,7 +37,10 @@ public class RuntimeImmutabilityChecker {
 	public static Set<Class<?>> createInbuiltImmutableSet() {
 		HashSet<Class<?>> out = new HashSet<Class<?>>();
 		List<Class<?>> l = Arrays.asList((Class<?>) Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class, Void.class);
+			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class, Void.class, 
+			
+			// java.time stuff
+			LocalDate.class, LocalDateTime.class, LocalTime.class, MonthDay.class, IsoChronology.class);
 		out.addAll(l);
 		return Collections.unmodifiableSet(out);
 	}

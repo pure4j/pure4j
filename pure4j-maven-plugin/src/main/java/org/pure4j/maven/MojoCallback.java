@@ -29,7 +29,7 @@ public class MojoCallback implements Callback {
 	}
 
 	@Override
-	public void registerPure(String signature) {
+	public void registerPure(String signature, Boolean intf, Boolean impl) {
 		l.info("Marked Pure: "+signature);
 	}
 

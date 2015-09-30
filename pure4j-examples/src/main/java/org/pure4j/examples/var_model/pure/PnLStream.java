@@ -25,7 +25,7 @@ public class PnLStream extends AbstractImmutableValue<PnLStream> {
 	}
 
 	@Override
-	public void fields(Visitor v, PnLStream p) {
+	protected void fields(Visitor v, PnLStream p) {
 		v.visit(ccy, p.ccy);
 		v.visit(pnls, p.pnls);
 	}

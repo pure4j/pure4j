@@ -101,7 +101,7 @@ public class Pure4J {
 	
 	@Pure
 	public static final UnsupportedOperationException unsupported() {
-		return new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 	
 	@Pure

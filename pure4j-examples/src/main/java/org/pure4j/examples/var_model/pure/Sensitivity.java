@@ -23,7 +23,7 @@ public final class Sensitivity extends AbstractImmutableValue<Sensitivity> {
 	}
 
 	@Override
-	public void fields(Visitor v, Sensitivity s) {
+	protected void fields(Visitor v, Sensitivity s) {
 		v.visit(ticker, s.ticker);
 		v.visit(amount, s.amount);
 	}
