@@ -138,7 +138,7 @@ public class PureChecklistHandler {
 				// check the signature of accessible pure method.
 				// only public/package visible methods need to be checked.
 				
-				if (isAccessibleOutsideClass(declaration, cl)) {
+				if (isAccessibleOutsideClass(declaration, cl, pm)) {
 					Type[] genericTypes = declaration.getGenericTypes(cl);
 					int argOffset = getArgOffset();
 					for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
@@ -233,7 +233,7 @@ public class PureChecklistHandler {
 								}
 								
 								if (!immutables.typeIsMarked(f.getGenericType(), cb)) {
-									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle, cl))) {
+									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle, cl, pm))) {
 										cb.registerError(new PureMethodAccessesNonImmutableFieldException(this, fieldHandle));
 										pureImplementation = false;
 									}
@@ -606,10 +606,18 @@ public class PureChecklistHandler {
 		return pureChecklist.values();
 	}
 
-	public static boolean isAccessibleOutsideClass(MemberHandle handle, ClassLoader cl) {
+	public static boolean isAccessibleOutsideClass(MemberHandle handle, ClassLoader cl, ProjectModel pm) {
 		boolean pub = Modifier.isPublic(handle.getModifiers(cl));
 		boolean priv = Modifier.isPrivate(handle.getModifiers(cl));
 		boolean prot = Modifier.isProtected(handle.getModifiers(cl));
+		boolean synthetic = false;
+		if (handle instanceof CallHandle) {
+			synthetic = (Opcodes.ACC_SYNTHETIC & pm.getOpcodes((CallHandle) handle)) == Opcodes.ACC_SYNTHETIC;
+			if (synthetic) {
+				return false;
+			}
+		}
+		
 		return pub || ((!priv) && (!prot));
 	}
 }

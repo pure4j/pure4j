@@ -28,6 +28,12 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	
 	@IgnoreImmutableTypeCheck
 	int _hasheq = -1;
+	
+	public APersistentMap() {
+	}
+	
+	public APersistentMap(ISeq<Entry<K, V>> elems) {
+	}
 
 	 /**
      * Returns a string representation of this map.  The string representation
