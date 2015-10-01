@@ -69,6 +69,13 @@ See the tutorial [here](tutorial.md).
 There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
 Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
 
+Specifications
+--------------
+
+Concordion specifications detailing the interface of the project are available online [here](http://robmoffat.github.io/pure4j/concordion/org/pure4j/test/checker/spec/Index.html).
+
+Effectively this forms the Javadoc for the project, though the assertions made in the documentation are tested.
+
 Status of this Project
 ----------------------
 
