@@ -54,7 +54,13 @@
 	<h3>Runtime Return Value Checking</h3>
 	
 	<p concordion:execute="runtimeResultNarrowing()">If it is not possible to narrow the result in this way (perhaps you are using generics) you can
-	check the result at runtime. TBC</p>
+	check the result at runtime.  This can be done in the following way:</p>
+	
+	<pre>
+		public Object someNonImmutableReturnMethod() {
+			return Pure4J.immutable(new ImmutableObjectOfSomeKind());
+		}
+	</pre>
 	
 	<h3>Libraries</h3>
 	

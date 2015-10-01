@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -30,6 +31,7 @@ import org.pure4j.exception.PureMethodNotInProjectScopeException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodReturnNotImmutableException;
 import org.pure4j.model.CallHandle;
+import org.pure4j.model.CallInfo;
 import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
@@ -160,9 +162,7 @@ public class PureChecklistHandler {
 								Method m = ((MethodHandle) declaration).hydrate(cl);
 								Type t = m.getGenericReturnType();
 								if (typeFailsCheck(cb, t) && (!returnsOwnType()))  {
-									cb.registerError(new PureMethodReturnNotImmutableException(this, t));
-									pureInterface = false;
-									return false; 
+									pureInterface = isRuntimeReturnChecked(pm, cb);
 								}
 							}
 						} 
@@ -181,14 +181,19 @@ public class PureChecklistHandler {
 					if (!pm.withinModel(declaration.getClassName())) {
 						// we can't confirm that the method is pure, unless it
 						// has been forced already.
-						if (!isMarkedPure(declaration, cb)) {
+						if (isMarkedPure(declaration, cb)) {
+							pureImplementation = true;
+							return true;
+						} else {
 							cb.registerError(new PureMethodNotInProjectScopeException(this));
+							pureImplementation = false;
+							return false;
 						}
-						pureImplementation = false;
 					}
 					
 					if (declaration instanceof CallHandle) {
-						if ((pm.getOpcodes((CallHandle) declaration) & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC) {
+						CallInfo ci = pm.getOpcodes((CallHandle) declaration);
+						if ((ci.getOpcodes() & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC) {
 							// synthetics are always pure.
 							pureImplementation = true;
 							return true;
@@ -309,6 +314,30 @@ public class PureChecklistHandler {
 			return false;
 		}
 
+		private boolean isRuntimeReturnChecked(ProjectModel pm, Callback cb) {
+			CallInfo ci = pm.getOpcodes((CallHandle) declaration);
+			
+			for (Object mh : ci.getMethodsBeforeReturns()) {
+				if (mh instanceof Integer) {
+					cb.registerError(new PureMethodReturnNotImmutableException(this, (Integer) mh));
+					return false;
+				} else if (mh instanceof CallHandle) {
+					CallHandle ch = (CallHandle) mh;
+					if (ch.getClassName().equals(org.springframework.asm.Type.getInternalName(Pure4J.class)) &&
+						(ch.getName().equals("returnImmutable")) ) {
+					// return ok.
+					
+					} else {
+						cb.registerError(new PureMethodReturnNotImmutableException(this, ((CallHandle)mh).getLineNumber()));
+						return false;
+					}
+				}
+			}
+			
+			return true;
+		}
+
+		
 		/**
 		 * Checks to see whether the developer has called the runtime check for
 		 * immutability.
@@ -615,7 +644,8 @@ public class PureChecklistHandler {
 		boolean prot = Modifier.isProtected(handle.getModifiers(cl));
 		boolean synthetic = false;
 		if (handle instanceof CallHandle) {
-			synthetic = (Opcodes.ACC_SYNTHETIC & pm.getOpcodes((CallHandle) handle)) == Opcodes.ACC_SYNTHETIC;
+			CallInfo ci = pm.getOpcodes((CallHandle) handle);
+			synthetic = (Opcodes.ACC_SYNTHETIC & ci.getOpcodes()) == Opcodes.ACC_SYNTHETIC;
 			if (synthetic) {
 				return false;
 			}

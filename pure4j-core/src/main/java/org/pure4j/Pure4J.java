@@ -48,6 +48,12 @@ public class Pure4J {
 		immutableClass(a);
 	}
 	
+	@Pure
+	public static final Object returnImmutable(Object o) {
+		immutableClass(o);
+		return o;
+	}
+	
 	private static void immutableClass(Object o) {
 		if (o == null) {
 			return;

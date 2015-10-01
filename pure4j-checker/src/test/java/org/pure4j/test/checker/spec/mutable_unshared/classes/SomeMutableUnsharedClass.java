@@ -28,6 +28,7 @@ public class SomeMutableUnsharedClass {
 	@CausesError(PureMethodReturnNotImmutableException.class)
 	public Object returningThisIsPure() {
 		// "this" is an ok thing to return.  But, the return type is going to be tricky.
+		new Object();
 		return this;   
 	}
 

@@ -14,6 +14,8 @@ import org.pure4j.test.checker.spec.mutable_unshared.override.BadBase;
 import org.pure4j.test.checker.spec.mutable_unshared.override.LeakyOverride;
 import org.pure4j.test.checker.spec.mutable_unshared.override.PureClass;
 import org.pure4j.test.checker.spec.mutable_unshared.return_this.ReturnThis;
+import org.pure4j.test.checker.spec.mutable_unshared.runtime_narrow.BrokenRuntimeCheck;
+import org.pure4j.test.checker.spec.mutable_unshared.runtime_narrow.NarrowAtRuntime;
 import org.pure4j.test.checker.spec.mutable_unshared.setting_fields.FieldSetting;
 import org.pure4j.test.checker.spec.mutable_unshared.static_call.TestCheckStatic;
 import org.pure4j.test.checker.spec.mutable_unshared.visitor.VisitorExample;
@@ -65,7 +67,8 @@ public class MutableUnshared {
 
 	@Test
 	public void runtimeResultNarrowing() {
-		
+		Helper.check(1, NarrowAtRuntime.class);
+		Helper.check(1, BrokenRuntimeCheck.class);
 	}
 
 	@Test

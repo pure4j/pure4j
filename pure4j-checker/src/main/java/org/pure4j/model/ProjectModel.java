@@ -97,6 +97,6 @@ public interface ProjectModel {
     /**
      * Return the opcodes for this definition
      */
-    public int getOpcodes(CallHandle ch);
+    public CallInfo getOpcodes(CallHandle ch);
     
 }

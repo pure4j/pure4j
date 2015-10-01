@@ -10,6 +10,7 @@ import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
 import org.pure4j.model.CallHandle;
+import org.pure4j.model.CallInfo;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
@@ -40,7 +41,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static boolean ALWAYS_OUTPUT_ASM = false;
+	public static boolean ALWAYS_OUTPUT_ASM = true;
 
 	public ClassFileModelBuilder() {
 		this(ALWAYS_OUTPUT_ASM);
@@ -105,9 +106,11 @@ public class ClassFileModelBuilder {
 
 			public MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] exceptions) {
 				final CallHandle mh = createHandle(className, name, desc, 0);
-				model.setOpcodes(mh, access);
+				CallInfo ci = new CallInfo();
+				ci.setOpcodes(access);
+				model.setOpcodes(mh, ci);
 				addDependency(className, model, desc, true);
-				return createMethodVisitor(model, className, mh, sup);
+				return createMethodVisitor(model, className, mh, sup, ci);
 
 			}
 
@@ -210,7 +213,7 @@ public class ClassFileModelBuilder {
 		};
 	}
 
-	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className, final MemberHandle mh, final String superName) {
+	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className, final MemberHandle mh, final String superName, final CallInfo ci) {
 		model.addDeclaredMethod(className, mh);
 		final String methodName = mh.getName();
 		output(methodName);
@@ -220,6 +223,7 @@ public class ClassFileModelBuilder {
 			Stack<Integer> arguments = new Stack<Integer>();
 			int line = 0;
 			boolean firstCall = true;
+			MemberHandle lastMethodCall;
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
@@ -256,6 +260,7 @@ public class ClassFileModelBuilder {
 				model.addCalls(mh, remoteMethod);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
+				lastMethodCall = remoteMethod;
 				output("  "+getOpcode(arg0)+" "+owner+" "+name+" "+desc);
 			}
 
@@ -307,6 +312,11 @@ public class ClassFileModelBuilder {
 
 			public void visitInsn(int arg0) {
 				output("  "+getOpcode(arg0));
+				
+				if (Opcodes.ARETURN == arg0) {
+					// we are returning something.  we need to keep track of the previous
+					ci.addMethodBeforeReturn(lastMethodCall == null ? line : lastMethodCall);
+				}
 			}
 
 			public void visitIntInsn(int arg0, int arg1) {
@@ -354,11 +364,12 @@ public class ClassFileModelBuilder {
 			protected void resetCallDetails() {
 				firstCall = false;
 				arguments = new Stack<Integer>();
+				lastMethodCall = null;
 			}
 
 			public void visitTryCatchBlock(Label arg0, Label arg1, Label arg2, String arg3) {
 				output("  try/catch: "+arg0+" "+arg1+" "+arg2+" "+arg3);
-				resetCallDetails();
+				//resetCallDetails();
 			}
 
 		};
