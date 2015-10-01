@@ -48,7 +48,7 @@ public class ClassFileModelBuilder {
 	}
 	
 	public ClassFileModelBuilder(boolean output) {
-		this.output = output || ALWAYS_OUTPUT_ASM;
+		this.output = ALWAYS_OUTPUT_ASM;
 	}
 	
 
