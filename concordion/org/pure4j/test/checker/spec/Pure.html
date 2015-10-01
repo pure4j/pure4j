@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><html xmlns:concordion="http://www.concordion.org/2007/concordion"><head><script type="text/javascript">/* Stack Trace Toggling */
+
+function getElementById(id) {
+  var element;
+
+  if (document.getElementById) { // standard
+    return document.getElementById(id);
+  } else if (document.all) { // old IE versions
+    return document.all[id];
+  } else if (document.layers) { // nn4
+    return document.layers[id];
+  }
+  alert("Sorry, but your web browser is not supported by Concordion.");
+}
+
+function isVisible(element) {
+  return element.style.display;
+}
+
+function makeVisible(element) {
+  element.style.display = "block";
+}
+
+function makeInvisible(element) {
+  element.style.display = "";
+}
+
+function toggleStackTrace(stackTraceNumber) {
+  var stackTrace = getElementById("stackTrace" + stackTraceNumber);
+  var stackTraceButton = getElementById("stackTraceButton" + stackTraceNumber);
+  if (isVisible(stackTrace)) {
+    makeInvisible(stackTrace);
+    stackTraceButton.value = "View Stack";
+  } else {
+    makeVisible(stackTrace);
+    stackTraceButton.value = "Hide Stack";
+  }
+}
+</script><style>* {
+  font-family: Arial;
+}
+body {
+  padding: 32px;  
+}
+pre {
+  padding: 6px 28px 6px 28px;
+  background-color: #E8EEF7;
+}
+pre, pre *, code, code *, kbd {
+  font-family: Courier New, Courier;
+  font-size: 10pt;
+}
+h1, h1 * {
+  font-size: 24pt;	
+}
+p, td, th, li, .breadcrumbs {
+  font-size: 10pt;
+}
+p, li {
+  line-height: 140%;
+  max-width: 720px;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 8px 0px 8px 0px;
+}
+th, td {
+  border: 1px solid black;
+  padding: 3px;
+}
+td {
+  background-color: white;
+  vertical-align: top;
+}
+th {
+  background-color: #C3D9FF;
+}
+li {
+  margin-top: 6px;
+  margin-bottom: 6px; 
+}
+
+.example {
+  padding: 6px 16px 6px 16px;
+  border: 1px solid #C3D9FF;
+  margin: 6px 0px 28px 0px;
+  background-color: #F5F9FD;
+}
+.example h3 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: 12pt;
+}
+
+p.success {
+  padding: 2px;
+}
+.success, .success * {
+  background-color: #afa !important;
+}
+.success pre {
+  background-color: #bbffbb;
+}
+.failure, .failure * {
+  background-color: #ffb0b0;
+  padding: 1px;
+}
+.failure .expected {
+  text-decoration: line-through;
+  color: #bb5050;
+}
+.ignored, .ignored * {
+  background-color: #f0f0f0 !important;	
+}
+
+ins {
+  text-decoration: none;	
+}
+
+.exceptionMessage {
+  background-color: #fdd;
+  font-family: Courier New, Courier, Monospace;
+  font-size: 10pt;
+  display: block;
+  font-weight: normal;
+  padding: 4px;
+  text-decoration: none !important;
+}
+.stackTrace, .stackTrace * {
+  font-weight: normal;
+}
+.stackTrace {
+  display: none;
+  padding: 1px 4px 4px 4px;
+  background-color: #fdd;
+  border-top: 1px dotted black;
+}
+.stackTraceExceptionMessage {
+  display: block;
+  font-family: Courier New, Courier, Monospace;
+  font-size: 8pt;
+  white-space: wrap;
+  padding: 1px 0px 1px 0px;
+}
+.stackTraceEntry {
+  white-space: nowrap;
+  font-family: Courier New, Courier, Monospace;
+  display: block;
+  font-size: 8pt;
+  padding: 1px 0px 1px 32px;
+}
+.stackTraceButton {
+  font-size: 8pt;
+  margin: 2px 8px 2px 0px;
+  font-weight: normal;
+  font-family: Arial;
+}
+
+.special {
+  font-style: italic;
+}
+.missing, .missing * {
+  background-color: #ff9999;
+  color:#bb5050;
+  text-decoration: line-through;
+}
+.surplus, .surplus * {
+  background-color: #ff9999;
+}
+.footer {
+  text-align: right;
+  margin-top: 40px;
+  font-size: 8pt;
+  width: 100%;
+  color: #999;
+}
+.footer .testTime {
+  padding: 2px 10px 0px 0px;
+}
+
+.idea {
+  font-size: 9pt;
+  color: #888;
+  font-style: italic;	
+}
+.tight li {
+  margin-top: 1px;
+  margin-bottom: 1px; 
+}
+.commentary {
+  float: right;
+  width: 200px;
+  background-color: #ffffd0;
+  padding:8px;
+  border: 3px solid #eeeeb0;	 
+  margin: 10px 0px 10px 10px;	 
+}
+.commentary, .commentary * {
+  font-size: 8pt;
+}
+</style><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<link href="../../../concordion.css" rel="stylesheet" type="text/css" />
+</head><body>
+
+    <h1><code>@Pure</code> Specification</h1>
+
+	<p>Declares that a single method on a class is "Pure". </p>  
+
+	<p>See the <a href="https://en.wikipedia.org/wiki/Pure_function">Wikipedia definition</a>, from which the following
+	is derived.  Essentially:</p>
+	
+	<ul>
+		<li>The function always evaluates the same result value given the same argument value(s).  i.e. the results are deterministic.</li>
+		<li>Evaluation of the result does not cause any semantically observable side effect or output.  Such as output to I/O devices.</li>
+	</ul>
+	
+	<p>Pure4J makes the distinction between implementation purity, and interface purity, as described below.</p>
+	
+	<h4>1. Implementation Purity.</h4>
+	
+	<p>A pure implementation will:</p>
+	<ol>
+		<li concordion:execute="onlyCallsOtherPures()">Only call other methods (or constructors) regarded to be implementation<code>Pure</code>.  
+		Errors will be reported if a pure method accesses code not regarded to be implementation pure.</li>
+		<li concordion:execute="accessesOnlyImmutableState()">Can access only immutable, final state within the system (for prevention of side-effects).  (see <a href="ImmutableValueSpecification.html"><code>@ImmutableValue</code> Specification</a>)</li>
+	</ol>
+
+	<h4>2.  Parameter Mutability (Interface Purity)</h4>
+
+	<ol>
+		<li concordion:execute="onlyAcceptsImmutableParameters()">By default, adding <code>@Pure</code> will check that the method only accepts immutable parameters (see {@link ImmutableValue}).
+		This ensures that the pure methods are <b>Thread Safe</b> and means that, once invoked the state of their arguments cannot be changed while the 
+	method is running.  Otherwise, this would impact the determinism constraint. </li>
+ 		<li concordion:execute="canAccessNonInterfacePure()">Pure methods are allowed to access other methods that are not interface pure.  (e.g. pure private methods on a class can be only implementation pure)</li>
+ 		<li concordion:execute="nonPureCodeAccessingOnlyImplementationPure()"><span class="failure"><del class="expected">Only methods which are both implementation pure and interface pure are reported in the resulting public pure interface of the class.  Thus, non-pure
+ 		code should only access pure code that is both implementation and interface pure.</del></span><span class="exceptionMessage">junit.framework.AssertionFailedError: Was expecting a org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity</span><input class="stackTraceButton" id="stackTraceButton1" type="button" onclick="javascript:toggleStackTrace('1')" value="View Stack" /><div class="stackTrace" id="stackTrace1"><p>While evaluating expression: <code>nonPureCodeAccessingOnlyImplementationPure()</code></p><div class="stackTraceExceptionMessage">org.concordion.internal.InvalidExpressionException: junit.framework.AssertionFailedError: Was expecting a org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity</div><div class="stackTraceEntry">at junit.framework.Assert.fail (Assert.java:47)</div><div class="stackTraceEntry">at junit.framework.Assert.assertTrue (Assert.java:20)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.thenCheck (Helper.java:127)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.check (Helper.java:41)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Pure.nonPureCodeAccessingOnlyImplementationPure (Pure.java:47)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke0 (NativeMethodAccessorImpl.java:-2)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)</div><div class="stackTraceEntry">at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)</div><div class="stackTraceEntry">at java.lang.reflect.Method.invoke (Method.java:497)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.invokeMethod (OgnlRuntime.java:532)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callAppropriateMethod (OgnlRuntime.java:826)</div><div class="stackTraceEntry">at ognl.ObjectMethodAccessor.callMethod (ObjectMethodAccessor.java:61)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callMethod (OgnlRuntime.java:860)</div><div class="stackTraceEntry">at ognl.ASTMethod.getValueBody (ASTMethod.java:73)</div><div class="stackTraceEntry">at ognl.SimpleNode.evaluateGetValueBody (SimpleNode.java:170)</div><div class="stackTraceEntry">at ognl.SimpleNode.getValue (SimpleNode.java:210)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:333)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:378)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:357)</div><div class="stackTraceEntry">at org.concordion.internal.OgnlEvaluator.evaluate (OgnlEvaluator.java:32)</div><div class="stackTraceEntry">at org.concordion.internal.SimpleEvaluator.evaluate (SimpleEvaluator.java:15)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand$DefaultStrategy.execute (ExecuteCommand.java:52)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand.execute (ExecuteCommand.java:39)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.LocalTextDecorator.process (LocalTextDecorator.java:26)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.ThrowableCatchingDecorator.process (ThrowableCatchingDecorator.java:42)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.api.CommandCallList.processSequentially (CommandCallList.java:30)</div><div class="stackTraceEntry">at org.concordion.internal.command.SpecificationCommand.execute (SpecificationCommand.java:31)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.internal.XMLSpecification.process (XMLSpecification.java:17)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:33)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:26)</div><div class="stackTraceEntry">at org.concordion.internal.FixtureRunner.run (FixtureRunner.java:24)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner$1.evaluate (ConcordionRunner.java:125)</div><div class="stackTraceEntry">at org.junit.runners.BlockJUnit4ClassRunner.runChild (BlockJUnit4ClassRunner.java:76)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:115)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:21)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$3.run (ParentRunner.java:193)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$1.schedule (ParentRunner.java:52)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.runChildren (ParentRunner.java:191)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.access$000 (ParentRunner.java:42)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$2.evaluate (ParentRunner.java:184)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.run (ParentRunner.java:236)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.execute (JUnit4Provider.java:283)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun (JUnit4Provider.java:173)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet (JUnit4Provider.java:153)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.invoke (JUnit4Provider.java:128)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader (ForkedBooter.java:203)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess (ForkedBooter.java:155)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.main (ForkedBooter.java:103)</div><div class="stackTraceExceptionMessage">junit.framework.AssertionFailedError: Was expecting a org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity</div><div class="stackTraceEntry">at junit.framework.Assert.fail (Assert.java:47)</div><div class="stackTraceEntry">at junit.framework.Assert.assertTrue (Assert.java:20)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.thenCheck (Helper.java:127)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.check (Helper.java:41)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Pure.nonPureCodeAccessingOnlyImplementationPure (Pure.java:47)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke0 (NativeMethodAccessorImpl.java:-2)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)</div><div class="stackTraceEntry">at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)</div><div class="stackTraceEntry">at java.lang.reflect.Method.invoke (Method.java:497)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.invokeMethod (OgnlRuntime.java:532)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callAppropriateMethod (OgnlRuntime.java:826)</div><div class="stackTraceEntry">at ognl.ObjectMethodAccessor.callMethod (ObjectMethodAccessor.java:61)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callMethod (OgnlRuntime.java:860)</div><div class="stackTraceEntry">at ognl.ASTMethod.getValueBody (ASTMethod.java:73)</div><div class="stackTraceEntry">at ognl.SimpleNode.evaluateGetValueBody (SimpleNode.java:170)</div><div class="stackTraceEntry">at ognl.SimpleNode.getValue (SimpleNode.java:210)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:333)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:378)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:357)</div><div class="stackTraceEntry">at org.concordion.internal.OgnlEvaluator.evaluate (OgnlEvaluator.java:32)</div><div class="stackTraceEntry">at org.concordion.internal.SimpleEvaluator.evaluate (SimpleEvaluator.java:15)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand$DefaultStrategy.execute (ExecuteCommand.java:52)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand.execute (ExecuteCommand.java:39)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.LocalTextDecorator.process (LocalTextDecorator.java:26)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.ThrowableCatchingDecorator.process (ThrowableCatchingDecorator.java:42)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.api.CommandCallList.processSequentially (CommandCallList.java:30)</div><div class="stackTraceEntry">at org.concordion.internal.command.SpecificationCommand.execute (SpecificationCommand.java:31)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.internal.XMLSpecification.process (XMLSpecification.java:17)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:33)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:26)</div><div class="stackTraceEntry">at org.concordion.internal.FixtureRunner.run (FixtureRunner.java:24)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner$1.evaluate (ConcordionRunner.java:125)</div><div class="stackTraceEntry">at org.junit.runners.BlockJUnit4ClassRunner.runChild (BlockJUnit4ClassRunner.java:76)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:115)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:21)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$3.run (ParentRunner.java:193)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$1.schedule (ParentRunner.java:52)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.runChildren (ParentRunner.java:191)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.access$000 (ParentRunner.java:42)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$2.evaluate (ParentRunner.java:184)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.run (ParentRunner.java:236)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.execute (JUnit4Provider.java:283)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun (JUnit4Provider.java:173)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet (JUnit4Provider.java:153)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.invoke (JUnit4Provider.java:128)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader (ForkedBooter.java:203)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess (ForkedBooter.java:155)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.main (ForkedBooter.java:103)</div></div></li>
+	</ol>
+ 	 
+ 	<h3>Defaults</h3> 
+ 	
+ 	<p>By adding the <code>@Pure</code> annotation, you expect both interface and implementation purity to be observed in the method.  Errors will be 
+ 	reported if these constraints are not met.</p>
+ 	
+ 	<h3>Overriding Purity Checking</h3>
+ 	
+ 	<p>You can disable purity checking (of both kinds) by adding the <code>Enforcement</code> argument on this annotation.</p>
+ 	
+ 	<ul>
+ 		<li concordion:execute="canOverrideAndForcePure()"><em>FORCE</em>: Disable purity checking,  and force purity on.</li>
+ 		<li concordion:execute="canOverrideAndForceNotPure()"><em>NOT_PURE</em>: Disable the purity check and force purity off.</li>
+ 	</ul>
+ 	
+ 	<h3>Overriding Interface Purity Only</h3>
+ 	
+ 	<p>You can disable the interface purity check by additionally adding the <code>@PureParameters</code> annotation.  
+ 	By setting the <code>Enforcement</code> argument on this annotation you can either:</p>
+ 	
+ 	<ul>
+ 		<li concordion:execute="canOverrideAndForceInterfacePure()"><em>FORCE</em>: Disable the interface purity check and force interface purity on.</li>
+ 		<li concordion:execute="canOverrideAndForceInterfaceNotPure()"><span class="failure"><del class="expected"><em>NOT_PURE</em>: Disable the interface purity check and force interface purity off.</del></span><span class="exceptionMessage">junit.framework.AssertionFailedError: Was expecting a org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity</span><input class="stackTraceButton" id="stackTraceButton2" type="button" onclick="javascript:toggleStackTrace('2')" value="View Stack" /><div class="stackTrace" id="stackTrace2"><p>While evaluating expression: <code>canOverrideAndForceInterfaceNotPure()</code></p><div class="stackTraceExceptionMessage">org.concordion.internal.InvalidExpressionException: junit.framework.AssertionFailedError: Was expecting a org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity</div><div class="stackTraceEntry">at junit.framework.Assert.fail (Assert.java:47)</div><div class="stackTraceEntry">at junit.framework.Assert.assertTrue (Assert.java:20)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.thenCheck (Helper.java:127)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.check (Helper.java:41)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Pure.canOverrideAndForceInterfaceNotPure (Pure.java:67)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke0 (NativeMethodAccessorImpl.java:-2)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)</div><div class="stackTraceEntry">at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)</div><div class="stackTraceEntry">at java.lang.reflect.Method.invoke (Method.java:497)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.invokeMethod (OgnlRuntime.java:532)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callAppropriateMethod (OgnlRuntime.java:826)</div><div class="stackTraceEntry">at ognl.ObjectMethodAccessor.callMethod (ObjectMethodAccessor.java:61)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callMethod (OgnlRuntime.java:860)</div><div class="stackTraceEntry">at ognl.ASTMethod.getValueBody (ASTMethod.java:73)</div><div class="stackTraceEntry">at ognl.SimpleNode.evaluateGetValueBody (SimpleNode.java:170)</div><div class="stackTraceEntry">at ognl.SimpleNode.getValue (SimpleNode.java:210)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:333)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:378)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:357)</div><div class="stackTraceEntry">at org.concordion.internal.OgnlEvaluator.evaluate (OgnlEvaluator.java:32)</div><div class="stackTraceEntry">at org.concordion.internal.SimpleEvaluator.evaluate (SimpleEvaluator.java:15)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand$DefaultStrategy.execute (ExecuteCommand.java:52)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand.execute (ExecuteCommand.java:39)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.LocalTextDecorator.process (LocalTextDecorator.java:26)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.ThrowableCatchingDecorator.process (ThrowableCatchingDecorator.java:42)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.api.CommandCallList.processSequentially (CommandCallList.java:30)</div><div class="stackTraceEntry">at org.concordion.internal.command.SpecificationCommand.execute (SpecificationCommand.java:31)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.internal.XMLSpecification.process (XMLSpecification.java:17)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:33)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:26)</div><div class="stackTraceEntry">at org.concordion.internal.FixtureRunner.run (FixtureRunner.java:24)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner$1.evaluate (ConcordionRunner.java:125)</div><div class="stackTraceEntry">at org.junit.runners.BlockJUnit4ClassRunner.runChild (BlockJUnit4ClassRunner.java:76)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:115)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:21)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$3.run (ParentRunner.java:193)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$1.schedule (ParentRunner.java:52)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.runChildren (ParentRunner.java:191)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.access$000 (ParentRunner.java:42)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$2.evaluate (ParentRunner.java:184)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.run (ParentRunner.java:236)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.execute (JUnit4Provider.java:283)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun (JUnit4Provider.java:173)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet (JUnit4Provider.java:153)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.invoke (JUnit4Provider.java:128)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader (ForkedBooter.java:203)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess (ForkedBooter.java:155)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.main (ForkedBooter.java:103)</div><div class="stackTraceExceptionMessage">junit.framework.AssertionFailedError: Was expecting a org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity</div><div class="stackTraceEntry">at junit.framework.Assert.fail (Assert.java:47)</div><div class="stackTraceEntry">at junit.framework.Assert.assertTrue (Assert.java:20)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.thenCheck (Helper.java:127)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Helper.check (Helper.java:41)</div><div class="stackTraceEntry">at org.pure4j.test.checker.spec.Pure.canOverrideAndForceInterfaceNotPure (Pure.java:67)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke0 (NativeMethodAccessorImpl.java:-2)</div><div class="stackTraceEntry">at sun.reflect.NativeMethodAccessorImpl.invoke (NativeMethodAccessorImpl.java:62)</div><div class="stackTraceEntry">at sun.reflect.DelegatingMethodAccessorImpl.invoke (DelegatingMethodAccessorImpl.java:43)</div><div class="stackTraceEntry">at java.lang.reflect.Method.invoke (Method.java:497)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.invokeMethod (OgnlRuntime.java:532)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callAppropriateMethod (OgnlRuntime.java:826)</div><div class="stackTraceEntry">at ognl.ObjectMethodAccessor.callMethod (ObjectMethodAccessor.java:61)</div><div class="stackTraceEntry">at ognl.OgnlRuntime.callMethod (OgnlRuntime.java:860)</div><div class="stackTraceEntry">at ognl.ASTMethod.getValueBody (ASTMethod.java:73)</div><div class="stackTraceEntry">at ognl.SimpleNode.evaluateGetValueBody (SimpleNode.java:170)</div><div class="stackTraceEntry">at ognl.SimpleNode.getValue (SimpleNode.java:210)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:333)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:378)</div><div class="stackTraceEntry">at ognl.Ognl.getValue (Ognl.java:357)</div><div class="stackTraceEntry">at org.concordion.internal.OgnlEvaluator.evaluate (OgnlEvaluator.java:32)</div><div class="stackTraceEntry">at org.concordion.internal.SimpleEvaluator.evaluate (SimpleEvaluator.java:15)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand$DefaultStrategy.execute (ExecuteCommand.java:52)</div><div class="stackTraceEntry">at org.concordion.internal.command.ExecuteCommand.execute (ExecuteCommand.java:39)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.LocalTextDecorator.process (LocalTextDecorator.java:26)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator$2.run (AbstractCommandDecorator.java:23)</div><div class="stackTraceEntry">at org.concordion.internal.command.ThrowableCatchingDecorator.process (ThrowableCatchingDecorator.java:42)</div><div class="stackTraceEntry">at org.concordion.api.AbstractCommandDecorator.execute (AbstractCommandDecorator.java:21)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.api.CommandCallList.processSequentially (CommandCallList.java:30)</div><div class="stackTraceEntry">at org.concordion.internal.command.SpecificationCommand.execute (SpecificationCommand.java:31)</div><div class="stackTraceEntry">at org.concordion.api.CommandCall.execute (CommandCall.java:29)</div><div class="stackTraceEntry">at org.concordion.internal.XMLSpecification.process (XMLSpecification.java:17)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:33)</div><div class="stackTraceEntry">at org.concordion.Concordion.process (Concordion.java:26)</div><div class="stackTraceEntry">at org.concordion.internal.FixtureRunner.run (FixtureRunner.java:24)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner$1.evaluate (ConcordionRunner.java:125)</div><div class="stackTraceEntry">at org.junit.runners.BlockJUnit4ClassRunner.runChild (BlockJUnit4ClassRunner.java:76)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:115)</div><div class="stackTraceEntry">at org.concordion.integration.junit4.ConcordionRunner.runChild (ConcordionRunner.java:21)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$3.run (ParentRunner.java:193)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$1.schedule (ParentRunner.java:52)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.runChildren (ParentRunner.java:191)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.access$000 (ParentRunner.java:42)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner$2.evaluate (ParentRunner.java:184)</div><div class="stackTraceEntry">at org.junit.runners.ParentRunner.run (ParentRunner.java:236)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.execute (JUnit4Provider.java:283)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun (JUnit4Provider.java:173)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet (JUnit4Provider.java:153)</div><div class="stackTraceEntry">at org.apache.maven.surefire.junit4.JUnit4Provider.invoke (JUnit4Provider.java:128)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader (ForkedBooter.java:203)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess (ForkedBooter.java:155)</div><div class="stackTraceEntry">at org.apache.maven.surefire.booter.ForkedBooter.main (ForkedBooter.java:103)</div></div></li>
+ 	</ul>
+ 	
+ 	<h3>Runtime Interface Purity Checking</h3>
+ 	
+ 	<p>If you are writing code that uses generics, or implements an interface that takes arguments which are non-immutable values, you may need to 
+ 	test the interface purity at runtime.  </p>
+ 	
+ 	<p>You can do this by adding <code>Pure4J.immutable(&lt;<em>args</em>&gt;)</code> as:</p>
+ 	<ul concordion:execute="runtimePurityChecking()">
+ 		<li> the <strong>first call</strong> of the method.</li>
+ 		<li> the <strong>first call</strong> after the <code>this</code> or <code>super</code> call in a constructor.</li>
+ 		<li>All non-immutable arguments must be supplied to <code>Pure4J.immutable</code>.</li>
+ 		<li>A <code>ClassNotImmutableException</code> will be thrown for arguments that prove to be not immutable</li>
+ 	</ul>
+ 	 
+ 	<p concordion:execute="unsupportedOperationCheck()">Alternatively, you can use the <code>Pure4J.unsupported()</code> method to throw an <code>UnsupportedOperationException</code>
+ 	which will also disable parameter checking.</p>
+ 	
+ 	
+ 	<h4>Example</h4>
+ 	
+ 	<pre>
+	 	public String testParam2Good(Object in1, Object in2) {
+			Pure4J.immutable(in1, in2);
+			return in1.toString() + in2.toString();
+		}
+ 	</pre>
+ 	 	
+	<h3>On Static Methods</h3>
+
+	<p concordion:execute="staticUse()">Since <code>@ImmutableValue</code> and <code>@MutableUnshared</code> are class-level annotations, and specify the purity requirements for
+	instance methods only, one common use-case for the <code>@Pure</code> annotation is in declaring static methods as being pure.</p>
+
+	<h3>Caveats</h3>
+	<p>
+	Use of reflection within your code can break these guarantees.  The compile-time checker will make no attempt
+	to ensure semantics where reflection is involved. (In fact, this is undecideable).  
+	</p>
+	
+	<h3>Java Language Purity</h3>
+	<p>
+	Lots of the methods in the Java language are pure, and can be used by your pure code.  For example:
+	</p>
+	<ul>
+		<li concordion:execute="mathIsPure()">Methods in the <code>java.lang.Math</code> class.</li>
+		<li concordion:execute="stringBuilding()">Most methods ofthe <code>java.lang.StringBuilder</code> class.  This is automatically used
+		by the Java Compile when concatenating strings.</li>
+	</ul>
+	
+	<h3>Other External Libraries</h3>
+	
+	<ul>
+		<li concordion:execute="testLibraryReference()">You can use classes annotated with the @Pure annotation outside your source base.  It's assumed that they have passed their purity checks.</li>
+	</ul>
+	
+	<h3>Construction and Use</h3>
+	
+	<p concordion:execute="useOfObjects()">Pure code is free to construct <code>@MutableUnshared</code> objects, or <code>@ImmutableValue</code> objects,
+	since the constructors for both of these types of objects are registed pure.</p>
+	
+	
+
+<div class="footer">Results generated by <a href="http://www.concordion.org" style="font-weight: bold; text-decoration: none; color: #89C;">Concordion</a><div class="testTime">in 355 ms on 01-Oct-2015 at 11:23:39 BST</div></div></body>
+</html>
