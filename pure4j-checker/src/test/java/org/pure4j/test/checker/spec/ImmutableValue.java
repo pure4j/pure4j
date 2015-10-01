@@ -143,17 +143,17 @@ public class ImmutableValue {
 
 	@Test
 	public void hashCodeAndToStringMustBeImplemented() {
-		Helper.expects(ClassExpectingPureMethod.class).thenCheck(1, NoToString.class);
+		Helper.expects(ClassExpectingPureMethod.class).thenCheck(1, 0, NoToString.class);
 	}
 
 	@Test
 	public void abstractImmutableValueImplementsHashCodeAndEquals() {
-		Helper.check(1, SomeBeanLibraryBased.class);
+		Helper.check(0, 1, SomeBeanLibraryBased.class);
 	}
 	
 	@Test
 	public void usingLibrary() {
-		Helper.check(1, SomeBeanLibraryBased.class);
+		Helper.check(0, 1, SomeBeanLibraryBased.class);
 	}
 
 	@Test

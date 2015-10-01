@@ -38,10 +38,14 @@ public final class Helper {
 	}
 	
 	public static void check(int defaultConstructors, Class<?>... classes) {
-		new Helper().thenCheck(defaultConstructors, classes);
+		new Helper().thenCheck(defaultConstructors, 0, classes);
 	}
 
-	public boolean thenCheck(int defaultConstructors, Class<?>... classes) {
+	public static void check(int defaultConstructors, int maxSynthetics, Class<?>... classes) {
+		new Helper().thenCheck(defaultConstructors, maxSynthetics, classes);
+	}
+	
+	public boolean thenCheck(int defaultConstructors, int maxSynthetics, Class<?>... classes) {
 		try {
 			final Set<String> pures = new LinkedHashSet<String>();
 			final Map<Class<? extends Pure4JException>, Integer> errorSet = new HashMap<Class<? extends Pure4JException>, Integer>();
@@ -101,7 +105,19 @@ public final class Helper {
 				System.out.println(string);
 			}
 
-			Assert.assertEquals(defaultConstructors, pures.size());
+			int synthetics = 0;
+			int constructors = 0;
+			for (String string : pures) {
+				if (string.contains("<")) {
+					constructors ++;
+				} else {
+					synthetics ++;
+				}
+			}
+			
+			Assert.assertEquals(defaultConstructors, constructors);
+			Assert.assertTrue(synthetics <= maxSynthetics);
+			
 
 			String errorAnn = org.pure4j.model.Type.getInternalName(CausesError.class);
 

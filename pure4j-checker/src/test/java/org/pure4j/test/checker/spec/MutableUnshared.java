@@ -62,7 +62,7 @@ public class MutableUnshared {
 
 	@Test
 	public void covariantReturnTypeImmutable() {
-		Helper.check(3 /* constructors */ + 2 /* covariants */, BadBase.class, LeakyOverride.class, PureClass.class);
+		Helper.check(3, 2, BadBase.class, LeakyOverride.class, PureClass.class);
 	}
 
 	@Test
