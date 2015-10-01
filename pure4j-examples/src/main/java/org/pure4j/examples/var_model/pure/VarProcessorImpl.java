@@ -1,6 +1,5 @@
 package org.pure4j.examples.var_model.pure;
 
-import java.util.Collections;
 import java.util.Currency;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
@@ -27,8 +26,6 @@ public class VarProcessorImpl implements VarProcessor {
 	 * 
 	 */
 	public Amount getVar(IPersistentMap<Ticker, PnLStream> historic, ISeq<Sensitivity> sensitivities, IPersistentMap<Currency, Float> fxRates) {
-		System.out.println("sdfjhdskhjfdsdhfsj");
-		
 		// combine the sensitivities
 		PnLStream combined = null;
 		for (Sensitivity s : sensitivities) {
