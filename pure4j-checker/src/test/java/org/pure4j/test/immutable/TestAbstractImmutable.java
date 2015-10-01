@@ -11,7 +11,7 @@ public class TestAbstractImmutable {
 		Bob b2 = new Bob("hello", 43);
 		Assert.assertEquals(b1, b1);
 		Assert.assertEquals(b1.hashCode(), b2.hashCode());
-		Assert.assertEquals("org.pure4j.immutable.Bob[hello,43]", b1.toString());
+		Assert.assertEquals("org.pure4j.test.immutable.Bob[hello,43]", b1.toString());
 		Assert.assertEquals(0,  b1.compareTo(b2));
 	}
 	

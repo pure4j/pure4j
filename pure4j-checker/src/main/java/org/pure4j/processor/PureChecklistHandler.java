@@ -23,8 +23,8 @@ import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
-import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
-import org.pure4j.exception.PureMethodAccessesSharedFieldException;
+import org.pure4j.exception.PureMethodAccessesNonImmutableStaticFieldException;
+import org.pure4j.exception.PureMethodAccessesStaticFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodNotInProjectScopeException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
@@ -229,13 +229,13 @@ public class PureChecklistHandler {
 							
 							if (isStatic) {
 								if (!isFinal) {
-									cb.registerError(new PureMethodAccessesSharedFieldException(this, fieldHandle));
+									cb.registerError(new PureMethodAccessesStaticFieldException(this, fieldHandle));
 									pureImplementation = false;
 								}
 								
 								if (!immutables.typeIsMarked(f.getGenericType(), cb)) {
 									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle, cl, pm))) {
-										cb.registerError(new PureMethodAccessesNonImmutableFieldException(this, fieldHandle));
+										cb.registerError(new PureMethodAccessesNonImmutableStaticFieldException(this, fieldHandle));
 										pureImplementation = false;
 									}
 								}
