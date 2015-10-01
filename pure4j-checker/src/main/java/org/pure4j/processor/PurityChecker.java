@@ -11,15 +11,19 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.annotations.pure.PureParameters;
 import org.pure4j.exception.ClassHasConflictingAnnotationsException;
+import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
+import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ClassHandle;
+import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.model.StackArgumentsMethodCall;
 import org.pure4j.processor.PureChecklistHandler.PureMethod;
+import org.springframework.asm.Type;
 
 public class PurityChecker implements Rule {
 	
@@ -49,12 +53,37 @@ public class PurityChecker implements Rule {
 		cb.send("Method Purity Testing");
 		cb.send("---------------------");
 		pureChecklist.doPureMethodChecks(cb, pm);
+		identifyImpureCallsToPureImplementations(pm, cb);
 		identifyImpureImplementations(pm, cb);
 		outputPureMethodList(cb, pm);	
 	}
 	
+	private void identifyImpureCallsToPureImplementations(ProjectModel pm, Callback cb) {
+		for (MemberHandle declaration : pm.getAllDeclaredMethods()) {
+			boolean pure = false;
+			
+			try {
+				pure = pureChecklist.isMarkedPure(declaration, cb);
+			} catch (MemberCantBeHydratedException e) {
+			}
+			
+			if (!pure) {
+				for (MemberHandle called : pm.getCalls(declaration)) {
+					PureMethod pureMethod = pureChecklist.getElementFor(called);
+					if (pureMethod != null) {
+						if (true == pureMethod.checkImplementationPurity(cb, pm)) {
+							if (false == pureMethod.checkInterfacePurity(cb, pm)) {
+								cb.registerError(new ImpureCodeCallingPureCodeWithoutInterfacePurity(declaration, called));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public Set<String> identifyImpureImplementations(ProjectModel pm, Callback cb) {
-		return new InterfacePurityViolations().getPurityViolations(pureChecklist, pm, cb, cl);
+		return new ImpurityCascader().getPurityViolations(pureChecklist, pm, cb, cl);
 	}
 	
 	public void cascadeImpurities(ProjectModel pm, Callback cb) {
@@ -110,6 +139,15 @@ public class PurityChecker implements Rule {
 		Class<?> in = pureClass;
 		
 		while (includeObject ? (in != null) : ((in != Object.class) && (in != null))) {
+			String className = Type.getInternalName(in);
+			if (pm.getAllClasses().contains(className)) {
+				for (MemberHandle mh : pm.getDeclaredMethods(className)) {
+					if (mh.getName().equals("<clinit>")) {
+						// handle purity of class initialization
+						registerMethodWithCorrectEnforcement(pureClass, cb, (ClassInitHandle) mh); 
+					}
+				}
+			}
 			Set<String> implementations = new LinkedHashSet<String>();
 			for (Constructor<?> c : in.getDeclaredConstructors()) {
 				ConstructorHandle ch = new ConstructorHandle(c);

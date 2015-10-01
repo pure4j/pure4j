@@ -2,6 +2,7 @@ package org.pure4j.model;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,13 @@ public class ProjectModelImpl implements ProjectModel {
 	private Map<String, Set<String>> packageContents = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<AnnotationHandle>> annotationReferences = new HashMap<String, Set<AnnotationHandle>>(100);
 	private Map<CallHandle, Integer> opcodes = new HashMap<CallHandle, Integer>(100);
+	private Set<MemberHandle> declaredMethods = new HashSet<>(1000);
+	private Map<String, Set<MemberHandle>> declaredMethodsByClass = new HashMap<String, Set<MemberHandle>>(100);
+	
+	public void addDeclaredMethod(String className, MemberHandle mh) {
+		declaredMethods.add(mh);
+		checkSetAdd(className, mh, declaredMethodsByClass);
+	}
 
 	private LinkedHashSet<String> classes = new LinkedHashSet<String>(100);
 
@@ -182,4 +190,15 @@ public class ProjectModelImpl implements ProjectModel {
 			opcodes.put(ch, o);
 		}
 	}
+
+	@Override
+	public Set<MemberHandle> getAllDeclaredMethods() {
+		return declaredMethods;
+	}
+
+	@Override
+	public Set<MemberHandle> getDeclaredMethods(String className) {
+		return checkSetGet(declaredMethodsByClass.get(className));
+	}
+
 }

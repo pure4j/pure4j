@@ -11,6 +11,7 @@ import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
 import org.pure4j.model.CallHandle;
 import org.pure4j.model.ClassHandle;
+import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
 import org.pure4j.model.MemberHandle;
@@ -209,9 +210,8 @@ public class ClassFileModelBuilder {
 		};
 	}
 
-	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className,
-			final MemberHandle mh, final String superName) {
-		
+	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className, final MemberHandle mh, final String superName) {
+		model.addDeclaredMethod(className, mh);
 		final String methodName = mh.getName();
 		output(methodName);
 		
@@ -411,6 +411,8 @@ public class ClassFileModelBuilder {
 	private CallHandle createHandle(String owner, String name, String desc, int line) {
 		if (name.equals("<init>")) {
 			return new ConstructorHandle(owner, desc, line);			
+		} else if (name.equals("<clinit>")) {
+			return new ClassInitHandle(owner, desc, line);
 		} else {
 			return new MethodHandle(owner, name, desc, line);
 		}

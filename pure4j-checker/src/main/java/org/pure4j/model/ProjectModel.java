@@ -80,6 +80,16 @@ public interface ProjectModel {
     public Set<String> getAllClasses();
     
     /**
+     * Returns all the methods/constructors in the model.
+     */
+    public Set<MemberHandle> getAllDeclaredMethods();
+    
+    /**
+     * Returns all methods/constructors declared from this className
+     */
+    public Set<MemberHandle> getDeclaredMethods(String className);
+    
+    /**
      * Returns the annotations that refer to this class
      */
     public Set<AnnotationHandle> getAnnotationReferences(String className);

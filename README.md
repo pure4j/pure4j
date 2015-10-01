@@ -22,6 +22,13 @@ What is Function Purity?
 
 See [wikipedia](https://en.wikipedia.org/wiki/Pure_function) for further details.
 
+Islands Of Purity
+-----------------
+
+One of the main reasons for using Java as a programming language is because of its library support for integration with other systems,
+e.g. JDBC, XML, Web-Services, JMS etc.  Pure4J allows you to write "islands" of pure code within the context of a larger, side-effecting code-base.
+
+
 Major Components Of Pure4J
 --------------------------
 
@@ -57,9 +64,10 @@ This library keeps track of these and allows your pure functions to use existing
 Tutorial
 --------
 
-See the tutorial here.
+See the tutorial [here](tutorial.md). 
 
-There is an example project here.
+There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
+Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
 
 Status of this Project
 ----------------------
@@ -68,14 +76,17 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 ### Known Remaining Issues
 
+* Fix remaining tests
 * Calling Pure Code From Impure (needs to be checked)
-* Thorough review of purity of Java language classes
-* Streams.  Supported, but test breaking.  Need to add to ISeq.
-* Service-classes:  need a way to specify their purity without calling them `@ImmutableValue`s
 * Return Type Checking: for `@MutableUnshared` implementations.
 * Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
-more like idiomatic Java.
+more like idiomatic Java.  -- need to write tests for each constructor, I think.
+* Bintray
+* Tutorial
+
 * Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
 * Cascading Implementation Impurity: One impure function should 'taint' those that use it.
+* Thorough review of purity of Java language classes
+* Service-classes:  need a way to specify their purity without calling them `@ImmutableValue`s  -- not sure about this
 
 

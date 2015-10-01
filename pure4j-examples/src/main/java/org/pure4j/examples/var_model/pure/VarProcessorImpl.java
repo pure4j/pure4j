@@ -27,6 +27,8 @@ public class VarProcessorImpl implements VarProcessor {
 	 * 
 	 */
 	public Amount getVar(IPersistentMap<Ticker, PnLStream> historic, ISeq<Sensitivity> sensitivities, IPersistentMap<Currency, Float> fxRates) {
+		System.out.println("sdfjhdskhjfdsdhfsj");
+		
 		// combine the sensitivities
 		PnLStream combined = null;
 		for (Sensitivity s : sensitivities) {

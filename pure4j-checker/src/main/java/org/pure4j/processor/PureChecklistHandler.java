@@ -30,6 +30,7 @@ import org.pure4j.exception.PureMethodNotInProjectScopeException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodReturnNotImmutableException;
 import org.pure4j.model.CallHandle;
+import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
 import org.pure4j.model.MemberHandle;
@@ -285,6 +286,8 @@ public class PureChecklistHandler {
 		private int getArgOffset() {
 			if (declaration instanceof ConstructorHandle) {
 				return 1;
+			} else if (declaration instanceof ClassInitHandle) {
+				return 0;
 			} else {
 				// method handle
 				Method m = ((MethodHandle) declaration).hydrate(cl);
@@ -432,7 +435,7 @@ public class PureChecklistHandler {
 	public boolean isMarkedPure(MemberHandle mh, Callback cb) {
 		boolean staticMethod = false;
 		if (mh instanceof MethodHandle) {
-			staticMethod = Modifier.isStatic(mh.getModifiers(cl));
+			staticMethod = mh.getName().equals("<clinit>") || Modifier.isStatic(mh.getModifiers(cl));
 		}
 		
 		if (pureChecklist.containsKey(mh)) {
