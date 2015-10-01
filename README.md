@@ -76,9 +76,6 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 ### Known Remaining Issues
 
-* Fix remaining tests
-* Calling Pure Code From Impure (needs to be checked)
-* Return Type Checking: for `@MutableUnshared` implementations.
 * Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
 more like idiomatic Java.  -- need to write tests for each constructor, I think.
 * Bintray
