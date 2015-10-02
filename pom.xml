@@ -4,7 +4,7 @@
 
 	<groupId>org.pure4j</groupId>
 	<artifactId>pure4j-parent</artifactId>
-	<version>0.2.3</version>
+	<version>0.2.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -170,7 +170,7 @@
   		<connection>scm:git:git@github.com:robmoffat/pure4j.git</connection>
   		<url>scm:git:git@github.com:robmoffat/pure4j.git</url>
   		<developerConnection>scm:git:git@github.com:robmoffat/pure4j.git</developerConnection>
-  	  <tag>pure4j-parent-0.2.3</tag>
+  	  <tag>HEAD</tag>
   </scm>
   
 </project>
