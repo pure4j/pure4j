@@ -47,7 +47,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   		<github.global.server>github</github.global.server>
-  		<bintray.repo>robmoffat/maven</bintray.repo>
+  		<bintray.repo>robmoffat</bintray.repo>
   		<bintray.package>pure4j</bintray.package>
 	</properties>
 
@@ -158,7 +158,7 @@
   	<distributionManagement>
   		<repository>
   			<id>bintray-robmoffat-maven-release</id>
-  			<url>https://api.bintray.com/maven/${bintray.subject}/${bintray.repo}/${bintray.package}/;publish=1</url>
+  			<url>https://api.bintray.com/maven/${bintray.repo}/${bintray.package}/;publish=1</url>
   		</repository>
   		<snapshotRepository>
   			<id>snapshots</id>
