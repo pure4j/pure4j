@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import org.pure4j.collections.PersistentVector;
 
 /**
- * Overrides the field & method return-type checks on an @ImmutableValue class to ignore the 
+ * Overrides the field &amp; method return-type checks on an @ImmutableValue class to ignore the 
  * checking of the field/method type.  
  * 
  * Since this is disabling some purity testing, it should be avoided if possible.  

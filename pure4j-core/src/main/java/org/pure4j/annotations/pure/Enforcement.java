@@ -16,8 +16,8 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * but in any case you want to generally be using the class as a pure class.  This is not acceptable as a class-level annotation.
  * </ul>
  * 
- * @see {@link ImmutableValue}
- * @see {@link Pure}
+ * @see org.pure4j.annotations.immutable.ImmutableValue
+ * @see org.pure4j.annotations.pure.Pure
  * 
  * @author robmoffat
  *

@@ -6,10 +6,9 @@
 	<parent>
 		<groupId>org.pure4j</groupId>
 		<artifactId>pure4j-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>0.2-SNAPSHOT</version>
 		<relativePath>..</relativePath>		
 	</parent>
-
 
 	<artifactId>pure4j-examples</artifactId>
 	<packaging>jar</packaging>
@@ -29,7 +28,7 @@
 			<plugin>
 				<groupId>org.pure4j</groupId>
 				<artifactId>pure4j-maven-plugin</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${project.version}</version>
 				<executions>
 		         	<execution>
 	                    <goals>
@@ -51,7 +50,6 @@
 			<groupId>org.pure4j</groupId>
 			<artifactId>pure4j-core</artifactId>
 	        <version>${project.version}</version>
-			<scope />
 		</dependency>
 	</dependencies>
 </project>

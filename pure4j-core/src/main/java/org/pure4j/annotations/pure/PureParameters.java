@@ -7,6 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * Allows you to change the level of interface purity checking on a pure method.
+ * @see org.pure4j.annotations.immutable.ImmutableValue
+ * @see org.pure4j.annotations.pure.Pure
+ * @see org.pure4j.annotations.mutable.MutableUnshared
  * 
  * @author robmoffat
  *

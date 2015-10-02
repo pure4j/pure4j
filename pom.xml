@@ -4,14 +4,8 @@
 
 	<groupId>org.pure4j</groupId>
 	<artifactId>pure4j-parent</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
 
 	<modules>
 		<module>pure4j-core</module>
@@ -47,7 +41,7 @@
 	</licenses>
 
 	<name>Pure4J</name>
-	<url></url>
+	<url />
 	<description>Suite of tools for purity semantics in Java.</description>
 
 	<properties>
