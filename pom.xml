@@ -4,7 +4,7 @@
 
 	<groupId>org.pure4j</groupId>
 	<artifactId>pure4j-parent</artifactId>
-	<version>0.2.6</version>
+	<version>0.2.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -53,18 +53,11 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.2</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-api</artifactId>
-						<version>1.7</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+			<!--  
+				REMINDER:  when releasing, don't use the maven-release-plugin.
+				Instead, mvn versions:set -DnewVersion=<blah>
+				mvn deploy.
+			 -->
 		
 		
 			<plugin>
@@ -144,14 +137,6 @@
 				<version>2.2</version>
 			</plugin>
 		</plugins>
-
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh-external</artifactId>
-				<version>1.0-alpha-5</version>
-			</extension>
-		</extensions>
 	</build>
 
 
@@ -160,17 +145,12 @@
   			<id>bintray-robmoffat-maven-release</id>
   			<url>https://api.bintray.com/maven/robmoffat/maven/pure4j/;publish=1</url>
   		</repository>
-  		<snapshotRepository>
-  			<id>snapshots</id>
-  			<url>file://${project.build.outputDirectory}/releases/snapshot/${project.version}</url>
-  		</snapshotRepository>
   	</distributionManagement>
   	
   	<scm>
   		<connection>scm:git:git@github.com:robmoffat/pure4j.git</connection>
   		<url>scm:git:git@github.com:robmoffat/pure4j.git</url>
   		<developerConnection>scm:git:git@github.com:robmoffat/pure4j.git</developerConnection>
-  	  <tag>pure4j-parent-0.2.3</tag>
   </scm>
   
 </project>
