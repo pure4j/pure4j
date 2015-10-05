@@ -64,10 +64,15 @@ This library keeps track of these and allows your pure functions to use existing
 Tutorial
 --------
 
-See the tutorial [here](tutorial.md). 
+See the tutorial [here](docs/tutorial.md). 
 
 There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
 Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
+
+FAQ
+---
+
+Please see the FAQ [here](docs/FAQ.md).
 
 Specifications
 --------------
@@ -87,10 +92,12 @@ This is currently an idea under investigation.  It’s quite possible that the c
 more like idiomatic Java.  -- need to write tests for each constructor, I think.
 * Bintray
 * Tutorial
+* Stream counter-examples.
 
 * Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
 * Cascading Implementation Impurity: One impure function should 'taint' those that use it.
 * Thorough review of purity of Java language classes
 * Service-classes:  need a way to specify their purity without calling them `@ImmutableValue`s  -- not sure about this
+
 
 

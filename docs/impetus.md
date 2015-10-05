@@ -95,10 +95,10 @@ been able to test the whole stack, but we could have tested the sections where c
 
 So for now, it would be nice if you could:
 
-Read and Write Code In Java (as a lingua franca)
-Make It Testable
-Make it Deterministic
-Make it Strategy-Proof
+* Read and Write Code In Java (as a lingua franca)
+* Make It Testable
+* Make it Deterministic
+* Make it Strategy-Proof
 
 Obviously, it would be nice if we could do functional programming on the JVM.  And actually, Java8 is a step in the right direction.  
 I am still undecided on whether it will make my life easier or not (as I haven’t seen much abuse of it in the wild yet).  
