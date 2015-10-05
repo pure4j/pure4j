@@ -15,7 +15,7 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * 
  * @author robmoffat
  *
- * @param <K>
+ * @param <K> Base-type for collection elements
  */
 @ImmutableValue
 public interface IPersistentCollection<K> extends Seqable<K>, Collection<K>, Counted {

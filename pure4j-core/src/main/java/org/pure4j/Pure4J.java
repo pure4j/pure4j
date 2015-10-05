@@ -84,9 +84,6 @@ public class Pure4J {
 		immutableClass(d);
 	}
 	
-	/**
-	 * TODO:  add non-varargs version of this.
-	 */
 	@Pure
 	public static String toString(Object o, Object... fields) {
 		StringBuilder sb = new StringBuilder();
@@ -133,8 +130,8 @@ public class Pure4J {
 	
 	/**
 	 * Handy equals builder.  Feel free to use or not. Other equals-builders are available.
-	 * @Param parts An array with even number of elements, where the first n/2 elements are from the 
-	 * first object to be compared, and the second n/2 are from the other object.
+	 * @param parts An array with even number of elements, where the first n/2 elements are from the  first object to be compared, and the second n/2 are from the other object.
+	 * @return true if all the part-pairs are equal, else false.
 	 */
 	@Pure
 	public static boolean equals(Object... parts) {
@@ -155,6 +152,7 @@ public class Pure4J {
 	 * Checks that the elements in an array (if not the array itself) are all immutable.
 	 * Works quickly O(1) if the base element type is itself immutable.  Otherwise checks
 	 * each element in O(n) time.
+	 * @param fields fields to be checked
 	 */
 	@Pure
 	public static void immutableArray(Object[] fields) {

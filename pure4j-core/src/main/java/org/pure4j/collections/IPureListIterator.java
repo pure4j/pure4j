@@ -9,7 +9,7 @@ import org.pure4j.annotations.mutable.MutableUnshared;
  * 
  * @author robmoffat
  *
- * @param <E>
+ * @param <E> Element type
  */
 @MutableUnshared
 public interface IPureListIterator<E> extends ListIterator<E> {

@@ -16,6 +16,9 @@ public class PureCollections {
 
 	/**
 	 * Note that this doesn't use the passed array as that would violate purity.
+	 * @param seq A sequence
+	 * @param passed the array to populate. Not used
+	 * @return an array containing the elements of seq
 	 */
 	@SuppressWarnings("rawtypes")
 	@Pure(Enforcement.FORCE)
@@ -280,6 +283,9 @@ public class PureCollections {
 	
 	/**
 	 * Provides a pure implementation for sorting
+	 * @param list elements to sort
+	 * @param <T> element type
+	 * @return a persistent vector in default sorted order
 	 */	
 	@Pure
 	public static <T extends Comparable<? super T>> IPersistentVector<T> sort(IPersistentVector<T> list) {

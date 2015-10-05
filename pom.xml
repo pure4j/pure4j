@@ -41,7 +41,7 @@
 	</licenses>
 
 	<name>Pure4J</name>
-	<url />
+	<url>https://github.com/robmoffat/pure4j</url>
 	<description>Suite of tools for purity semantics in Java.</description>
 
 	<properties>

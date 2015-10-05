@@ -18,7 +18,10 @@ public class ToStringFunctions {
      * <tt>", "</tt> (comma and space).  Elements are converted to strings as
      * by {@link String#valueOf(Object)}.
      *
+     * @param <E> element type
+     * @param c the collection
      * @return a string representation of this collection
+     * 
      */
 	@Pure
 	public static <E> String toString(Collection<E> c) {
@@ -48,6 +51,9 @@ public class ToStringFunctions {
      * {@link String#valueOf(Object)}.
      *
      * @return a string representation of this map
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param m the map to be rendered
      */
 	@Pure
 	public static <K, V> String toString(Map<K, V> m) {

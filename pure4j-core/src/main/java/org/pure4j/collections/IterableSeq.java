@@ -20,7 +20,7 @@ import java.util.Iterator;
  * 
  * @author robmoffat
  *
- * @param <K>
+ * @param <K> Element type
  */
 public class IterableSeq<K> extends ASeq<K> {
 	final Iterator<K> iter;

@@ -25,7 +25,7 @@ import org.pure4j.annotations.mutable.MutableUnshared;
  * 
  * @author robmoffat
  *
- * @param <K>
+ * @param <K> Element type
  */
 @MutableUnshared
 public interface ITransientCollection<K> extends Collection<K> {

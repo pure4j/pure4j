@@ -195,9 +195,11 @@ public final class PureCollectors {
 
     /**
      * Could probably make this a lot faster using a transient list.
-     * @return
+     * @return collects into a {@link PersistentList}.
+     * @param <T> element type for the list 
      */
-    @Pure
+    @SuppressWarnings("unchecked")
+	@Pure
     public static <T> CollectorImpl<T, List<T>, ISeq<T>> toSeq() {
     	return new CollectorImpl<>(
     			(Supplier<List<T>>) ArrayList::new, 
@@ -217,58 +219,6 @@ public final class PureCollectors {
     			, CH_NOID);
     }
 
-    /**
-     * Returns a {@code Collector} that accumulates the input elements into a
-     * new {@code Set}. There are no guarantees on the type, mutability,
-     * serializability, or thread-safety of the {@code Set} returned; if more
-     * control over the returned {@code Set} is required, use
-     * {@link #toCollection(Supplier)}.
-     *
-     * <p>This is an {@link Collector.Characteristics#UNORDERED unordered}
-     * Collector.
-     *
-     * @param <T> the type of the input elements
-     * @return a {@code Collector} which collects all the input elements into a
-     * {@code Set}
-     */
-    public static <T>
-    Collector<T, ?, Set<T>> toSet() {
-        return new CollectorImpl<>((Supplier<Set<T>>) HashSet::new, Set::add,
-                                   (left, right) -> { left.addAll(right); return left; },
-                                   CH_UNORDERED_ID);
-    }
-
-    /**
-     * Implementation class used by partitioningBy.
-     */
-    private static final class Partition<T>
-            extends AbstractMap<Boolean, T>
-            implements Map<Boolean, T> {
-        final T forTrue;
-        final T forFalse;
-
-        Partition(T forTrue, T forFalse) {
-            this.forTrue = forTrue;
-            this.forFalse = forFalse;
-        }
-
-        @Override
-        public Set<Map.Entry<Boolean, T>> entrySet() {
-            return new AbstractSet<Map.Entry<Boolean, T>>() {
-                @Override
-                public Iterator<Map.Entry<Boolean, T>> iterator() {
-                    Map.Entry<Boolean, T> falseEntry = new SimpleImmutableEntry<>(false, forFalse);
-                    Map.Entry<Boolean, T> trueEntry = new SimpleImmutableEntry<>(true, forTrue);
-                    return Arrays.asList(falseEntry, trueEntry).iterator();
-                }
-
-                @Override
-                public int size() {
-                    return 2;
-                }
-            };
-        }
-    }
 
 	@SuppressWarnings("unchecked")
 	private static <I, R> Function<I, R> castingIdentity() {

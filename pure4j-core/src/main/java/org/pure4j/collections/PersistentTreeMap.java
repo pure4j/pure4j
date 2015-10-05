@@ -29,7 +29,7 @@ import org.pure4j.annotations.pure.Pure;
  * Persistent Red Black Tree 
  * Note that instances of this class are constant
  * values i.e. add/remove etc return new values
- * <p/>
+ *
  * See Okasaki, Kahrs, Larsen et al
  */
 

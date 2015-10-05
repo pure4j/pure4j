@@ -22,15 +22,18 @@ import org.pure4j.annotations.pure.Pure;
 
 
 /**
- * Simple implementation of persistent map on an array
- * <p/>
+ * Simple implementation of persistent map on an array.
+ * 
  * Note that instances of this class are constant values i.e. add/remove etc
  * return new values
- * <p/>
+ * 
  * Copies array on every change, so only appropriate for _very_small_ maps
- * <p/>
+ * 
  * null keys and values are ok, but you won't be able to distinguish a null
  * value via valAt - use contains/entryAt
+ * 
+ * @param <K> Key
+ * @param <V> value
  */
 
 public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IMapIterable<K, V> {

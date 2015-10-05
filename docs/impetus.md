@@ -13,7 +13,8 @@ of abstractions available to Scala programmers, plus features like operator over
 creating a nightmare rather than a utopia.  Put simply, there was just too much scope to screw everything up.
 
 I decided: If you spend more time reading code than writing it, Scala is a bad deal.  I don’t know whether this is 
-still the case.  I have a feeling that it is.  If Scala wants to provide the best-of-both-worlds FP plus Java 
+still the case.  I have a feeling that it would be; they aren't going to remove features from the language.  
+If Scala wants to provide the best-of-both-worlds FP plus Java 
 backwards compatibility, it is taking on a huge amount of essential complexity.  And, I think, this is why 
 Martin Odersky does presentations like [this](https://www.youtube.com/watch?v=WxyyJyB_Ssc).
 
@@ -73,14 +74,24 @@ commonly, it's about managers wanting to be able to do design.
 The problem is, writing a strategy is easy.  You can do it on powerpoint.   A few weeks pass, a new manager arrives, 
 and there is a new strategy.   As I say, this is a common problem amongst all the investment banks I touch.
 
-But, writing code as pure functions takes you some of the way there:  /Pure functions can run anywhere./  Because they 
+But, writing code as pure functions takes you some of the way there:  *Pure functions can run anywhere.*  Because they 
 don’t have side-effects, they don’t have dependencies on other systems.   This is immense:  
 
-> Irrespective of the strategy of the month, we can run our code anywhere there is a JVM:  Hadoop, Spark, Coherence, whatever.  
+> Irrespective of the strategy of the month, we can run our code anywhere there is a JVM:  Hadoop, Spark, Coherence, whatever.   
+> Pure programming is strategy-proofing.
 
-## Pure programming is strategy-proofing.
+## Benighted Projects
 
-Putting It All Together
+A diversion now, but a useful one:  I was assigned to sort out the automated testing on a project in the bank that was *ahem* troubled.
+Sadly, most of my time was *not* spent building automated tests for the project.  Due to the way the project 
+had been designed, it was not possible to test much of it anywhere other than in a live environment.  That is to say, we could
+unit-test small parts of the code at build-time, but not run end-to-end tests because some dependencies could only be 
+satisfied by deploying it.
+
+So, this seems to be *another* case where writing our business logic in a pure style would have really helped:  we would not have 
+been able to test the whole stack, but we could have tested the sections where calculation actually happens.
+
+## Putting It All Together
 
 So for now, it would be nice if you could:
 
@@ -89,10 +100,14 @@ Make It Testable
 Make it Deterministic
 Make it Strategy-Proof
 
-Obviously, it would be nice if we could do functional programming on the JVM.  And actually, Java8 is a step in the right direction.  I am still undecided on whether it will make my life easier or not (as I haven’t seen much abuse of it in the wild yet).  But, I can live without this.
+Obviously, it would be nice if we could do functional programming on the JVM.  And actually, Java8 is a step in the right direction.  
+I am still undecided on whether it will make my life easier or not (as I haven’t seen much abuse of it in the wild yet).  
+But, I can live without this.
 
-Pure4J
+## Pure4J
 
-Frege proves that pure programming is possible on the JVM.  Clojure proves you can have immutable (persistent) collections and still have a language.  All that is needed is to bring these two ideas together within plain Java and we can hit all of the bullet points above.  
+Frege proves that pure programming is possible on the JVM.  Clojure proves you can have immutable (persistent) collections and still have a language.  
+All that is needed is to bring these two ideas together within plain Java and we can hit all of the bullet points above.  
 
-Pure4J gives you the tools to specify (and then check at compile time) immutable classes.  It also gives you the tool to identify your islands of purity, and again, check that this constraint is met at compile time.   
+Pure4J gives you the tools to specify (and then check at compile time) immutable classes.  
+It also gives you the tool to identify your islands of purity, and again, check that this constraint is met at compile time.   

@@ -10,11 +10,6 @@
 
 package org.pure4j.collections;
 
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.pure4j.annotations.immutable.ImmutableValue;
 
 
@@ -34,7 +29,7 @@ public interface ISeq<K> extends Counted, Seqable<K> {
 	K first();
 
 	/**
-	 * Returns a seq for the remainder of the list. If there are no more elements, returns null.
+	 * @return a seq for the remainder of the list. If there are no more elements, returns null.
 	 */
 	ISeq<K> next();
 
@@ -42,6 +37,8 @@ public interface ISeq<K> extends Counted, Seqable<K> {
 
 	/**
 	 * Adds an element to the front of the seq.
+	 * @return A new non-null ISeq.
+	 * @param o any object
 	 */
 	ISeq<K> cons(K o);
 

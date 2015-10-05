@@ -28,8 +28,8 @@ import org.pure4j.annotations.pure.Pure;
  * Purity notes: I've heavily used FORCE on this class and it's abstract just because I 
  * don't want to change the implementation and I trust the clojure guys.  
  *
- * @param <K>
- */
+ * @param <K> Element Type
+ */ 
 public class PersistentVector<K> extends APersistentVector<K> {
 
 	@MutableUnshared
