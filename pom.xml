@@ -56,7 +56,7 @@
 			<!--  
 				REMINDER:  when releasing, don't use the maven-release-plugin.
 				Instead, mvn versions:set -DnewVersion=<blah>
-				mvn deploy.
+				mvn install javadoc:jar deploy
 			 -->
 		
 		
