@@ -10,10 +10,7 @@ import org.pure4j.annotations.pure.Pure;
 /**
  * See: <a href="http://robmoffat.github.io/pure4j/concordion/org/pure4j/test/checker/spec/ImmutableValue.html">Online Spec</a>
  *
- * @see org.pure4j.annotations.immutable.ImmutableValue
- * @see org.pure4j.annotations.pure.Pure
- * @see org.pure4j.annotations.mutable.MutableUnshared
-
+ * 
  * 
  * @author robmoffat
  *

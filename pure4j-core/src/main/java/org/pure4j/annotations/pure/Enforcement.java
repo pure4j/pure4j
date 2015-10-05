@@ -18,6 +18,7 @@ import org.pure4j.annotations.immutable.ImmutableValue;
  * 
  * @see org.pure4j.annotations.immutable.ImmutableValue
  * @see org.pure4j.annotations.pure.Pure
+ * @see org.pure4j.annotations.mutable.MutableUnshared
  * 
  * @author robmoffat
  *

@@ -3,7 +3,7 @@ Frequently Asked Questions
 
 ## What Are The Advantages of Writing Pure Code?
 
-1.  Pure code is easier to test.  Because all of the 
+1.  Pure code is easier to test.  Because everything needed to perform the calculation is passed in to the pure method, 
 
 ## Why is <code>equals()</code> pure?
 
