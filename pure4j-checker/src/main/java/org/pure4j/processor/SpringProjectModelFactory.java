@@ -10,7 +10,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
- * This class uses spring & asm functionality to scan the contents of the
+ * This class uses spring &amp; asm functionality to scan the contents of the
  * project to build the project model.
  * 
  * 
