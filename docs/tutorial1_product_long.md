@@ -1,13 +1,15 @@
+Product
+=======
+
+```java
 package org.pure4j.examples.tutorial.pure;
 
-import org.pure4j.annotations.immutable.ImmutableValue;
 
-@ImmutableValue
 public class Product {
 
 	private long sku;
 
-	private final String description;
+	private String description;
 	
 	public Product(long sku, String description) {
 		super();
@@ -19,8 +21,16 @@ public class Product {
 		return sku;
 	}
 
+	public void setSku(long sku) {
+		this.sku = sku;
+	}
+
 	public String getDescription() {
 		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override
@@ -51,10 +61,6 @@ public class Product {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "Product [sku=" + sku + ", description=" + description + "]";
-	}
-
 	
 }
+```

@@ -21,17 +21,28 @@ But, on the other hand, you wont have to make defensive copies.  So, it's likely
 However, remember that these collections are taken from the Clojure world:  and high-throughput systems like Apache Storm are written
 in that, so I would argue that often times, these collections are *good enough*.
 
+## Why Does Everything Need to be Immutable?
+
+Well, this isn't strictly true.  But, by limiting the place where an object can change state to *construction only* makes 
+it much easier to reason about state.  If you're not sold on immutability, then consider the `String` class.  Yes, we could have 
+mutable strings, but this is likely to make your code *much* harder to reason about.  Do you really want to go back to 
+mutable strings?  Rich Hickey (the inventor of Clojure language) makes a similar, more persuasive case [here](https://youtu.be/-6BsiVyC1kM)
+
+So, without immutability, it's very hard to come up with truly deterministic code.
+
+
 ## Is it really worth your while to bother with this, in a non-multi-threaded environment?
 
 Probably yes.  A good analogy here is garbage collection.  In the C world, you had to manage your own memory, and people thought that
-was better.  Usually, the programs ran fine, but every now and again something crazy might happen, which might be down to memory 
-not being deallocated properly.  These are hard-to-track-down bugs, and the same goes for bugs in Java threading.
+generally they could do a better job of this than an algorithm.  Usually, the programs ran fine, but every now and again something crazy 
+might happen, which might be down to memory not being deallocated properly.  These are hard-to-track-down bugs.  Java took away
+this opportunity for bugs to arise, and by and large people are happy not to have to worry about this in their coding again. 
 
-Although you might trust your own skills writing multi-threaded code, it's far easier to just *not have to worry* and let the compiler
-handle it for you.  
+The same goes for bugs in Java threading.  Although you might trust your own skills writing multi-threaded code, it's far easier to just
+*not have to worry* and let the compiler  handle it for you.  Pure4J does this.
 
 A lot of the time, Pure4J seems to be nit-picking:  "really, this needs to be final?  How is that *ever* going to bite me?"  But 
-actually, each one of these tiny changes adds up to serious heisenbugs being prevented over the lifespan of the project.
+actually, each one of these tiny changes adds up to serious Heisenbugs being prevented over the lifespan of the project.
 
 You could ask the same question about Java's static typing too:  When you start small, static typing *is* a burden.  But, if
 you're building a big system (or a system you suspect will get bigger) then up-front efforts like purity and static typing do 
@@ -67,9 +78,13 @@ Since `toString()` uses the hash of the object in it's output, it is also non-de
 ## How do I use Pure code with Dependency Injection (such as Spring)?
 
 You can use the `@ImmutableValue` annotation on your spring classes. That will work.  However, if you do this, any dependencies
-will need to be declared `final`, which means you will need to use Spring's constructor-based dependency injection.
+your class uses will need to be declared `final`, which means you will need to use Spring's constructor-based dependency injection.
+Also, they will need to be `@ImmutableValue` classes too.
 
 Apart from that, it should work fine.  
+
+At some point, a new annotation might be introduced for spring beans, since these are not strictly 'value' objects, so you
+shouldn't have to write `hashCode()` and `toString()` for them.
 
 ## How Does This Stack Up Against Mocking?
 
@@ -88,6 +103,10 @@ a priority over developer speed.
 ## Is there a Plugin for &lt;favourite IDE&gt;?
 
 Not yet. But, it would be nice if you wrote one.  :) Please [get in touch](mail:rob@kite9.com).
+
+## How about a Gradle plugin?
+
+Not yet.  Please [help](mail:rob@kite9.com).
 
 ## Why Can Pure Methods Only Take Immutable Parameters?
 
@@ -142,7 +161,7 @@ e.g. call `PersistentHashMap.transient()` to get a `TransientHashMap`.
 The transient versions have a `persistent()` method to turn them back into persistent collections.
 
 They otherwise are `@MutableUnshared` collections, that will only collect immutable objects.
-
+3
 ## Are Interfaces Pure?
 
 You can mark an interface with `@ImmutableValue` or `@MutableUnshared` but only the concrete implementations will get
@@ -186,4 +205,6 @@ reference to which is passed in via the constructor (without you having to type 
 
 So, if you want an `@ImmutableValue` inner class, the outer class must also be `@ImmutableValue`.  You can have an `@MutableUnshared`
 inner class too, again, only if the outer class is `@ImmutableValue`.
+
+
 

@@ -39,6 +39,7 @@ public class Pure4JProcessMojo extends AbstractMojo {
 				new String[] { output, testOutput }, false);
 			spmf.setPattern("**/*.class");
 			pc.checkModel(spmf.createProjectModel(mc), mc);
+			mc.listPures();
 			getLog().info("Finished Pure4J Analysis");
 		} catch (Exception e) {
 			throw new MojoExecutionException("Pure4J Checker Failed: ", e);

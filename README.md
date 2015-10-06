@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/robmoffat/pure4j.svg?branch=master)](https://travis-ci.org/robmoffat/pure4j)
+[![Download](https://api.bintray.com/packages/robmoffat/maven/pure4j/images/download.svg) ](https://bintray.com/robmoffat/maven/pure4j/_latestVersion)
 
 Pure4J
 ------
@@ -44,7 +45,27 @@ There are various other supporting annotations, but these are the main ones.  Sp
 
 ### 2.  Maven Purity Checker
 
-As part of the build pipeline, you add the purity checker.  If any of the purity semantics indicated by the annotations are broken, errors occur.  
+As part of the build pipeline, you add the purity checker.  If any of the purity semantics indicated by the annotations are broken, errors occur.  To add the Pure4J checker
+to your build pipeline, add this to your Maven `pom.xml` file:
+
+```xml
+...
+<build>
+	<plugins>
+		...
+		<plugin>
+			<groupId>org.pure4j</groupId>
+			<artifactId>pure4j-maven-plugin</artifactId>
+			<version>*latest version - see top of this file*</version>
+			<executions>
+	         	<execution>
+                    <goals>
+                        <goal>pure4j</goal>
+                    </goals>   
+		         </execution>
+		     </executions>
+		</plugin>
+```
 
 ### 3. Persistent Collections
 

@@ -1,5 +1,9 @@
 package org.pure4j.maven;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.plugin.logging.Log;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.processor.Callback;
@@ -30,7 +34,15 @@ public class MojoCallback implements Callback {
 
 	@Override
 	public void registerPure(String signature, Boolean intf, Boolean impl) {
-		l.info("Marked Pure: "+signature);
+		pures.add("Marked Pure: "+signature);
 	}
+	
+	List<String> pures = new ArrayList<String>(300);
 
+	public void listPures() {
+		Collections.sort(pures);
+		for (String string : pures) {
+			l.info(string);
+		}
+	}
 }
