@@ -136,26 +136,37 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2</version>
 			</plugin>
-			
-            <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-gpg-plugin</artifactId>
-	            <version>1.1</version>
-	            <executions>
-	            	<execution>
-	            		<id>sign-artifacts</id>
-	            		<phase>verify</phase>
-	            		<goals>
-	            			<goal>sign</goal>
-	            		</goals>
-	            	</execution>
-	            </executions>
-	            <configuration>
-	                    <useAgent>true</useAgent>
-	            </configuration>
-            </plugin>
 		</plugins>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>gpg</id>
+			<build>
+				<plugins>
+					<!--  handles signing of jars for maven central -->
+					<plugin>
+			            <groupId>org.apache.maven.plugins</groupId>
+			            <artifactId>maven-gpg-plugin</artifactId>
+			            <version>1.1</version>
+			            <executions>
+			            	<execution>
+			            		<id>sign-artifacts</id>
+			            		<phase>verify</phase>
+			            		<goals>
+			            			<goal>sign</goal>
+			            		</goals>
+			            	</execution>
+			            </executions>
+			            <configuration>
+			                    <useAgent>true</useAgent>
+			            </configuration>
+		            </plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+	</profiles>
 
 
   	<distributionManagement>

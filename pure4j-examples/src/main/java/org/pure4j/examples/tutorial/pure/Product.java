@@ -5,7 +5,7 @@ import org.pure4j.annotations.immutable.ImmutableValue;
 @ImmutableValue
 public class Product {
 
-	private long sku;
+	private final long sku;
 
 	private final String description;
 	
