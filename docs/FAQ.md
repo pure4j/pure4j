@@ -142,7 +142,7 @@ that the underlying map will not get changed at some point while your pure metho
 This handy table shows the persistent version of each class:
 
 |Persistent Collection|Original Java Collection|
------------------------------------------------|
+|---------------------|------------------------|
 |PersistentHashMap    |HashMap                 |
 |PersistentHashSet    |HashSet                 |
 |PersistentList       |LinkedList              |
@@ -151,7 +151,7 @@ This handy table shows the persistent version of each class:
 |PersistentTreeMap    |TreeMap                 |
 |PersistentVector     |ArrayList               |
 |PersistentArrayMap   |*none*                  |
-------------------------------------------------
+|---------------------|------------------------|
 
 ## What Are These Transient Collection Classes (TransientHashMap, TransientArrayList etc.) ?
 
