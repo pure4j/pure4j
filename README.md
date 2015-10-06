@@ -39,7 +39,7 @@ You apply these annotations to your code to indicate the purity constraints.
 
 * `@Pure` is applied on a method level, and indicates that the method is deterministic and has no side effects.  
 * `@ImmutableValue` is applied on a class-level.  It indicates that the class is immutable after construction.   Also it indicates that the instance methods on the class are @Pure.  
-* `@MutableUnshared` is also applied at class-level.  It indicates that the class contains some mutable state, however, that mutable state is never leaves the class:  all method arguments are immutable and return types are immutable too.  
+* `@MutableUnshared` is also applied at class-level.  It indicates that the class contains some mutable state, however, that mutable state never leaves the class:  all method arguments are immutable and return types are immutable too.  
 
 There are various other supporting annotations, but these are the main ones.  Specification for each is here.
 
@@ -119,6 +119,8 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 ### Known Remaining Issues
 
+* toString purity
+* pure method on a non-immutable class shouldn't be allowed to access class state, unless it's immutable.
 * Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
 more like idiomatic Java.  -- need to write tests for each constructor, I think.
 * Tutorials - in progress
