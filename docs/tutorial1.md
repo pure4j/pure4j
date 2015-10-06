@@ -37,7 +37,8 @@ There are 3 things wrong with this.   First, we haven't implemented `hashCode()`
 But most IDE's can generate these for you, so it's not a problem.
 
 Second, we haven't got getters / setters or a constructor.  Again, this is easily fixed -  IDEs now generate these.
-I have prepared [this file](tutorial1_product_long.md) which shows you what this could look like.
+I have prepared [this file](tutorial1_product_long.md) which shows you what this could look like.  I used Eclipse to 
+generate pretty much all of this.
 
 Thirdly, and most importantly for this tutorial, it's not an immutable value class.  Making this class an immutable value
 means just a couple of changes.  Adding the @ImmutableValue annotation and making the fields final.
@@ -50,7 +51,20 @@ public class Product {
 
 	private final String description;
 	
-```	  
+```	
+
+The class `@ImmutableValue`, and others that we need is available in the `pure4j-core` library.  Add this as a dependency 
+to your project.  Maven users can add this:
+
+```xml
+		<dependency>
+			<groupId>org.pure4j</groupId>
+			<artifactId>pure4j-core</artifactId>
+	        <version>*latest version*</version>
+		</dependency>
+```  
+
+Note that the latest version number is displayed at the top of the [README](../README.md) page.
 
 ### Why Immutable Values?
 
@@ -158,9 +172,173 @@ And, if we had failed to implement `toString()`, say, we would get this:
 
 Which tells us that we are using the `toString()` from object, which is impure.
 
+The Basket - First Go
+---------------------
 
-The Basket
-----------
+So we have a `Product` that we can put in our basket.  Next we need to model the basket to put them in, and we're going to 
+have a pure method for pricing up the basket.  So, let's start with something like this:
+
+### `MutableBasket.java`
+
+```java
+public class MutableBasket {
+	
+	private final Map<Product, Integer> contents;
+	
+	public MutableBasket(Map<Product, Integer> initialContents) {
+		this.contents = initialContents;
+	}
+	
+	public void updateProduct(Product p, int i) {
+		if (i == 0) {
+			contents.remove(p);
+		} else if (i>0) {
+			contents.put(p, i);
+		} else {
+			throw new IllegalArgumentException("You can't have negative product in the basket! ");
+		}
+	}
+```
+
+So, this part should be fairly self-explanatory:  we hold a regular map inside the object.   We can update the contents of the basket (held in the map)
+to reflect us putting things in and out.  Let's look now at our implementation of `priceBasket()`:
+
+```java
+@Pure
+	public float priceBasket(Map<Product, Float> priceList, float taxRate) {
+		float runningTotal = 0f;
+		for (Map.Entry<Product, Integer> item : contents.entrySet()) {
+			Float price = priceList.get(item.getKey());
+			
+			if (price == null) {
+				throw new RuntimeException("No price for "+item.getKey());
+			}
+			
+			runningTotal += price * item.getValue(); // quantity
+		}
+		
+		return runningTotal + (runningTotal * taxRate);
+	}
+```
+
+Briefly, this method simply runs over the contents of the basket, looks up the price for each, and keeps track of the running total.
+At the end, it adds on the tax and returns the result.
+
+The annotation `@Pure` indicates that we want this function to work in a pure way, without side effects, and deterministically.
+Will this happen?  Let's run the checker and find out:
+
+```
+[INFO] Beginning Pure4J Analysis
+[ERROR] method  can't take non-immutable argument java.util.Map<org.pure4j.examples.tutorial.pure.Product, java.lang.Float>
+   See:[declaration=org/pure4j/examples/tutorial/pure/MutableBasket.priceBasket(Ljava/util/Map;F)F
+     impl=CHECKED
+     intf=CHECKED, 
+        usedIn=
+          class org.pure4j.examples.tutorial.pure.MutableBasket
+       ]
+```
+
+The problem being reported is that the `Map` argument supplied is not immutable.  Why is this a problem?  If the argument is not 
+immutable, there is every chance that someone could be changing the price list as we go along, which would ruin our calculation 
+in unexpected, hard-to-track-down ways.
+
+Additionally, there is every chance that the basket itself could be changed (by another thread), because the map in it is mutable.
+So, how to deal with this problem?
+
+### PersistentHashMap
+
+PersistentHashMap is a drop-in replacement for Java HashMap classes, and is immutable.  So, instead of adding something to an 
+existing HashMap, you add-and-return a new one, like this:
+
+```java
+PersistentHashMap newOne = oldMap.assoc(key, value);
+```
+
+Pure4J contains persistent versions of the other collections classes too.  These are taken from the Clojure project where they
+have been used to good effect for several years.
+
+ImmutableBasket
+---------------
+
+Can we use this approach to write an `@ImmutableValue` version of Basket?  Let's look at that:
+
+```java
+public class ImmutableBasket extends AbstractImmutableValue<ImmutableBasket>{
+	
+	private final IPersistentMap<Product, Integer> contents;
+	
+	public ImmutableBasket(IPersistentMap<Product, Integer> contents) {
+		this.contents = contents;
+	}
+```
+
+So, here we have defined a new basket which has an `IPersistentMap` in it.  Rather than use the `@ImmutableValue` annotation, 
+we are going to extend the `AbsrtractImmutableValue` class, which basically cuts down on all the boilerplate code by providing 
+an implementation of `hashCode()`, `toString()`, `equals()` and `java.util.Comparable`.  
+
+To make this work, we need to implement a single method, `fields`:
+
+```java
+	@Override
+	protected void fields(Visitor v, ImmutableBasket other) {
+		v.visit(contents, other.contents);
+	}
+```
+
+To understand what this is doing, just pretent that you are writing an `equals()` method, and you want to compare two objects,
+`this` and `other`.  You need to compare each field in turn.  For our basket, we have a single field, `contents` which 
+needs to be compared.  Result:  a whole lot less boiler-plate code.  
+
+So, how do we add elements to our `ImmutableBasket`?
+
+```java
+	public ImmutableBasket updateProduct(Product p, int i) {
+		if (i == 0) {
+			return new ImmutableBasket(contents.without(p));
+		} else if (i>0) {
+			return new ImmutableBasket(contents.assoc(p, i));
+		} else {
+			throw new IllegalArgumentException("You can't have negative product in the basket! ");
+		}
+	}
+```
+
+Here, we've slightly modified the interface, so that `updateProduct()` returns a new basket each time it's called.  And, 
+each time it is creating a new `PersistentHashMap` to construct it with.
+
+On the upside, we've gained immutability (and therefore, thread-safety).  On the downside, we are doing more object 
+construction (and therefore, bothering the garbage collector more).  However, *you shouldn't worry about this*.  Although it 
+might sound worse this way, the chances are you're not going to notice such a minor overhead in your code.  You *are*
+going to notice improved robustness, thread-safety and scalability.
+
+What about our implementation of `priceBasket()`?  It's almost unchanged:
+
+```java
+public float priceBasket(IPersistentMap<Product, Float> priceList, float taxRate) {
+		float runningTotal = 0f;
+		for (Map.Entry<Product, Integer> item : contents.entrySet()) {
+			Float price = priceList.get(item.getKey());
+			
+			if (price == null) {
+				throw new RuntimeException("No price for "+item.getKey());
+			}
+			
+			runningTotal += price * item.getValue(); // quantity
+		}
+		
+		return runningTotal + (runningTotal * taxRate);
+	}
+```
+
+Here, we are just using an IPersistentMap (analogous to the `java.util.Map` interface).  Implementations of this are
+known to be immutable, since the interface has `@ImmutableValue` as an annotation.  So, this time, we get no errors 
+when running the Pure4J checker.
+
+In the next tutorial, we will be looking more at persistent collections and at ways of managing unshared mutable state.
+
+
+
+
 
 
 
