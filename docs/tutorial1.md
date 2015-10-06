@@ -1,5 +1,5 @@
-Pure4J Tutorial
-===============
+Pure4J First Tutorial
+=====================
 
 In this tutorial we are going to have a short introduction to building pure functions in Java, and checking that they're
 pure with Pure4J.  For a description of why this might be a good idea, please review the [Why Pure4J](impetus.md) page, which 

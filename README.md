@@ -74,6 +74,16 @@ Persistent versions of the Java Collections library are provided.  These fulfil 
 NB.  These are versions of the Clojure Persistent Collections, developed by Rich Hickey, modified for use with generics and to have regular constructors, and 
 some alterations to the inheritance hiearchy.  
 
+Import the annotations and the persistent collections into your project with the following dependency:
+
+```xml
+		<dependency>
+			<groupId>org.pure4j</groupId>
+			<artifactId>pure4j-core</artifactId>
+	        <version>*see version info at top of this page*</version>
+		</dependency>
+```
+
 Also provided are subclasses of existing Java Collections, having the `@MutableUnshared` contract.  
 
 ### 4.  Knowledge of Java Language Purity
@@ -85,7 +95,7 @@ This library keeps track of these and allows your pure functions to use existing
 Tutorial
 --------
 
-See the tutorial [here](docs/tutorial.md). 
+See the tutorial [here](docs/tutorial1.md). 
 
 There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
 Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
@@ -111,10 +121,8 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 * Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
 more like idiomatic Java.  -- need to write tests for each constructor, I think.
-* Bintray
-* Tutorial
+* Tutorials - in progress
 * Stream counter-examples.
-
 * Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
 * Cascading Implementation Impurity: One impure function should 'taint' those that use it.
 * Thorough review of purity of Java language classes
