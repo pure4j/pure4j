@@ -24,7 +24,7 @@ public class ProjectModelImpl implements ProjectModel {
 	private Map<PackageHandle, Set<PackageHandle>> dependedOnPackages = new HashMap<PackageHandle, Set<PackageHandle>>(100);
 	private Map<String, Set<String>> packageContents = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<AnnotationHandle>> annotationReferences = new HashMap<String, Set<AnnotationHandle>>(100);
-	private Map<CallHandle, CallInfo> opcodes = new HashMap<CallHandle, CallInfo>(100);
+	private Map<MemberHandle, CallInfo> opcodes = new HashMap<MemberHandle, CallInfo>(100);
 	private Set<MemberHandle> declaredMethods = new HashSet<>(1000);
 	private Map<String, Set<MemberHandle>> declaredMethodsByClass = new HashMap<String, Set<MemberHandle>>(100);
 	
@@ -179,11 +179,11 @@ public class ProjectModelImpl implements ProjectModel {
 	}
 
 	@Override
-	public CallInfo getOpcodes(CallHandle ch) {
+	public CallInfo getOpcodes(MemberHandle ch) {
 		return opcodes.get(ch);
 	}
 
-	public void setOpcodes(CallHandle ch, CallInfo o) {
+	public void setOpcodes(MemberHandle ch, CallInfo o) {
 		opcodes.put(ch, o);
 	}
 

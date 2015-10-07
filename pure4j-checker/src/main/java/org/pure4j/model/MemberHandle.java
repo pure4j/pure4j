@@ -17,6 +17,15 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 	protected String className;
 	protected String name;
 	protected String desc;
+	protected int line;
+	
+	public MemberHandle(String className, String name, String desc, int line) {
+		super();
+		this.className = className;
+		this.name = name;
+		this.desc = desc;
+		this.line = line;
+	}
 
 	public String getClassName() {
 		return className;
@@ -30,9 +39,13 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 		return desc;
 	}
 
+	public int getLine() {
+		return line;
+	}
+
 	@Override
 	public String toString() {
-		return className + "." + name + (desc == null ? "" : desc);
+		return className + "." + name + (desc == null ? "" : desc)+(line != 0 ? " @line="+line : "");
 	}
 
 	public int compareTo(AnnotatedElementHandle<?> oo) {

@@ -3,7 +3,7 @@ package org.pure4j.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 
-public class ClassInitHandle extends CallHandle {
+public class ClassInitHandle extends MemberHandle {
 
 	public ClassInitHandle(String className, String desc, int line) {
 		super(className, "<clinit>", desc, line);

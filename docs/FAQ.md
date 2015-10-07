@@ -151,7 +151,10 @@ This handy table shows the persistent version of each class:
 |PersistentTreeMap    |TreeMap                 |
 |PersistentVector     |ArrayList               |
 |PersistentArrayMap   |*none*                  |
-|---------------------|------------------------|
+
+## What is a Seq / iSeq?
+
+
 
 ## What Are These Transient Collection Classes (TransientHashMap, TransientArrayList etc.) ?
 

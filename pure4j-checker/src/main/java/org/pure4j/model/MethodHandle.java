@@ -3,13 +3,10 @@ package org.pure4j.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public class MethodHandle extends CallHandle {
+public class MethodHandle extends MemberHandle {
 
 	public MethodHandle(Method m) {
-		super();
-		this.className =  convertClassName(m.getDeclaringClass());
-		this.name = m.getName();
-		this.desc = Type.getMethodDescriptor(m);
+		super(convertClassName(m.getDeclaringClass()), m.getName(), Type.getMethodDescriptor(m), 0);
 	}
 
 	public MethodHandle(String className, String name, String desc, int line) {

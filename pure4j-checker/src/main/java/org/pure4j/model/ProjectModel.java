@@ -44,6 +44,6 @@ public interface ProjectModel {
     
     public Set<AnnotationHandle> getAnnotationReferences(String className);
     
-    public CallInfo getOpcodes(CallHandle ch);
+    public CallInfo getOpcodes(MemberHandle ch);
     
 }

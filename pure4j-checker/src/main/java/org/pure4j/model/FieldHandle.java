@@ -6,15 +6,11 @@ import java.lang.reflect.Field;
 public class FieldHandle extends MemberHandle {
 
 	public FieldHandle(Field f) {
-		super();
-		this.className = convertClassName(f.getDeclaringClass());
-		this.name = f.getName();
-		this.desc = null;
+		super(convertClassName(f.getDeclaringClass()), f.getName(), null, 0);
 	}
 
-	public FieldHandle(String className, String name) {
-		this.name = name;
-		this.className = className;
+	public FieldHandle(String className, String name, int line) {
+		super(className, name, null, line);
 	}
 
 	public Field hydrate(ClassLoader cl) {
