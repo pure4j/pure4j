@@ -18,7 +18,7 @@ import org.pure4j.collections.PersistentVector;
  * <p>This can be used to indicate that a field within the class is managed by the class, and won't be 
  * shared/exposed.  For example, having an array field within an immutable value is not allowed, as the
  * array is mutable.  Preferentially, use a {@link PersistentVector} or similar to contain the array in an immutable 
- * structure.
+ * structure.  Also prevents errors due to non-final fields.
  * 
  * <h3>2.  Return types for methods in <code>@MutableState</code> classes.</h3>
  * 

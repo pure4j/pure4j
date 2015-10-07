@@ -24,21 +24,22 @@ import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
-import org.pure4j.exception.PureMethodAccessesNonImmutableStaticFieldException;
-import org.pure4j.exception.PureMethodAccessesStaticFieldException;
+import org.pure4j.exception.PureMethodAccessesNonFinalFieldException;
+import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodNotInProjectScopeException;
+import org.pure4j.exception.PureMethodOnNonImmutableClassException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.exception.PureMethodReturnNotImmutableException;
-import org.pure4j.model.CallHandle;
 import org.pure4j.model.CallInfo;
 import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
 import org.pure4j.model.FieldHandle;
+import org.pure4j.model.ImplementationHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
-import org.pure4j.model.StackArgumentsCall;
+import org.pure4j.model.StackArgumentsHandle;
 import org.springframework.asm.Opcodes;
 
 /**
@@ -57,6 +58,8 @@ public class PureChecklistHandler {
 	public static final boolean IGNORE_TOSTRING_PURITY = true;
 	public static final boolean IGNORE_ENUM_VALUES_PURITY = true;
 
+	static enum PurityType { MUTABLE_UNSHARED, IMMUTABLE_VALUE }
+	
 	public class PureMethod {
 
 		public MemberHandle declaration;
@@ -64,16 +67,16 @@ public class PureChecklistHandler {
 		public Enforcement intfPurity;
 		private Boolean pureImplementation = null;
 		private Boolean pureInterface = null;
-		private boolean immutableReturnType;
+		private PurityType pt;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 
-		private PureMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, boolean immutableReturnType) {
+		private PureMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, boolean mutableUnshared) {
 			super();
 			this.declaration = declaration;
 			this.implPurity = impl;
 			this.intfPurity = intf;
 			setupEnforcements(intf, impl);
-			this.immutableReturnType = immutableReturnType;
+			this.pt = mutableUnshared ? PurityType.MUTABLE_UNSHARED : PurityType.IMMUTABLE_VALUE;
 		}
 
 		protected void setupEnforcements(Enforcement intf, Enforcement impl) {
@@ -146,7 +149,7 @@ public class PureChecklistHandler {
 					int argOffset = getArgOffset();
 					for (int i = thisFieldSkip(); i < genericTypes.length; i++) {
 						Type t = genericTypes[i];
-						if (typeFailsCheck(cb, t)) {
+						if (typeFailsImmutabilityCheck(cb, t)) {
 							int argNo = i+ argOffset;
 							if (!isRuntimeChecked(argNo, pm, cb)) {
 								cb.registerError(new PureMethodParameterNotImmutableException(this, t));
@@ -156,12 +159,25 @@ public class PureChecklistHandler {
 						}
 					}
 					
-					if (immutableReturnType) {
+					/*if (pt == PurityType.IMMUTABLE_VALUE) {
+					if (!Modifier.isStatic(declaration.getModifiers(cl))) {
+						for (Class<?> c : usedIn) {
+							if (typeFailsImmutabilityCheck(cb, c)) {
+								cb.registerError(new PureMethodOnNonImmutableClassException(this, c));
+								pureInterface = false;
+								return false;
+							}
+						}
+					}
+					}*/
+					
+					
+					if (pt == PurityType.MUTABLE_UNSHARED) {
 						if (declaration instanceof MethodHandle) {
 							if (declaration.getAnnotation(cl, IgnoreImmutableTypeCheck.class) == null) {
 								Method m = ((MethodHandle) declaration).hydrate(cl);
 								Type t = m.getGenericReturnType();
-								if (typeFailsCheck(cb, t) && (!returnsOwnType()))  {
+								if (typeFailsImmutabilityCheck(cb, t) && (!returnsOwnType()))  {
 									pureInterface = isRuntimeReturnChecked(pm, cb);
 								}
 							}
@@ -191,13 +207,11 @@ public class PureChecklistHandler {
 						}
 					}
 					
-					if (declaration instanceof CallHandle) {
-						CallInfo ci = pm.getOpcodes((CallHandle) declaration);
-						if ((ci.getOpcodes() & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC) {
-							// synthetics are always pure.
-							pureImplementation = true;
-							return true;
-						}
+					CallInfo ci = pm.getOpcodes(declaration);
+					if ((ci.getOpcodes() & Opcodes.ACC_SYNTHETIC) == Opcodes.ACC_SYNTHETIC) {
+						// synthetics are always pure.
+						pureImplementation = true;
+						return true;
 					}
 
 					if (this.declaration.getDeclaringClass(cl).isInterface()) {
@@ -218,12 +232,12 @@ public class PureChecklistHandler {
 					
 					List<MemberHandle> calls = pm.getCalls(declaration);
 					for (MemberHandle mh : calls) {
-						if (mh instanceof CallHandle) {
+						if (mh instanceof ImplementationHandle) {
 							mh = ensureCorrectClass(mh);
 							if ((IGNORE_TOSTRING_PURITY) && (mh.getName().equals("toString")) && (mh.getDeclaringClass().equals("java/lang/Object"))) {
 								// we can skip this one
 							} else if (!isMarkedPure(mh, cb)) {
-								cb.registerError(new PureMethodCallsImpureException(this, (CallHandle) mh));
+								cb.registerError(new PureMethodCallsImpureException(this, mh));
 								pureImplementation = false;
 							}
 						} else if (mh instanceof FieldHandle) {
@@ -234,17 +248,18 @@ public class PureChecklistHandler {
 							
 							if (isStatic) {
 								if (!isFinal) {
-									cb.registerError(new PureMethodAccessesStaticFieldException(this, fieldHandle));
+									cb.registerError(new PureMethodAccessesNonFinalFieldException(this, fieldHandle));
 									pureImplementation = false;
 								}
-								
+									
 								if (!immutables.typeIsMarked(f.getGenericType(), cb)) {
 									if ((!forcedImmutable(f)) && (isAccessibleOutsideClass(fieldHandle, cl, pm))) {
-										cb.registerError(new PureMethodAccessesNonImmutableStaticFieldException(this, fieldHandle));
+										cb.registerError(new PureMethodAccessesNonImmutableFieldException(this, fieldHandle));
 										pureImplementation = false;
 									}
 								}
-							} 
+							}
+							
 						} 
 					}
 				} catch (MemberCantBeHydratedException e) {
@@ -263,7 +278,7 @@ public class PureChecklistHandler {
 			return (returnedType.contains(declaration.getDeclaringClass()));
 		}
 
-		protected boolean typeFailsCheck(Callback cb, Type t) {
+		protected boolean typeFailsImmutabilityCheck(Callback cb, Type t) {
 			if (intfPurity == Enforcement.CHECKED) {
 				return !immutables.typeIsMarked(t, cb);
 			} 
@@ -315,20 +330,20 @@ public class PureChecklistHandler {
 		}
 
 		private boolean isRuntimeReturnChecked(ProjectModel pm, Callback cb) {
-			CallInfo ci = pm.getOpcodes((CallHandle) declaration);
+			CallInfo ci = pm.getOpcodes(declaration);
 			
 			for (Object mh : ci.getMethodsBeforeReturns()) {
 				if (mh instanceof Integer) {
 					cb.registerError(new PureMethodReturnNotImmutableException(this, (Integer) mh));
 					return false;
-				} else if (mh instanceof CallHandle) {
-					CallHandle ch = (CallHandle) mh;
+				} else if (mh instanceof MethodHandle) {
+					MethodHandle ch = (MethodHandle) mh;
 					if (ch.getClassName().equals(org.springframework.asm.Type.getInternalName(Pure4J.class)) &&
 						(ch.getName().equals("returnImmutable")) ) {
 					// return ok.
 					
 					} else {
-						cb.registerError(new PureMethodReturnNotImmutableException(this, ((CallHandle)mh).getLineNumber()));
+						cb.registerError(new PureMethodReturnNotImmutableException(this, ch.getLine()));
 						return false;
 					}
 				}
@@ -350,8 +365,8 @@ public class PureChecklistHandler {
 			boolean found = false;
 			boolean checkTried = false;
 			for (MemberHandle memberHandle : calls) {
-				if (memberHandle instanceof StackArgumentsCall) {
-					StackArgumentsCall icmh = (StackArgumentsCall) memberHandle;
+				if (memberHandle instanceof StackArgumentsHandle) {
+					StackArgumentsHandle icmh = (StackArgumentsHandle) memberHandle;
 					if (icmh.getName().equals("immutable")) {
 						checkTried = true;
 						if (!icmh.isFirstCall()) {
@@ -574,7 +589,7 @@ public class PureChecklistHandler {
 		return false;
 	}
 
-	public void addMethod(CallHandle declaration, Enforcement impl, Enforcement intf, boolean immutableReturnType, Class<?> usedIn, Callback cb) {
+	public void addMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, boolean immutableReturnType, Class<?> usedIn, Callback cb) {
 		PureMethod pm;
 		if (pureChecklist.containsKey(declaration)) {
 			pm = pureChecklist.get(declaration);
@@ -643,13 +658,12 @@ public class PureChecklistHandler {
 		boolean priv = Modifier.isPrivate(handle.getModifiers(cl));
 		boolean prot = Modifier.isProtected(handle.getModifiers(cl));
 		boolean synthetic = false;
-		if (handle instanceof CallHandle) {
-			CallInfo ci = pm.getOpcodes((CallHandle) handle);
-			synthetic = (Opcodes.ACC_SYNTHETIC & ci.getOpcodes()) == Opcodes.ACC_SYNTHETIC;
-			if (synthetic) {
-				return false;
-			}
+		CallInfo ci = pm.getOpcodes(handle);
+		synthetic = (Opcodes.ACC_SYNTHETIC & ci.getOpcodes()) == Opcodes.ACC_SYNTHETIC;
+		if (synthetic) {
+			return false;
 		}
+		
 		
 		return pub || ((!priv) && (!prot));
 	}

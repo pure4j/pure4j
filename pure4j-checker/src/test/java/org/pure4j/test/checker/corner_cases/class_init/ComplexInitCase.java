@@ -1,7 +1,7 @@
 package org.pure4j.test.checker.corner_cases.class_init;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.exception.PureMethodAccessesNonImmutableStaticFieldException;
+import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.test.checker.support.CausesError;
 import org.pure4j.test.checker.support.ShouldBePure;
@@ -18,7 +18,7 @@ public final class ComplexInitCase {
 	/**
 	 * These annotations should be on the static, but they don't fit there.
 	 */
-	@CausesError({PureMethodCallsImpureException.class, PureMethodAccessesNonImmutableStaticFieldException.class})
+	@CausesError({PureMethodCallsImpureException.class, PureMethodAccessesNonImmutableFieldException.class})
 	@Override
 	@ShouldBePure
 	public int hashCode() {

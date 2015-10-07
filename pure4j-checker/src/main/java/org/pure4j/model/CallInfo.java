@@ -23,4 +23,6 @@ public class CallInfo {
 	public void addMethodBeforeReturn(Object mh) {
 		methodsBeforeReturns.add(mh);
 	}
+	
+	public final static CallInfo NO_CALL = new CallInfo();
 }

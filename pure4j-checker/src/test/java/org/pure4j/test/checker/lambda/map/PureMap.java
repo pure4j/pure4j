@@ -16,7 +16,7 @@ public class PureMap extends AbstractChecker {
 
 	@ShouldBePure
 	@Pure
-	public ISeq<String> consumeBlah(ArraySeq<String> in) {
+	public static ISeq<String> consumeBlah(ArraySeq<String> in) {
 		ISeq<String> done = in.stream().map((a) -> "johhny "+a).collect(PureCollectors.toSeq());
 		return done;
 	}

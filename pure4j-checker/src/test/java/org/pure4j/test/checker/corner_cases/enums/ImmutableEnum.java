@@ -15,7 +15,7 @@ public class ImmutableEnum extends AbstractChecker {
 	
 	@ShouldBePure
 	@Pure
-	public Blah consumeBlah(Blah b) {
+	public static Blah consumeBlah(Blah b) {
 		return Blah.A;
 	}
 	

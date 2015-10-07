@@ -1,43 +1,23 @@
 package org.pure4j.test.checker.spec.immutable.missing_final;
 
-import java.io.InputStream;
-
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.exception.ClassExpectingPureMethod;
-import org.pure4j.exception.FieldNotFinalException;
-import org.pure4j.exception.FieldTypeNotImmutableException;
-import org.pure4j.exception.PureMethodCallsImpureException;
-import org.pure4j.exception.PureMethodParameterNotImmutableException;
+import org.pure4j.exception.PureMethodAccessesNonFinalFieldException;
 import org.pure4j.test.checker.support.CausesError;
 import org.pure4j.test.checker.support.ShouldBePure;
 
 @ImmutableValue
-public class BrokenValueObject extends AnotherBrokenObject {
+public class BrokenValueObject extends AbstractBrokenObject {
+	
 
-	@CausesError(FieldNotFinalException.class)
-	Integer int2;
-	@CausesError(FieldNotFinalException.class)
-	String b;
-	@CausesError(FieldTypeNotImmutableException.class)
-	final InputStream is;
-	 
-	@CausesError(PureMethodParameterNotImmutableException.class)
-	public BrokenValueObject(Integer in, Integer int2, String b, InputStream is) {
+	@ShouldBePure
+	public BrokenValueObject(Integer in) {
 		super(in);
-		this.int2 = int2;
-		this.b = b;
-		this.is = is;
 	}
 
-	@CausesError(PureMethodCallsImpureException.class)
 	@Override
+	@ShouldBePure
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((b == null) ? 0 : b.hashCode());
-		result = prime * result + ((int2 == null) ? 0 : int2.hashCode());
-		result = prime * result + ((is == null) ? 0 : is.hashCode());
-		return result;
+		return 1;
 	}
 
 	@Override
@@ -46,30 +26,21 @@ public class BrokenValueObject extends AnotherBrokenObject {
 		return super.equals(obj);
 	}
 	
-	@ShouldBePure // pure, just not immutable
+	@CausesError({PureMethodAccessesNonFinalFieldException.class,PureMethodAccessesNonFinalFieldException.class} ) 
 	public void increment() {
-		this.int2++;
+		this.in++;
 	}
 
-	@ShouldBePure
+	@CausesError(PureMethodAccessesNonFinalFieldException.class) 
 	public Integer getInt2() {
-		return int2;
+		return in;
 	}
 
 	@ShouldBePure
-	public String getB() {
-		return b;
-	}
-
-	@ShouldBePure
-	public InputStream getIs() {
-		return is;
-	} 
-	
-	@ShouldBePure
-	@CausesError(ClassExpectingPureMethod.class)  // because we should've overridden toString.
-	public String notToString() {
+	public String toString() {
 		return "";
 	}
+	
+	
 	
 }

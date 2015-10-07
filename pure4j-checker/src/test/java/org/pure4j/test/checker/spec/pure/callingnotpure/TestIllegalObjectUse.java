@@ -6,19 +6,19 @@ import org.pure4j.test.checker.support.CausesError;
 
 public class TestIllegalObjectUse {
 
-	public int nonPureMethod() {
+	public static int nonPureMethod() {
 		return new Object().hashCode();
 	}
 
 	@Pure
 	@CausesError(PureMethodCallsImpureException.class)
-	public int doSomething2() {
+	public static int doSomething2() {
 		return nonPureMethod();
 	}
 	
 	@Pure
 	@CausesError({PureMethodCallsImpureException.class})
-	public int doSomething1() {
+	public static int doSomething1() {
 		return new StringBuilder().hashCode();
 	}
 }

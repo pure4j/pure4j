@@ -36,7 +36,7 @@ public class MutableEnum extends AbstractChecker {
 	
 	@Pure
 	@ShouldBePure
-	public void consumeBlah(Blah b) {
+	public static void consumeBlah(Blah b) {
 	}
 	
 	@Test

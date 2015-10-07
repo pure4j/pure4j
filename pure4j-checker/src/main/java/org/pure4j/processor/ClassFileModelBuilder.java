@@ -9,7 +9,6 @@ import org.pure4j.Pure4J;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.AnnotationHandle;
-import org.pure4j.model.CallHandle;
 import org.pure4j.model.CallInfo;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ClassInitHandle;
@@ -19,8 +18,8 @@ import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.PackageHandle;
 import org.pure4j.model.ProjectModelImpl;
-import org.pure4j.model.StackArgumentsConstructorCall;
-import org.pure4j.model.StackArgumentsMethodCall;
+import org.pure4j.model.StackArgumentsConstructorHandle;
+import org.pure4j.model.StackArgumentsMethodHandle;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.Attribute;
 import org.springframework.asm.ClassReader;
@@ -41,7 +40,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static boolean ALWAYS_OUTPUT_ASM = false;
+	public static boolean ALWAYS_OUTPUT_ASM = true;
 
 	public ClassFileModelBuilder() {
 		this(ALWAYS_OUTPUT_ASM);
@@ -99,13 +98,13 @@ public class ClassFileModelBuilder {
 			}
 
 			public FieldVisitor visitField(int access, String name, String desc, String sign, Object value) {
-				final FieldHandle mh = new FieldHandle(className, name);
+				final FieldHandle mh = new FieldHandle(className, name, 0);
 				addDependency(className, model, desc, true);
 				return createFieldVisitor(model, className, mh);
 			}
 
 			public MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] exceptions) {
-				final CallHandle mh = createHandle(className, name, desc, 0);
+				final MemberHandle mh = createHandle(className, name, desc, 0);
 				CallInfo ci = new CallInfo();
 				ci.setOpcodes(access);
 				model.setOpcodes(mh, ci);
@@ -231,7 +230,7 @@ public class ClassFileModelBuilder {
 			}
 
 			public void visitFieldInsn(int arg0, String owner, String name, String desc) {
-				FieldHandle field = new FieldHandle(owner, name);
+				FieldHandle field = new FieldHandle(owner, name, line);
 				model.addCalls(mh, field);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
@@ -243,13 +242,13 @@ public class ClassFileModelBuilder {
 				//String callerName = methodName;
 				MemberHandle remoteMethod = null;
 				if (name.equals("<init>")) {
-					remoteMethod = new StackArgumentsConstructorCall(owner, desc, line, arguments, true);	
+					remoteMethod = new StackArgumentsConstructorHandle(owner, desc, line, arguments, true);	
 					arguments = new Stack<Integer>();
 					
 					// check calling the superclass constructor:  Reactivate first call for possible immutable after it.
 					firstCall = mh.getName().equals("<init>") && owner.equals(superName);
 				} else {
-					remoteMethod = new StackArgumentsMethodCall(owner, name, desc, line, arguments, firstCall);
+					remoteMethod = new StackArgumentsMethodHandle(owner, name, desc, line, arguments, firstCall);
 					arguments = new Stack<Integer>();
 					
 					if (!owner.equals(Type.getInternalName(Pure4J.class))) {
@@ -419,7 +418,7 @@ public class ClassFileModelBuilder {
 		return name.substring(0, li);
 	}
 	
-	private CallHandle createHandle(String owner, String name, String desc, int line) {
+	private MemberHandle createHandle(String owner, String name, String desc, int line) {
 		if (name.equals("<init>")) {
 			return new ConstructorHandle(owner, desc, line);			
 		} else if (name.equals("<clinit>")) {

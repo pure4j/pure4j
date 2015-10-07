@@ -14,14 +14,14 @@ import org.pure4j.exception.ClassHasConflictingAnnotationsException;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
-import org.pure4j.model.CallHandle;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ClassInitHandle;
 import org.pure4j.model.ConstructorHandle;
+import org.pure4j.model.ImplementationHandle;
 import org.pure4j.model.MemberHandle;
 import org.pure4j.model.MethodHandle;
 import org.pure4j.model.ProjectModel;
-import org.pure4j.model.StackArgumentsMethodCall;
+import org.pure4j.model.StackArgumentsMethodHandle;
 import org.pure4j.processor.PureChecklistHandler.PureMethod;
 import org.springframework.asm.Type;
 
@@ -172,7 +172,7 @@ public class PurityChecker implements Rule {
 		}
 	}
 
-	protected void registerMethodWithCorrectEnforcement(Class<?> pureClass, Callback cb, CallHandle ch) {
+	protected void registerMethodWithCorrectEnforcement(Class<?> pureClass, Callback cb, MemberHandle ch) {
 		Enforcement impl = getImplementationEnforcement(ch);
 		Enforcement intf = getInterfaceEnforcement(ch);
 		boolean ret = getReturnTypeEnforcement(cb, ch);
@@ -198,8 +198,8 @@ public class PurityChecker implements Rule {
 				for (MemberHandle call : pm.getCalls(memberHandle)) {
 					if (call.equals(callTo)) {
 						// is it a call to "this"?
-						if (call instanceof StackArgumentsMethodCall) {
-							if (((StackArgumentsMethodCall) call).getLocalVariables().contains(0)) {
+						if (call instanceof StackArgumentsMethodHandle) {
+							if (((StackArgumentsMethodHandle) call).getLocalVariables().contains(0)) {
 								return true;
 							}
 						}
@@ -230,22 +230,22 @@ public class PurityChecker implements Rule {
 	private void addPureMethodsToPureList(ProjectModel pm, Callback cb) {
 		cb.send("@Pure methods:");
 		for (MemberHandle handle : pm.getMembersWithAnnotation(getInternalName(Pure.class))) {
-			if (handle instanceof CallHandle) {
-				Class<?> class1 = ((CallHandle)handle).getDeclaringClass(cl);
-				registerMethodWithCorrectEnforcement(class1, cb, (CallHandle) handle);
+			if (handle instanceof ImplementationHandle) {
+				Class<?> class1 = handle.getDeclaringClass(cl);
+				registerMethodWithCorrectEnforcement(class1, cb, handle);
 			}
 		}
 	}
 
 	protected boolean getReturnTypeEnforcement(Callback cb, MemberHandle handle) {
 		Class<?> class1 = handle.getDeclaringClass(cl);
-		IgnoreImmutableTypeCheck iitc = ((CallHandle)handle).getAnnotation(cl, IgnoreImmutableTypeCheck.class);
+		IgnoreImmutableTypeCheck iitc = handle.getAnnotation(cl, IgnoreImmutableTypeCheck.class);
 		boolean checkReturnType = mutableUnshared.classIsMarked(class1, cb) && (iitc == null);
 		return checkReturnType;
 	}
 
 	protected Enforcement getInterfaceEnforcement(MemberHandle handle) {
-		PureParameters pp = ((CallHandle)handle).getAnnotation(cl, PureParameters.class);
+		PureParameters pp = handle.getAnnotation(cl, PureParameters.class);
 		Enforcement intf = pp == null ? Enforcement.CHECKED : pp.value();
 		return intf;
 	}

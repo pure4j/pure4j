@@ -2,7 +2,7 @@ package org.pure4j.model;
 
 import java.util.List;
 
-public interface StackArgumentsCall {
+public interface StackArgumentsHandle {
 
 	public List<Integer> getLocalVariables();
 	public Object getName();

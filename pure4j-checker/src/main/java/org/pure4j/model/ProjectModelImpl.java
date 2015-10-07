@@ -180,7 +180,8 @@ public class ProjectModelImpl implements ProjectModel {
 
 	@Override
 	public CallInfo getOpcodes(MemberHandle ch) {
-		return opcodes.get(ch);
+		CallInfo out = opcodes.get(ch);
+		return (out == null) ? CallInfo.NO_CALL : out;
 	}
 
 	public void setOpcodes(MemberHandle ch, CallInfo o) {

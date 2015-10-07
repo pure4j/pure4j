@@ -16,7 +16,7 @@ public class PureFilter extends AbstractChecker {
 
 	@ShouldBePure
 	@Pure
-	public ISeq<String> consumeBlah(ArraySeq<String> in) {
+	public static ISeq<String> consumeBlah(ArraySeq<String> in) {
 		ISeq<String> done = in.stream().filter((a) -> a.startsWith("e")).collect(PureCollectors.toSeq());
 		return done;
 	}

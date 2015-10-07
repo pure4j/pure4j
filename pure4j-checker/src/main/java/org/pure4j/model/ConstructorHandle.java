@@ -3,7 +3,7 @@ package org.pure4j.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
-public class ConstructorHandle extends MemberHandle {
+public class ConstructorHandle extends MemberHandle implements ImplementationHandle {
 
 	public ConstructorHandle(Constructor<?> c) {
 		super(convertClassName(c.getDeclaringClass()), "<init>", Type.getConstructorDescriptor(c), 0);

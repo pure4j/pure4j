@@ -26,7 +26,7 @@ import org.pure4j.test.checker.spec.immutable.exception.ExceptionGenerating;
 import org.pure4j.test.checker.spec.immutable.forced2.ArrayBeingUsed;
 import org.pure4j.test.checker.spec.immutable.good.SomeGoodValueObject;
 import org.pure4j.test.checker.spec.immutable.interface_ann.SomeValueObject1;
-import org.pure4j.test.checker.spec.immutable.missing_final.AnotherBrokenObject;
+import org.pure4j.test.checker.spec.immutable.missing_final.AbstractBrokenObject;
 import org.pure4j.test.checker.spec.immutable.missing_final.BrokenValueObject;
 import org.pure4j.test.checker.spec.immutable.mutable_field.NotImmutable;
 import org.pure4j.test.checker.spec.immutable.no_to_string.NoToString;
@@ -53,7 +53,7 @@ public class ImmutableValue {
 
 	@Test
 	public void fieldsMustBeFinal() {
-		Helper.check(0, AnotherBrokenObject.class, BrokenValueObject.class);
+		Helper.check(0, AbstractBrokenObject.class, BrokenValueObject.class);	// missing final
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class ImmutableValue {
 	
 	@Test 
 	public void annotationFromSuper() {
-		Helper.check(1, SomeValueObjectBrokenExtend.class);
+		Helper.check(0, SomeValueObjectBrokenExtend.class);
 	}
 	
 
