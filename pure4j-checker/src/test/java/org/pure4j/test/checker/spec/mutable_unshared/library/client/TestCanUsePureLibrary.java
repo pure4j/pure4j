@@ -8,7 +8,7 @@ public class TestCanUsePureLibrary {
 
 	@Pure
 	@ShouldBePure
-	public int someFunction(String in) {
+	public static int someFunction(String in) {
 		return new PureLibrary().doSomething(in);
 	}
 }

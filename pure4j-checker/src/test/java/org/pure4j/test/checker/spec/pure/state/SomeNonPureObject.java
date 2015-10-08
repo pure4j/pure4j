@@ -10,7 +10,7 @@ public class SomeNonPureObject {
 
 	@ShouldBePure
 	@Pure
-	public String returnSomeField() {
+	public static String returnSomeField() {
 		return immutable.doSomething();
 	}
 

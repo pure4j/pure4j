@@ -286,6 +286,11 @@ public class ClassFileModelBuilder {
 				output("  "+getOpcode(arg0)+" "+arg1);
 				if (Opcodes.ALOAD == arg0) {
 					arguments.push(arg1);
+					
+					if (arg1 == 0) {
+						ci.setUsesThis(true);
+					}
+					
 				} else {
 					firstCall = false;
 				}

@@ -31,7 +31,7 @@ public class VisitorExample {
 	
 	@ShouldBePure
 	@Pure
-	public void doSomething() {
+	public static void doSomething() {
 		Visitor v = new Impl1();
 		String on = new String();
 		v.visit(on);

@@ -8,13 +8,13 @@ public class SomeForcedPure {
 
 	@ShouldBePure
 	@Pure(Enforcement.FORCE) 
-	public int doSomethingNotPure() {
+	public static int doSomethingNotPure() {
 		return new Object().hashCode();
 	}
 	
 	@Pure
 	@ShouldBePure
-	public void callIt() {
+	public static void callIt() {
 		doSomethingNotPure();
 	}
 }

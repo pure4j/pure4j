@@ -31,6 +31,7 @@
 		<li concordion:execute="onlyAcceptsImmutableParameters()">By default, adding <code>@Pure</code> will check that the method only accepts immutable parameters (see {@link ImmutableValue}).
 		This ensures that the pure methods are <b>Thread Safe</b> and means that, once invoked the state of their arguments cannot be changed while the 
 	method is running.  Otherwise, this would impact the determinism constraint. </li>
+		<li>(untested) If the pure method is non-static, 'this' must also be immutable.</li>
  		<li concordion:execute="canAccessNonInterfacePure()">Pure methods are allowed to access other methods that are not interface pure.  (e.g. pure private methods on a class can be only implementation pure)</li>
  		<li concordion:execute="nonPureCodeAccessingOnlyImplementationPure()">Only methods which are both implementation pure and interface pure are reported in the resulting public pure interface of the class.  Thus, non-pure
  		code should only access pure code that is both implementation and interface pure.</li>

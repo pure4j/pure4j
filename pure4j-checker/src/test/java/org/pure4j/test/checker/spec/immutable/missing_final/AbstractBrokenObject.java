@@ -11,17 +11,17 @@ public abstract class AbstractBrokenObject {
 	protected Integer in;
 
 	
-	@CausesError(PureMethodAccessesNonFinalFieldException.class) 
+	@ShouldBePure
 	public Integer getIn() {
 		return in;
 	}
 
-	@CausesError(PureMethodAccessesNonFinalFieldException.class) 
+	@ShouldBePure
 	public void setIn(Integer in) {
 		this.in = in;
 	}
 
-	@CausesError(PureMethodAccessesNonFinalFieldException.class) 
+	@ShouldBePure
 	public AbstractBrokenObject(Integer in) {
 		super();
 		this.in = in;

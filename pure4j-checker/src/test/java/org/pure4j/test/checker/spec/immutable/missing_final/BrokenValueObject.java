@@ -26,12 +26,12 @@ public class BrokenValueObject extends AbstractBrokenObject {
 		return super.equals(obj);
 	}
 	
-	@CausesError({PureMethodAccessesNonFinalFieldException.class,PureMethodAccessesNonFinalFieldException.class} ) 
+	@ShouldBePure
 	public void increment() {
 		this.in++;
 	}
 
-	@CausesError(PureMethodAccessesNonFinalFieldException.class) 
+	@ShouldBePure
 	public Integer getInt2() {
 		return in;
 	}

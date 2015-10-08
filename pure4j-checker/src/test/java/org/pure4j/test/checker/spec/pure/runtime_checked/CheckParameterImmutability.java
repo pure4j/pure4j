@@ -14,11 +14,9 @@ import org.pure4j.immutable.ClassNotImmutableException;
 import org.pure4j.test.checker.support.CausesError;
 import org.pure4j.test.checker.support.ShouldBePure;
 
-import com.sun.org.apache.bcel.internal.generic.IMUL;
-
 public class CheckParameterImmutability {
 
-	private String s = "blah";
+	private static String s = "blah";
 	
 	@MutableUnshared
 	static class InnerClass {
@@ -69,7 +67,7 @@ public class CheckParameterImmutability {
 	 */
 	@Pure
 	@ShouldBePure
-	public String testParam2Good(Object in1, Object in2) {
+	public static String testParam2Good(Object in1, Object in2) {
 		Pure4J.immutable(in1, in2);
 		return in1.toString() + in2.toString();
 	}
@@ -79,7 +77,7 @@ public class CheckParameterImmutability {
 	 */
 	@Pure
 	@ShouldBePure
-	public String testParam3Good(Object in1, int in2) {
+	public static String testParam3Good(Object in1, int in2) {
 		Pure4J.immutable(in1);
 		return in1.toString();
 	}
@@ -89,7 +87,7 @@ public class CheckParameterImmutability {
 	 */
 	@Pure
 	@CausesError({MissingImmutableParameterCheckException.class, PureMethodParameterNotImmutableException.class})
-	public String testParam4Bad(Object in1, Object in2) {
+	public static String testParam4Bad(Object in1, Object in2) {
 		Pure4J.immutable(in1);
 		return in1.toString() + in2.toString();
 	}
@@ -99,7 +97,7 @@ public class CheckParameterImmutability {
 	 */
 	@Pure
 	@CausesError({IncorrectPure4JImmutableCallException.class, PureMethodParameterNotImmutableException.class})
-	public String testParam5Bad(Object in1) {
+	public static String testParam5Bad(Object in1) {
 		Pure4J.immutable(in1, 6);
 		return in1.toString();
 	}
@@ -109,7 +107,7 @@ public class CheckParameterImmutability {
 	 */
 	@Pure
 	@ShouldBePure
-	public String testParam6Good(Object in1, Object in2,Object in3, Object in4, Object in5, Object in6) {
+	public static String testParam6Good(Object in1, Object in2,Object in3, Object in4, Object in5, Object in6) {
 		Pure4J.immutable(in1,in2, in3, in4);
 		Pure4J.immutable(in5, in6);
 		return in1.toString();
@@ -117,15 +115,14 @@ public class CheckParameterImmutability {
 	
 	@Pure
 	@CausesError({PureMethodParameterNotImmutableException.class, IncorrectPure4JImmutableCallException.class, PureMethodAccessesNonFinalFieldException.class})  // called with non-arguments
- 	public String testParam7Good(Object in1) {
+ 	public static String testParam7Good(Object in1) {
 		Pure4J.immutable(in1, s);
 		return in1.toString();
 	}
 	
-	@Test
 	@ShouldBePure
 	@Pure
-	public void callTheGoodOnes() {
+	public static void callTheGoodOnes() {
 		testParam2Good("string", 66);
 		testParam3Good('c', 3455);
 		testParam5Bad("hello");

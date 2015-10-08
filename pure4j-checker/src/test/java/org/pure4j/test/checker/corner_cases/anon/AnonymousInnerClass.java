@@ -15,7 +15,7 @@ public class AnonymousInnerClass extends AbstractChecker {
 	
 	@Pure
 	@ShouldBePure
-	public int doSomething(ISeq<Integer> in) {
+	public static int doSomething(ISeq<Integer> in) {
 		final int[] count = { 0 };
 		in.forEach(new Consumer<Integer>() {
 

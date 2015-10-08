@@ -8,13 +8,13 @@ import org.pure4j.test.checker.support.CausesError;
 public class SomeForcedImpure {
 
 	@Pure(Enforcement.NOT_PURE) 
-	public int doSomethingNotPure() {
+	public static int doSomethingNotPure() {
 		return new Object().hashCode();
 	}
 	
 	@Pure
 	@CausesError(PureMethodCallsImpureException.class)
-	public void callIt() {
+	public static void callIt() {
 		doSomethingNotPure();
 	}
 }

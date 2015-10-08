@@ -14,7 +14,7 @@ public class PureReduce extends AbstractChecker {
 
 	@ShouldBePure
 	@Pure
-	public String consumeBlah(ArraySeq<String> in) {
+	public static String consumeBlah(ArraySeq<String> in) {
 		String done = in.stream().reduce("", (a, b) -> a+b);
 		return done;
 	}

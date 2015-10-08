@@ -7,13 +7,13 @@ public class InterfaceNotPureOkCall {
 
 	@ShouldBePure
 	@Pure
-	private int doSomething2(Object o) {
+	private static int doSomething2(Object o) {
 		return 6;
 	}
 	
 	@ShouldBePure
 	@Pure
-	public int doSomething1() {
+	public static int doSomething1() {
 		return doSomething2(null);
 	}
 }

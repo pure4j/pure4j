@@ -159,17 +159,21 @@ public class PureChecklistHandler {
 						}
 					}
 					
-					/*if (pt == PurityType.IMMUTABLE_VALUE) {
-					if (!Modifier.isStatic(declaration.getModifiers(cl))) {
-						for (Class<?> c : usedIn) {
-							if (typeFailsImmutabilityCheck(cb, c)) {
-								cb.registerError(new PureMethodOnNonImmutableClassException(this, c));
-								pureInterface = false;
-								return false;
+					if (pt == PurityType.IMMUTABLE_VALUE) {
+						if (!Modifier.isStatic(declaration.getModifiers(cl))) {
+							CallInfo ci = pm.getOpcodes(declaration);
+							if (ci.usesThis()) {
+								// if we use 'this', then the class must be immutable.
+								for (Class<?> c : usedIn) {
+									if (typeFailsImmutabilityCheck(cb, c)) {
+										cb.registerError(new PureMethodOnNonImmutableClassException(this, c));
+										pureInterface = false;
+										return false;
+									}
+								}
 							}
 						}
 					}
-					}*/
 					
 					
 					if (pt == PurityType.MUTABLE_UNSHARED) {
@@ -334,10 +338,11 @@ public class PureChecklistHandler {
 			
 			for (Object mh : ci.getMethodsBeforeReturns()) {
 				if (mh instanceof Integer) {
-					cb.registerError(new PureMethodReturnNotImmutableException(this, (Integer) mh));
+					int lineNumber = (Integer) mh;
+					cb.registerError(new PureMethodReturnNotImmutableException(this, lineNumber));
 					return false;
-				} else if (mh instanceof MethodHandle) {
-					MethodHandle ch = (MethodHandle) mh;
+				} else if (mh instanceof ImplementationHandle) {
+					MemberHandle ch = (MemberHandle) mh;
 					if (ch.getClassName().equals(org.springframework.asm.Type.getInternalName(Pure4J.class)) &&
 						(ch.getName().equals("returnImmutable")) ) {
 					// return ok.

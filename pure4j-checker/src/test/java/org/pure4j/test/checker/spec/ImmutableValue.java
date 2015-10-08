@@ -63,7 +63,7 @@ public class ImmutableValue {
 	
 	@Test 
 	public void annotationFromSuper() {
-		Helper.check(0, SomeValueObjectBrokenExtend.class);
+		Helper.check(1, SomeValueObjectBrokenExtend.class);
 	}
 	
 

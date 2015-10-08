@@ -7,6 +7,15 @@ public class CallInfo {
 
 	private int opcodes;
 	List<Object> methodsBeforeReturns = new ArrayList<Object>();
+	private boolean usesThis = false;
+
+	public boolean usesThis() {
+		return usesThis;
+	}
+
+	public void setUsesThis(boolean usesThis) {
+		this.usesThis = usesThis;
+	}
 
 	public List<Object> getMethodsBeforeReturns() {
 		return methodsBeforeReturns;

@@ -2,6 +2,7 @@ package org.pure4j.test.checker.spec.mutable_unshared.classes;
 
 import java.util.Random;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -19,17 +20,24 @@ public class SomeMutableUnsharedClass {
 	
 	@CausesError(FieldTypeNotImmutableException.class)
 	public Object some_non_immutable;
-	
-	
-	public SomeMutableUnsharedClass() {
-		super();
-	}
 
-	@CausesError(PureMethodReturnNotImmutableException.class)
-	public Object returningThisIsPure() {
-		// "this" is an ok thing to return.  But, the return type is going to be tricky.
+	@ShouldBePure
+	public Object guardedReturnIsPure() {
 		new Object();
+		return Pure4J.returnImmutable(5);   
+	}
+	
+	
+	@CausesError(PureMethodReturnNotImmutableException.class)
+	public Object returningThisIsCurrentlyNotPure() {
 		return this;   
+	}
+	
+	
+	
+	@CausesError(PureMethodReturnNotImmutableException.class)
+	public Object returningObjectIsNotPure() {
+		return new Object();
 	}
 
 	@ShouldBePure
