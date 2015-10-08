@@ -16,7 +16,7 @@ import org.pure4j.test.checker.spec.pure.interface_not_pure.TestCheckCatchesNonI
 import org.pure4j.test.checker.spec.pure.math.PureMathsTests;
 import org.pure4j.test.checker.spec.pure.runtime_checked.CheckParameterImmutability;
 import org.pure4j.test.checker.spec.pure.runtime_unsupported.SimpleUnsupported;
-import org.pure4j.test.checker.spec.pure.state.SomeNonPureObject;
+import org.pure4j.test.checker.spec.pure.state.SomeNonImmutableObject;
 import org.pure4j.test.checker.spec.pure.strings2.StringBuilding;
 
 @RunWith(ConcordionRunner.class)
@@ -29,7 +29,7 @@ public class Pure {
 	
 	@Test
 	public void accessesOnlyImmutableState() {
-		Helper.check(0, SomeNonPureObject.class);
+		Helper.check(0, SomeNonImmutableObject.class);
 	}
 	
 	@Test

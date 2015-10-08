@@ -20,6 +20,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PurityType;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MemberCantBeHydratedException;
@@ -58,8 +59,6 @@ public class PureChecklistHandler {
 	public static final boolean IGNORE_TOSTRING_PURITY = true;
 	public static final boolean IGNORE_ENUM_VALUES_PURITY = true;
 
-	static enum PurityType { MUTABLE_UNSHARED, IMMUTABLE_VALUE }
-	
 	public class PureMethod {
 
 		public MemberHandle declaration;
@@ -70,13 +69,13 @@ public class PureChecklistHandler {
 		private PurityType pt;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 
-		private PureMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, boolean mutableUnshared) {
+		private PureMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, PurityType pt) {
 			super();
 			this.declaration = declaration;
 			this.implPurity = impl;
 			this.intfPurity = intf;
 			setupEnforcements(intf, impl);
-			this.pt = mutableUnshared ? PurityType.MUTABLE_UNSHARED : PurityType.IMMUTABLE_VALUE;
+			this.pt = pt;
 		}
 
 		protected void setupEnforcements(Enforcement intf, Enforcement impl) {
@@ -594,12 +593,12 @@ public class PureChecklistHandler {
 		return false;
 	}
 
-	public void addMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, boolean immutableReturnType, Class<?> usedIn, Callback cb) {
+	public void addMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, PurityType pt, Class<?> usedIn, Callback cb) {
 		PureMethod pm;
 		if (pureChecklist.containsKey(declaration)) {
 			pm = pureChecklist.get(declaration);
 		} else {
-			pm = new PureMethod(declaration, impl, intf, immutableReturnType);
+			pm = new PureMethod(declaration, impl, intf, pt);
 			pureChecklist.put(declaration, pm);
 			cb.send("  - " + declaration + " " + impl);
 		}

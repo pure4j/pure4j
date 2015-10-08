@@ -49,7 +49,7 @@ public class Pure4J {
 	}
 	
 	@Pure
-	public static final Object returnImmutable(Object o) {
+	public static final <K> K returnImmutable(K o) {
 		immutableClass(o);
 		return o;
 	}

@@ -10,6 +10,7 @@ import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PurityType;
 import org.pure4j.exception.ClassHasConflictingAnnotationsException;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 import org.pure4j.exception.MemberCantBeHydratedException;
@@ -175,7 +176,7 @@ public class PurityChecker implements Rule {
 	protected void registerMethodWithCorrectEnforcement(Class<?> pureClass, Callback cb, MemberHandle ch) {
 		Enforcement impl = getImplementationEnforcement(ch);
 		Enforcement intf = getInterfaceEnforcement(ch);
-		boolean ret = getReturnTypeEnforcement(cb, ch);
+		PurityType ret = getPurityType(cb, ch);
 		pureChecklist.addMethod(ch, impl, intf, ret, pureClass, cb);
 	}
 
@@ -237,11 +238,15 @@ public class PurityChecker implements Rule {
 		}
 	}
 
-	protected boolean getReturnTypeEnforcement(Callback cb, MemberHandle handle) {
+	protected PurityType getPurityType(Callback cb, MemberHandle handle) {
 		Class<?> class1 = handle.getDeclaringClass(cl);
-		IgnoreImmutableTypeCheck iitc = handle.getAnnotation(cl, IgnoreImmutableTypeCheck.class);
-		boolean checkReturnType = mutableUnshared.classIsMarked(class1, cb) && (iitc == null);
-		return checkReturnType;
+		Pure p = handle.getAnnotation(cl, Pure.class);
+		boolean mutable = mutableUnshared.classIsMarked(class1, cb);
+		if (mutable) {
+			return PurityType.MUTABLE_UNSHARED;
+		} else {
+			return PurityType.IMMUTABLE_VALUE;
+		}
 	}
 
 	protected Enforcement getInterfaceEnforcement(MemberHandle handle) {

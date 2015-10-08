@@ -20,16 +20,11 @@ import org.pure4j.collections.PersistentVector;
  * array is mutable.  Preferentially, use a {@link PersistentVector} or similar to contain the array in an immutable 
  * structure.  Also prevents errors due to non-final fields.
  * 
- * <h3>2.  Return types for methods in <code>@MutableState</code> classes.</h3>
- * 
- * <p>Sometimes you cannot narrow the return type for a mutable state object far enough, perhaps because the
- * return type is generic.  You can use this annotation on the method to skip the checking of the return type.
- * 
  * @author robmoffat
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD})
 public @interface IgnoreImmutableTypeCheck {
 
 }
