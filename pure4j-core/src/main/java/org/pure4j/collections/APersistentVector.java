@@ -49,7 +49,14 @@ public abstract class APersistentVector<K> implements
 		return null;
 	}
 
-	static <E> boolean doEquals(IPersistentVector<E> v, Object obj) {
+	
+	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		
+		APersistentVector<K> v = this;
+		
 		if (obj instanceof IPersistentVector) {
 			IPersistentVector<?> ov = (IPersistentVector<?>) obj;
 			if (ov.count() != v.count())
@@ -83,12 +90,7 @@ public abstract class APersistentVector<K> implements
 
 		return true;
 
-	}
-	
-	public boolean equals(Object obj) {
-		if (obj == this)
-			return true;
-		return doEquals(this, obj);
+		
 	}
 
 	public int hashCode() {

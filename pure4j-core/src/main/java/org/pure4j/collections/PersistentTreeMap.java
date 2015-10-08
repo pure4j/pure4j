@@ -799,10 +799,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		}
 	}
 
-	@ImmutableValue
 	public static class NodeIterator<K, V> implements IPureIterator<Entry<K, V>> {
-		Stack<Node> stack = new Stack<Node>();
-		boolean asc;
+		private Stack<Node> stack = new Stack<Node>();
+		private boolean asc;
 
 		NodeIterator(Node t, boolean asc) {
 			this.asc = asc;
@@ -824,7 +823,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		public Entry<K, V> next() {
 			Node t = (Node) stack.pop();
 			push(asc ? t.right() : t.left());
-			return (java.util.Map.Entry<K, V>) t;
+			return (java.util.Map.Entry<K, V>) Pure4J.returnImmutable(t);
 		}
 
 		public void remove() {

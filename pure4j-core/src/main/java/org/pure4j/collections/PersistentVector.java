@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
@@ -35,23 +34,19 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	@MutableUnshared
 	public static class Node implements Serializable {
 		
-		transient private final AtomicReference<Thread> edit;
 		@IgnoreImmutableTypeCheck
 		private final Object[] array;
 
-		private Node(AtomicReference<Thread> edit, Object[] array) {
-			this.edit = edit;
+		private Node(Object[] array) {
 			this.array = array;
 		}
 
-		private Node(AtomicReference<Thread> edit) {
-			this.edit = edit;
+		private Node() {
 			this.array = new Object[32];
 		}
 	}
-	final static AtomicReference<Thread> NOEDIT = new AtomicReference<Thread>(null);
 
-	public final static Node EMPTY_NODE = new Node(NOEDIT, new Object[32]);
+	private final static Node EMPTY_NODE = new Node(new Object[32]);
 
 	final int cnt;
 	public final int shift;
@@ -65,6 +60,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>(0, 5,
 			EMPTY_NODE, new Object[] {});
 
+	@Pure(Enforcement.FORCE)  // needed due to array copy
 	@SuppressWarnings("unchecked")
 	static public <K> IPersistentVector<K> create(ISeq<K> items) {
 		K[] arr = (K[]) new Object[32];
@@ -122,8 +118,9 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return ret.persistent();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public PersistentVector() {
-		this(0, 5, EMPTY_NODE, (K[]) EMPTY.tail);
+		this(0, 5, EMPTY_NODE, (K[]) emptyVector().tail);
 	}
 
 	private PersistentVector(int cnt, int shift, Node root, K[] tail) {
@@ -193,7 +190,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 
 	@Pure(Enforcement.FORCE)
 	private static Node doAssoc(int level, Node node, int i, Object val) {
-		Node ret = new Node(node.edit, node.array.clone());
+		Node ret = new Node(node.array.clone());
 		if (level == 0) {
 			ret.array[i & 0x01f] = val;
 		} else {
@@ -222,13 +219,13 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		}
 		// full tail, push into tree
 		Node newroot;
-		Node tailnode = new Node(root.edit, tail);
+		Node tailnode = new Node(tail);
 		int newshift = shift;
 		// overflow root?
 		if ((cnt >>> 5) > (1 << shift)) {
-			newroot = new Node(root.edit);
+			newroot = new Node();
 			newroot.array[0] = root;
-			newroot.array[1] = newPath(root.edit, shift, tailnode);
+			newroot.array[1] = newPath(shift, tailnode);
 			newshift += 5;
 		} else
 			newroot = pushTail(shift, root, tailnode);
@@ -244,25 +241,24 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		// else alloc new path
 		// return nodeToInsert placed in copy of parent
 		int subidx = ((cnt - 1) >>> level) & 0x01f;
-		Node ret = new Node(parent.edit, parent.array.clone());
+		Node ret = new Node(parent.array.clone());
 		Node nodeToInsert;
 		if (level == 5) {
 			nodeToInsert = tailnode;
 		} else {
 			Node child = (Node) parent.array[subidx];
 			nodeToInsert = (child != null) ? pushTail(level - 5, child,
-					tailnode) : newPath(root.edit, level - 5, tailnode);
+					tailnode) : newPath(level - 5, tailnode);
 		}
 		ret.array[subidx] = nodeToInsert;
 		return ret;
 	}
 
-	private static Node newPath(AtomicReference<Thread> edit, int level,
-			Node node) {
+	private static Node newPath(int level, Node node) {
 		if (level == 0)
 			return node;
-		Node ret = new Node(edit);
-		ret.array[0] = newPath(edit, level - 5, node);
+		Node ret = new Node();
+		ret.array[0] = newPath(level - 5, node);
 		return ret;
 	}
 
@@ -407,14 +403,14 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			if (newchild == null && subidx == 0)
 				return null;
 			else {
-				Node ret = new Node(root.edit, node.array.clone());
+				Node ret = new Node(node.array.clone());
 				ret.array[subidx] = newchild;
 				return ret;
 			}
 		} else if (subidx == 0)
 			return null;
 		else {
-			Node ret = new Node(root.edit, node.array.clone());
+			Node ret = new Node(node.array.clone());
 			ret.array[subidx] = null;
 			return ret;
 		}

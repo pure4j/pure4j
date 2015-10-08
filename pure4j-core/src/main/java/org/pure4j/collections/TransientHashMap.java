@@ -20,7 +20,6 @@ public class TransientHashMap<K, V> extends HashMap<K, V> implements ITransientM
 		super(initialCapacity);
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
 	public TransientHashMap(Map<? extends K, ? extends V> m) {
 		super(m);
 	}

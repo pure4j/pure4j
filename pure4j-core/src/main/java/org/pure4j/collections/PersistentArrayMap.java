@@ -18,6 +18,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 
 
 
@@ -44,6 +45,8 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 
 	private static final PersistentArrayMap<Object, Object> EMPTY = new PersistentArrayMap<Object, Object>();
 
+	@Pure
+	@PureParameters
 	@SuppressWarnings("unchecked")
 	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
 		Pure4J.immutable(other);
@@ -354,7 +357,6 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 
 	}
 
-	@Pure(Enforcement.NOT_PURE)
 	public ITransientMap<K, V> asTransient() {
 		return new TransientHashMap<K, V>(this);
 	}
