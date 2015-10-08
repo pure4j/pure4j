@@ -668,6 +668,9 @@ public class PureChecklistHandler {
 			return false;
 		}
 		
+		if (PurityChecker.classIsAnonymousInner(handle.getDeclaringClass(cl))) {
+			return false;
+		}
 		
 		return pub || ((!priv) && (!prot));
 	}

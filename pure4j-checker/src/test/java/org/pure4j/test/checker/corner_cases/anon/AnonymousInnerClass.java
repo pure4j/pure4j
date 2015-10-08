@@ -5,17 +5,21 @@ import java.util.function.Consumer;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
+import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.test.checker.support.AbstractChecker;
+import org.pure4j.test.checker.support.CausesError;
 import org.pure4j.test.checker.support.ShouldBePure;
 
+@ImmutableValue
 public class AnonymousInnerClass extends AbstractChecker {
 	
-	@Pure
 	@ShouldBePure
-	public static int doSomething(ISeq<Integer> in) {
+	public int doSomething(ISeq<Integer> in) {
 		final int[] count = { 0 };
 		in.forEach(new Consumer<Integer>() {
 
@@ -31,14 +35,32 @@ public class AnonymousInnerClass extends AbstractChecker {
 		return count[0];
 	}
 	
+	@ShouldBePure
+	@Pure(Enforcement.FORCE)
 	@Test
 	public void addEmUp() {
 		Assert.assertEquals(121, doSomething(ArraySeq.create(5, 6, 12, 88, 10)));
 	}
 	
 	
+	@ShouldBePure
+	@Pure(Enforcement.FORCE)
 	@Test
 	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0);
+		checkThisPackage(this.getClass(), 2, 1);
 	}
+
+	@ShouldBePure
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	@ShouldBePure
+	@Override
+	public String toString() {
+		return "";
+	}
+	
+	
 }

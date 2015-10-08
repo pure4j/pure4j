@@ -12,4 +12,6 @@ public interface ClassAnnotationCache {
 
 	void doClassChecks(Class<?> immutableClass, Callback cb, ProjectModel pm);
 
+	void addClass(Class<?> pureClass);
+
 }

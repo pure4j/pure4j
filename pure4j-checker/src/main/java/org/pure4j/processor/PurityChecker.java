@@ -6,7 +6,6 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.annotations.pure.PureParameters;
@@ -240,13 +239,30 @@ public class PurityChecker implements Rule {
 
 	protected PurityType getPurityType(Callback cb, MemberHandle handle) {
 		Class<?> class1 = handle.getDeclaringClass(cl);
-		Pure p = handle.getAnnotation(cl, Pure.class);
-		boolean mutable = mutableUnshared.classIsMarked(class1, cb);
+		boolean mutable = false;
+		if (classIsAnonymousInner(class1)) {
+			mutableUnshared.addClass(class1);
+			mutable = true;
+		} else if (mutableUnshared.classIsMarked(class1, cb)) {
+			mutable = true;
+		}
 		if (mutable) {
 			return PurityType.MUTABLE_UNSHARED;
 		} else {
 			return PurityType.IMMUTABLE_VALUE;
 		}
+	}
+
+	public static boolean classIsAnonymousInner(Class<?> class1) {
+		int dollar = class1.getName().lastIndexOf("$");
+		if (dollar > -1) {
+			String number = class1.getName().substring(dollar+1);
+			if (number.matches("[0-9]+")) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	protected Enforcement getInterfaceEnforcement(MemberHandle handle) {

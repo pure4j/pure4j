@@ -58,4 +58,14 @@ public abstract class AbstractClassAnnoatationCache implements ClassAnnotationCa
 			}
 		}
 
+	
+	public void addClass(Class<?> cl) {
+		if (Boolean.FALSE == classMap.get(cl.getName())) {
+			throw new IllegalStateException("Class is already excluded from cache "+this.getClass().getName()+cl);
+		}
+		
+		classMap.put(cl.getName(), true);
+	}
+	
+	
 }
