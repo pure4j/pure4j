@@ -14,6 +14,7 @@ package org.pure4j.collections;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -57,70 +58,90 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	@IgnoreImmutableTypeCheck
 	public final K[] tail;
 
-	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>(0, 5,
-			EMPTY_NODE, new Object[] {});
-
-	@Pure(Enforcement.FORCE)  // needed due to array copy
+	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>();
+	
 	@SuppressWarnings("unchecked")
-	static public <K> IPersistentVector<K> create(ISeq<K> items) {
-		K[] arr = (K[]) new Object[32];
-		int i = 0;
-		for (; items != null && i < 32; items = items.next())
-			arr[i++] = items.first();
+	public PersistentVector(ISeq<K> items) {
+		if (items.count()  <= 32) {
+			this.cnt = items.count();
+			this.shift = 5;
+			K[] arr = (K[]) new Object[items.count()];
+			fill(items, arr);
+			this.tail = arr;
+			this.root = EMPTY_NODE;
+		} else {
+			K[] arr = (K[]) new Object[32];
+			ISeq<K> rest = fill(items, arr);
+			PersistentVector<K> start = new PersistentVector<K>(32, 5, EMPTY_NODE, arr);
+			while (rest != null) {
+				start = start.cons(rest.first());
+				rest = rest.next();
+			}
+			this.cnt = start.cnt;
+			this.shift = start.shift;
+			this.tail = start.tail;
+			this.root = start.root;
+		}
+	}
+	
+	private ISeq<K> fill(ISeq<K> in, Object[] array) {
+		for (int i = 0; i < array.length; i++) {
+			array[i] = in.first();
+			in = in.next();
+		}
+		
+		return in;
+	}
 
-		if (items != null) { // >32, construct with array directly
-			PersistentVector<K> start = new PersistentVector<K>(32, 5, EMPTY_NODE,
-					arr);
-			TransientVector<K> ret = start.asTransient();
-			for (; items != null; items = items.next())
-				ret.add(items.first());
-			return ret.persistent();
-		} else if (i == 32) { // exactly 32, skip copy
-			return new PersistentVector<K>(32, 5, EMPTY_NODE, arr);
-		} else { // <32, copy to minimum array and construct
-			K[] arr2 = (K[]) new Object[i];
-			System.arraycopy(arr, 0, arr2, 0, i);
-			return new PersistentVector<K>(i, 5, EMPTY_NODE, arr2);
+	@Pure(Enforcement.NOT_PURE)
+	@SuppressWarnings("unchecked")
+	public PersistentVector(List<K> list) {
+		int size = list.size();
+		if (size <= 32) {
+			this.cnt = size;
+			this.shift = 5;
+			this.tail = (K[]) list.toArray();
+			this.root = EMPTY_NODE;
+		} else {
+			K[] arr = (K[]) new Object[32];
+			PersistentVector<K> start = new PersistentVector<K>(32, 5, EMPTY_NODE, arr);
+			int i = 0;
+			for(K item : list) {
+				if (i<32) {
+					arr[i] = item;
+					i++;
+				} else {
+					start = start.cons(item);
+				}
+			}
+			this.cnt = start.cnt;
+			this.shift = start.shift;
+			this.tail = start.tail;
+			this.root = start.root;
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	static public <K> IPersistentVector<K> create(List<K> list) {
-		int size = list.size();
-		if (size <= 32)
-			return new PersistentVector<K>(size, 5, PersistentVector.EMPTY_NODE,
-					(K[]) list.toArray());
-
-		TransientVector<K> ret = (TransientVector<K>) EMPTY.asTransient();
-		for (int i = 0; i < size; i++)
-			ret.add(list.get(i));
-		return ret.persistent();
+	@Pure(Enforcement.NOT_PURE)
+	public PersistentVector(Iterable<K> items) {
+		PersistentVector<K> start = emptyVector();
+		for(K k : items) {
+			start = start.cons(k);
+		}
+		this.cnt = start.cnt;
+		this.shift = start.shift;
+		this.tail = start.tail;
+		this.root = start.root;
 	}
 
 	@SuppressWarnings("unchecked")
-	static public <K> IPersistentVector<K> create(Iterable<K> items) {
-		// optimize common case
-		if (items instanceof ArrayList)
-			return create((ArrayList<K>) items);
-
-		Iterator<K> iter = items.iterator();
-		TransientVector<K> ret = (TransientVector<K>) EMPTY.asTransient();
-		while (iter.hasNext())
-			ret.add(iter.next());
-		return ret.persistent();
-	}
-
-	@SuppressWarnings("unchecked")
-	static public <K> IPersistentVector<K> create(K... items) {
-		TransientVector<K> ret = (TransientVector<K>) EMPTY.asTransient();
-		for (K item : items)
-			ret.add(item);
-		return ret.persistent();
+	@Pure(Enforcement.NOT_PURE)
+	public PersistentVector(K... items) {
+		this(Arrays.asList(items));
 	}
 	
 	@SuppressWarnings("unchecked")
 	public PersistentVector() {
-		this(0, 5, EMPTY_NODE, (K[]) emptyVector().tail);
+		this(0, 5, EMPTY_NODE, (K[]) new Object[] {});
 	}
 
 	private PersistentVector(int cnt, int shift, Node root, K[] tail) {
@@ -132,7 +153,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 
 	@Pure(Enforcement.NOT_PURE)
 	public TransientVector<K> asTransient() {
-		return new TransientVector<K>(this);
+		return new TransientVector<K>(this.seq());
 	}
 
 	final int tailoff() {

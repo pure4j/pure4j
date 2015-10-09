@@ -1,10 +1,14 @@
 package org.pure4j.test.checker.collections;
 
+import java.util.Arrays;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.IPersistentVector;
+import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientVector;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
@@ -58,8 +62,32 @@ public class PersistentVectorExample extends AbstractChecker {
 		IPersistentVector<Integer> toPers = trans.persistent();
 		Assert.assertEquals("[6, 1, 2, 5, 4, 3, 0, 64]", toPers.toString());
 		Assert.assertEquals("[6, 1, 2, 5, 4, 3, 0]", pv.toString());
+	}
+	
+	@Test
+	public void testConstruction() {
+		// array
+		IPersistentVector<String> pv = new PersistentVector<String>(someStrings(60));
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
 		
+		// iseq
+		pv = new PersistentVector<String>((ISeq<String>) new ArraySeq<String>(someStrings(60)));
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
 		
+		// list based
+		pv = new PersistentVector<String>(Arrays.asList(someStrings(60)));
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		
+
+	}
+
+	private String[] someStrings(int size) {
+		String[] out = new String[size];
+		for (int i = 0; i < out.length; i++) {
+			out[i] = "str"+i;
+		}
+		
+		return out;
 	}
 
 }

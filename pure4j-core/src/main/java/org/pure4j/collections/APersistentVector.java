@@ -102,7 +102,7 @@ public abstract class APersistentVector<K> implements
 				hash = 31 * hash + Util.hash(nth(n));
 			}
 
-			_hasheq = Murmur3.mixCollHash(hash, n);
+			_hasheq = hash;
 		}
 		return _hasheq;
 	}
