@@ -16,7 +16,7 @@ public class TransientQueue<T> extends LinkedList<T> implements ITransientQueue<
 
 	@Override
 	public IPersistentCollection<T> persistent() {
-		return new PersistentQueue<T>(this.size(), null, (PersistentVector<T>) PersistentVector.create(this));
+		return new PersistentQueue<T>(this.size(), null, new PersistentVector<T>(this));
 	}
 
 }

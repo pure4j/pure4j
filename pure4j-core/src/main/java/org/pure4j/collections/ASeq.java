@@ -55,7 +55,7 @@ public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 
 	public int hashCode() {
 		if (_hasheq == -1) {
-			_hasheq = Murmur3.hashOrdered(this);
+			_hasheq = Hasher.hashOrdered(this);
 		}
 		return _hasheq;
 	}

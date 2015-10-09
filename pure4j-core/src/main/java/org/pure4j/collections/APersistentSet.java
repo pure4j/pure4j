@@ -79,7 +79,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 
 	public int hashCode() {
 		if (_hasheq == -1) {
-			_hasheq = Murmur3.hashUnordered(this);
+			_hasheq = Hasher.hashUnordered(this);
 		}
 		return _hasheq;
 	}

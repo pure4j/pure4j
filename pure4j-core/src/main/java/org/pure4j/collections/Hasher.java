@@ -32,17 +32,10 @@ package org.pure4j.collections;
 
 import org.pure4j.annotations.pure.Pure;
 
-/**
- * See http://smhasher.googlecode.com/svn/trunk/MurmurHash3.cpp
- * MurmurHash3_x86_32
- *
- * @author Austin Appleby
- * @author Dimitris Andreou
- * @author Kurt Alfred Kluever
- */
 
 
-public final class Murmur3 {
+
+public final class Hasher {
 	private static final int seed = 0;
 	private static final int C1 = 0xcc9e2d51;
 	private static final int C2 = 0x1b873593;
@@ -112,7 +105,7 @@ public final class Murmur3 {
 			++n;
 		}
 
-		return mixCollHash(hash, n);
+		return hash;
 	}
 
 	@Pure

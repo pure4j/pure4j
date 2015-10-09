@@ -87,13 +87,13 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 
 	public int hashCode() {
 		if (_hasheq == -1) {
-			_hasheq = Murmur3.hashUnordered(this);
+			_hasheq = Hasher.hashUnordered(this);
 		}
 		return _hasheq;
 	}
 
 	static public int mapHasheq(IPersistentMap<?,?> m) {
-		return Murmur3.hashUnordered(m);
+		return Hasher.hashUnordered(m);
 	}
 
 	static public class KeySeq<K, V> extends ASeq<K> {

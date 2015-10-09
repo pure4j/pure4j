@@ -1,6 +1,9 @@
 package org.pure4j.examples.var_model.pure;
 
 import java.util.Currency;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.collections.IPersistentList;
@@ -48,7 +51,9 @@ public class VarProcessorImpl implements VarProcessor {
 		}
 		
 		// collect the results + sort (probably highly inefficient)
-		IPersistentList<Float> results = combined.getPnls().values().stream().collect(PureCollectors.toPersistentList());
+		Stream<Float> stream = combined.getPnls().values().stream();
+		Collector<Float, List<Float>, IPersistentList<Float>> collector = PureCollectors.toPersistentList();
+		IPersistentList<Float> results = stream.collect(collector);
 		IPersistentVector<Float> sorted = PureCollections.sort(results.seq());
 		
 		// work out confidence level

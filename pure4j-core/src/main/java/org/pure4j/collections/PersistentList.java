@@ -109,7 +109,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 	
 	static class EmptyList<K> implements IPersistentList<K>, ISeq<K> {
 		private static final Object[] EMPTY_ARRAY = new Object[] {};
-		static final int hasheq = Murmur3.hashOrdered(Collections.EMPTY_LIST);
+		static final int hasheq = Hasher.hashOrdered(Collections.EMPTY_LIST);
 
 		public int hashCode() {
 			return hasheq;

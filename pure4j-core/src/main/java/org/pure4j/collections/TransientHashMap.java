@@ -3,9 +3,6 @@ package org.pure4j.collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.PureParameters;
-
 public class TransientHashMap<K, V> extends HashMap<K, V> implements ITransientMap<K, V> {
 	
 	public TransientHashMap() {
