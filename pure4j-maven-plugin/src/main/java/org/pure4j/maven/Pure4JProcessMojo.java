@@ -52,7 +52,7 @@ public class Pure4JProcessMojo extends AbstractMojo {
 
 	public static ClassLoader getClassLoader(MavenProject project) throws Exception {
 	    List<String> classPathElements = getClassPathElements(project);
-	    List<URL> classpathElementUrls = new ArrayList<>(classPathElements.size());
+	    List<URL> classpathElementUrls = new ArrayList<URL>(classPathElements.size());
 	    for (String classPathElement : classPathElements) {
 	        classpathElementUrls.add(new File(classPathElement).toURI().toURL());
 	    }
@@ -64,7 +64,7 @@ public class Pure4JProcessMojo extends AbstractMojo {
 
 	@SuppressWarnings("unchecked")
 	private static List<String> getClassPathElements(MavenProject project) throws Exception {
-		ArrayList<String> out = new ArrayList<>();
+		ArrayList<String> out = new ArrayList<String>();
 		out.addAll(project.getCompileClasspathElements());
 		out.add(project.getBuild().getOutputDirectory());
 		out.add(project.getBuild().getTestOutputDirectory());
