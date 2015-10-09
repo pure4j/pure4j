@@ -48,7 +48,7 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 
 	public PersistentTreeSet(Comparator<? super K> comp, ISeq<K> items) {
-		super(APersistentSet.createMap(items, new TransientTreeMap<>(comp)));
+		super(APersistentSet.createMap(items, new TransientTreeMap<K, K>(comp)));
 	}
 
 	private PersistentTreeSet(IPersistentMap<K, K> impl) {

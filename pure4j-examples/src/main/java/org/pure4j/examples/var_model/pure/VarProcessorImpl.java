@@ -8,7 +8,7 @@ import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.IPersistentVector;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.PureCollections;
-import org.pure4j.collections.PureCollectors;
+import org.pure4j.lambda.PureCollectors;
 
 @ImmutableValue
 public class VarProcessorImpl implements VarProcessor {

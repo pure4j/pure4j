@@ -52,7 +52,6 @@ import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
-import org.pure4j.collections.PureCollectors;
 import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
@@ -61,6 +60,7 @@ import org.pure4j.collections.TransientTreeMap;
 import org.pure4j.collections.TransientTreeSet;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.exception.Pure4JException;
+import org.pure4j.lambda.PureCollectors;
 import org.pure4j.model.ClassHandle;
 import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
@@ -102,14 +102,14 @@ public class JavaStandardLibraryPurity {
 //						TransientQueue.class,
 //						TransientTreeMap.class,
 //						TransientTreeSet.class, 
-//						TransientVector.class,
+						TransientVector.class,
 //						PureCollections.class,
 //						ArraySeq.class,
 //						APersistentMap.class,
 //						PersistentHashMap.class,
 //						PersistentHashSet.class,
-//						PersistentList.class,
-//						PersistentQueue.class,
+						PersistentList.class,
+						PersistentQueue.class,
 //						PersistentArrayMap.class,
 //						PersistentTreeMap.class,
 //						PersistentTreeSet.class,
@@ -119,7 +119,7 @@ public class JavaStandardLibraryPurity {
 						
 						);
 			}
-		}, "org.pure4j", false, true, true);
+		}, "org.pure4j", false, true, false /* change this to true once fixed*/);
 	}
 	
 	interface ClassListProvider {

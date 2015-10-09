@@ -28,8 +28,8 @@
 	</developers>
 
 	<issueManagement>
-		<system>Kite9.com Issues Page</system>
-		<url>http://www.kite9.com/project/issues/</url>
+		<system>Pure4J Issues Page</system>
+		<url>https://github.com/robmoffat/pure4j/issues/</url>
 	</issueManagement>
 
 	<licenses>
@@ -57,19 +57,42 @@
 				REMINDER:  when releasing, don't use the maven-release-plugin.
 				Instead, mvn versions:set -DnewVersion=<blah>
 				mvn install javadoc:jar deploy
+				mvn versions:revert
 			 -->
-		
-		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
+				<version>3.3</version>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<configuration>
+							<source>1.6</source>
+							<target>1.6</target>
+							<excludes><exclude>**/lambda/*</exclude></excludes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>lambda-compile</id>
+						<phase>compile</phase>
+						<goals><goal>compile</goal></goals>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<includes><include>**/lambda/*</include></includes> 
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-testCompile</id>
+						<goals><goal>compile</goal></goals>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+						</configuration>
+					</execution>
+					
+				</executions>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.8</version>
@@ -137,6 +160,7 @@
 				<version>2.2</version>
 			</plugin>
 		</plugins>
+				
 	</build>
 	
 	<profiles>
@@ -165,9 +189,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
 	</profiles>
-
 
   	<distributionManagement>
   		<repository>

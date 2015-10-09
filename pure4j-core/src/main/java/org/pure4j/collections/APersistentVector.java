@@ -445,7 +445,7 @@ public abstract class APersistentVector<K> implements
 
 		@Override
 		public ITransientVector<K> asTransient() {
-			return new TransientVector<>(this);
+			return new TransientVector<K>(this);
 		}
 	}
 }

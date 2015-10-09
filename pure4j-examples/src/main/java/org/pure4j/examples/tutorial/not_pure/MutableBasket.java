@@ -1,21 +1,18 @@
 package org.pure4j.examples.tutorial.not_pure;
 
-import java.io.IOException;
 import java.util.Map;
 
-import org.junit.Test;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.examples.tutorial.pure.Product;
-import org.pure4j.test.checker.support.AbstractChecker;
 
-public class MutableBasket extends AbstractChecker {
+public class MutableBasket {
 	
 	private final Map<Product, Integer> contents;
 	
-//	public MutableBasket(Map<Product, Integer> initialContents) {
-//		this.contents = initialContents;
-//	}
+	public MutableBasket(Map<Product, Integer> initialContents) {
+		this.contents = initialContents;
+	}
 	
 	public MutableBasket() {
 		contents = null;
@@ -31,7 +28,7 @@ public class MutableBasket extends AbstractChecker {
 		}
 	}
 
-	@Pure
+	// @Pure -- can't be pure, because of the non-persistent map, and accessing "contents"
 	public float priceBasket(Map<Product, Float> priceList, float taxRate) {
 		Pure4J.immutable(priceList);
 		float runningTotal = 0f;
@@ -47,12 +44,12 @@ public class MutableBasket extends AbstractChecker {
 		
 		return runningTotal + (runningTotal * taxRate);
 	}
-	
-	
-	@Test 
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 1);
-	}
-	
+//	
+//	
+//	@Test 
+//	public void checkThisPackage() throws IOException {
+//		checkThisPackage(this.getClass(), 1);
+//	}
+//	
 
 }

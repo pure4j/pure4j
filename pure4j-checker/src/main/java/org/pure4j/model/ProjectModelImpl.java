@@ -25,7 +25,7 @@ public class ProjectModelImpl implements ProjectModel {
 	private Map<String, Set<String>> packageContents = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<AnnotationHandle>> annotationReferences = new HashMap<String, Set<AnnotationHandle>>(100);
 	private Map<MemberHandle, CallInfo> opcodes = new HashMap<MemberHandle, CallInfo>(100);
-	private Set<MemberHandle> declaredMethods = new HashSet<>(1000);
+	private Set<MemberHandle> declaredMethods = new HashSet<MemberHandle>(1000);
 	private Map<String, Set<MemberHandle>> declaredMethodsByClass = new HashMap<String, Set<MemberHandle>>(100);
 	
 	public void addDeclaredMethod(String className, MemberHandle mh) {

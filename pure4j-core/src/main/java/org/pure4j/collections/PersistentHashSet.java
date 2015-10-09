@@ -93,7 +93,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	}
 
 	public ITransientSet<K> asTransient() {
-		return new TransientHashSet<>(this);
+		return new TransientHashSet<K>(this);
 	}
 
 }

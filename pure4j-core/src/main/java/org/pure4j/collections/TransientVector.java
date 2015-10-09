@@ -8,7 +8,7 @@ final public class TransientVector<K> extends ArrayList<K> implements ITransient
 	public TransientVector() {
 		super();
 	}
-
+	
 	public TransientVector(Collection<? extends K> c) {
 		super(c);
 	}

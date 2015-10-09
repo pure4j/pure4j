@@ -1,67 +1,23 @@
-/*
- * Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-package org.pure4j.collections;
+package org.pure4j.lambda;
 
-import java.util.AbstractMap;
-import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.DoubleSummaryStatistics;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IntSummaryStatistics;
-import java.util.Iterator;
 import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.IPersistentList;
+import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PersistentList;
 
 /**
  * Version of the {@link Collectors} class for use with persistent collections.
@@ -201,7 +157,7 @@ public final class PureCollectors {
     @SuppressWarnings("unchecked")
 	@Pure
     public static <T> CollectorImpl<T, List<T>, ISeq<T>> toSeq() {
-    	return new CollectorImpl<>(
+    	return new CollectorImpl<T, List<T>, ISeq<T>>(
     			(Supplier<List<T>>) ArrayList::new, 
     			List::add,
     			(left, right)  -> { left.addAll(right); return left; }, 
@@ -211,7 +167,7 @@ public final class PureCollectors {
     
     @Pure
     public static <T> CollectorImpl<T, List<T>, IPersistentList<T>> toPersistentList() {
-    	return new CollectorImpl<>(
+    	return new CollectorImpl<T, List<T>, IPersistentList<T>> (
     			(Supplier<List<T>>) ArrayList::new, 
     			List::add,
     			(left, right)  -> { left.addAll(right); return left; }, 

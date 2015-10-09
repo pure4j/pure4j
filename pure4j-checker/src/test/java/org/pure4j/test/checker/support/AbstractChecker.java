@@ -94,7 +94,7 @@ public class AbstractChecker {
 			System.out.println(string);
 		}
 		
-		Assert.assertEquals(defaultConstructors, pures.size()); 
+		Assert.assertTrue(defaultConstructors >= pures.size()); 
 		
 		String errorAnn = org.pure4j.model.Type.getInternalName(CausesError.class);
 		
