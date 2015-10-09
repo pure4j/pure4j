@@ -40,7 +40,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static boolean ALWAYS_OUTPUT_ASM = true;
+	public static boolean ALWAYS_OUTPUT_ASM = false;
 
 	public ClassFileModelBuilder() {
 		this(ALWAYS_OUTPUT_ASM);
