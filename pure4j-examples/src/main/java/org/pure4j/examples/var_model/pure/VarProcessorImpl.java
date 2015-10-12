@@ -11,9 +11,11 @@ import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.IPersistentVector;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.lambda.Java8API;
 import org.pure4j.lambda.PureCollectors;
 
 @ImmutableValue
+@Java8API
 public class VarProcessorImpl implements VarProcessor {
 	
 	private final float confidenceLevel;

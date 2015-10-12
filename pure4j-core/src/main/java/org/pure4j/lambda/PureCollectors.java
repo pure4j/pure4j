@@ -65,6 +65,7 @@ import org.pure4j.collections.PersistentList;
  *
  * @since 1.8
  */
+@Java8API
 public final class PureCollectors {
 
 	@IgnoreImmutableTypeCheck

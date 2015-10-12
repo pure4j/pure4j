@@ -84,7 +84,7 @@
 					</execution>
 					<execution>
 						<id>default-testCompile</id>
-						<goals><goal>compile</goal></goals>
+						<goals><goal>testCompile</goal></goals>
 						<configuration>
 							<source>1.8</source>
 							<target>1.8</target>
@@ -158,6 +158,27 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2</version>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>animal-sniffer-maven-plugin</artifactId>
+				<version>1.14</version>
+				<executions>
+					<execution>
+						<id>animal-sniffer</id>
+						<phase>test</phase>
+						<goals><goal>check</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<signature>
+						<groupId>org.codehaus.mojo.signature</groupId>
+						<artifactId>java16</artifactId>
+						<version>1.0</version>
+					</signature>
+					<annotations><annotation>org.pure4j.lambda.Java8API</annotation></annotations>
+				</configuration>
 			</plugin>
 		</plugins>
 				

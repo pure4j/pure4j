@@ -28,7 +28,6 @@
 				<version>2.9.1</version>
 			</plugin>
 		</plugins>
-	
 	</build>
 
 	<dependencies>

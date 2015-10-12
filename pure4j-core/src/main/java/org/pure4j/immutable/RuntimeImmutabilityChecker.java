@@ -133,7 +133,7 @@ public class RuntimeImmutabilityChecker {
 		}
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		X ann = (X) immutableClass.getDeclaredAnnotation((Class) ac);
+		X ann = (X) immutableClass.getAnnotation((Class) ac);
 		if (ann != null) {
 			return ann;
 		} else {

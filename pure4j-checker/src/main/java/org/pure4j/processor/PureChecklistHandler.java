@@ -414,7 +414,7 @@ public class PureChecklistHandler {
 					Method theCallMethod = theCall.hydrate(cl);
 					Method fromMethod = ((MethodHandle) this.declaration).hydrate(cl);
 					if (theCallMethod.getReturnType().isAssignableFrom(fromMethod.getReturnType())) {
-						if (theCallMethod.getParameters().length == fromMethod.getParameters().length) {
+						if (theCallMethod.getParameterTypes().length == fromMethod.getParameterTypes().length) {
 							return true;
 						}
 					}
