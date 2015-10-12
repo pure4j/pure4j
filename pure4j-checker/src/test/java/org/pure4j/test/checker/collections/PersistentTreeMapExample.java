@@ -60,13 +60,13 @@ public class PersistentTreeMapExample extends AbstractChecker {
 		pureMethod(phm, 4, 4);
 		
 		// check sorting (of keys)
-		Assert.assertEquals(new ArraySeq<>("fiona", "peter","rob", "testy"), new IterableSeq<>(phm.keyIterator()));
+		Assert.assertEquals(new ArraySeq<String>("fiona", "peter","rob", "testy"), new IterableSeq<String>(phm.keyIterator()));
 		
 		// check transient version
 		ITransientMap<String, String> tm = phm.asTransient();
 		tm.put("blah", "grommet");
 		
-		Assert.assertEquals(new ArraySeq<>("blah", "fiona", "peter","rob", "testy"), new IterableSeq<>(tm.persistent().keyIterator()));
+		Assert.assertEquals(new ArraySeq<String>("blah", "fiona", "peter","rob", "testy"), new IterableSeq<String>(tm.persistent().keyIterator()));
 		
 	}
 	

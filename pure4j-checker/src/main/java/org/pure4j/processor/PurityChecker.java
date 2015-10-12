@@ -106,7 +106,7 @@ public class PurityChecker implements Rule {
 			Class<?> cl = hydrate(className);
 			if (immutables.classIsMarked(cl, cb)) {
 				Class<?> immutableClass = hydrate(className);
-				if (isConcrete(immutableClass) && (!RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(immutableClass))) {
+				if (isConcrete(immutableClass) && (!RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(immutableClass.getName()))) {
 					immutables.doClassChecks(immutableClass, cb, pm);
 					cb.send("@ImmutableValue: "+immutableClass);
 					addMethodsFromClassToPureList(immutableClass, cb, pm, true, false); 

@@ -94,7 +94,8 @@ public class AbstractChecker {
 			System.out.println(string);
 		}
 		
-		Assert.assertTrue(defaultConstructors >= pures.size()); 
+		
+		Assert.assertTrue("Too many extras:", defaultConstructors >= pures.size()); 
 		
 		String errorAnn = org.pure4j.model.Type.getInternalName(CausesError.class);
 		

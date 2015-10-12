@@ -46,7 +46,7 @@ public class EnumerationSeqExample extends AbstractChecker {
 		Collections.shuffle(items);
 		Assert.assertEquals(
 				PureCollections.sort(new EnumerationSeq<String>(items.elements())),
-				new ArraySeq<>("first", "second", "third")
+				new ArraySeq<String>("first", "second", "third")
 				);
 		
 		log("seq: "+seq);		

@@ -32,16 +32,24 @@ public class RuntimeImmutabilityChecker {
 	 */
 	public static final String PURE4J_IMMUTABILITY_CHECKING = "pure4j.immutability_checking";
 	
-	public static final Set<Class<?>> INBUILT_IMMUTABLE_CLASSES = createInbuiltImmutableSet();
+	public static final Set<String> INBUILT_IMMUTABLE_CLASSES = createInbuiltImmutableSet();
 
-	public static Set<Class<?>> createInbuiltImmutableSet() {
-		HashSet<Class<?>> out = new HashSet<Class<?>>();
+	public static Set<String> createInbuiltImmutableSet() {
+		HashSet<String> out = new HashSet<String>();
 		List<Class<?>> l = Arrays.asList((Class<?>) Byte.class, Float.class, Double.class, Integer.class, String.class, Character.class, 
-			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class, Void.class, 
-			
-			// java.time stuff
-			LocalDate.class, LocalDateTime.class, LocalTime.class, MonthDay.class, IsoChronology.class);
-		out.addAll(l);
+			Long.class, Boolean.class, Short.class, BigDecimal.class, BigInteger.class, Currency.class, Void.class);
+		
+		for (Class<?> c : l) {
+			out.add(c.getName());
+		}
+		
+		// these are added this way in case we are running in a JVM without them (<1.7)
+		out.add("java.time.LocalDate");
+		out.add("java.time.LocalDateTime");
+		out.add("java.time.LocalTime");
+		out.add("java.time.MonthDay");
+		out.add("java.time.IsoChronology");
+	
 		return Collections.unmodifiableSet(out);
 	}
 	
@@ -49,7 +57,7 @@ public class RuntimeImmutabilityChecker {
 	
 	@Pure
 	public static void throwIfClassNotImmutable(Class<?> immutableClass) {
-		if (INBUILT_IMMUTABLE_CLASSES.contains(immutableClass)) {
+		if (INBUILT_IMMUTABLE_CLASSES.contains(immutableClass.getName())) {
 			return;
 		}
 
@@ -78,7 +86,7 @@ public class RuntimeImmutabilityChecker {
 	
 	@Pure
 	public static boolean isClassImmutable(Class<?> immutableClass) {
-		if (INBUILT_IMMUTABLE_CLASSES.contains(immutableClass)) {
+		if (INBUILT_IMMUTABLE_CLASSES.contains(immutableClass.getName())) {
 			return true; 
 		}
 

@@ -66,7 +66,7 @@ public class ImmutableValueClassHandler extends AbstractClassAnnoatationCache im
 			return true;
 		}
 		
-		if (RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(in)) {
+		if (RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(in.getName())) {
 			return true;
 		}
 		
