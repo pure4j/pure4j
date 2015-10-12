@@ -355,7 +355,6 @@ public class PureChecklistHandler {
 			
 			return true;
 		}
-
 		
 		/**
 		 * Checks to see whether the developer has called the runtime check for
@@ -476,7 +475,9 @@ public class PureChecklistHandler {
 
 	private static boolean isAnonymousInnerClass(String className) {
 		String tail = className.substring(className.lastIndexOf("$")+1);
-		return tail.matches("[0-9]*");
+		boolean out = tail.matches("[0-9]*");
+		System.out.println("anonymous inner: "+className+"="+out);
+		return out;
 	}
 	
 	

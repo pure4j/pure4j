@@ -49,7 +49,8 @@ public class MutableUnsharedClassHandler extends AbstractClassAnnoatationCache i
 					boolean pub = Modifier.isPublic(f.getModifiers());
 					boolean priv = Modifier.isPrivate(f.getModifiers());
 					boolean prot = Modifier.isProtected(f.getModifiers());
-					boolean accessible = pub || ((!priv) && (!prot));
+					boolean synthetic = (f.getModifiers() & 4096) == 4096;
+					boolean accessible = (pub || ((!priv) && (!prot))) && (!synthetic);
 					if (accessible) {
 						if (!immutableHandler.typeIsMarked(f.getGenericType(), cb)) {
 							cb.registerError(new FieldTypeNotImmutableException(f, mutableSharedClass));
