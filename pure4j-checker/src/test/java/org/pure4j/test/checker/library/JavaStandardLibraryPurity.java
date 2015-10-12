@@ -104,7 +104,7 @@ public class JavaStandardLibraryPurity {
 //						TransientTreeSet.class, 
 						TransientVector.class,
 //						PureCollections.class,
-//						ArraySeq.class,
+						ArraySeq.class,
 //						APersistentMap.class,
 //						PersistentHashMap.class,
 //						PersistentHashSet.class,
@@ -119,7 +119,7 @@ public class JavaStandardLibraryPurity {
 						
 						);
 			}
-		}, "org.pure4j", false, true, false /* change this to true once fixed*/);
+		}, "org.pure4j", false, true, true);
 	}
 	
 	interface ClassListProvider {

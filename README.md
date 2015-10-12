@@ -120,7 +120,6 @@ This is currently an idea under investigation.  It’s quite possible that the c
 ### Known Remaining Issues
 
 * toString purity
-* pure method on a non-immutable class shouldn't be allowed to access class state, unless it's immutable.
 * Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
 more like idiomatic Java.  -- need to write tests for each constructor, I think.
 * Tutorials - in progress

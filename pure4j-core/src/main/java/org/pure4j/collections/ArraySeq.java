@@ -18,6 +18,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 
 public class ArraySeq<K> extends ASeq<K> {
 	
@@ -101,6 +102,7 @@ public class ArraySeq<K> extends ASeq<K> {
 		return new ArraySeq_double(array, 0, true);
 	}
 
+	@PureParameters(Enforcement.NOT_PURE)
 	@SafeVarargs
 	public ArraySeq(K... array) {
 		this(array, 0, true);
