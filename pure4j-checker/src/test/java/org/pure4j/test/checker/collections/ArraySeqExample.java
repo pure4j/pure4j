@@ -46,7 +46,7 @@ public class ArraySeqExample extends AbstractChecker{
 		
 		checkSeq(ArraySeq.create(5f, 4f, 9f), 3, 5f);  // float
 		checkSeq(ArraySeq.create(5d, 4d, 9d ), 3, 5d);  // double
-		checkSeq(ArraySeq.create(true, false ), 2, true);  // boolean
+		checkSeq(new ArraySeq.BooleanSeq(true, false ), 2, true);  // boolean
 		
 		
 		// check sorting

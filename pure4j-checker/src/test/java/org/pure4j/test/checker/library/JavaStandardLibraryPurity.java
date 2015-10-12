@@ -98,8 +98,8 @@ public class JavaStandardLibraryPurity {
 						// transient array seq.
 //						TransientHashSet.class,
 //						TransientHashMap.class,
-//						TransientList.class,
-//						TransientQueue.class,
+						TransientList.class,
+						TransientQueue.class,
 //						TransientTreeMap.class,
 //						TransientTreeSet.class, 
 						TransientVector.class,

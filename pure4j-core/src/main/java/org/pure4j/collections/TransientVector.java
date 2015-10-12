@@ -3,9 +3,9 @@ package org.pure4j.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
 
 final public class TransientVector<K> extends ArrayList<K> implements ITransientVector<K> {
 	
@@ -13,9 +13,13 @@ final public class TransientVector<K> extends ArrayList<K> implements ITransient
 		super();
 	}
 	
-	@PureParameters(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	public TransientVector(Collection<? extends K> c) {
-		super(c);
+		super(c.size());
+		for (K k : c) {
+			Pure4J.immutable(k);
+			this.add(k);
+		}
 	}
 
 	public TransientVector(int initialCapacity) {

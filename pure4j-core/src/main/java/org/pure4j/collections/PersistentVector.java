@@ -13,8 +13,6 @@
 package org.pure4j.collections;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -93,20 +91,23 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return in;
 	}
 
-	@Pure(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
 	public PersistentVector(List<K> list) {
 		int size = list.size();
 		if (size <= 32) {
 			this.cnt = size;
 			this.shift = 5;
-			this.tail = (K[]) list.toArray();
+			K[] array = (K[]) list.toArray();
+			Pure4J.immutableArray(array);
+			this.tail = array;
 			this.root = EMPTY_NODE;
 		} else {
 			K[] arr = (K[]) new Object[32];
 			PersistentVector<K> start = new PersistentVector<K>(32, 5, EMPTY_NODE, arr);
 			int i = 0;
 			for(K item : list) {
+				Pure4J.immutable(item);
 				if (i<32) {
 					arr[i] = item;
 					i++;
@@ -121,10 +122,11 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		}
 	}
 
-	@Pure(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	public PersistentVector(Iterable<K> items) {
 		PersistentVector<K> start = emptyVector();
 		for(K k : items) {
+			Pure4J.immutable(k);
 			start = start.cons(k);
 		}
 		this.cnt = start.cnt;
@@ -134,9 +136,9 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Pure(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	public PersistentVector(K... items) {
-		this(Arrays.asList(items));
+		this((ISeq<K>) new ArraySeq<K>(items));
 	}
 	
 	@SuppressWarnings("unchecked")

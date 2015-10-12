@@ -40,6 +40,9 @@ public class ArraySeq<K> extends ASeq<K> {
 			if (component == double.class) {
 				return create((double[]) o);
 			} 
+			if (component == byte.class) {
+				return new ByteSeq((byte[]) o);
+			} 
 			if (component == long.class) {
 				return create((long[]) o);
 			} 
@@ -50,7 +53,7 @@ public class ArraySeq<K> extends ASeq<K> {
 				return create((char[]) o);
 			} 
 			if (component == boolean.class) {
-				return create((boolean[]) o);
+				return new BooleanSeq((boolean[]) o);
 			} 
 			if (component == float.class) {
 				return create((float[]) o);
@@ -63,46 +66,37 @@ public class ArraySeq<K> extends ASeq<K> {
 	}
 	
 	@Pure(Enforcement.FORCE)
-	public static ArraySeq_int create(int... array) {
-		return new ArraySeq_int(array, 0, true);
+	public static IntSeq create(int... array) {
+		return new IntSeq(array, 0, true);
 	}
 	
 	@Pure(Enforcement.FORCE)
-	public static ArraySeq_float create(float... array) {
-		return new ArraySeq_float(array, 0, true);
+	public static FloatSeq create(float... array) {
+		return new FloatSeq(array, 0, true);
 	}
 	
 	@Pure(Enforcement.FORCE)
-	public static ArraySeq_long create(long... array) {
-		return new ArraySeq_long(array, 0, true);
+	public static LongSeq create(long... array) {
+		return new LongSeq(array, 0, true);
+	}
+	
+	
+	@Pure(Enforcement.FORCE)
+	public static ShortSeq create(short... array) {
+		return new ShortSeq(array, 0, true);
+	}
+	
+	@PureParameters(Enforcement.NOT_PURE)
+	public static CharSeq create(char... array) {
+		return new CharSeq(array, 0, true);
 	}
 	
 	@Pure(Enforcement.FORCE)
-	public static ArraySeq_byte create(byte... array) {
-		return new ArraySeq_byte(array, 0, true);
-	}
-	
-	@Pure(Enforcement.FORCE)
-	public static ArraySeq_short create(short... array) {
-		return new ArraySeq_short(array, 0, true);
-	}
-	
-	@Pure(Enforcement.FORCE)
-	public static ArraySeq_char create(char... array) {
-		return new ArraySeq_char(array, 0, true);
-	}
-	
-	@Pure(Enforcement.FORCE)
-	public static ArraySeq_boolean create(boolean... array) {
-		return new ArraySeq_boolean(array, 0, true);
-	}
-	
-	@Pure(Enforcement.FORCE)
-	public static ArraySeq_double create(double... array) {
-		return new ArraySeq_double(array, 0, true);
+	public static DoubleSeq create(double... array) {
+		return new DoubleSeq(array, 0, true);
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public ArraySeq(K... array) {
 		this(array, 0, true);
@@ -160,13 +154,18 @@ public class ArraySeq<K> extends ASeq<K> {
 	// ////////////////////////////////// specialized primitive versions
 	// ///////////////////////////////
 
-	static public class ArraySeq_int extends ASeq<Integer>  {
+	static public class IntSeq extends ASeq<Integer>  {
 		@IgnoreImmutableTypeCheck
 		public final int[] array;
 		final int i;
 
 		@Pure(Enforcement.FORCE)
-		ArraySeq_int(int[] array, int i, boolean copy) {
+		public IntSeq(int... array) {
+			this(array, 0, true);
+		}
+		
+		@Pure(Enforcement.FORCE) // due to array copy
+		private IntSeq(int[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -177,7 +176,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Integer> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_int(array, i + 1, false);
+				return new IntSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -210,14 +209,19 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_float extends ASeq<Float>   {
+	static public class FloatSeq extends ASeq<Float>   {
 		
 		@IgnoreImmutableTypeCheck
 		public final float[] array;
 		final int i;
 
 		@Pure(Enforcement.FORCE)
-		ArraySeq_float(float[] array, int i, boolean copy) {
+		public FloatSeq(float... array) {
+			this(array, 0, true);
+		}
+		
+		@Pure(Enforcement.FORCE) // due to array copy
+		FloatSeq(float[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -228,7 +232,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Float> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_float(array, i + 1, false);
+				return new FloatSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -259,13 +263,18 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_double extends ASeq<Double> {
+	static public class DoubleSeq extends ASeq<Double> {
 		@IgnoreImmutableTypeCheck
 		public final double[] array;
 		final int i;
 
 		@Pure(Enforcement.FORCE)
-		ArraySeq_double(double[] array, int i, boolean copy) {
+		public DoubleSeq(double... array) {
+			this(array, 0, true);
+		}
+		
+		@Pure(Enforcement.FORCE) // due to array copy
+		DoubleSeq(double[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -276,7 +285,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Double> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_double(array, i + 1, false);
+				return new DoubleSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -309,13 +318,19 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_long extends ASeq<Long> {
+	static public class LongSeq extends ASeq<Long> {
 		@IgnoreImmutableTypeCheck
 		public final long[] array;
 		final int i;
 
 		@Pure(Enforcement.FORCE)
-		ArraySeq_long(long[] array, int i, boolean copy) {
+		public LongSeq(long... array) {
+			this(array, 0, true);
+		}
+
+
+		@Pure(Enforcement.FORCE) // due to array copy
+		private LongSeq(long[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -326,7 +341,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Long> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_long(array, i + 1, false);
+				return new LongSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -359,13 +374,18 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_byte extends ASeq<Byte>  {
+	static public class ByteSeq extends ASeq<Byte>  {
 		@IgnoreImmutableTypeCheck
 		public final byte[] array;
 		final int i;
-
+		
 		@Pure(Enforcement.FORCE)
-		ArraySeq_byte(byte[] array, int i, boolean copy) {
+		public ByteSeq(byte... array) {
+			this(array, 0, true);
+		}
+
+		@Pure(Enforcement.FORCE) // due to array copy
+		private ByteSeq(byte[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -376,7 +396,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Byte> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_byte(array, i + 1, false);
+				return new ByteSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -419,13 +439,18 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_char extends ASeq<Character> {
+	static public class CharSeq extends ASeq<Character> {
 		@IgnoreImmutableTypeCheck
 		public final char[] array;
 		final int i;
 
 		@Pure(Enforcement.FORCE)
-		ArraySeq_char(char[] array, int i, boolean copy) {
+		public CharSeq(char... array) {
+			this(array, 0, true);
+		}
+		
+		@Pure(Enforcement.FORCE) // due to array copy
+		private CharSeq(char[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -436,7 +461,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Character> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_char(array, i + 1, false);
+				return new CharSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -479,13 +504,19 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_short extends ASeq<Short> {
+	static public class ShortSeq extends ASeq<Short> {
 		@IgnoreImmutableTypeCheck
 		public final short[] array;
 		final int i;
 
+		
 		@Pure(Enforcement.FORCE)
-		ArraySeq_short(short[] array, int i, boolean copy) {
+		public ShortSeq(short... array) {
+			this(array, 0, true);
+		}
+
+		@Pure(Enforcement.FORCE) // due to array copy
+		private ShortSeq(short[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -496,7 +527,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Short> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_short(array, i + 1, false);
+				return new ShortSeq(array, i + 1, false);
 			return null;
 		}
 
@@ -539,13 +570,18 @@ public class ArraySeq<K> extends ASeq<K> {
 		}
 	}
 
-	static public class ArraySeq_boolean extends ASeq<Boolean> {
+	static public class BooleanSeq extends ASeq<Boolean> {
 		@IgnoreImmutableTypeCheck
 		public final boolean[] array;
 		final int i;
 
 		@Pure(Enforcement.FORCE)
-		ArraySeq_boolean(boolean[] array, int i, boolean copy) {
+		public BooleanSeq(boolean... array) {
+			this(array, 0, true);
+		}
+		
+		@Pure(Enforcement.FORCE) // due to array copy
+		BooleanSeq(boolean[] array, int i, boolean copy) {
 			this.array = copy ? Arrays.copyOf(array, array.length) : array;
 			this.i = i;
 		}
@@ -556,7 +592,7 @@ public class ArraySeq<K> extends ASeq<K> {
 
 		public ISeq<Boolean> next() {
 			if (i + 1 < array.length)
-				return new ArraySeq_boolean(array, i + 1, false);
+				return new BooleanSeq(array, i + 1, false);
 			return null;
 		}
 
