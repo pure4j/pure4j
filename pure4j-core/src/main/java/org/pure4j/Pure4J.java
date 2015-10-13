@@ -1,6 +1,8 @@
 package org.pure4j;
 
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureParameters;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
 
 
@@ -168,4 +170,8 @@ public class Pure4J {
 			RuntimeImmutabilityChecker.throwIfClassNotImmutable(component);
 		}
 	}
+	
+	@Pure
+	@PureParameters(Enforcement.NOT_PURE)
+	public static 
 }

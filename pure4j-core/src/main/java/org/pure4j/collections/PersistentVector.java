@@ -13,8 +13,8 @@
 package org.pure4j.collections;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
@@ -59,7 +59,8 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>();
 	
 	@SuppressWarnings("unchecked")
-	public PersistentVector(ISeq<K> items) {
+	public PersistentVector(Seqable<K> itemSeq) {
+		ISeq<K> items = itemSeq.seq();
 		if (items.count()  <= 32) {
 			this.cnt = items.count();
 			this.shift = 5;
@@ -93,7 +94,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 
 	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
-	public PersistentVector(List<K> list) {
+	public PersistentVector(Collection<K> list) {
 		int size = list.size();
 		if (size <= 32) {
 			this.cnt = size;

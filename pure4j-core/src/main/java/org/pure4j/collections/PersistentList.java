@@ -10,8 +10,7 @@
 
 package org.pure4j.collections;
 
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Collection;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
@@ -46,17 +45,27 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 		this._rest = _rest;
 		this._count = _count;
 	}
+	
+	public PersistentList(Seqable<K> s) {
+		PersistentList<K> ret = emptyList();
+		for (K k : s.seq()) {
+			ret = (PersistentList<K>) ret.cons(k);
+		}
+		this._count = ret.count();
+		this._first = ret._first;
+		this._rest = ret._rest;
+	}
 
 	/**
 	 * Each element in the list must be immutable.
 	 * @param init
 	 */
 	@Pure(Enforcement.FORCE)	
-	public PersistentList(List<K> init) {
+	public PersistentList(Collection<K> init) {
 		PersistentList<K> ret = emptyList();
-		for (ListIterator<K> i = init.listIterator(init.size()); i.hasPrevious();) {
-			Pure4J.immutable(i.previous());
-			ret = (PersistentList<K>) ret.cons(i.previous());
+		for (K k : init) {
+			Pure4J.immutable(k);
+			ret = ret.cons(k);
 		}
 		this._count = ret.count();
 		this._first = ret._first;
@@ -112,7 +121,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 	
 	@Override
 	public ITransientCollection<K> asTransient() {
-		return new TransientList<K>(this);
+		return new TransientList<K>((Collection<K>) this);
 	}
 
 }

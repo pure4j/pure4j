@@ -295,7 +295,6 @@ public class PureChecklistHandler {
 				int countOfThisFields = 0;	// for 'this'
 				for (Field f : c.getDeclaringClass().getDeclaredFields()) {
 					if (f.getName().startsWith("this$")) {
-						System.out.println("this field:"+f.getName());
 						countOfThisFields++;
 					}
 				}
@@ -476,8 +475,9 @@ public class PureChecklistHandler {
 	private static boolean isAnonymousInnerClass(String className) {
 		String tail = className.substring(className.lastIndexOf("$")+1);
 		boolean out = tail.matches("[0-9]*");
-		System.out.println("anonymous inner: "+className+"="+out);
+		int mods = PureChecklistHandler.class.getModifiers();
 		return out;
+		
 	}
 	
 	

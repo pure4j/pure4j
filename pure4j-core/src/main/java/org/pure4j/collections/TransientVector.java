@@ -26,10 +26,11 @@ final public class TransientVector<K> extends ArrayList<K> implements ITransient
 		super(initialCapacity);
 	}
 
-	public TransientVector(ISeq<K> list) {
-		super(list.count());
-		for (K k : list) {
-			add(k);
+	public TransientVector(Seqable<K> list) {
+		super(list.seq().count());
+		ISeq<K> ss = list.seq();
+		for (K k : ss) {
+			add(k); 
 		}
 	}
 

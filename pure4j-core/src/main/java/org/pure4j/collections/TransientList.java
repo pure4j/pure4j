@@ -7,7 +7,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-final public class TransientList<K> extends LinkedList<K> implements ITransientCollection<K> {
+public class TransientList<K> extends LinkedList<K> implements ITransientCollection<K> {
 
 	@Override
 	public IPersistentCollection<K> persistent() {
@@ -27,4 +27,19 @@ final public class TransientList<K> extends LinkedList<K> implements ITransientC
 		}
 	}		
 	
+	@Pure(Enforcement.FORCE)
+	@SafeVarargs
+	public TransientList(K... items) {
+		for (K k : items) {
+			Pure4J.immutable(k);
+			this.add(k);
+		}
+	}
+	
+	public TransientList(Seqable<K> seqable) {
+		for (K k : seqable.seq()) {
+			Pure4J.immutable(k);
+			this.add(k);
+		}
+	}
 }
