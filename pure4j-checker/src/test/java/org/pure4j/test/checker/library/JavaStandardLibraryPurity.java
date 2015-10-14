@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -41,24 +42,16 @@ import java.util.Vector;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.pure4j.collections.APersistentMap;
 import org.pure4j.collections.ArraySeq;
-import org.pure4j.collections.PersistentArrayMap;
 import org.pure4j.collections.PersistentHashMap;
-import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentQueue;
-import org.pure4j.collections.PersistentTreeMap;
-import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
-import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.TransientHashMap;
-import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
-import org.pure4j.collections.TransientTreeMap;
-import org.pure4j.collections.TransientTreeSet;
 import org.pure4j.collections.TransientVector;
+import org.pure4j.collections.Util;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.lambda.PureCollectors;
 import org.pure4j.model.ClassHandle;
@@ -80,7 +73,8 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				List<Class<?>> out = new ArrayList<Class<?>>();
 				out.addAll(javaLangClasses());
-			//	out.addAll(javaIOClasses());
+				out.addAll(javaIOClasses());
+				out.addAll(javaNetClasses());
 				out.addAll(javaUtilClasses());
 				return out;
 			}
@@ -97,12 +91,12 @@ public class JavaStandardLibraryPurity {
 				return Arrays.asList((Class<?>) 
 						// transient array seq.
 //						TransientHashSet.class,
-//						TransientHashMap.class,
+						TransientHashMap.class,
 //						TransientTreeMap.class,
 //						TransientTreeSet.class, 
 //						PureCollections.class,
 //						APersistentMap.class,
-//						PersistentHashMap.class,
+						PersistentHashMap.class,
 //						PersistentHashSet.class,
 //						PersistentArrayMap.class,
 //						PersistentTreeMap.class,
@@ -114,8 +108,8 @@ public class JavaStandardLibraryPurity {
 						PersistentList.class,
 						PersistentQueue.class,
 						PersistentVector.class,
-						PureCollectors.class
-					
+						PureCollectors.class,
+						Util.class
 						
 						);
 			}
@@ -201,6 +195,12 @@ public class JavaStandardLibraryPurity {
 		StringWriter.class,
 		PrintStream.class,
 		PrintWriter.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<Class<?>> javaNetClasses() {
+	
+		return Arrays.asList(URI.class);
 	}
 
 	@SuppressWarnings("unchecked")

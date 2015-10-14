@@ -162,7 +162,7 @@ public final class PureCollectors {
     			(Supplier<List<T>>) ArrayList::new, 
     			List::add,
     			(left, right)  -> { left.addAll(right); return left; }, 
-    			(in) -> (ISeq<T>) PersistentList.create(in)
+    			(in) -> (ISeq<T>) new PersistentList<T>(in)
     			, CH_NOID);
     }
     
@@ -172,7 +172,7 @@ public final class PureCollectors {
     			(Supplier<List<T>>) ArrayList::new, 
     			List::add,
     			(left, right)  -> { left.addAll(right); return left; }, 
-    			(in) -> (IPersistentList<T>) PersistentList.create(in)
+    			(in) -> (IPersistentList<T>) new PersistentList<T>(in)
     			, CH_NOID);
     }
 

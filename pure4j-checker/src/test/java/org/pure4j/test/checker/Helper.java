@@ -1,4 +1,4 @@
-package org.pure4j.test.checker.spec;
+package org.pure4j.test.checker;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -80,7 +80,7 @@ public final class Helper {
 				}
 			};
 
-			String packageName = this.getClass().getPackage().getName();
+			String packageName = classes[0].getPackage().getName();
 			ProjectModel pm = createModel(classes, packageName);
 			PurityChecker checker = new PurityChecker(this.getClass().getClassLoader());
 			checker.checkModel(pm, cb);

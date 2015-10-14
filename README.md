@@ -119,15 +119,24 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 ### Known Remaining Issues
 
-* toString purity
 * Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
 more like idiomatic Java.  -- need to write tests for each constructor, I think.
-* Tutorials - in progress
+* registering extra immutables
 * Stream counter-examples.
-* Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
 * Cascading Implementation Impurity: One impure function should 'taint' those that use it.
+* Tutorials - collections tutorial.   mutable unshared tutorial.
+* length -> size
+* JUnit -> Assert purity.
+
+* Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
+	* Anonymous classes: hard to say which one we're talking about without a line-number.
+	* <init> -- change this to say constructor, and the line number
+	* Non-static pure method on class which is not immutable: should give line number of ALOAD 0.
+	
+	
+	
 * Thorough review of purity of Java language classes
 * Service-classes:  need a way to specify their purity without calling them `@ImmutableValue`s  -- not sure about this
-
+* toString purity
 
 

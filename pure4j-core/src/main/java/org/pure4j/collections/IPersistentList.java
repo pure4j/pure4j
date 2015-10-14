@@ -16,4 +16,9 @@ import java.util.List;
 
 public interface IPersistentList<K> extends IPersistentStack<K>, List<K> {
 
+	IPersistentList<K> cons(K o);
+	
+	ITransientList<K> asTransient();
+	
+	IPersistentList<K> addAll(ISeq<? extends K> in);
 }

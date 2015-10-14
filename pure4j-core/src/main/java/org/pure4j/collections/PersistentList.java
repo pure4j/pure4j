@@ -11,6 +11,8 @@
 package org.pure4j.collections;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
@@ -47,13 +49,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 	}
 	
 	public PersistentList(Seqable<K> s) {
-		PersistentList<K> ret = emptyList();
-		for (K k : s.seq()) {
-			ret = (PersistentList<K>) ret.cons(k);
-		}
-		this._count = ret.count();
-		this._first = ret._first;
-		this._rest = ret._rest;
+		this(s.seq().first(), s.seq().next() == null ? null : new PersistentList<K>(s.seq().next()), s.seq().size());
 	}
 
 	/**
@@ -63,14 +59,43 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 	@Pure(Enforcement.FORCE)	
 	public PersistentList(Collection<K> init) {
 		PersistentList<K> ret = emptyList();
-		for (K k : init) {
-			Pure4J.immutable(k);
-			ret = ret.cons(k);
+		if (init instanceof List) {
+			ListIterator<K> li = ((List<K>) init).listIterator(init.size());
+			while (li.hasPrevious()) {
+				K k = li.previous();
+				Pure4J.immutable(k);
+				ret = ret.cons(k);
+			}
+		} else {
+			for (K k : init) {
+				Pure4J.immutable(k);
+				ret = ret.cons(k);
+			}
 		}
-		this._count = ret.count();
+		
+		this._count = ret.size();
 		this._first = ret._first;
 		this._rest = ret._rest;
 	}
+	
+	/**
+	 * Each element in the list must be immutable.
+	 * @param init Some elements
+	 */
+	@SafeVarargs
+	@Pure(Enforcement.FORCE)	
+	public PersistentList(K... init) {
+		PersistentList<K> ret = emptyList();
+		for (int i = init.length-1; i >=0; i--) {
+			Pure4J.immutable(init[i]);
+			ret = ret.cons(init[i]);
+		}
+		this._count = ret.size();
+		this._first = ret._first;
+		this._rest = ret._rest;
+	}
+	
+	
 
 	public K first() {
 		return _first;
@@ -93,7 +118,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 		return _rest;
 	}
 
-	public int count() {
+	public int size() {
 		return _count;
 	}
 
@@ -120,8 +145,20 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 	}
 	
 	@Override
-	public ITransientCollection<K> asTransient() {
+	public ITransientList<K> asTransient() {
 		return new TransientList<K>((Collection<K>) this);
+	}
+
+	/**
+	 * This implementation ensures the Seq ordering is maintained in the list being added to.
+	 */
+	@Override
+	public IPersistentList<K> addAll(ISeq<? extends K> in) {
+		while (in != null) {
+			return addAll(in.next()).cons(in.first());
+		}
+
+		return this;
 	}
 
 }

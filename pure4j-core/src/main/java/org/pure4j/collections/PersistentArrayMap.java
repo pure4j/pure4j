@@ -150,7 +150,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		this.array = init;
 	}
 
-	public int count() {
+	public int size() {
 		return array.length / 2;
 	}
 
@@ -262,7 +262,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	public int capacity() {
-		return count();
+		return size();
 	}
 
 	@Pure(Enforcement.FORCE)
@@ -321,7 +321,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return (array.length - i) / 2;
 		}
 	}

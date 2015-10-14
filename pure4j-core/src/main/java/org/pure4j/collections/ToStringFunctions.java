@@ -40,6 +40,20 @@ public class ToStringFunctions {
         }
     }
     
+	@Pure
+	public static <E> String toString(ISeq<E> c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (;;) {
+            E e = c.first();
+            sb.append(e == c ? "(this Collection)" : e);
+            if (c.next() == null)
+                return sb.append(']').toString();
+            sb.append(',').append(' ');
+            c = c.next();
+        }
+    }
+	
 	 /**
      * Returns a string representation of this map.  The string representation
      * consists of a list of key-value mappings in the order returned by the

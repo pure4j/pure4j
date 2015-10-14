@@ -3,6 +3,7 @@ package org.pure4j.test.checker.spec;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.spec.mutable_unshared.bad_return.BadReturn;
 import org.pure4j.test.checker.spec.mutable_unshared.classes.SomeMutableUnsharedClass;
 import org.pure4j.test.checker.spec.mutable_unshared.inherit.BasePure;

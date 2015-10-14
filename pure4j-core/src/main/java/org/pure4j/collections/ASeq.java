@@ -11,9 +11,8 @@
 package org.pure4j.collections;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.pure4j.Pure4J;
@@ -21,7 +20,7 @@ import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
+public abstract class ASeq<K> implements ISeq<K>, Serializable {
 
 	private static final long serialVersionUID = 220865945544862915L;
 	
@@ -43,14 +42,28 @@ public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof Seqable))
-			return false;
-		ISeq<?> ms = ((Seqable<?>)obj).seq();
-		for (ISeq<K> s = seq(); s != null; s = s.next(), ms = ms.next()) {
-			if (ms == null || !Util.equals(s.first(), ms.first()))
+		if (obj instanceof Seqable) {
+			ISeq<?> ms = ((Seqable<?>)obj).seq();
+			for (ISeq<K> s = seq(); s != null; s = s.next(), ms = ms.next()) {
+				if (ms == null || !Util.equals(s.first(), ms.first()))
+					return false;
+			}
+			return ms == null;
+		} else if (obj instanceof Iterable) {
+			Iterator<K> i1 = this.iterator();
+			Iterator<?> i2 = ((Iterable<?>) obj).iterator();
+			if (i1.hasNext() && (i2.hasNext())) {
+				if (!Util.equals(i1.next(), i2.next())) {
+					return false;
+				}
+			} else if (i1.hasNext() != i2.hasNext()) {
 				return false;
+			}
+			
+			return true;
 		}
-		return ms == null;
+		
+		return false;
 	}
 
 	public int hashCode() {
@@ -60,11 +73,11 @@ public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 		return _hasheq;
 	}
 
-	public int count() {
+	public int size() {
 		int i = 1;
 		for (ISeq<K> s = next(); s != null; s = s.next(), i++)
 			if (s instanceof Counted)
-				return i + s.count();
+				return i + s.size();
 		return i;
 	}
 
@@ -132,10 +145,6 @@ public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 		return true;
 	}
 
-	public int size() {
-		return count();
-	}
-
 	public boolean isEmpty() {
 		return seq() == null;
 	}
@@ -154,9 +163,8 @@ public abstract class ASeq<K> implements ISeq<K>, List<K>, Serializable {
 	}
 
 	// ////////// List stuff /////////////////
-	@Pure(Enforcement.FORCE)  // no side-effects
 	private List<K> reify() {
-		return Collections.unmodifiableList(new ArrayList<K>(this));
+		return new TransientList<K>(this);
 	}
 
 	public List<K> subList(int fromIndex, int toIndex) {

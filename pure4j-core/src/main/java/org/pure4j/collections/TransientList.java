@@ -7,10 +7,10 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-public class TransientList<K> extends LinkedList<K> implements ITransientCollection<K> {
+public class TransientList<K> extends LinkedList<K> implements ITransientList<K> {
 
 	@Override
-	public IPersistentCollection<K> persistent() {
+	public IPersistentList<K> persistent() {
 		return new PersistentList<K>(this);
 	}
 

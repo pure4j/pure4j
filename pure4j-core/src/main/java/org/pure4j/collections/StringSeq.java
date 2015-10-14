@@ -37,7 +37,7 @@ public class StringSeq extends ASeq<Character> {
 		return null;
 	}
 
-	public int count() {
+	public int size() {
 		return s.length() - i;
 	}
 }

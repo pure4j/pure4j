@@ -6,7 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.ISeq;
 import org.pure4j.lambda.PureCollectors;
 import org.pure4j.test.checker.support.AbstractChecker;
@@ -16,7 +16,7 @@ public class PureFilter extends AbstractChecker {
 
 	@ShouldBePure
 	@Pure
-	public static ISeq<String> consumeBlah(ArraySeq<String> in) {
+	public static ISeq<String> consumeBlah(PersistentList<String> in) {
 		ISeq<String> done = in.stream().filter((a) -> a.startsWith("e")).collect(PureCollectors.toSeq());
 		return done;
 	}
@@ -24,8 +24,8 @@ public class PureFilter extends AbstractChecker {
 	
 	@Test
 	public void usingAPure() {
-		ArraySeq<String> someSeq = new ArraySeq<String>("john", "eats", "chips");
-		Assert.assertEquals(new ArraySeq<String>("eats") , consumeBlah(someSeq));
+		PersistentList<String> someSeq = new PersistentList<String>("john", "eats", "chips");
+		Assert.assertEquals(new PersistentList<String>("eats") , consumeBlah(someSeq));
 	}
 	
 	

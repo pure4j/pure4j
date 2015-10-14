@@ -9,22 +9,23 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;
 
-public class ArraySeqExample extends AbstractChecker{
+public class ArraySeqExample extends AbstractChecker {
 
 	@SuppressWarnings("unchecked")
 	@Pure
 	@ShouldBePure
-	public <K> void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
+	public static <K>  void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
 		Pure4J.immutable(in, expectedFirst);
 		
 		log("seq: "+in.toString());
 		
 		log(in.next().toString());
 		
-		assertEquals(expectedLength, in.count());
+		assertEquals(expectedLength, in.size());
 		assertEquals(expectedFirst, in.first());
 		if (in instanceof List) {
 			
@@ -51,6 +52,11 @@ public class ArraySeqExample extends AbstractChecker{
 		
 		// check sorting
 		Assert.assertEquals(PureCollections.sort(ArraySeq.create('d', 'e', 'g', 'f' )), ArraySeq.create('d', 'e', 'f', 'g'));
+	}
+	
+	@Test 
+	public void testPurity() {
+		Helper.check(0, this.getClass());
 	}
 }
 

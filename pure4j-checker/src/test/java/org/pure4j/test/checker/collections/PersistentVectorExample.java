@@ -12,6 +12,7 @@ import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientVector;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;
 
@@ -19,7 +20,7 @@ public class PersistentVectorExample extends AbstractChecker {
 	
 	@Pure
 	@ShouldBePure
-	public int sumPersistentVector(PersistentVector<Integer> someInts) {
+	public static int sumPersistentVector(PersistentVector<Integer> someInts) {
 		int total = 0;
 		for (Integer integer : someInts) {
 			total += integer;
@@ -41,8 +42,8 @@ public class PersistentVectorExample extends AbstractChecker {
 		}
 		log(pl.toString());
 		int j = sumPersistentVector(pl);
-		Assert.assertEquals(150*301,j);
-		Assert.assertEquals(301, pl.size());
+		assertEquals(150*301,j);
+		assertEquals(301, pl.size());
 		
 		// test sorting
 		PersistentVector<Integer> pv = PersistentVector.emptyVector();
@@ -53,15 +54,15 @@ public class PersistentVectorExample extends AbstractChecker {
 		pv = pv.cons(4);
 		pv = pv.cons(3);
 		pv = pv.cons(0);
-		Assert.assertEquals(PureCollections.sort(pv), pl.subList(0, 7));
+		assertEquals(PureCollections.sort(pv), pl.subList(0, 7));
 		
 		
 		// test transient ver
 		ITransientVector<Integer> trans = pv.asTransient();
 		trans.add(64);
 		IPersistentVector<Integer> toPers = trans.persistent();
-		Assert.assertEquals("[6, 1, 2, 5, 4, 3, 0, 64]", toPers.toString());
-		Assert.assertEquals("[6, 1, 2, 5, 4, 3, 0]", pv.toString());
+		assertEquals("[6, 1, 2, 5, 4, 3, 0, 64]", toPers.toString());
+		assertEquals("[6, 1, 2, 5, 4, 3, 0]", pv.toString());
 	}
 	
 	@Test
@@ -77,7 +78,11 @@ public class PersistentVectorExample extends AbstractChecker {
 		// list based
 		pv = new PersistentVector<String>(Arrays.asList(someStrings(60)));
 		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
-		
+		 
+		// no-args
+		pv = new PersistentVector<String>();
+		pv = pv.addAll(new ArraySeq<String>(someStrings(60))); 
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
 
 	}
 
@@ -90,4 +95,8 @@ public class PersistentVectorExample extends AbstractChecker {
 		return out;
 	}
 
+	@Test 
+	public void testPurity() {
+		Helper.check(0, this.getClass());
+	}
 }

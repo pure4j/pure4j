@@ -53,7 +53,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	@IgnoreImmutableTypeCheck
 	final private static Object NOT_FOUND = new Object();
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureParameters(Enforcement.FORCE)
 	public PersistentHashMap(Map<K,V> other) {
 		this(createTemporary(other));
 	}
@@ -67,6 +67,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	private static <K, V> TemporaryHashMap<K, V> createTemporary(Map<K, V> other) {
 		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K,V>();
 		for (Entry<K,V> o : other.entrySet()) {
+			Pure4J.immutable(o.getKey(), o.getValue());
 			ret = (TemporaryHashMap<K, V>) ret.assoc(o.getKey(), o.getValue());
 		}
 		return ret;
@@ -86,16 +87,20 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this(in.count, in.root, in.hasNull, in.nullValue);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	static public <K> IPersistentMap<K, K> create(K... pairs) {
-		ITransientMap<K, K> ret = new TemporaryHashMap<K, K>();
+	public PersistentHashMap(K... pairs) {
+		TemporaryHashMap<K, K> ret = new TemporaryHashMap<K, K>();
 		if (pairs.length % 2 != 0) {
 			throw new IllegalArgumentException("Argument must supply key/value pairs");
 		}
 		for (int i = 0; i < pairs.length; i=i+2) {
 			ret.put((K) pairs[i], (K) pairs[i+1]);	
 		}
-		return ret.persistent();
+		this.count = ret.count;
+		this.root = ret.root;
+		this.hasNull = ret.hasNull;
+		this.nullValue = (V) ret.nullValue;
 	}
 	
 	@Pure
@@ -253,7 +258,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return ValSeq.create(seq()).iterator();
 	}
 
-	public int count() {
+	public int size() {
 		return count;
 	}
 
@@ -273,7 +278,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (hash >>> shift) & 0x01f;
 	}
 
-	@Pure(Enforcement.NOT_PURE)
 	public TemporaryHashMap<K, V> asTransient() {
 		return new TemporaryHashMap<K, V>(this);
 	}
@@ -366,7 +370,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return (V) root.find(0, hash(key), key, notFound);
 		}
 
-		int doCount() {
+		int dosize() {
 			return count;
 		}
 

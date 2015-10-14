@@ -20,10 +20,12 @@ public class TransientHashMap<K, V> extends HashMap<K, V> implements ITransientM
 	public TransientHashMap(Map<? extends K, ? extends V> m) {
 		super(m);
 	}
-
-	@Override
-	public int count() {
-		return size();
+	
+	public TransientHashMap(Seqable<Entry<K, V>> entries) {
+		super();
+		for (Entry<K, V> entry : entries) {
+			this.put(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override

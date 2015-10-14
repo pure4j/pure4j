@@ -19,7 +19,7 @@ abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 	abstract ITransientMap<K, V> doAssoc(K key, V val);
 	abstract ITransientMap<K, V> doWithout(Object key);
 	abstract V doValAt(Object key, V notFound);
-	abstract int doCount();
+	abstract int dosize();
 	abstract IPersistentMap<K, V> doPersistent();
 
 	public ITransientMap<K, V> conj(Entry<K, V> o) {
@@ -51,17 +51,14 @@ abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 		return doValAt(key, notFound);
 	}
 
-	public final int count() {
+	public final int size() {
 		ensureEditable();
-		return doCount();
+		return dosize();
 	}
-	@Override
-	public int size() {
-		return count();
-	}
+
 	@Override
 	public boolean isEmpty() {
-		return count() == 0;
+		return size() == 0;
 	}
 	
 	@Override

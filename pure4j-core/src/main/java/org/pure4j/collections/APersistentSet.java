@@ -45,8 +45,8 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return impl.containsKey(key);
 	}
 
-	public int count() {
-		return impl.count();
+	public int size() {
+		return impl.size();
 	}
 
 	public ISeq<K> seq() {
@@ -66,7 +66,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 			return false;
 		Set<?> m = (Set<?>) obj;
 
-		if (m.size() != s1.count())
+		if (m.size() != s1.size())
 			return false;
 
 		for (Object aM : m) {
@@ -132,12 +132,8 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		return (T[]) PureCollections.seqToNewArray(seq(), a);
 	}
 
-	public int size() {
-		return count();
-	}
-
 	public boolean isEmpty() {
-		return count() == 0;
+		return size() == 0;
 	}
 
 	public Iterator<K> iterator() {

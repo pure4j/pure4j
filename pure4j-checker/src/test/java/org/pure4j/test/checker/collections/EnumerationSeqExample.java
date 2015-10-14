@@ -20,7 +20,7 @@ public class EnumerationSeqExample extends AbstractChecker {
 	@ShouldBePure
 	public <K> void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
 		
-		assertEquals(expectedLength, in.count());
+		assertEquals(expectedLength, in.size());
 		assertEquals(expectedFirst, in.first());
 	}
 	

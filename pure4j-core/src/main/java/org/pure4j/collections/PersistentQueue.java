@@ -82,7 +82,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 		return new PersistentQueue<K>(cnt - 1, f1, r1);
 	}
 
-	public int count() {
+	public int size() {
 		return cnt;
 	}
 
@@ -139,7 +139,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 			return new Seq<K>(f1, r1);
 		}
 
-		public int count() {
+		public int size() {
 			return PureCollections.count(f) + PureCollections.count(rseq);
 		}
 	}
@@ -195,11 +195,11 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	}
 
 	public int size() {
-		return count();
+		return size();
 	}
 
 	public boolean isEmpty() {
-		return count() == 0;
+		return size() == 0;
 	}
 
 	public boolean contains(Object o) {

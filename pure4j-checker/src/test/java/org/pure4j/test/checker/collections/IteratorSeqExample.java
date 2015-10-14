@@ -20,7 +20,7 @@ public class IteratorSeqExample extends AbstractChecker {
 	public <K> void checkSeq(ISeq<K> in, int expectedLength, K expectedFirst) {
 		log("seq: "+in);
 		
-		assertEquals(expectedLength, in.count());
+		assertEquals(expectedLength, in.size());
 		assertEquals(expectedFirst, in.first());
 	}
 	

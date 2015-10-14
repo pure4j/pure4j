@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.spec.generics.holder_immutable.GenericHolderImm;
 import org.pure4j.test.checker.spec.generics.holder_immutable.SomeImmutable;
 import org.pure4j.test.checker.spec.generics.holder_mutable.GenericHolderMutable;

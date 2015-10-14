@@ -265,7 +265,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		return _count;
 	}
 
-	public int count() {
+	public int size() {
 		return _count;
 	}
 
@@ -792,9 +792,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			if (cnt < 0)
-				return super.count();
+				return super.size();
 			return cnt;
 		}
 	}

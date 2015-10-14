@@ -139,14 +139,14 @@ public class AbstractChecker {
 	}
 	
 	@Pure(Enforcement.FORCE)
-	public void assertEquals(Object exp, Object act) {
+	public static void assertEquals(Object exp, Object act) {
 		if (!exp.equals(act)) {
 			throw new RuntimeException("Was expecting equality: "+exp+" and "+act);
 		}
 	}
 	
 	@Pure(Enforcement.FORCE) 
-	public void log(String s) {
+	public static void log(String s) {
 		System.out.println(s);
 	}
 }

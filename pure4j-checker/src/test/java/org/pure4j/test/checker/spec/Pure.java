@@ -3,6 +3,7 @@ package org.pure4j.test.checker.spec;
 import org.concordion.integration.junit4.ConcordionRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.spec.pure.bad_references.client.TestBadLibraryReference;
 import org.pure4j.test.checker.spec.pure.callingnotinterfacepure.InterfaceNotPureOkCall;
 import org.pure4j.test.checker.spec.pure.callingnotpure.TestIllegalObjectUse;

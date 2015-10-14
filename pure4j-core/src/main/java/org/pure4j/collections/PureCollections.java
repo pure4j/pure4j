@@ -33,7 +33,7 @@ public class PureCollections {
 
 	public static int count(Object o) {
 		if (o instanceof Counted)
-			return ((Counted) o).count();
+			return ((Counted) o).size();
 		return countFrom(Util.ret1(o, o = null));
 	}
 
@@ -47,7 +47,7 @@ public class PureCollections {
 			int i = 0;
 			for (; s != null; s = s.next()) {
 				if (s instanceof Counted)
-					return i + s.count();
+					return i + s.size();
 				i++;
 			}
 			return i;
@@ -256,7 +256,7 @@ public class PureCollections {
 
 	static public <K> IPersistentVector<K> subvec(IPersistentVector<K> v,
 			int start, int end) {
-		if (end < start || start < 0 || end > v.count())
+		if (end < start || start < 0 || end > v.size())
 			throw new IndexOutOfBoundsException();
 		if (start == end)
 			return PersistentVector.emptyVector();

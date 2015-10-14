@@ -38,37 +38,44 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public ISeq<K> seq() {
-		if (count() > 0)
+		if (size() > 0)
 			return new Seq<K>(this, 0);
 		return null;
 	}
 
 	public ISeq<K> rseq() {
-		if (count() > 0)
-			return new RSeq<K>(this, count() - 1);
+		if (size() > 0)
+			return new RSeq<K>(this, size() - 1);
 		return null;
 	}
 
+	public IPersistentVector<K> addAll(ISeq<? extends K> items) {
+		IPersistentVector<K> out = this;
+		for(K k: items) {
+			out = out.cons(k);
+		}
+
+		return out;
+	}
 	
 	
 	public boolean equals(Object obj) {
-		if (obj == this)
-			return true;
-		
 		APersistentVector<K> v = this;
+		if (v == obj)
+			return true;
 		
 		if (obj instanceof IPersistentVector) {
 			IPersistentVector<?> ov = (IPersistentVector<?>) obj;
-			if (ov.count() != v.count())
+			if (ov.size() != v.size())
 				return false;
-			for (int i = 0; i < v.count(); i++) {
+			for (int i = 0; i < v.size(); i++) {
 				if (!Util.equals(v.nth(i), ov.nth(i)))
 					return false;
 			}
 			return true;
 		} else if (obj instanceof List) {
 			Collection<?> ma = (Collection<?>) obj;
-			if (ma.size() != v.count() || ma.hashCode() != v.hashCode())
+			if (ma.size() != v.size() || ma.hashCode() != v.hashCode())
 				return false;
 			for (Iterator<?> i1 = ((List<?>) v).iterator(), i2 = ma.iterator(); i1
 					.hasNext();) {
@@ -80,7 +87,7 @@ public abstract class APersistentVector<K> implements
 			if (!(obj instanceof ISeq))
 				return false;
 			ISeq<?> ms = PureCollections.seq(obj);
-			for (int i = 0; i < v.count(); i++, ms = ms.next()) {
+			for (int i = 0; i < v.size(); i++, ms = ms.next()) {
 				if (ms == null || !Util.equals(v.nth(i), ms.first()))
 					return false;
 			}
@@ -89,8 +96,7 @@ public abstract class APersistentVector<K> implements
 		}
 
 		return true;
-
-		
+			
 	}
 
 	public int hashCode() {
@@ -98,7 +104,7 @@ public abstract class APersistentVector<K> implements
 			int n;
 			int hash = 1;
 
-			for (n = 0; n < count(); ++n) {
+			for (n = 0; n < size(); ++n) {
 				hash = 31 * hash + Util.hash(nth(n));
 			}
 
@@ -113,7 +119,7 @@ public abstract class APersistentVector<K> implements
 
 	public K nth(int i, K notFound) {
 		Pure4J.immutable(notFound);
-		if (i >= 0 && i < count())
+		if (i >= 0 && i < size())
 			return nth(i);
 		return notFound;
 	}
@@ -124,7 +130,7 @@ public abstract class APersistentVector<K> implements
 
 	public int indexOf(Object o) {
 		Pure4J.immutable(o);
-		for (int i = 0; i < count(); i++)
+		for (int i = 0; i < size(); i++)
 			if (Util.equals(nth(i), o))
 				return i;
 		return -1;
@@ -132,7 +138,7 @@ public abstract class APersistentVector<K> implements
 
 	public int lastIndexOf(Object o) {
 		Pure4J.immutable(o);
-		for (int i = count() - 1; i >= 0; i--)
+		for (int i = size() - 1; i >= 0; i--)
 			if (Util.equals(nth(i), o))
 				return i;
 		return -1;
@@ -147,7 +153,7 @@ public abstract class APersistentVector<K> implements
 			int nexti = index;
 
 			public boolean hasNext() {
-				return nexti < count();
+				return nexti < size();
 			}
 
 			public K next() {
@@ -226,7 +232,7 @@ public abstract class APersistentVector<K> implements
 			int i = 0;
 
 			public boolean hasNext() {
-				return i < count();
+				return i < size();
 			}
 
 			public K next() {
@@ -240,8 +246,8 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public K peek() {
-		if (count() > 0)
-			return nth(count() - 1);
+		if (size() > 0)
+			return nth(size() - 1);
 		return null;
 	}
 
@@ -249,8 +255,8 @@ public abstract class APersistentVector<K> implements
 	// java.util.Collection implementation
 
 	public Object[] toArray() {
-		Object[] ret = new Object[count()];
-		for (int i = 0; i < count(); i++)
+		Object[] ret = new Object[size()];
+		for (int i = 0; i < size(); i++)
 			ret[i] = nth(i);
 		return ret;
 	}
@@ -304,11 +310,11 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public int size() {
-		return count();
+		return size();
 	}
 
 	public boolean isEmpty() {
-		return count() == 0;
+		return size() == 0;
 	}
 
 	public boolean contains(Object o) {
@@ -322,7 +328,7 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public int length() {
-		return count();
+		return size();
 	}
 
 	static class Seq<K> extends ASeq<K> {
@@ -340,7 +346,7 @@ public abstract class APersistentVector<K> implements
 		}
 
 		public ISeq<K> next() {
-			if (i + 1 < v.count())
+			if (i + 1 < v.size())
 				return new APersistentVector.Seq<K>(v, i + 1);
 			return null;
 		}
@@ -349,8 +355,8 @@ public abstract class APersistentVector<K> implements
 			return i;
 		}
 
-		public int count() {
-			return v.count() - i;
+		public int size() {
+			return v.size() - i;
 		}
 
 	}
@@ -374,7 +380,7 @@ public abstract class APersistentVector<K> implements
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return i + 1;
 		}
 	}
@@ -421,7 +427,7 @@ public abstract class APersistentVector<K> implements
 			return new SubVector<K>(v.assocN(start + i, val), start, end);
 		}
 
-		public int count() {
+		public int size() {
 			return end - start;
 		}
 
@@ -445,7 +451,7 @@ public abstract class APersistentVector<K> implements
 
 		@Override
 		public ITransientVector<K> asTransient() {
-			return new TransientVector<K>(this);
+			return new TransientVector<K>((Collection<K>) this);
 		}
 	}
 }

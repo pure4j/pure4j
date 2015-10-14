@@ -61,10 +61,10 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	@SuppressWarnings("unchecked")
 	public PersistentVector(Seqable<K> itemSeq) {
 		ISeq<K> items = itemSeq.seq();
-		if (items.count()  <= 32) {
-			this.cnt = items.count();
+		if (items.size()  <= 32) {
+			this.cnt = items.size();
 			this.shift = 5;
-			K[] arr = (K[]) new Object[items.count()];
+			K[] arr = (K[]) new Object[items.size()];
 			fill(items, arr);
 			this.tail = arr;
 			this.root = EMPTY_NODE;
@@ -154,7 +154,6 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		this.tail = tail;
 	}
 
-	@Pure(Enforcement.NOT_PURE)
 	public TransientVector<K> asTransient() {
 		return new TransientVector<K>(this.seq());
 	}
@@ -225,7 +224,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return ret;
 	}
 
-	public int count() {
+	public int size() {
 		return cnt;
 	}
 
@@ -287,7 +286,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	}
 
 	public IChunkedSeq<K> chunkedSeq() {
-		if (count() == 0)
+		if (size() == 0)
 			return null;
 		return new ChunkedSeq<K>(this, 0, 0);
 	}
@@ -300,7 +299,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		return new IPureIterator<K>() {
 			int i = start;
 			int base = i - (i % 32);
-			K[] array = (start < count()) ? arrayFor(i) : null;
+			K[] array = (start < size()) ? arrayFor(i) : null;
 
 			public boolean hasNext() {
 				return i < end;
@@ -321,7 +320,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	}
 
 	public Iterator<K> iterator() {
-		return rangedIterator(0, count());
+		return rangedIterator(0, size());
 	}
 
 	static public final class ChunkedSeq<K> extends ASeq<K> implements IChunkedSeq<K>,
@@ -376,7 +375,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			return chunkedNext();
 		}
 
-		public int count() {
+		public int size() {
 			return vec.cnt - (i + offset);
 		}
 	}
@@ -439,5 +438,12 @@ public class PersistentVector<K> extends APersistentVector<K> {
 			return ret;
 		}
 	}
+
+	@Override
+	public PersistentVector<K> addAll(ISeq<? extends K> items) {
+		return (PersistentVector<K>) super.addAll(items);
+	}
+	
+	
 
 }

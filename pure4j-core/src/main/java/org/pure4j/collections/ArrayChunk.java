@@ -39,12 +39,12 @@ public final class ArrayChunk<K> implements IChunk<K>, Serializable {
 	}
 
 	public K nth(int i, K notFound) {
-		if (i >= 0 && i < count())
+		if (i >= 0 && i < size())
 			return nth(i);
 		return notFound;
 	}
 
-	public int count() {
+	public int size() {
 		return end - off;
 	}
 

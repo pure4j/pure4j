@@ -58,7 +58,7 @@ public class TransientHashSet<T> extends HashSet<T> implements ITransientSet<T> 
 
 	@Pure(value=Enforcement.FORCE)
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public <V> V[] toArray(V[] a) {
 		return super.toArray(a);
 	}
 

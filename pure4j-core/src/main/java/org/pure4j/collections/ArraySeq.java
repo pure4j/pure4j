@@ -120,7 +120,7 @@ public class ArraySeq<K> extends ASeq<K> {
 		return null;
 	}
 
-	public int count() {
+	public int size() {
 		if (array != null)
 			return array.length - i;
 		return 0;
@@ -180,7 +180,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -236,7 +236,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -289,7 +289,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -345,7 +345,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -400,7 +400,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -465,7 +465,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -531,7 +531,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 
@@ -596,7 +596,7 @@ public class ArraySeq<K> extends ASeq<K> {
 			return null;
 		}
 
-		public int count() {
+		public int size() {
 			return array.length - i;
 		}
 

@@ -71,7 +71,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		
 		Map<?,?> m = (Map<?,?>) obj;
 
-		if (m.size() != m1.count())
+		if (m.size() != m1.size())
 			return false;
 		
 		for (ISeq<Entry<K2,V2>> s = m1.seq(); s != null; s = s.next()) {
@@ -242,12 +242,13 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 				return APersistentMap.this.iterator();
 			}
 
-			public int size() {
-				return count();
-			}
-
 			public int hashCode() {
 				return APersistentMap.this.hashCode();
+			}
+
+			@Override
+			public int size() {
+				return APersistentMap.this.size();
 			}
 
 			public boolean contains(Object o) {
@@ -264,11 +265,16 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public boolean isEmpty() {
-		return count() == 0;
+		return size() == 0;
 	}
 
 	public Set<K> keySet() {
 		return new AImmutableSet<K>() {
+			
+			@Override
+			public int size() {
+				return APersistentMap.this.size();
+			}
 
 			public Iterator<K> iterator() {
 				final Iterator<Entry<K, V>> mi = APersistentMap.this.iterator();
@@ -288,10 +294,6 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 						throw new UnsupportedOperationException();
 					}
 				};
-			}
-
-			public int size() {
-				return count();
 			}
 
 			public boolean contains(Object o) {
@@ -315,12 +317,13 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		throw new UnsupportedOperationException();
 	}
 
-	public int size() {
-		return count();
-	}
-
 	public Collection<V> values() {
 		return new AImmutableCollection<V>() {
+			
+			@Override
+			public int size() {
+				return APersistentMap.this.size();
+			}
 
 			public Iterator<V> iterator() {
 				final Iterator<Map.Entry<K, V>> mi = APersistentMap.this.iterator();
@@ -340,10 +343,6 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 						throw new UnsupportedOperationException();
 					}
 				};
-			}
-
-			public int size() {
-				return count();
 			}
 		};
 	}

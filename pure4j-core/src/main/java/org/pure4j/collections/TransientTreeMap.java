@@ -23,7 +23,7 @@ public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientM
 	}
 
 	@Override
-	public int count() {
+	public int size() {
 		return size();
 	}
 

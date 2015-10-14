@@ -21,5 +21,7 @@ public interface IPersistentVector<K> extends IPersistentStack<K>, Reversible<K>
 	IPersistentVector<K> cons(K o);
 	
 	ITransientVector<K> asTransient();
+	
+	IPersistentVector<K> addAll(ISeq<? extends K> in);
 
 }

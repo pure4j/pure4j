@@ -1,10 +1,18 @@
 package org.pure4j.test.checker.collections;
 
+import java.util.Arrays;
+
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.IPersistentList;
+import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientCollection;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;
 
@@ -12,7 +20,7 @@ public class PersistentListExample extends AbstractChecker {
 	
 	@Pure
 	@ShouldBePure
-	public int sumPersistentList(PersistentList<Integer> someInts) {
+	public static int sumPersistentList(PersistentList<Integer> someInts) {
 		int total = 0;
 		for (Integer integer : someInts) {
 			total += integer;
@@ -41,5 +49,40 @@ public class PersistentListExample extends AbstractChecker {
 		ITransientCollection<Integer> tran = pl.asTransient();
 		tran.add(77);
 		assertEquals("[10, 5, 77]", tran.persistent().toString());
+	}
+	
+	@Test
+	public void testConstruction() {
+		// array
+		IPersistentList<String> pv = new PersistentList<String>(someStrings(60));
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		
+		// iseq
+		pv = new PersistentList<String>((ISeq<String>) new ArraySeq<String>(someStrings(60)));
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		
+		// list based
+		pv = new PersistentList<String>(Arrays.asList(someStrings(60)));
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		 
+		// no-args
+		pv = new PersistentList<String>();
+		pv = pv.addAll(new ArraySeq<String>(someStrings(60))); 
+		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+
+	}
+	
+	private String[] someStrings(int size) {
+		String[] out = new String[size];
+		for (int i = 0; i < out.length; i++) {
+			out[i] = "str"+i;
+		}
+		
+		return out;
+	}
+	
+	@Test 
+	public void testPurity() {
+		Helper.check(0, this.getClass());
 	}
 }
