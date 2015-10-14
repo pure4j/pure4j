@@ -52,11 +52,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	
 	@IgnoreImmutableTypeCheck
 	final private static Object NOT_FOUND = new Object();
-
-	@PureParameters(Enforcement.FORCE)
-	public PersistentHashMap(Map<K,V> other) {
-		this(createTemporary(other));
-	}
 	
 	public PersistentHashMap() {
 		this(0, null, false, null);
@@ -64,9 +59,9 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 
 	@Pure
 	@PureParameters(Enforcement.NOT_PURE)
-	private static <K, V> TemporaryHashMap<K, V> createTemporary(Map<K, V> other) {
+	private static <K, V> TemporaryHashMap<K, V> createTemporary(Iterable<Entry<K, V>> other) {
 		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K,V>();
-		for (Entry<K,V> o : other.entrySet()) {
+		for (Entry<K,V> o : other) {
 			Pure4J.immutable(o.getKey(), o.getValue());
 			ret = (TemporaryHashMap<K, V>) ret.assoc(o.getKey(), o.getValue());
 		}
@@ -87,20 +82,22 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this(in.count, in.root, in.hasNull, in.nullValue);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	public PersistentHashMap(K... pairs) {
-		TemporaryHashMap<K, K> ret = new TemporaryHashMap<K, K>();
+		this(createTemporary(pairs));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <K, V> TemporaryHashMap<K, V> createTemporary(K[] pairs) {
+		Pure4J.immutableArray(pairs);
+		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K, V>();
 		if (pairs.length % 2 != 0) {
 			throw new IllegalArgumentException("Argument must supply key/value pairs");
 		}
 		for (int i = 0; i < pairs.length; i=i+2) {
-			ret.put((K) pairs[i], (K) pairs[i+1]);	
+			ret.put((K) pairs[i], (V) pairs[i+1]);	
 		}
-		this.count = ret.count;
-		this.root = ret.root;
-		this.hasNull = ret.hasNull;
-		this.nullValue = (V) ret.nullValue;
+		return ret;
 	}
 	
 	@Pure
@@ -116,7 +113,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this.nullValue = nullValue;
 	}
 
-	public PersistentHashMap(ISeq<Map.Entry<K, V>> items) {
+	public PersistentHashMap(Seqable<Map.Entry<K, V>> items) {
 		this(createTemporary(items));
 	}
 

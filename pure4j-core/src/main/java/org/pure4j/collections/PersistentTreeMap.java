@@ -60,17 +60,19 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 
 	final static private PersistentTreeMap<Object, Object> EMPTY = new PersistentTreeMap<Object, Object>();
 
-	static public <K, V> IPersistentMap<K, V> create(Comparator<? super K> comp, ITransientMap<K, V> other) {
-		IPersistentMap<K, V> ret = new PersistentTreeMap<K, V>(comp);
-		for (Map.Entry<K, V> e : other.entrySet()) {
-			ret = ret.assoc(e.getKey(), e.getValue());
-		}
-		return ret;
+	@Pure(Enforcement.FORCE)
+	public PersistentTreeMap(Comparator<? super K> comp, Map<K, V> other) {
+		this(createTemporary(comp, other.entrySet()));
 	}
 
-	@SuppressWarnings("unchecked")
 	public PersistentTreeMap() {
-		this((Comparator<K>) DEFAULT_COMPARATOR);
+		this((Comparator<? super K>) DEFAULT_COMPARATOR);
+	}
+	
+	private PersistentTreeMap(PersistentTreeMap<K, V> temp) {
+		this._count = temp._count;
+		this.tree = temp.tree;
+		this.comp = temp.comp;
 	}
 
 	public PersistentTreeMap(Comparator<? super K> comp) {
@@ -80,37 +82,53 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		_count = 0;
 	}
 
-	@Pure(Enforcement.FORCE)	// since it's private
 	private PersistentTreeMap(Comparator<? super K> comp, Node tree, int _count) {
 		this.comp = comp;
 		this.tree = tree;
 		this._count = _count;
 	}
 
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentTreeMap<K, K> create(ISeq<K> items) {
-		IPersistentMap<K, K> ret = (IPersistentMap<K, K>) EMPTY;
-		for (; items != null; items = items.next().next()) {
-			if (items.next() == null)
-				throw new IllegalArgumentException(String.format(
-						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
-		}
-		return (PersistentTreeMap<K, K>) ret;
+	public PersistentTreeMap(Seqable<Entry<K, V>> items) {
+		this(DEFAULT_COMPARATOR, items);
 	}
 
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentTreeMap<K, K> create(Comparator<? super K> comp, ISeq<K> items) {
-		IPersistentMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
-		for (; items != null; items = items.next().next()) {
-			if (items.next() == null)
-				throw new IllegalArgumentException(String.format(
-						"No value supplied for key: %s", items.first()));
-			ret = ret.assoc(items.first(), (K) PureCollections.second(items));
-		}
-		return (PersistentTreeMap<K,K>) ret;
+	public PersistentTreeMap(Map<K, V> map) {
+		this(DEFAULT_COMPARATOR, map);
 	}
-
+	
+	public PersistentTreeMap(Comparator<? super K> comp, Seqable<Entry<K, V>> seq) {
+		this(createTemporary(comp, seq));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@SafeVarargs
+	public PersistentTreeMap(Comparator<? super K> comp, K... items) {
+		this((PersistentTreeMap<K, V>) createTemporary(comp, items));
+	}
+	
+	@SafeVarargs
+	public PersistentTreeMap(K... items) {
+		this(DEFAULT_COMPARATOR, items);
+	}
+ 
+	private static <K, V> PersistentTreeMap<K, V> createTemporary(Comparator<? super K> comp, Iterable<Entry<K, V>> in) {
+		PersistentTreeMap<K,V> ret = new PersistentTreeMap<K, V>(comp);
+		for (Entry<K, V> entry : in) {
+			Pure4J.immutable(entry.getKey(), entry.getValue());
+			ret = ret.assoc(entry.getKey(), entry.getValue());
+		}
+		return ret;
+	}
+	
+	private static <K> PersistentTreeMap<K, K> createTemporary(Comparator<? super K> comp, K[] items) {
+		PersistentTreeMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
+		for (int i = 0; i < items.length; i=i+2) {
+			Pure4J.immutable(items[i], items[i+1]);
+			ret = ret.assoc(items[i], items[i+1]);
+		}
+		return ret;
+	}
+	
 	public boolean containsKey(Object key) {
 		Pure4J.immutable(key);
 		return entryAt(key) != null;

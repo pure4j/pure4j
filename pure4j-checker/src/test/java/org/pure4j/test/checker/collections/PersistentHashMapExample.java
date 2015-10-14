@@ -11,6 +11,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.PersistentHashMap;
+import org.pure4j.collections.Seqable;
 import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;
@@ -48,17 +49,19 @@ public class PersistentHashMapExample extends AbstractChecker {
 		System.out.println(pm);
 		
 		// iseq
-//		pv = new PersistentList<String>((ISeq<String>) new ArraySeq<String>(someStrings(60)));
-//		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		PersistentHashMap<String, String> pm2 = new PersistentHashMap<String, String>(pm.seq());
+		assertEquals(pm2, pm);
 //		
-//		// list based
-//		pv = new PersistentList<String>(Arrays.asList(someStrings(60)));
-//		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+//		// map-based
+		PersistentHashMap<String, String> pm3 = new PersistentHashMap<String, String>(pm);
+		assertEquals(pm3, pm);
 //		 
 //		// no-args
-//		pv = new PersistentList<String>();
-//		pv = pv.addAll(new ArraySeq<String>(someStrings(60))); 
-//		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		PersistentHashMap<String, String> pm4 = new PersistentHashMap<String, String>();
+		for (Entry<String, String> entry : pm) {
+			pm4 = pm4.assoc(entry.getKey(), entry.getValue());
+		}
+		Assert.assertEquals(pm, pm4);
 
 	}
 	
