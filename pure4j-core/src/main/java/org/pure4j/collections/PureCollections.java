@@ -23,48 +23,12 @@ public class PureCollections {
 	@SuppressWarnings("rawtypes")
 	@Pure(Enforcement.FORCE)
 	static public Object[] seqToNewArray(ISeq seq, Object[] passed) {
-		int len = count(seq);
+		int len = seq == null ? 0 : seq.size();
 		Object[] dest = (Object[]) Array.newInstance(passed.getClass().getComponentType(), len);
 		for (int i = 0; seq != null; ++i, seq = seq.next()) {
 			dest[i] = seq.first();
 		}
 		return dest;
-	}
-
-	public static int count(Object o) {
-		if (o instanceof Counted)
-			return ((Counted) o).size();
-		return countFrom(Util.ret1(o, o = null));
-	}
-
-	@SuppressWarnings("rawtypes")
-	static int countFrom(Object o) {
-		if (o == null)
-			return 0;
-		else if (o instanceof IPersistentCollection) {
-			ISeq s = seq(o);
-			o = null;
-			int i = 0;
-			for (; s != null; s = s.next()) {
-				if (s instanceof Counted)
-					return i + s.size();
-				i++;
-			}
-			return i;
-		} else if (o instanceof CharSequence)
-			return ((CharSequence) o).length();
-		else if (o instanceof Collection)
-			return ((Collection) o).size();
-		else if (o instanceof Map)
-			return ((Map) o).size();
-		else if (o instanceof Map.Entry)
-			return 2;
-		else if (o.getClass().isArray())
-			return Array.getLength(o);
-
-		throw new UnsupportedOperationException(
-				"count not supported on this type: "
-						+ o.getClass().getSimpleName());
 	}
 
 	@SuppressWarnings("unchecked")

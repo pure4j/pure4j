@@ -42,14 +42,20 @@ import java.util.Vector;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.pure4j.collections.APersistentMap;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.PersistentHashMap;
+import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentQueue;
+import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.PersistentVector;
+import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
+import org.pure4j.collections.TransientTreeMap;
+import org.pure4j.collections.TransientTreeSet;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.collections.Util;
 import org.pure4j.exception.Pure4JException;
@@ -92,14 +98,14 @@ public class JavaStandardLibraryPurity {
 						// transient array seq.
 //						TransientHashSet.class,
 						TransientHashMap.class,
-//						TransientTreeMap.class,
-//						TransientTreeSet.class, 
-//						PureCollections.class,
-//						APersistentMap.class,
+						TransientTreeMap.class,
+						TransientTreeSet.class, 
+						PureCollections.class,
+						APersistentMap.class,
 						PersistentHashMap.class,
-//						PersistentHashSet.class,
+						PersistentHashSet.class,
 //						PersistentArrayMap.class,
-//						PersistentTreeMap.class,
+						PersistentTreeMap.class,
 //						PersistentTreeSet.class,
 						ArraySeq.class,
 						TransientList.class,

@@ -3,6 +3,9 @@ package org.pure4j.collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
+
 public class TransientHashMap<K, V> extends HashMap<K, V> implements ITransientMap<K, V> {
 	
 	public TransientHashMap() {
@@ -17,6 +20,7 @@ public class TransientHashMap<K, V> extends HashMap<K, V> implements ITransientM
 		super(initialCapacity);
 	}
 
+	@Pure(Enforcement.FORCE)
 	public TransientHashMap(Map<? extends K, ? extends V> m) {
 		super(m);
 	}

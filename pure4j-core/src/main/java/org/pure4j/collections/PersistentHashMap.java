@@ -12,7 +12,6 @@ package org.pure4j.collections;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -24,7 +23,6 @@ import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
 
 /*
  A persistent rendition of Phil Bagwell's Hash Array Mapped Trie
@@ -59,7 +57,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
 	private static <K, V> TemporaryHashMap<K, V> createTemporary(Iterable<Entry<K, V>> other) {
 		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K,V>();
 		for (Entry<K,V> o : other) {
@@ -70,7 +67,6 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 	
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
 	private static <K, V> TemporaryHashMap<K, V> createTemporary(ISeq<Map.Entry<K, V>> other) {
 		TemporaryHashMap<K, V> ret = new TemporaryHashMap<K,V>();
 		for (Entry<K,V> o : other) {
@@ -83,11 +79,14 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this(in.count, in.root, in.hasNull, in.nullValue);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public PersistentHashMap(K... pairs) {
 		this(createTemporary(pairs));
 	}
 
+	
+	@Pure
 	@SuppressWarnings("unchecked")
 	private static <K, V> TemporaryHashMap<K, V> createTemporary(K[] pairs) {
 		Pure4J.immutableArray(pairs);
@@ -122,6 +121,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this(in.seq());
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public PersistentHashMap(Map<K, V> in) {
 		this(createTemporary(in.entrySet()));
 	}

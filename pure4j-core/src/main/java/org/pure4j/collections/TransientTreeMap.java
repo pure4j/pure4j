@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.pure4j.Pure4J;
+
 public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientMap<K, V> {
 
 	public TransientTreeMap() {
@@ -12,7 +14,7 @@ public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientM
 
 
 	public TransientTreeMap(Comparator<? super K> comparator) {
-		super(comparator);
+		super(Pure4J.immutable(comparator));
 	}
 
 	public TransientTreeMap(PersistentTreeMap<K, V> pt) {

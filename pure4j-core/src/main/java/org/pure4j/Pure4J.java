@@ -44,8 +44,9 @@ public class Pure4J {
 	}
 	
 	@Pure
-	public static final void immutable(Object a) {
+	public static final <K> K immutable(K a) {
 		immutableClass(a);
+		return a;
 	}
 	
 	@Pure

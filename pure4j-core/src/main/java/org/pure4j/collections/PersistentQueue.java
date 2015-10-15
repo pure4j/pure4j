@@ -140,7 +140,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 		}
 
 		public int size() {
-			return PureCollections.count(f) + PureCollections.count(rseq);
+			return (f==null ? 0 : f.size()) + (rseq == null ? 0 : rseq.size());
 		}
 	}
 

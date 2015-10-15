@@ -40,6 +40,6 @@ final public class Cons<K> extends ASeq<K> implements Serializable {
 	}
 
 	public int size() {
-		return 1 + PureCollections.count(_more);
+		return 1 + _more.size();
 	}
 }

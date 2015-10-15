@@ -38,11 +38,10 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return new PersistentHashSet<K>(map.persistent());
 	}
 
+	@Pure(Enforcement.FORCE)
 	public PersistentHashSet(Collection<K> init) {
 		this(createMap(init));
 	}
-
-	
 
 	public PersistentHashSet(ISeq<K> items) {
 		this(createMap(items));

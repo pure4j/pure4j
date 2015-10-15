@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Stack;
 
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+
 import org.pure4j.Pure4J;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.AnnotatedElementHandle;
@@ -266,7 +268,9 @@ public class ClassFileModelBuilder {
 			public void visitTypeInsn(int arg0, String type) {
 				model.addClassDependency(className, type);
 				output("  "+getOpcode(arg0)+" "+type);
-				resetCallDetails();
+				if (arg0 != Opcodes.CHECKCAST) {
+					resetCallDetails();
+				}
 			}
 
 			public void visitMultiANewArrayInsn(String desc, int arg1) {
@@ -318,6 +322,7 @@ public class ClassFileModelBuilder {
 				output("  "+getOpcode(arg0));
 				
 				if (Opcodes.ARETURN == arg0) {
+					int line2 = line;
 					// we are returning something.  we need to keep track of the previous
 					ci.addMethodBeforeReturn(lastMethodCall == null ? line : lastMethodCall);
 				}

@@ -3,6 +3,8 @@ package org.pure4j.collections;
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import org.pure4j.Pure4J;
+
 public class TransientTreeSet<T> extends TreeSet<T> implements ITransientSet<T> {
 	
 	public TransientTreeSet() {
@@ -10,11 +12,11 @@ public class TransientTreeSet<T> extends TreeSet<T> implements ITransientSet<T> 
 	}
 
 	public TransientTreeSet(Comparator<? super T> comparator) {
-		super(comparator);
+		super(Pure4J.immutable(comparator));
 	}
 	
 	public TransientTreeSet(Comparator<? super T> comparator, ISeq<T> items) {
-		super(comparator);
+		this(Pure4J.immutable(comparator));
 		for (T t : items) {
 			add(t);
 		}

@@ -73,8 +73,9 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this(DEFAULT_COMPARATOR, in.seq());
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public PersistentTreeMap(Comparator<? super K> comp, IPersistentMap<K, V> in) {
-		this(comp, in.seq());
+		this(Pure4J.immutable(comp), in.seq());
 	}
 	
 	private PersistentTreeMap(PersistentTreeMap<K, V> temp) {
@@ -100,25 +101,29 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this(DEFAULT_COMPARATOR, items);
 	}
 
+	@Pure(Enforcement.FORCE)
 	public PersistentTreeMap(Map<K, V> map) {
 		this(DEFAULT_COMPARATOR, map);
 	}
 	
 	public PersistentTreeMap(Comparator<? super K> comp, Seqable<Entry<K, V>> seq) {
-		this(createTemporary(comp, seq));
+		this(createTemporary(Pure4J.immutable(comp), seq));
 	}
 	
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	public PersistentTreeMap(Comparator<? super K> comp, K... items) {
 		this((PersistentTreeMap<K, V>) createTemporary(comp, items, false));
 	}
 	
+	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public PersistentTreeMap(K... items) {
 		this(DEFAULT_COMPARATOR, items);
 	}
  
+	@Pure
 	protected static <K, V> PersistentTreeMap<K, V> createTemporary(Comparator<? super K> comp, Iterable<Entry<K, V>> in) {
 		PersistentTreeMap<K,V> ret = new PersistentTreeMap<K, V>(comp);
 		for (Entry<K, V> entry : in) {
@@ -128,6 +133,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		return ret;
 	}
 	
+	@Pure
 	protected static <K> PersistentTreeMap<K, K> createTemporary(Comparator<? super K> comp, K[] items, boolean doubleUp) {
 		PersistentTreeMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
 		int incr = doubleUp ? 0 : 1;
@@ -850,7 +856,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		public Entry<K, V> next() {
 			Node t = (Node) stack.pop();
 			push(asc ? t.right() : t.left());
-			return (java.util.Map.Entry<K, V>) Pure4J.returnImmutable(t);
+			return Pure4J.returnImmutable( (Entry<K, V>) t);
 		}
 
 		public void remove() {
