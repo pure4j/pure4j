@@ -11,7 +11,6 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.PersistentHashMap;
-import org.pure4j.collections.Seqable;
 import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;

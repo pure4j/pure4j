@@ -29,8 +29,8 @@ public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientM
 
 	
 	@Override
-	public IPersistentMap<K, V> persistent() {
-		return PersistentTreeMap.create(comparator(), this);
+	public PersistentTreeMap<K, V> persistent() {
+		return new PersistentTreeMap<K, V>(comparator(), this);
 	}
 
 

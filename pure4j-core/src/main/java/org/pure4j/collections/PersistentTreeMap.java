@@ -69,6 +69,14 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this((Comparator<? super K>) DEFAULT_COMPARATOR);
 	}
 	
+	public PersistentTreeMap(IPersistentMap<K, V> in) {
+		this(DEFAULT_COMPARATOR, in.seq());
+	}
+	
+	public PersistentTreeMap(Comparator<? super K> comp, IPersistentMap<K, V> in) {
+		this(comp, in.seq());
+	}
+	
 	private PersistentTreeMap(PersistentTreeMap<K, V> temp) {
 		this._count = temp._count;
 		this.tree = temp.tree;

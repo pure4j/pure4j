@@ -12,6 +12,7 @@ package org.pure4j.collections;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -115,6 +116,14 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 
 	public PersistentHashMap(Seqable<Map.Entry<K, V>> items) {
 		this(createTemporary(items));
+	}
+	
+	public PersistentHashMap(IPersistentMap<K, V> in) {
+		this(in.seq());
+	}
+	
+	public PersistentHashMap(Map<K, V> in) {
+		this(createTemporary(in.entrySet()));
 	}
 
 	@Pure
