@@ -11,6 +11,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentTreeSet;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;
 
@@ -34,7 +35,7 @@ public class PersistentTreeSetExample extends AbstractChecker {
 	public void sanityTestOfSet() {
 		
 		// test persistence
-		IPersistentSet<String> phm1 = PersistentTreeSet.create("bob", "jeff", "gogo", "zzap");
+		IPersistentSet<String> phm1 = new PersistentTreeSet<String>("bob", "jeff", "gogo", "zzap");
 		IPersistentSet<String> phm = phm1.cons("spencer");
 		pureMethod(phm, 4);
 		phm = phm.cons("spencera");
@@ -44,13 +45,52 @@ public class PersistentTreeSetExample extends AbstractChecker {
 		pureMethod(phm, 7);
 	
 		// test equality
-		Assert.assertEquals(phm1, PersistentTreeSet.create("bob", "gogo", "jeff", "zzap"));
+		Assert.assertEquals(phm1, new PersistentTreeSet<String>("bob", "gogo", "jeff", "zzap"));
 		
 		ITransientSet<String> trans = phm1.asTransient();
 		trans.add("boggins");
-		Assert.assertEquals(PersistentTreeSet.create("bob", "boggins", "gogo", "jeff", "zzap"), trans.persistent());
+		Assert.assertEquals(new PersistentTreeSet<String>("bob", "boggins", "gogo", "jeff", "zzap"), trans.persistent());
 		
 		
 	}
 	
+	@Test
+	public void testConstruction() {
+		// array
+		int entries = 100;
+		PersistentTreeSet<String> pm = new PersistentTreeSet<String>(makeSet(entries));
+		assertEquals(entries, pm.size());
+		System.out.println(pm);
+		
+		// iseq
+		PersistentTreeSet<String> pm2 = new PersistentTreeSet<String>(pm.seq());
+		assertEquals(pm2, pm);
+//		
+//		// map-based
+		PersistentTreeSet<String> pm3 = new PersistentTreeSet<String>(pm);
+		assertEquals(pm3, pm);
+//		 
+//		// no-args
+		PersistentTreeSet<String> pm4 = new PersistentTreeSet<String>();
+		for (String entry : pm) {
+			pm4 = pm4.cons(entry);
+		}
+		assertEquals(pm, pm4);
+
+	}
+	
+
+	private String[] makeSet(int i) {
+		String[] out = new String[i];
+		for (int j = 0; j < i; j++) {
+			out[j] = "k"+j;
+		}
+		return out;
+	}
+	
+
+	@Test 
+	public void testPurity() {
+		Helper.check(0, this.getClass());
+	}
 }

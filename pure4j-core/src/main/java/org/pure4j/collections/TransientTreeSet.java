@@ -22,12 +22,7 @@ public class TransientTreeSet<T> extends TreeSet<T> implements ITransientSet<T> 
 
 	@Override
 	public IPersistentSet<T> persistent() {
-		IPersistentSet<T> out =  (IPersistentSet<T>) PersistentTreeSet.create(comparator());
-		for (T t : this) {
-			out = out.cons(t);
-		}
-		
-		return out;
+		return new PersistentTreeSet<T>(this);
 	}
 
 }

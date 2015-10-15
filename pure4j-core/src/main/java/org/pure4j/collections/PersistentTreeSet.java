@@ -13,46 +13,73 @@
 package org.pure4j.collections;
 
 import java.util.Comparator;
+import java.util.Set;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
 
 public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversible<K>, Sorted<K, K> {
 
 	static private final PersistentTreeSet<Object> EMPTY = new PersistentTreeSet<Object>(PersistentTreeMap.emptyMap());
 
-	public PersistentTreeSet(ISeq<K> items) {
-		this(APersistentSet.createMap(items, new TransientTreeMap<K, K>()));
+	public PersistentTreeSet(Seqable<K> items) {
+		this(PersistentTreeMap.DEFAULT_COMPARATOR, items);
+	}
+	
+	@SafeVarargs
+	public PersistentTreeSet(K... items) {
+		this(PersistentTreeMap.DEFAULT_COMPARATOR, items);
+	}
+	
+	@SafeVarargs
+	public PersistentTreeSet(Comparator<? super K> comp, K... items) {
+		this(PersistentTreeMap.createTemporary(comp, items, true));
+	}
+	
+	public PersistentTreeSet() {
+		this(PersistentTreeMap.DEFAULT_COMPARATOR);
 	}
 	
 	public PersistentTreeSet(Comparator<? super K> comp) {
 		this(new PersistentTreeMap<K, K>(comp));
 	}
 	
-	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
-	public static <K> PersistentTreeSet<K> create(Comparator<? super K> comp, K... init) {
-		PersistentTreeSet<K> ret = new PersistentTreeSet<K>(new PersistentTreeMap<K, K>(comp));
-		for (int i = 0; i < init.length; i++) {
-			ret = ret.cons(init[i]);
-		}
-		return ret;
-	}
-	
-	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
-	public static <K> PersistentTreeSet<K> create(K... init) {
-		return create(PersistentTreeMap.DEFAULT_COMPARATOR, init);
-	}
-
 	public PersistentTreeSet(Comparator<? super K> comp, ISeq<K> items) {
 		super(APersistentSet.createMap(items, new TransientTreeMap<K, K>(comp)));
 	}
 
 	private PersistentTreeSet(IPersistentMap<K, K> impl) {
 		super(impl);
+	}
+	
+
+	public PersistentTreeSet(IPersistentSet<K> in) {
+		this(PersistentTreeMap.DEFAULT_COMPARATOR, in);
+	}
+	
+	public PersistentTreeSet(Comparator<? super K> comp, IPersistentSet<K> in) {
+		this(createTemporaryMap(comp, in));
+	}
+
+	
+	public PersistentTreeSet(Set<K> in) {
+		this(PersistentTreeMap.DEFAULT_COMPARATOR, in);
+	}
+	
+	public PersistentTreeSet(Comparator<? super K> comp, Set<K> in) {
+		this(createTemporaryMap(comp, in));
+	}
+
+	public PersistentTreeSet(Comparator<? super K> comp, Seqable<K> items) {
+		this(createTemporaryMap(comp, items));
+	}
+	
+	protected static <K> PersistentTreeMap<K, K> createTemporaryMap(Comparator<? super K> comp, Iterable<K> in) {
+		PersistentTreeMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
+		for (K k : in) {
+			Pure4J.immutable(k);
+			ret = ret.assoc(k, k);
+		}
+		return ret;
 	}
 
 	public PersistentTreeSet<K> disjoin(Object key) {
@@ -108,5 +135,14 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	@Override
 	public ITransientSet<K> asTransient() {
 		return new TransientTreeSet<K>(comparator(), this.seq());
+	}
+	
+	@Override
+	public PersistentTreeSet<K> addAll(ISeq<? extends K> items) {
+		IPersistentSet<K> out = this;
+		for (K k : items) {
+			out = out.cons(k);
+		}
+		return (PersistentTreeSet<K>) out;
 	}
 }

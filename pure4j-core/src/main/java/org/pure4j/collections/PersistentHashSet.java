@@ -96,4 +96,13 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return new TransientHashSet<K>(this);
 	}
 
+	@Override
+	public PersistentHashSet<K> addAll(ISeq<? extends K> items) {
+		IPersistentSet<K> out = this;
+		for (K k : items) {
+			out = out.cons(k);
+		}
+		return (PersistentHashSet<K>) out;
+	}
+
 }

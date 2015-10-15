@@ -24,4 +24,6 @@ public interface IPersistentSet<K> extends IPersistentCollection<K>, Counted, Se
 	public IPersistentSet<K> cons(K key);
 	
 	public ITransientSet<K> asTransient();
+	
+	public IPersistentSet<K> addAll(ISeq<? extends K> items);
 }

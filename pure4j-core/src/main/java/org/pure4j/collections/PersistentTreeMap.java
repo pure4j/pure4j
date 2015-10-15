@@ -111,7 +111,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	public PersistentTreeMap(Comparator<? super K> comp, K... items) {
-		this((PersistentTreeMap<K, V>) createTemporary(comp, items));
+		this((PersistentTreeMap<K, V>) createTemporary(comp, items, false));
 	}
 	
 	@SafeVarargs
@@ -119,7 +119,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this(DEFAULT_COMPARATOR, items);
 	}
  
-	private static <K, V> PersistentTreeMap<K, V> createTemporary(Comparator<? super K> comp, Iterable<Entry<K, V>> in) {
+	protected static <K, V> PersistentTreeMap<K, V> createTemporary(Comparator<? super K> comp, Iterable<Entry<K, V>> in) {
 		PersistentTreeMap<K,V> ret = new PersistentTreeMap<K, V>(comp);
 		for (Entry<K, V> entry : in) {
 			Pure4J.immutable(entry.getKey(), entry.getValue());
@@ -128,11 +128,12 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		return ret;
 	}
 	
-	private static <K> PersistentTreeMap<K, K> createTemporary(Comparator<? super K> comp, K[] items) {
+	protected static <K> PersistentTreeMap<K, K> createTemporary(Comparator<? super K> comp, K[] items, boolean doubleUp) {
 		PersistentTreeMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
-		for (int i = 0; i < items.length; i=i+2) {
-			Pure4J.immutable(items[i], items[i+1]);
-			ret = ret.assoc(items[i], items[i+1]);
+		int incr = doubleUp ? 0 : 1;
+		for (int i = 0; i < items.length; i=i+1+incr) {
+			Pure4J.immutable(items[i], items[i+incr]);
+			ret = ret.assoc(items[i], items[i+incr]);
 		}
 		return ret;
 	}
