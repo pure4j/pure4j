@@ -12,8 +12,8 @@
 
 package org.pure4j.collections;
 
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.Set;
 
 import org.pure4j.Pure4J;
 
@@ -52,20 +52,20 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 	
 
-	public PersistentTreeSet(IPersistentSet<K> in) {
+	public PersistentTreeSet(IPersistentCollection<K> in) {
 		this(PersistentTreeMap.DEFAULT_COMPARATOR, in);
 	}
 	
-	public PersistentTreeSet(Comparator<? super K> comp, IPersistentSet<K> in) {
+	public PersistentTreeSet(Comparator<? super K> comp, IPersistentCollection<K> in) {
 		this(createTemporaryMap(comp, in));
 	}
 
 	
-	public PersistentTreeSet(Set<K> in) {
+	public PersistentTreeSet(Collection<K> in) {
 		this(PersistentTreeMap.DEFAULT_COMPARATOR, in);
 	}
 	
-	public PersistentTreeSet(Comparator<? super K> comp, Set<K> in) {
+	public PersistentTreeSet(Comparator<? super K> comp, Collection<K> in) {
 		this(createTemporaryMap(comp, in));
 	}
 

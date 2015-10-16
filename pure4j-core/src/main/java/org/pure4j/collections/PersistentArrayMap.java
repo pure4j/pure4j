@@ -358,6 +358,6 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	public ITransientMap<K, V> asTransient() {
-		return new TransientHashMap<K, V>(this);
+		return new TransientHashMap<K, V>(this); 
 	}
 }

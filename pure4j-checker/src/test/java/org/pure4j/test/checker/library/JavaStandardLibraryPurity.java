@@ -49,9 +49,11 @@ import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentQueue;
 import org.pure4j.collections.PersistentTreeMap;
+import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.TransientHashMap;
+import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
 import org.pure4j.collections.TransientTreeMap;
@@ -96,7 +98,7 @@ public class JavaStandardLibraryPurity {
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
 						// transient array seq.
-//						TransientHashSet.class,
+						TransientHashSet.class,
 						TransientHashMap.class,
 						TransientTreeMap.class,
 						TransientTreeSet.class, 
@@ -106,7 +108,7 @@ public class JavaStandardLibraryPurity {
 						PersistentHashSet.class,
 //						PersistentArrayMap.class,
 						PersistentTreeMap.class,
-//						PersistentTreeSet.class,
+						PersistentTreeSet.class,
 						ArraySeq.class,
 						TransientList.class,
 						TransientQueue.class,
