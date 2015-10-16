@@ -196,6 +196,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		return null;
 	}
 	
+	@Pure
 	@SuppressWarnings("unchecked")
 	public static <K, V> PersistentTreeMap<K, V> emptyMap() {
 		return (PersistentTreeMap<K, V>) EMPTY;

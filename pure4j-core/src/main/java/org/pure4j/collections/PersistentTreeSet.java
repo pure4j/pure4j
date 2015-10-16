@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Comparator;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
 
 public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversible<K>, Sorted<K, K> {
 
@@ -25,11 +27,13 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 		this(PersistentTreeMap.DEFAULT_COMPARATOR, items);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public PersistentTreeSet(K... items) {
 		this(PersistentTreeMap.DEFAULT_COMPARATOR, items);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public PersistentTreeSet(Comparator<? super K> comp, K... items) {
 		this(PersistentTreeMap.createTemporary(comp, items, true));
@@ -40,11 +44,11 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 	
 	public PersistentTreeSet(Comparator<? super K> comp) {
-		this(new PersistentTreeMap<K, K>(comp));
+		this(new PersistentTreeMap<K, K>(Pure4J.immutable(comp)));
 	}
 	
 	public PersistentTreeSet(Comparator<? super K> comp, ISeq<K> items) {
-		super(APersistentSet.createMap(items, new TransientTreeMap<K, K>(comp)));
+		super(APersistentSet.createMap(items, new TransientTreeMap<K, K>(Pure4J.immutable(comp))));
 	}
 
 	private PersistentTreeSet(IPersistentMap<K, K> impl) {
@@ -57,22 +61,24 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	}
 	
 	public PersistentTreeSet(Comparator<? super K> comp, IPersistentCollection<K> in) {
-		this(createTemporaryMap(comp, in));
+		this(createTemporaryMap(Pure4J.immutable(comp), in));
 	}
 
-	
+	@Pure(Enforcement.FORCE)
 	public PersistentTreeSet(Collection<K> in) {
 		this(PersistentTreeMap.DEFAULT_COMPARATOR, in);
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public PersistentTreeSet(Comparator<? super K> comp, Collection<K> in) {
-		this(createTemporaryMap(comp, in));
+		this(createTemporaryMap(Pure4J.immutable(comp), in));
 	}
 
 	public PersistentTreeSet(Comparator<? super K> comp, Seqable<K> items) {
-		this(createTemporaryMap(comp, items));
+		this(createTemporaryMap(Pure4J.immutable(comp), items));
 	}
 	
+	@Pure
 	protected static <K> PersistentTreeMap<K, K> createTemporaryMap(Comparator<? super K> comp, Iterable<K> in) {
 		PersistentTreeMap<K,K> ret = new PersistentTreeMap<K, K>(comp);
 		for (K k : in) {

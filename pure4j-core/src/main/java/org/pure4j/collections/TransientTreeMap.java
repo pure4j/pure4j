@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.pure.Enforcement;
+import org.pure4j.annotations.pure.Pure;
 
 public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientMap<K, V> {
 
@@ -25,6 +27,7 @@ public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientM
 		}
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public TransientTreeMap(Map<? extends K, ? extends V> pt) {
 		this(PersistentTreeMap.DEFAULT_COMPARATOR);
 		for (Map.Entry<? extends K, ? extends V> entry : pt.entrySet()) {
@@ -34,12 +37,13 @@ public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientM
 	}
 	
 	public TransientTreeMap(Comparator<? super K> comp, IPersistentMap<? extends K, ? extends V> pt) {
-		this(comp);
+		this(Pure4J.immutable(comp));
 		for (Map.Entry<? extends K, ? extends V> entry : pt.entrySet()) {
 			this.put(entry.getKey(), entry.getValue());
 		}
 	}
 	
+	@Pure(Enforcement.FORCE)
 	public TransientTreeMap(Comparator<? super K> comp, Map<? extends K, ? extends V> pt) {
 		this(comp);
 		for (Map.Entry<? extends K, ? extends V> entry : pt.entrySet()) {

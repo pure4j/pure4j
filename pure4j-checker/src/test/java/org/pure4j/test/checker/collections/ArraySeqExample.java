@@ -28,9 +28,8 @@ public class ArraySeqExample extends AbstractChecker {
 		assertEquals(expectedLength, in.size());
 		assertEquals(expectedFirst, in.first());
 		if (in instanceof List) {
-			
+			assertEquals(0, ((List<K>)in).indexOf(expectedFirst));
 		}
-		assertEquals(0, ((List<K>)in).indexOf(expectedFirst));
 	}
 
 	

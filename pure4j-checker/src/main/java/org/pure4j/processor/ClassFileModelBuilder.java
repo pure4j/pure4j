@@ -269,7 +269,8 @@ public class ClassFileModelBuilder {
 				model.addClassDependency(className, type);
 				output("  "+getOpcode(arg0)+" "+type);
 				if (arg0 != Opcodes.CHECKCAST) {
-					resetCallDetails();
+					arguments = new Stack<Integer>();
+					lastMethodCall = null;
 				}
 			}
 

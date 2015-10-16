@@ -103,10 +103,23 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 			return new PersistentQueue<K>(cnt + 1, f, rr.cons(o));
 		}
 	}
+	
+	public PersistentQueue<K> addAll(ISeq<? extends K> items) {
+		PersistentQueue<K> out = this;
+		for (K k : items) {
+			out = out.cons(k);
+		}
+		
+		return out;
+	}
 
 	@SuppressWarnings("unchecked")
 	public PersistentQueue<K> empty() {
 		return (PersistentQueue<K>) EMPTY;
+	}
+	
+	public PersistentQueue() {
+		this(0, null, null);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -193,11 +206,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	public <E> E[] toArray(E[] a) {
 		return (E[]) PureCollections.seqToNewArray(seq(), a);
 	}
-
-	public int size() {
-		return size();
-	}
-
+	
 	public boolean isEmpty() {
 		return size() == 0;
 	}
