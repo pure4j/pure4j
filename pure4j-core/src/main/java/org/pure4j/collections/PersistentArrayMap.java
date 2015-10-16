@@ -18,7 +18,6 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
 
 
 
@@ -45,25 +44,43 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 
 	private static final PersistentArrayMap<Object, Object> EMPTY = new PersistentArrayMap<Object, Object>();
 
-	@Pure
-	@PureParameters
-	@SuppressWarnings("unchecked")
-	static public <K, V> IPersistentMap<K, V> create(Map<K, V> other) {
-		Pure4J.immutable(other);
-		ITransientMap<K, V> ret = (ITransientMap<K, V>) EMPTY.asTransient();
-		for (Entry<K, V> e : other.entrySet()) {
-			ret.put(e.getKey(), e.getValue());
+	@Pure(Enforcement.FORCE)
+	public PersistentArrayMap(Map<? extends K, ? extends V> other) {
+		this.array = new Object[other.size() * 2];
+		int pos = 0;
+		for (Entry<? extends K, ? extends V> entry : other.entrySet()) {
+			Pure4J.immutable(entry.getKey(), entry.getValue());
+			this.array[pos++] = entry.getKey();
+			this.array[pos++] = entry.getValue();
 		}
-		return ret.persistent();
 	}
+	
+	public PersistentArrayMap(IPersistentMap<K, V> other) {
+		this((Map<K, V>) other);
+	}
+	
+	public PersistentArrayMap(Seqable<Entry<K, V>> stuff) {
+		ISeq<Entry<K, V>> seq = stuff.seq();
+		this.array = new Object[seq.size() * 2];
+		int pos = 0;
+		for (Entry<K, V> entry : seq) {
+			Pure4J.immutable(entry.getKey(), entry.getValue());
+			this.array[pos++] = entry.getKey();
+			this.array[pos++] = entry.getValue();
+		}
+	}
+	
+	
 
-	protected PersistentArrayMap() {
+	public PersistentArrayMap() {
 		this.array = new Object[] {};
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	private IPersistentMap<K, V> createHT(Object[] init) {
-		return (IPersistentMap<K, V>) PersistentHashMap.create(init);
+		return (IPersistentMap<K, V>) new PersistentHashMap<K,V>((K[]) init);
 	}
 
 	@SafeVarargs
@@ -137,13 +154,15 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	 * @param init
 	 *            {key1,val1,key2,val2,...}
 	 */
-	@Pure(Enforcement.NOT_PURE)
-	public PersistentArrayMap(Object[] init) {
+	@SafeVarargs
+	@Pure(Enforcement.FORCE)
+	public PersistentArrayMap(K... init) {
 		this(init, true);
 	}
 	
-	@Pure(Enforcement.NOT_PURE) // makes copy and is private.
+	@Pure(Enforcement.FORCE) // makes copy and is private.
 	private PersistentArrayMap(Object[] init, boolean makeCopy) {
+		Pure4J.immutableArray(init);
 		if (makeCopy) {
 			init = Arrays.copyOf(init, init.length);
 		}
