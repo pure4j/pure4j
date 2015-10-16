@@ -1,4 +1,4 @@
-FORCE java/lang/StringBuilder.<init>(Ljava/lang/String;)V
-FORCE java/lang/StringBuilder.<init>()V
-FORCE java/lang/StringBuilder.append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
-FORCE java/lang/String.valueOf(Ljava/lang/Object;)Ljava/lang/String;
+FORCE java/lang/System.arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+FORCE java/lang/reflect/Array.newInstance(Ljava/lang/Class;I)Ljava/lang/Object;
+FORCE java/lang/Class.desiredAssertionStatus()Z
+FORCE java/util/Arrays.asList([Ljava/lang/Object;)Ljava/util/List;

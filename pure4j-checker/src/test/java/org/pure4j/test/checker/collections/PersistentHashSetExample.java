@@ -5,6 +5,8 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentHashSet;
+import org.pure4j.collections.PersistentHashSet;
+import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;
 
@@ -26,7 +28,7 @@ public class PersistentHashSetExample extends AbstractChecker {
 	public void sanityTestOfSet() {
 		
 		// check persistence
-		IPersistentSet<String> phm = PersistentHashSet.create("bob", "jeff", "gogo");
+		IPersistentSet<String> phm = new PersistentHashSet<String>("bob", "jeff", "gogo");
 		phm = phm.cons("spencer");
 		pureMethod(phm, 4);
 		phm = phm.cons("spencera");
@@ -41,6 +43,46 @@ public class PersistentHashSetExample extends AbstractChecker {
 		set.remove("spencera");
 		IPersistentSet<String> out = set.persistent();
 		System.out.println(out);
+	}
+	
+	@Test
+	public void testConstruction() {
+		// array
+		int entries = 100;
+		PersistentHashSet<String> pm = new PersistentHashSet<String>(makeSet(entries));
+		assertEquals(entries, pm.size());
+		System.out.println(pm);
+		
+		// iseq
+		PersistentHashSet<String> pm2 = new PersistentHashSet<String>(pm.seq());
+		assertEquals(pm2, pm);
+//		
+//		// map-based
+		PersistentHashSet<String> pm3 = new PersistentHashSet<String>(pm);
+		assertEquals(pm3, pm);
+//		 
+//		// no-args
+		PersistentHashSet<String> pm4 = new PersistentHashSet<String>();
+		for (String entry : pm) {
+			pm4 = pm4.cons(entry);
+		}
+		assertEquals(pm, pm4);
+
+	}
+	
+
+	private String[] makeSet(int i) {
+		String[] out = new String[i];
+		for (int j = 0; j < i; j++) {
+			out[j] = "k"+j;
+		}
+		return out;
+	}
+	
+
+	@Test 
+	public void testPurity() {
+		Helper.check(0, this.getClass());
 	}
 	
 }

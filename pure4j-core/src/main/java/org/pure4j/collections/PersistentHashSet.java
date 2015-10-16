@@ -12,6 +12,7 @@
 
 package org.pure4j.collections;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.pure4j.Pure4J;
@@ -29,43 +30,35 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return (PersistentHashSet<K>) EMPTY;
 	}
 
+	@Pure(Enforcement.FORCE)
 	@SuppressWarnings("unchecked")
-	public static <K> PersistentHashSet<K> create(K... init) {
-		ITransientMap<K, K> map = (ITransientMap<K, K>) PersistentHashMap.emptyMap().asTransient();
-		for (int i = 0; i < init.length; i++) {
-			map.put(init[i], init[i]);
-		}
-		return new PersistentHashSet<K>(map.persistent());
+	public PersistentHashSet(K... init) {
+		this(createTemporaryMap(Arrays.asList(init)));
 	}
 
 	@Pure(Enforcement.FORCE)
 	public PersistentHashSet(Collection<K> init) {
-		this(createMap(init));
-	}
-
-	public PersistentHashSet(ISeq<K> items) {
-		this(createMap(items));
-	}
-
-	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
-	private static <K> IPersistentMap<K, K> createMap(ISeq<K> items) {
-		ITransientMap<K, K> map = new TransientHashMap<K, K>();
-		for (; items != null; items = items.next()) {
-			K first = items.first();
-			map.put(first, first);
-		}
-		return map.persistent();
+		this(createTemporaryMap(init));
 	}
 	
+	public PersistentHashSet(IPersistentSet<K> init) {
+		this(createTemporaryMap(init));
+	}
+
+	public PersistentHashSet(Seqable<K> items) {
+		this(createTemporaryMap(items));
+	}
+
 	@Pure
 	@PureParameters(Enforcement.NOT_PURE)
-	private static <K> IPersistentMap<K, K> createMap(Collection<K> init) {
-		ITransientMap<K, K> map = new TransientHashMap<K, K>();
-		for (K key : init) {
-			map.put(key, key);
+	private static <K> IPersistentMap<K, K> createTemporaryMap(Iterable<K> items) {
+		PersistentHashMap<K, K> phm = new PersistentHashMap<K, K>();
+		for (K k : items) {
+			Pure4J.immutable(k);
+			phm = phm.assoc(k, k);
 		}
-		return map.persistent();
+		
+		return phm;
 	}
 
 	private PersistentHashSet(IPersistentMap<K, K> impl) {
@@ -79,7 +72,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		return this;
 	}
 
-	public IPersistentSet<K> cons(K o) {
+	public PersistentHashSet<K> cons(K o) {
 		Pure4J.immutable(o);
 		if (contains(o))
 			return this;
