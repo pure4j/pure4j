@@ -119,14 +119,10 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 ### Known Remaining Issues
 
-* Persistent Collection Construction:  Currently, lots of static methods to construct.  Need to provide constructors to make it
-more like idiomatic Java.  -- need to write tests for each constructor, I think.
 * registering extra immutables
 * Stream counter-examples.
 * Cascading Implementation Impurity: One impure function should 'taint' those that use it.
 * Tutorials - collections tutorial.   mutable unshared tutorial.
-* length -> size
-* JUnit -> Assert purity.
 
 * Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
 	* Anonymous classes: hard to say which one we're talking about without a line-number.

@@ -97,7 +97,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this._count = _count;
 	}
 
-	public PersistentTreeMap(Seqable<Entry<K, V>> items) {
+	public PersistentTreeMap(ISeq<Entry<K, V>> items) {
 		this(DEFAULT_COMPARATOR, items);
 	}
 
@@ -106,7 +106,7 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		this(DEFAULT_COMPARATOR, map);
 	}
 	
-	public PersistentTreeMap(Comparator<? super K> comp, Seqable<Entry<K, V>> seq) {
+	public PersistentTreeMap(Comparator<? super K> comp, ISeq<Entry<K, V>> seq) {
 		this(createTemporary(Pure4J.immutable(comp), seq));
 	}
 	

@@ -5,7 +5,6 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentHashSet;
-import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.test.checker.Helper;
 import org.pure4j.test.checker.support.AbstractChecker;
 import org.pure4j.test.checker.support.ShouldBePure;

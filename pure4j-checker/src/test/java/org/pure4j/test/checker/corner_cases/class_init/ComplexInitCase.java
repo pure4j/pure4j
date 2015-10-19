@@ -18,7 +18,7 @@ public final class ComplexInitCase {
 	/**
 	 * These annotations should be on the static, but they don't fit there.
 	 */
-	@CausesError({PureMethodCallsImpureException.class, PureMethodAccessesNonImmutableFieldException.class})
+	@CausesError({PureMethodAccessesNonImmutableFieldException.class})
 	@Override
 	@ShouldBePure
 	public int hashCode() {

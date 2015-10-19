@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -39,18 +40,20 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
+import org.pure4j.collections.APersistentMap;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.PersistentArrayMap;
+import org.pure4j.collections.PersistentHashMap;
+import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentQueue;
 import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
+import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.TransientList;
-import org.pure4j.collections.TransientQueue;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.collections.Util;
 import org.pure4j.exception.Pure4JException;
@@ -77,6 +80,7 @@ public class JavaStandardLibraryPurity {
 				out.addAll(javaIOClasses());
 				out.addAll(javaNetClasses());
 				out.addAll(javaUtilClasses());
+				out.addAll(otherClasses());
 				return out;
 			}
 		}, "java.", true, false, false);
@@ -90,26 +94,28 @@ public class JavaStandardLibraryPurity {
 			@Override
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
+						PureCollections.class,
+						Util.class,
+						PureCollectors.class,
+						
+						APersistentMap.class,
+						PersistentHashMap.class,
+						PersistentHashSet.class,
+						PersistentArrayMap.class,
+						PersistentTreeMap.class,
+						PersistentTreeSet.class,
+						PersistentList.class,
+						PersistentQueue.class,
+						PersistentVector.class,
+
+						ArraySeq.class,
 //						TransientHashSet.class,
 //						TransientHashMap.class,
 //						TransientTreeMap.class,
 //						TransientTreeSet.class, 
-//						PureCollections.class,
-//						APersistentMap.class,
-//						PersistentHashMap.class,
-//						PersistentHashSet.class,
-//						PersistentArrayMap.class,
-//						PersistentTreeMap.class,
-						PersistentTreeSet.class,
-//						ArraySeq.class,
-//						TransientList.class,
+						TransientList.class,
 //						TransientQueue.class,
-//						TransientVector.class,
-//						PersistentList.class,
-//						PersistentQueue.class,
-//						PersistentVector.class,
-//						PureCollectors.class,
-						Util.class
+						TransientVector.class
 						
 						);
 			}
@@ -130,7 +136,7 @@ public class JavaStandardLibraryPurity {
 		Set<Resource> resources = new HashSet<Resource>();
 		
 		for (Class<?> c : clp.topLevelClasses()) {
-			visitAllOf(c, drl, cfmb, packageStem, new HashSet<Class<?>>(), resources);
+			visitAllOf(c, drl, cfmb, "", new HashSet<Class<?>>(), resources);
 		}
 		
 		for (Resource resource : resources) {
@@ -163,6 +169,7 @@ public class JavaStandardLibraryPurity {
 		AbstractCollection.class, 
 		AbstractMap.class,
 		ArrayList.class,
+		AbstractList.class,
 		ListIterator.class,
 		Arrays.class,
 		LinkedList.class,
@@ -221,6 +228,10 @@ public class JavaStandardLibraryPurity {
 		Class.class, 
 		Enum.class, 
 		Void.class);
+	}
+	
+	protected List<Class<?>>  otherClasses() {
+		return Arrays.asList(Assert.class);
 	}
 	
 	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Class<?>> done, Set<Resource> resources) throws IOException {

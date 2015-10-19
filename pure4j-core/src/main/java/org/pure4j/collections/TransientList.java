@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-public class TransientList<K> extends LinkedList<K> implements ITransientList<K> {
+@MutableUnshared
+public class TransientList<K> extends ATransientList<K> implements ITransientList<K> {
 
 	@Override
 	public IPersistentList<K> persistent() {
@@ -15,12 +17,12 @@ public class TransientList<K> extends LinkedList<K> implements ITransientList<K>
 	}
 
 	public TransientList() {
-		super();
+		super(new LinkedList<K>());
 	}
 
 	@Pure(Enforcement.FORCE)
 	public TransientList(Collection<? extends K> c) {
-		super();
+		this();
 		for (K k : c) {
 			Pure4J.immutable(k);
 			this.add(k);
@@ -30,16 +32,20 @@ public class TransientList<K> extends LinkedList<K> implements ITransientList<K>
 	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public TransientList(K... items) {
+		this();
 		for (K k : items) {
 			Pure4J.immutable(k);
 			this.add(k);
 		}
 	}
 	
-	public TransientList(Seqable<K> seqable) {
+	public TransientList(ISeq<K> seqable) {
+		this();
 		for (K k : seqable.seq()) {
 			Pure4J.immutable(k);
 			this.add(k);
 		}
 	}
+	
+	
 }

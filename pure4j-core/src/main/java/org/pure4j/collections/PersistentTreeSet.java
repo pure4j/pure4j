@@ -23,7 +23,7 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 
 	static private final PersistentTreeSet<Object> EMPTY = new PersistentTreeSet<Object>(PersistentTreeMap.emptyMap());
 
-	public PersistentTreeSet(Seqable<K> items) {
+	public PersistentTreeSet(ISeq<K> items) {
 		this(PersistentTreeMap.DEFAULT_COMPARATOR, items);
 	}
 	

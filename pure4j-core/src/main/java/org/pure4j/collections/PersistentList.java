@@ -48,8 +48,8 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 		this._count = _count;
 	}
 	
-	public PersistentList(Seqable<K> s) {
-		this(s.seq().first(), s.seq().next() == null ? null : new PersistentList<K>(s.seq().next()), s.seq().size());
+	public PersistentList(ISeq<K> s) {
+		this(s.first(), s.next() == null ? null : new PersistentList<K>(s.next()), s.size());
 	}
 
 	/**

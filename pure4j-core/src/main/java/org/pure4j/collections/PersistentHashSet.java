@@ -45,7 +45,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 		this(createTemporaryMap(init));
 	}
 
-	public PersistentHashSet(Seqable<K> items) {
+	public PersistentHashSet(ISeq<K> items) {
 		this(createTemporaryMap(items));
 	}
 

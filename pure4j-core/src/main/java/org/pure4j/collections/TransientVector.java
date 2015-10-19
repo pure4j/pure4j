@@ -7,27 +7,45 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-final public class TransientVector<K> extends ArrayList<K> implements ITransientVector<K> {
-	
+/**
+ * Wrapper around ArrayList that prevents the sharing of any state with other
+ * java objects.
+ * 
+ * @author robmoffat
+ *
+ * @param <K>
+ */
+final public class TransientVector<K> extends ATransientList<K> implements ITransientVector<K> {
+		
 	public TransientVector() {
-		super();
+		super(new ArrayList<K>());
 	}
 	
 	@Pure(Enforcement.FORCE)
 	public TransientVector(Collection<? extends K> c) {
-		super(c.size());
+		this(c.size());
 		for (K k : c) {
+			Pure4J.immutable(k);
+			this.add(k);
+		}
+	}
+	
+	@SafeVarargs
+	@Pure(Enforcement.FORCE)
+	public TransientVector(K... in) {
+		this(in.length);
+		for (K k : in) {
 			Pure4J.immutable(k);
 			this.add(k);
 		}
 	}
 
 	public TransientVector(int initialCapacity) {
-		super(initialCapacity);
+		super(new ArrayList<K>(initialCapacity));
 	}
 
-	public TransientVector(Seqable<K> list) {
-		super(list.seq().size());
+	public TransientVector(ISeq<K> list) {
+		this(list.seq().size());
 		ISeq<K> ss = list.seq();
 		for (K k : ss) {
 			add(k); 
@@ -37,7 +55,7 @@ final public class TransientVector<K> extends ArrayList<K> implements ITransient
 	@Pure(Enforcement.FORCE)  // this is a short-cut to simply iterating over the whole contents, which would be pure.	
 	@Override
 	public IPersistentVector<K> persistent() {
-		return new PersistentVector<K>(this);
+		return new PersistentVector<K>((Collection<K>) this);
 	}
 	
 }

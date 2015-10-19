@@ -113,7 +113,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this.nullValue = nullValue;
 	}
 
-	public PersistentHashMap(Seqable<Map.Entry<K, V>> items) {
+	public PersistentHashMap(ISeq<Map.Entry<K, V>> items) {
 		this(createTemporary(items));
 	}
 	

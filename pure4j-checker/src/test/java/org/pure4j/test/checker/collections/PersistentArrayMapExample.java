@@ -3,7 +3,6 @@ package org.pure4j.test.checker.collections;
 import java.util.Collection;
 import java.util.Map.Entry;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentMap;

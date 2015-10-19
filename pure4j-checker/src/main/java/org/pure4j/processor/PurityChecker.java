@@ -175,7 +175,7 @@ public class PurityChecker implements Rule {
 	protected void registerMethodWithCorrectEnforcement(Class<?> pureClass, Callback cb, MemberHandle ch) {
 		Enforcement impl = getImplementationEnforcement(ch);
 		Enforcement intf = getInterfaceEnforcement(ch);
-		PurityType ret = getPurityType(cb, ch);
+		PurityType ret = getPurityType(cb, pureClass);
 		pureChecklist.addMethod(ch, impl, intf, ret, pureClass, cb);
 	}
 
@@ -237,8 +237,7 @@ public class PurityChecker implements Rule {
 		}
 	}
 
-	protected PurityType getPurityType(Callback cb, MemberHandle handle) {
-		Class<?> class1 = handle.getDeclaringClass(cl);
+	protected PurityType getPurityType(Callback cb, Class<?> class1) {
 		boolean mutable = false;
 		if (classIsAnonymousInner(class1)) {
 			mutableUnshared.addClass(class1);

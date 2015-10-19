@@ -22,6 +22,7 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.annotations.pure.PurityType;
 import org.pure4j.exception.ClassExpectingPureMethod;
+import org.pure4j.exception.ClassHierarchyUsesBothTypesOfPurity;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;
 import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.exception.MissingImmutableParameterCheckException;
@@ -69,6 +70,10 @@ public class PureChecklistHandler {
 		private PurityType pt;
 		private Set<Class<?>> usedIn = new LinkedHashSet<Class<?>>();
 
+		public Set<Class<?>> getUsedIn() {
+			return usedIn;
+		}
+
 		private PureMethod(MemberHandle declaration, Enforcement impl, Enforcement intf, PurityType pt) {
 			super();
 			this.declaration = declaration;
@@ -109,7 +114,7 @@ public class PureChecklistHandler {
 
 		@Override
 		public String toString() {
-			return "   See:[declaration=" + declaration + "\n     impl=" + implPurity + "\n     intf=" + intfPurity + ", \n        usedIn=\n" + lines(usedIn, 10) + "       ]";
+			return "   See:[declaration=" + declaration + "\n     impl=" + implPurity + "\n     intf=" + intfPurity + ", \n     purity=" + pt+", \n     usedIn=\n" + lines(usedIn, 10) + "       ]";
 		}
 
 		private String lines(Set<Class<?>> usedIn2, int i) {
@@ -607,6 +612,12 @@ public class PureChecklistHandler {
 		if (pm.implPurity != impl) {
 			if (pm.implPurity != Enforcement.FORCE) {
 				cb.registerError(new ClassExpectingPureMethod(usedIn, pm));
+			}
+		}
+		
+		if (pm.implPurity != Enforcement.NOT_PURE) {
+			if ((pm.pt != pt) && (pm.pt != null)) {
+				cb.registerError(new ClassHierarchyUsesBothTypesOfPurity(pm, usedIn));
 			}
 		}
 

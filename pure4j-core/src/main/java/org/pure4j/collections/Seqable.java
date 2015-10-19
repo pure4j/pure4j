@@ -12,9 +12,7 @@
 
 package org.pure4j.collections;
 
-import org.pure4j.annotations.immutable.ImmutableValue;
 
-@ImmutableValue
 public interface Seqable<K> extends Iterable<K> {
 	
     ISeq<K> seq();

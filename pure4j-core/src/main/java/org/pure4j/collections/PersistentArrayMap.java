@@ -59,8 +59,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		this((Map<K, V>) other);
 	}
 	
-	public PersistentArrayMap(Seqable<Entry<K, V>> stuff) {
-		ISeq<Entry<K, V>> seq = stuff.seq();
+	public PersistentArrayMap(ISeq<Entry<K, V>> seq) {
 		this.array = new Object[seq.size() * 2];
 		int pos = 0;
 		for (Entry<K, V> entry : seq) {
@@ -81,71 +80,6 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	@SuppressWarnings("unchecked")
 	private IPersistentMap<K, V> createHT(Object[] init) {
 		return (IPersistentMap<K, V>) new PersistentHashMap<K,V>((K[]) init);
-	}
-
-	@SafeVarargs
-	static public <K> PersistentArrayMap<K, K> createWithCheck(K... init) {
-		for (int i = 0; i < init.length; i += 2) {
-			for (int j = i + 2; j < init.length; j += 2) {
-				if (equalKey(init[i], init[j]))
-					throw new IllegalArgumentException("Duplicate key: "
-							+ init[i]);
-			}
-		}
-		return new PersistentArrayMap<K, K>(init, true);
-	}
-
-	@SuppressWarnings("unchecked")
-	static public <K> PersistentArrayMap<K, K> createAsIfByAssoc(K[] init) {
-		// If this looks like it is doing busy-work, it is because it
-		// is achieving these goals: O(n^2) run time like
-		// createWithCheck(), never modify init arg, and only
-		// allocate memory if there are duplicate keys.
-		int n = 0;
-		for (int i = 0; i < init.length; i += 2) {
-			boolean duplicateKey = false;
-			for (int j = 0; j < i; j += 2) {
-				if (equalKey(init[i], init[j])) {
-					duplicateKey = true;
-					break;
-				}
-			}
-			if (!duplicateKey)
-				n += 2;
-		}
-		if (n < init.length) {
-			// Create a new shorter array with unique keys, and
-			// the last value associated with each key. To behave
-			// like assoc, the first occurrence of each key must
-			// be used, since its metadata may be different than
-			// later equal keys.
-			Object[] nodups = new Object[n];
-			int m = 0;
-			for (int i = 0; i < init.length; i += 2) {
-				boolean duplicateKey = false;
-				for (int j = 0; j < m; j += 2) {
-					if (equalKey(init[i], nodups[j])) {
-						duplicateKey = true;
-						break;
-					}
-				}
-				if (!duplicateKey) {
-					int j;
-					for (j = init.length - 2; j >= i; j -= 2) {
-						if (equalKey(init[i], init[j])) {
-							break;
-						}
-					}
-					nodups[m] = init[i];
-					nodups[m + 1] = init[j + 1];
-					m += 2;
-				}
-			}
-			if (m != n)
-				throw new IllegalArgumentException("Internal error: m=" + m);
-			init = (K[]) nodups;
-		}
-		return new PersistentArrayMap<K, K>(init, true);
 	}
 
 	/**
@@ -298,6 +232,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 		return indexOfObject(key);
 	}
 
+	@Pure
 	static boolean equalKey(Object k1, Object k2) {
 		return Util.equals(k1, k2);
 	}

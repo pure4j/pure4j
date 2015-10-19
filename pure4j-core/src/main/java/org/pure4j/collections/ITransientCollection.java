@@ -28,7 +28,7 @@ import org.pure4j.annotations.mutable.MutableUnshared;
  * @param <K> Element type
  */
 @MutableUnshared
-public interface ITransientCollection<K> extends Collection<K> {
+public interface ITransientCollection<K> extends Collection<K>, Seqable<K> {
 
 	IPersistentCollection<K> persistent();
 	

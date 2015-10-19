@@ -59,8 +59,7 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	public final static PersistentVector<Object> EMPTY = new PersistentVector<Object>();
 	
 	@SuppressWarnings("unchecked")
-	public PersistentVector(Seqable<K> itemSeq) {
-		ISeq<K> items = itemSeq.seq();
+	public PersistentVector(ISeq<K> items) {
 		if (items.size()  <= 32) {
 			this.cnt = items.size();
 			this.shift = 5;
