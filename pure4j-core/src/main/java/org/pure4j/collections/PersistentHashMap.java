@@ -426,6 +426,16 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		public Set<java.util.Map.Entry<K, V>> entrySet() {
 			return persistent().entrySet();
 		}
+
+		@Override
+		public ISeq<K> keySeq() {
+			return new IterableSeq<K>(keySet());
+		}
+
+		@Override
+		public ISeq<V> valueSeq() {
+			return new IterableSeq<V>(values());
+		}
 	}
 
 	@MutableUnshared

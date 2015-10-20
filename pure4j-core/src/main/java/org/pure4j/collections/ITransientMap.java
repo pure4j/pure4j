@@ -21,4 +21,8 @@ public interface ITransientMap<K, V> extends Counted, Map<K, V> {
 
 	IPersistentMap<K, V> persistent();
 	
+	ISeq<K> keySeq();
+	
+	ISeq<V> valueSeq();
+	
 }

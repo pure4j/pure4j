@@ -23,11 +23,6 @@ public interface IMapIterable<K, V> {
 	IPureIterator<K> keyIterator();
 
 	IPureIterator<V> valIterator();
-	
-	ISeq<K> keySeq();		// need to add these in.
-	
-	ISeq<V> valueSeq();
-	
-	ISeq<Entry<K, V>> entrySeq();
+
 
 }
