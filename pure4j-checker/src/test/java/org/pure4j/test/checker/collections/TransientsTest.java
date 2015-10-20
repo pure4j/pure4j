@@ -5,10 +5,13 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ITransientList;
 import org.pure4j.collections.ITransientVector;
+import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
+import org.pure4j.collections.TransientTreeMap;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.immutable.ClassNotImmutableException;
 import org.pure4j.test.checker.Helper;
@@ -57,6 +60,27 @@ public class TransientsTest {
 		tq.add("ellie");
 		tq.poll();
 		Assert.assertEquals(Arrays.asList("ellie"), tq);
+	}
+	
+	@Test
+	@Pure
+	@ShouldBePure
+	public void testTransientHashMap() {
+		TransientHashMap<String, String> tm = new TransientHashMap<String, String>();
+		tm.put("a", "aa");
+		Assert.assertEquals("aa", tm.remove("a"));
+	}
+	
+	@Test
+	@Pure
+	@ShouldBePure
+	public void testTransientTreeMap() {
+		TransientTreeMap<String, String> tm = new TransientTreeMap<String, String>();
+		tm.put("a", "aa");
+		tm.put("b", "bb");
+		tm.put("c", "cc");
+		Assert.assertEquals("aa", tm.remove("a"));
+		Assert.assertEquals(new ArraySeq<String>("b", "c"), tm.keySeq());
 	}
 	
 	@Test 

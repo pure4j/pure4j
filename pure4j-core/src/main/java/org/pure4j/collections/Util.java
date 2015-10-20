@@ -15,7 +15,7 @@ package org.pure4j.collections;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PureInterface;
 
 public class Util {
 
@@ -24,7 +24,7 @@ public class Util {
 	
 	@Pure
 	@SuppressWarnings("unchecked")
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	static public int compare(Object k1, Object k2) {
 		if (k1 == k2)
 			return 0;
@@ -46,7 +46,7 @@ public class Util {
 
 
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	static public int hashCombine(int seed, int hash) {
 		// a la boost
 		seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -54,25 +54,25 @@ public class Util {
 	}
 
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	static public Object ret1(Object ret, Object nil) {
 		return ret;
 	}
 
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	static public <K> ISeq<K> ret1(ISeq<K> ret, Object nil) {
 		return ret;
 	}
 
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	static public RuntimeException runtimeException(String s) {
 		return new RuntimeException(s);
 	}
 	
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	static public boolean equals(Object k1, Object k2){
 		if(k1 == k2)
 			return true;

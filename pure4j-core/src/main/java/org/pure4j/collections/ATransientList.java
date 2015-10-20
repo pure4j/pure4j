@@ -9,7 +9,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PureInterface;
 
 @MutableUnshared
 public abstract class ATransientList<K> implements List<K>, Seqable<K> {
@@ -20,7 +20,7 @@ public abstract class ATransientList<K> implements List<K>, Seqable<K> {
 		this.wrapped = wrapped;
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	public boolean addAll(int index, Collection<? extends K> c) {
 		boolean result = false;
 		for (K k : c) {
@@ -130,7 +130,7 @@ public abstract class ATransientList<K> implements List<K>, Seqable<K> {
 		return wrapped.remove(o);
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		for (Object object : c) {
@@ -142,7 +142,7 @@ public abstract class ATransientList<K> implements List<K>, Seqable<K> {
 		return true;
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	@Override
 	public boolean addAll(Collection<? extends K> c) {
 		boolean result = false;
@@ -155,7 +155,7 @@ public abstract class ATransientList<K> implements List<K>, Seqable<K> {
 		
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean result = false;
@@ -167,7 +167,7 @@ public abstract class ATransientList<K> implements List<K>, Seqable<K> {
 	}
 
 	@Pure(Enforcement.FORCE)
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		boolean changed = false;

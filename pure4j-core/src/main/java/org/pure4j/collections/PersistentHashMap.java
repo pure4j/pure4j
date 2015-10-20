@@ -289,7 +289,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 
 	
-	private static final class TemporaryHashMap<K, V> extends ATransientMap<K, V> {
+	private static final class TemporaryHashMap<K, V> extends ATemporaryMap<K, V> {
 		final AtomicReference<Thread> edit;
 		volatile INode root;
 		volatile int count;

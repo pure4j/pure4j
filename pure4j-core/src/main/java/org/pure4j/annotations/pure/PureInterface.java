@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PureParameters {
+public @interface PureInterface {
 
 	public Enforcement value() default Enforcement.NOT_PURE;
 }

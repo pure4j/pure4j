@@ -18,7 +18,7 @@ import java.util.Collection;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PureInterface;
 
 public class PersistentHashSet<K> extends APersistentSet<K> {
 
@@ -50,7 +50,7 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	}
 
 	@Pure
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	private static <K> IPersistentMap<K, K> createTemporaryMap(Iterable<K> items) {
 		PersistentHashMap<K, K> phm = new PersistentHashMap<K, K>();
 		for (K k : items) {

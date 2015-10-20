@@ -12,6 +12,8 @@
 
 package org.pure4j.collections;
 
+import java.util.Map.Entry;
+
 
 /**
  * Indicate a map can provide more efficient key and val iterators.
@@ -22,8 +24,10 @@ public interface IMapIterable<K, V> {
 
 	IPureIterator<V> valIterator();
 	
-//	ISeq<K> keys();		// need to add these in.
-//	
-//	ISeq<V> values();
+	ISeq<K> keySeq();		// need to add these in.
+	
+	ISeq<V> valueSeq();
+	
+	ISeq<Entry<K, V>> entrySeq();
 
 }

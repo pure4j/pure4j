@@ -267,6 +267,18 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	public boolean isEmpty() {
 		return size() == 0;
 	}
+	
+	public ISeq<K> keySeq() {
+		return new IterableSeq<K>(keySet());
+	}
+	
+	public ISeq<V> valueSeq() {
+		return new IterableSeq<V>(values());
+	}
+	
+	public ISeq<Entry<K, V>> entrySeq() {
+		return new IterableSeq<Map.Entry<K,V>>(entrySet());
+	}
 
 	public Set<K> keySet() {
 		return new AImmutableSet<K>() {

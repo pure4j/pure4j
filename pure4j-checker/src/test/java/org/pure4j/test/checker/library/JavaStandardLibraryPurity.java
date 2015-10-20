@@ -53,8 +53,10 @@ import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
+import org.pure4j.collections.TransientTreeMap;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.collections.Util;
 import org.pure4j.exception.Pure4JException;
@@ -91,7 +93,6 @@ public class JavaStandardLibraryPurity {
 	public void createPure4JCollectionsPurityList() throws IOException, ClassNotFoundException {
 		checkPurityOfClasses("target/pure4j-collections.pure", new ClassListProvider() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public List<Class<?>> topLevelClasses() {
 				return Arrays.asList((Class<?>) 
@@ -111,8 +112,8 @@ public class JavaStandardLibraryPurity {
 
 						ArraySeq.class,
 //						TransientHashSet.class,
-//						TransientHashMap.class,
-//						TransientTreeMap.class,
+						TransientHashMap.class,
+						TransientTreeMap.class,
 //						TransientTreeSet.class, 
 						TransientList.class,
 						TransientQueue.class,
@@ -162,7 +163,6 @@ public class JavaStandardLibraryPurity {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected List<Class<?>> javaUtilClasses() {
 		return Arrays.asList(
 		Objects.class, 
@@ -191,7 +191,6 @@ public class JavaStandardLibraryPurity {
 		);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected List<Class<?>> javaIOClasses() {
 	
 		return Arrays.asList(ArrayList.class,
@@ -205,13 +204,11 @@ public class JavaStandardLibraryPurity {
 		PrintWriter.class);
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected List<Class<?>> javaNetClasses() {
 	
 		return Arrays.asList(URI.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected List<Class<?>>  javaLangClasses() {
 		return Arrays.asList(
 		Number.class,

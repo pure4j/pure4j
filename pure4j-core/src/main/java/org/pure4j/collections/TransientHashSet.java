@@ -6,7 +6,7 @@ import java.util.HashSet;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PureInterface;
 
 public class TransientHashSet<T> extends HashSet<T> implements ITransientSet<T> {
 
@@ -14,7 +14,7 @@ public class TransientHashSet<T> extends HashSet<T> implements ITransientSet<T> 
 		super();
 	}
 
-	@PureParameters(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	public TransientHashSet(Collection<? extends T> c) {
 		super(c);
 	}

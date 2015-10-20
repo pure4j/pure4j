@@ -8,16 +8,17 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 
-public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientMap<K, V> {
+public class TransientTreeMap<K, V> extends ATransientMap<K, V> {
 
 	public TransientTreeMap() {
-		super();
+		super(new TreeMap<K, V>());
 	}
-
 	
+	private Comparator<? super K> comp = null;
 
 	public TransientTreeMap(Comparator<? super K> comparator) {
-		super(Pure4J.immutable(comparator));
+		super(new TreeMap<K, V>(Pure4J.immutable(comparator)));
+		this.comp = comparator;
 	}
 
 	public TransientTreeMap(IPersistentMap<? extends K, ? extends V> pt) {
@@ -52,29 +53,24 @@ public class TransientTreeMap<K, V> extends TreeMap<K, V> implements ITransientM
 		}
 	}
 	
-	public TransientTreeMap(Seqable<Entry<? extends K, ? extends V>> seq) {
+	public TransientTreeMap(ISeq<Entry<? extends K, ? extends V>> seq) {
+		this();
 		for (Entry<? extends K, ? extends V> e : seq) {
 			this.put(e.getKey(), e.getValue());
 		}
 	}
 	
 	
-	public TransientTreeMap(Comparator<? super K> comparator, Seqable<Entry<? extends K, ? extends V>> seq) {
-		this(comparator);
+	public TransientTreeMap(Comparator<? super K> comparator, ISeq<Entry<? extends K, ? extends V>> seq) {
+		this(Pure4J.immutable(comparator));
 		for (Entry<? extends K, ? extends V> e : seq) {
 			this.put(e.getKey(), e.getValue());
 		}
 	}
-
-	@Override
-	public int size() {
-		return size();
-	}
-
 	
 	@Override
 	public PersistentTreeMap<K, V> persistent() {
-		return new PersistentTreeMap<K, V>(comparator(), this);
+		return new PersistentTreeMap<K, V>(comp == null ? PersistentTreeMap.DEFAULT_COMPARATOR : comp, this);
 	}
 
 

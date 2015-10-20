@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PureInterface;
 import org.pure4j.annotations.pure.PurityType;
 import org.pure4j.exception.ClassHasConflictingAnnotationsException;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
@@ -265,7 +265,7 @@ public class PurityChecker implements Rule {
 	}
 
 	protected Enforcement getInterfaceEnforcement(MemberHandle handle) {
-		PureParameters pp = handle.getAnnotation(cl, PureParameters.class);
+		PureInterface pp = handle.getAnnotation(cl, PureInterface.class);
 		Enforcement intf = pp == null ? Enforcement.CHECKED : pp.value();
 		return intf;
 	}

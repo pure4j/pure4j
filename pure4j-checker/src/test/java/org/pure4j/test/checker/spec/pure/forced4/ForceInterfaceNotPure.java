@@ -2,7 +2,7 @@ package org.pure4j.test.checker.spec.pure.forced4;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.PureParameters;
+import org.pure4j.annotations.pure.PureInterface;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 import org.pure4j.test.checker.support.CausesError;
 import org.pure4j.test.checker.support.ShouldBePure;
@@ -13,7 +13,7 @@ import org.pure4j.test.checker.support.ShouldBePure;
 @ImmutableValue
 public final class ForceInterfaceNotPure {
 
-	@PureParameters(Enforcement.NOT_PURE)		// but, really should be pure
+	@PureInterface(Enforcement.NOT_PURE)		// but, really should be pure
 	public ForceInterfaceNotPure(String in) {
 		super();
 	}
