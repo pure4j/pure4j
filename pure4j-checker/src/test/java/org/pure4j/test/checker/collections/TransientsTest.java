@@ -8,6 +8,7 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ITransientList;
 import org.pure4j.collections.ITransientVector;
 import org.pure4j.collections.TransientList;
+import org.pure4j.collections.TransientQueue;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.immutable.ClassNotImmutableException;
 import org.pure4j.test.checker.Helper;
@@ -45,6 +46,17 @@ public class TransientsTest {
 		tv.removeAll(Arrays.asList("b", "d"));
 		tv.retainAll(Arrays.asList("a", "c"));
 		Assert.assertEquals(Arrays.asList("a", "c"), tv);
+	}
+	
+	@Test
+	@Pure
+	@ShouldBePure
+	public void testTransientQueueIterators() {
+		TransientQueue<String> tq = new TransientQueue<String>();
+		tq.add("baba");
+		tq.add("ellie");
+		tq.poll();
+		Assert.assertEquals(Arrays.asList("ellie"), tq);
 	}
 	
 	@Test 
