@@ -54,6 +54,7 @@ import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.collections.TransientList;
+import org.pure4j.collections.TransientQueue;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.collections.Util;
 import org.pure4j.exception.Pure4JException;
@@ -114,7 +115,7 @@ public class JavaStandardLibraryPurity {
 //						TransientTreeMap.class,
 //						TransientTreeSet.class, 
 						TransientList.class,
-//						TransientQueue.class,
+						TransientQueue.class,
 						TransientVector.class
 						
 						);

@@ -233,7 +233,7 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	@Pure
-	static boolean equalKey(Object k1, Object k2) {
+	static private boolean equalKey(Object k1, Object k2) {
 		return Util.equals(k1, k2);
 	}
 

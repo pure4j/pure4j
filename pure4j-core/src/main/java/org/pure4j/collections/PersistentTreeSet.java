@@ -73,10 +73,6 @@ public class PersistentTreeSet<K> extends APersistentSet<K> implements Reversibl
 	public PersistentTreeSet(Comparator<? super K> comp, Collection<K> in) {
 		this(createTemporaryMap(Pure4J.immutable(comp), in));
 	}
-
-	public PersistentTreeSet(Comparator<? super K> comp, Seqable<K> items) {
-		this(createTemporaryMap(Pure4J.immutable(comp), items));
-	}
 	
 	@Pure
 	protected static <K> PersistentTreeMap<K, K> createTemporaryMap(Comparator<? super K> comp, Iterable<K> in) {

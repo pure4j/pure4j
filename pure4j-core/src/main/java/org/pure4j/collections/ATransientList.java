@@ -16,7 +16,7 @@ public abstract class ATransientList<K> implements List<K>, Seqable<K> {
 	
 	protected final List<K> wrapped;
 
-	public ATransientList(List<K> wrapped) {
+	protected ATransientList(List<K> wrapped) {
 		this.wrapped = wrapped;
 	}
 
