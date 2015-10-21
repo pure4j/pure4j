@@ -9,6 +9,7 @@ import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ITransientList;
 import org.pure4j.collections.ITransientVector;
 import org.pure4j.collections.TransientHashMap;
+import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
 import org.pure4j.collections.TransientTreeMap;
@@ -81,6 +82,19 @@ public class TransientsTest {
 		tm.put("c", "cc");
 		Assert.assertEquals("aa", tm.remove("a"));
 		Assert.assertEquals(new ArraySeq<String>("b", "c"), tm.keySeq());
+	}
+	
+	@Test
+	@Pure
+	@ShouldBePure
+	public void testTransientHashSet() {
+		TransientHashSet<String> tm = new TransientHashSet<String>();
+		tm.add("a");
+		tm.add("b");
+		tm.add("c");
+		tm.add("d");
+		Assert.assertEquals(true, tm.remove("a"));
+		Assert.assertEquals(new ArraySeq<String>("b", "c", "d"), tm.seq());
 	}
 	
 	@Test 
