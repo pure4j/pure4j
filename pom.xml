@@ -180,6 +180,27 @@
 					<annotations><annotation>org.pure4j.lambda.Java8API</annotation></annotations>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+			    <groupId>org.eluder.coveralls</groupId>
+			    <artifactId>coveralls-maven-plugin</artifactId>
+			    <version>4.0.0</version>
+			    <configuration>
+			        <repoToken>Lk8oCBCa94eVFHEJyiJekrnq3UUe1JQYj</repoToken>
+			    </configuration>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>cobertura-maven-plugin</artifactId>
+			    <version>2.7</version>
+			    <configuration>
+			        <format>xml</format>
+			        <maxmem>256m</maxmem>
+			        <!-- aggregated reports for multi-module projects -->
+			        <aggregate>true</aggregate>
+			    </configuration>
+			</plugin>
 		</plugins>
 				
 	</build>

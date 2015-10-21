@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/robmoffat/pure4j.svg?branch=master)](https://travis-ci.org/robmoffat/pure4j)
 [![Download](https://api.bintray.com/packages/robmoffat/maven/pure4j/images/download.svg) ](https://bintray.com/robmoffat/maven/pure4j/_latestVersion)
+[![Coverage Status](https://coveralls.io/repos/robmoffat/pure4j/badge.svg?branch=master&service=github)](https://coveralls.io/github/robmoffat/pure4j?branch=master)
 
 Pure4J
 ------
