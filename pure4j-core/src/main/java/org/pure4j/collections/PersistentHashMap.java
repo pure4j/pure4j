@@ -79,7 +79,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this(in.count, in.root, in.hasNull, in.nullValue);
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public PersistentHashMap(K... pairs) {

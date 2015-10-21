@@ -18,7 +18,7 @@ public class TransientTreeSet<T> extends ATransientCollection<T> implements ITra
 	}
 	
 	public TransientTreeSet(Comparator<? super T> comp) {
-		this(new TreeSet<T>(comp));
+		this(new TreeSet<T>(Pure4J.immutable(comp)));
 	}
 	
 	private TransientTreeSet(TreeSet<T> wrapped) {
@@ -48,7 +48,7 @@ public class TransientTreeSet<T> extends ATransientCollection<T> implements ITra
 	}
 	
 	public TransientTreeSet(Comparator<? super T> comp, IPersistentCollection<T> c) {
-		this(comp);
+		this(Pure4J.immutable(comp));
 		for (T t : c) {
 			wrapped.add(t);
 		}
