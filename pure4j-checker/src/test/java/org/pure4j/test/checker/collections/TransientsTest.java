@@ -13,6 +13,7 @@ import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
 import org.pure4j.collections.TransientQueue;
 import org.pure4j.collections.TransientTreeMap;
+import org.pure4j.collections.TransientTreeSet;
 import org.pure4j.collections.TransientVector;
 import org.pure4j.immutable.ClassNotImmutableException;
 import org.pure4j.test.checker.Helper;
@@ -89,6 +90,19 @@ public class TransientsTest {
 	@ShouldBePure
 	public void testTransientHashSet() {
 		TransientHashSet<String> tm = new TransientHashSet<String>();
+		tm.add("a");
+		tm.add("b");
+		tm.add("c");
+		tm.add("d");
+		Assert.assertEquals(true, tm.remove("a"));
+		Assert.assertEquals(new ArraySeq<String>("b", "c", "d"), tm.seq());
+	}
+	
+	@Test
+	@Pure
+	@ShouldBePure
+	public void testTransientTreeSet() {
+		TransientTreeSet<String> tm = new TransientTreeSet<String>();
 		tm.add("a");
 		tm.add("b");
 		tm.add("c");
