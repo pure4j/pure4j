@@ -13,7 +13,7 @@ import org.pure4j.annotations.pure.Pure;
  * 
  * @author robmoffat
  *
- * @param <K>
+ * @param <K> element type
  */
 final public class TransientVector<K> extends ATransientList<K> implements ITransientVector<K> {
 		

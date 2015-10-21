@@ -54,7 +54,7 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 
 	/**
 	 * Each element in the list must be immutable.
-	 * @param init
+	 * @param init collection with elements to copy
 	 */
 	@Pure(Enforcement.FORCE)	
 	public PersistentList(Collection<K> init) {
