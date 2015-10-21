@@ -16,12 +16,12 @@ import org.pure4j.collections.IPersistentVector;
 import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PersistentVector;
-import org.pure4j.examples.var_model.pure.Amount;
-import org.pure4j.examples.var_model.pure.PnLStream;
-import org.pure4j.examples.var_model.pure.Sensitivity;
-import org.pure4j.examples.var_model.pure.Ticker;
-import org.pure4j.examples.var_model.pure.VarProcessor;
-import org.pure4j.examples.var_model.pure.VarProcessorImpl;
+import org.pure4j.examples.lambda.var_model.pure.Amount;
+import org.pure4j.examples.lambda.var_model.pure.PnLStream;
+import org.pure4j.examples.lambda.var_model.pure.Sensitivity;
+import org.pure4j.examples.lambda.var_model.pure.Ticker;
+import org.pure4j.examples.lambda.var_model.pure.VarProcessor;
+import org.pure4j.examples.lambda.var_model.pure.VarProcessorImpl;
 
 /**
  * I wonder if this would be a good spot for an excel concordion test?

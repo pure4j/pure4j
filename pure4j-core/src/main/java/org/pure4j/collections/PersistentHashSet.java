@@ -31,7 +31,6 @@ public class PersistentHashSet<K> extends APersistentSet<K> {
 	}
 
 	@Pure(Enforcement.FORCE)
-	@SuppressWarnings("unchecked")
 	public PersistentHashSet(K... init) {
 		this(createTemporaryMap(Arrays.asList(init)));
 	}

@@ -79,10 +79,11 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		this(in.count, in.root, in.hasNull, in.nullValue);
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Pure(Enforcement.FORCE)
 	@SafeVarargs
 	public PersistentHashMap(K... pairs) {
-		this(createTemporary(pairs));
+		this((TemporaryHashMap) createTemporary(pairs));
 	}
 
 	

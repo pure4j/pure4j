@@ -12,7 +12,6 @@
 
 package org.pure4j.collections;
 
-import java.util.Map.Entry;
 
 
 /**

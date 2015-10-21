@@ -135,7 +135,6 @@ public class PersistentVector<K> extends APersistentVector<K> {
 		this.root = start.root;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Pure(Enforcement.FORCE)
 	public PersistentVector(K... items) {
 		this((ISeq<K>) new ArraySeq<K>(items));

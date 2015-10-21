@@ -70,7 +70,11 @@ public class TransientTreeMap<K, V> extends ATransientMap<K, V> {
 	
 	@Override
 	public PersistentTreeMap<K, V> persistent() {
-		return new PersistentTreeMap<K, V>(comp == null ? PersistentTreeMap.DEFAULT_COMPARATOR : comp, this);
+		Comparator<? super K> comparator = PersistentTreeMap.DEFAULT_COMPARATOR;
+		if (comp != null) {
+			comparator = comp;
+		}
+		return new PersistentTreeMap<K, V>(comparator, wrapped);
 	}
 
 

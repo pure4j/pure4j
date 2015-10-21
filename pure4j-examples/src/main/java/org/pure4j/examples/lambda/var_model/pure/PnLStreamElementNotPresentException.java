@@ -1,4 +1,4 @@
-package org.pure4j.examples.var_model.pure;
+package org.pure4j.examples.lambda.var_model.pure;
 
 public class PnLStreamElementNotPresentException extends RuntimeException {
 
