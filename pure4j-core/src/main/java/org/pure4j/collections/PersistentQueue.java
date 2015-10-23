@@ -63,9 +63,8 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 		return _hasheq;
 	}
 
-	@SuppressWarnings("unchecked")
 	public K peek() {
-		return (K) PureCollections.first(f);
+		return f == null ? null : f.first();
 	}
 
 	public PersistentQueue<K> pop() {

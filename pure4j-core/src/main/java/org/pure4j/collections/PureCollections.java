@@ -52,12 +52,6 @@ public class PureCollections {
 			return ((Seqable) coll).seq();
 		else if (coll == null)
 			return null;
-		else if (coll instanceof Iterable)
-			return new IterableSeq(((Iterable) coll));
-		else if (coll.getClass().isArray())
-			return (ISeq<K>) ArraySeq.createFromArray(coll);
-		else if (coll instanceof Map)
-			return seq(((Map) coll).entrySet());
 		else {
 			Class c = coll.getClass();
 			throw new IllegalArgumentException(
@@ -83,18 +77,6 @@ public class PureCollections {
 			i++;
 		}
 		return i;
-	}
-
-	@Pure
-	@SuppressWarnings("rawtypes")
-	static public Object first(Object x) {
-		Pure4J.immutable(x);
-		if (x instanceof ISeq)
-			return ((ISeq) x).first();
-		ISeq seq = seq(x);
-		if (seq == null)
-			return null;
-		return seq.first();
 	}
 
 	@SuppressWarnings("rawtypes")
