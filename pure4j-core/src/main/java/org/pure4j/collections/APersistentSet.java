@@ -58,8 +58,8 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	@Pure
-	static public boolean setEquals(IPersistentSet<?> s1, Object obj) {
-		Pure4J.immutable(obj);
+	@PureInterface(Enforcement.NOT_PURE)
+	static public boolean setEquals(Set<?> s1, Object obj) {
 		if (s1 == obj)
 			return true;
 		if (!(obj instanceof Set))

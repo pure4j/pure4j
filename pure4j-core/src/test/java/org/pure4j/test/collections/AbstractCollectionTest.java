@@ -12,6 +12,7 @@ import org.pure4j.collections.IPersistentList;
 import org.pure4j.collections.IPersistentStack;
 import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
+import org.pure4j.collections.Seqable;
 import org.pure4j.test.AbstractTest;
 
 public abstract class AbstractCollectionTest extends AbstractTest {
@@ -25,8 +26,6 @@ public abstract class AbstractCollectionTest extends AbstractTest {
 	@Test
 	public void testIterator() {
 		getInstance().cons("g").cons("b");
-		
-		
 	}
 	
 	
@@ -71,27 +70,25 @@ public abstract class AbstractCollectionTest extends AbstractTest {
 			}
 		}
 		
-		if (pc instanceof IPersistentList) {
-			IPersistentList<String> pl = (IPersistentList<String>) pc;
-//			pl.
+		if (pc instanceof IPersistentCollection) {
+			pc = pc.cons("something").cons("else");
+			pc = pc.addAll(new ArraySeq<String>("a", "b"));
+			assertEquals(true, pc.contains("something"));
+			assertEquals(true, pc.containsAll(new PersistentList<String>("something","else")));
+			assertEquals(false, pc.containsAll(new PersistentList<String>("something","happened")));
+			assertEquals(pc, pc.asTransient().persistent());
+			assertEquals(pc.hashCode(), pc.asTransient().persistent().hashCode());
+			assertEquals(0, pc.empty().size());
+			
+			pc = pc.empty().cons("3").cons("2").cons("1");
+			PersistentHashSet<String> pc2 = new PersistentHashSet<String>();
+			for (String string : pc) {
+				pc2 = pc2.cons(string);
+			}
+			
+			assertEquals(pc2, new PersistentHashSet<String>(pc));
+			assertEquals(pc2.hashCode(), new PersistentHashSet<String>(pc).hashCode());
 		}
-	
-		
-		pc = pc.cons("something").cons("else");
-		pc = pc.addAll(new ArraySeq<String>("a", "b"));
-		assertEquals(true, pc.contains("something"));
-		assertEquals(true, pc.containsAll(new PersistentList<String>("something","else")));
-		assertEquals(false, pc.containsAll(new PersistentList<String>("something","happened")));
-		assertEquals(pc, pc.asTransient().persistent());
-		assertEquals(0, pc.empty().size());
-		
-		pc = pc.empty().cons("3").cons("2").cons("1");
-		PersistentHashSet<String> pc2 = new PersistentHashSet<String>();
-		for (String string : pc) {
-			pc2 = pc2.cons(string);
-		}
-		
-		assertEquals(pc2, new PersistentHashSet<String>(pc));
 	}
 	
 	@Test(expected=RuntimeException.class)

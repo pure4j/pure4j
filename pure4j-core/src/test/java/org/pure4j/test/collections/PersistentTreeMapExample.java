@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.APersistentMap;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.IterableSeq;
 import org.pure4j.collections.PersistentTreeMap;
@@ -112,14 +113,27 @@ public class PersistentTreeMapExample extends AbstractMapTest {
 		assertMapping(pm, entries); 
 		System.out.println(pm);
 		
+		pm = new PersistentTreeMap<String, String>(PersistentTreeMap.DEFAULT_COMPARATOR, makeMaps(entries));
+		assertEquals(entries, pm.size());
+		assertMapping(pm, entries); 
+
+
 		// iseq
-		PersistentTreeMap<String, String> pm2 = new PersistentTreeMap<String, String>(pm.seq());
+		PersistentTreeMap<String, String> pm2 = new PersistentTreeMap<String, String>((ISeq<Entry<String, String>>) pm.seq());
 		assertEquals(pm2, pm);
+		
+		pm2 = new PersistentTreeMap<String, String>(PersistentTreeMap.DEFAULT_COMPARATOR, (ISeq<Entry<String, String>>) pm.seq());
+		assertEquals(pm2, pm);
+
 //		
 //		// map-based
 		PersistentTreeMap<String, String> pm3 = new PersistentTreeMap<String, String>(pm);
 		assertEquals(pm3, pm);
-//		 
+
+		pm3 = new PersistentTreeMap<String, String>(PersistentTreeMap.DEFAULT_COMPARATOR, pm);
+		assertEquals(pm3, pm);
+
+		
 //		// no-args
 		PersistentTreeMap<String, String> pm4 = new PersistentTreeMap<String, String>();
 		for (Entry<String, String> entry : pm) {

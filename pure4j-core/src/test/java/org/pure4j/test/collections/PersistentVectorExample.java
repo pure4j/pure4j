@@ -50,9 +50,12 @@ public class PersistentVectorExample extends AbstractCollectionTest {
 		assertEquals(7, pl.size());
 		assertEquals(3, pl.nth(3));
 		assertEquals(20, pl.nth(10, 20));
-		
-		
-		
+		for (int i = 0; i < 60; i++) {
+			pl = pl.assocN(i, i);
+		}
+		pl = pl.assocN(40, 40);
+		pl = pl.cons(33);
+		assertEquals(60, pl.pop().size());
 	}
 	
 	

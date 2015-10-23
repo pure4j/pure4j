@@ -103,4 +103,16 @@ public abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 	public ISeq<Entry<K, V>> entrySeq() {
 		return new IterableSeq<Map.Entry<K,V>>(entrySet());
 	}
+	
+	public String toString() {
+		return ToStringFunctions.toString(this);
+	}
+
+	public int hashCode() {
+		return Hasher.hashUnordered(this.entrySet());
+	}
+
+	public boolean equals(Object obj) {
+		return APersistentMap.mapEquals(this.entrySet(), this.size(), obj);
+	}
 }

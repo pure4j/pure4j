@@ -35,7 +35,7 @@ import org.pure4j.annotations.pure.Pure;
 
 public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Reversible<Entry<K, V>>, Sorted<K, Entry<K, V>> {
 	
-	static final DefaultComparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
+	public static final DefaultComparator<Object> DEFAULT_COMPARATOR = new DefaultComparator<Object>();
 	
 	@ImmutableValue
 	private static final class DefaultComparator<K> implements Comparator<K>, Serializable {

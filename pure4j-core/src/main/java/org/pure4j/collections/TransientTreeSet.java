@@ -104,6 +104,20 @@ public class TransientTreeSet<T> extends ATransientCollection<T> implements ITra
 	protected Collection<T> getWrapped() {
 		return wrapped;
 	}
+	
+
+	public String toString() {
+		return ToStringFunctions.toString(this);
+	}
+
+	public boolean equals(Object obj) {
+		return APersistentSet.setEquals(this, obj);
+	}
+	
+
+	public int hashCode() {
+		return Hasher.hashUnordered(this);
+	}
 
 
 }

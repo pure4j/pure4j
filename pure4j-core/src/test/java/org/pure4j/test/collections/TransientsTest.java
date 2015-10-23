@@ -1,13 +1,19 @@
 package org.pure4j.test.collections;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.IPersistentMap;
+import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientList;
+import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.ITransientVector;
+import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
@@ -39,6 +45,10 @@ public class TransientsTest {
 		tv.removeAll(Arrays.asList("b", "d"));
 		tv.retainAll(Arrays.asList("a", "c"));
 		Assert.assertEquals(Arrays.asList("a", "c"), tv);
+		
+		Assert.assertEquals(tv, new TransientVector<String>("a", "c"));
+		Assert.assertEquals(tv, new TransientVector<String>("a", "c"));
+		Assert.assertEquals(tv, new TransientVector<String>(Arrays.asList("a", "c")));
 	}
 	
 	@Test
@@ -50,6 +60,7 @@ public class TransientsTest {
 		tv.removeAll(Arrays.asList("b", "d"));
 		tv.retainAll(Arrays.asList("a", "c"));
 		Assert.assertEquals(Arrays.asList("a", "c"), tv);
+		Assert.assertEquals(tv, new TransientList<String>("a", "c"));
 	}
 	
 	@Test
@@ -86,6 +97,15 @@ public class TransientsTest {
 		tm.put("c", "cc");
 		Assert.assertEquals("aa", tm.remove("a"));
 		Assert.assertEquals(new ArraySeq<String>("b", "c"), tm.keySeq());
+		Assert.assertEquals(tm, new TransientTreeMap<String, String>((IPersistentMap<String, String>) tm.persistent()));
+		Assert.assertEquals(tm, new TransientTreeMap<String, String>((Map<String, String>) tm));
+		Assert.assertEquals(tm, new TransientTreeMap<String, String>(tm.persistent().seq()));
+		
+		Assert.assertEquals(tm, new TransientTreeMap<String, String>(PersistentTreeMap.DEFAULT_COMPARATOR, (IPersistentMap<String, String>) tm.persistent()));
+		Assert.assertEquals(tm, new TransientTreeMap<String, String>(PersistentTreeMap.DEFAULT_COMPARATOR, (Map<String, String>) tm));
+		Assert.assertEquals(tm, new TransientTreeMap<String, String>(PersistentTreeMap.DEFAULT_COMPARATOR, tm.persistent().seq()));
+		
+
 	}
 	
 	@Test
@@ -99,6 +119,10 @@ public class TransientsTest {
 		tm.add("d");
 		Assert.assertEquals(true, tm.remove("a"));
 		Assert.assertEquals(new ArraySeq<String>("b", "c", "d"), tm.seq());
+		Assert.assertEquals(tm, new TransientHashSet<String>("d", "b", "c"));
+		Assert.assertEquals(tm, new TransientHashSet<String>(Arrays.asList("d", "b", "c")));
+		Assert.assertEquals(new TransientHashSet<String>(), new TransientHashSet<String>(100));
+		Assert.assertEquals(new TransientHashSet<String>(), new TransientHashSet<String>(100, .5f));
 	}
 	
 	@Test
@@ -112,6 +136,16 @@ public class TransientsTest {
 		tm.add("d");
 		Assert.assertEquals(true, tm.remove("a"));
 		Assert.assertEquals(new ArraySeq<String>("b", "c", "d"), tm.seq());
+		Assert.assertEquals(tm, new TransientTreeSet<String>("d", "b", "c"));
+		Assert.assertEquals(tm, new TransientTreeSet<String>(Arrays.asList("d", "b", "c")));
+		Assert.assertEquals(tm, new TransientTreeSet<String>(new ArraySeq<String>("d", "b", "c")));
+		Assert.assertEquals(tm, new TransientTreeSet<String>(tm));
+		
+		Assert.assertEquals(tm, new TransientTreeSet<String>(PersistentTreeMap.DEFAULT_COMPARATOR, "d", "b", "c"));
+		Assert.assertEquals(tm, new TransientTreeSet<String>(PersistentTreeMap.DEFAULT_COMPARATOR, Arrays.asList("d", "b", "c")));
+		Assert.assertEquals(tm, new TransientTreeSet<String>(PersistentTreeMap.DEFAULT_COMPARATOR, new ArraySeq<String>("d", "b", "c")));
+		Assert.assertEquals(tm, new TransientTreeSet<String>(PersistentTreeMap.DEFAULT_COMPARATOR, tm));
+
 	}
 
 }

@@ -20,6 +20,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureInterface;
 
 public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable {
@@ -58,12 +59,12 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	public boolean equals(Object obj) {
-		return mapEquals(this, obj);
+		return mapEquals(this, this.size(), obj);
 	}
 
 	@Pure
-	static public <K2, V2> boolean mapEquals(IPersistentMap<K2,V2> m1, Object obj) {
-		Pure4J.immutable(m1, obj);
+	@PureInterface(Enforcement.NOT_PURE)
+	static public <K2, V2> boolean mapEquals(Iterable<Entry<K2,V2>> m1, int size, Object obj) {
 		if (m1 == obj)
 			return true;
 		if (!(obj instanceof Map))
@@ -71,11 +72,10 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		
 		Map<?,?> m = (Map<?,?>) obj;
 
-		if (m.size() != m1.size())
+		if (m.size() != size)
 			return false;
 		
-		for (ISeq<Entry<K2,V2>> s = m1.seq(); s != null; s = s.next()) {
-			Entry<K2,V2> e = s.first();
+		for (Entry<K2, V2> e : m1) {
 			boolean found = m.containsKey(e.getKey());
 
 			if (!found || !Util.equals(e.getValue(), m.get(e.getKey())))

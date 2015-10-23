@@ -1,11 +1,13 @@
 package org.pure4j.test.collections;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.ASeq;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.PureCollections;
@@ -59,6 +61,48 @@ public class ArraySeqExample extends AbstractTest {
 		
 		// check sorting
 		Assert.assertEquals(PureCollections.sort(ArraySeq.create('d', 'e', 'g', 'f' )), ArraySeq.create('d', 'e', 'f', 'g'));
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testRemove() {
+		getInstance().remove("blah");
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testClear() {
+		getInstance().clear();
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testAdd() {
+		getInstance().add("blah");
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testRetainAll() {
+		getInstance().retainAll(null);
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testAddAll() {
+		getInstance().addAll(Collections.emptyList());
+	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testSet() {
+		getInstance().set(3, "d");
+	}
+	
+
+	private ASeq<String> getInstance() {
+		return new ArraySeq<String>("bob");
+	}
+
+
+
+	@Test(expected=RuntimeException.class)
+	public void testRemoveAll() {
+		getInstance().removeAll(null);
 	}
 }
 

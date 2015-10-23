@@ -73,5 +73,16 @@ public class TransientHashSet<T> extends ATransientCollection<T> implements ITra
 	}
 
 
+	public String toString() {
+		return ToStringFunctions.toString(this);
+	}
 
+	public boolean equals(Object obj) {
+		return APersistentSet.setEquals(this, obj);
+	}
+	
+
+	public int hashCode() {
+		return Hasher.hashUnordered(this);
+	}
 }

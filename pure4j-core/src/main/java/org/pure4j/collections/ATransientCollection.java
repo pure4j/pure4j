@@ -118,5 +118,5 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 	public void clear() {
 		getWrapped().clear();
 	}
-
+	
 }

@@ -53,17 +53,17 @@ public class TransientTreeMap<K, V> extends ATransientMap<K, V> {
 		}
 	}
 	
-	public TransientTreeMap(ISeq<Entry<? extends K, ? extends V>> seq) {
+	public TransientTreeMap(ISeq<Entry<K, V>> seq) {
 		this();
-		for (Entry<? extends K, ? extends V> e : seq) {
+		for (Entry<K, V> e : seq) {
 			this.put(e.getKey(), e.getValue());
 		}
 	}
 	
 	
-	public TransientTreeMap(Comparator<? super K> comparator, ISeq<Entry<? extends K, ? extends V>> seq) {
+	public TransientTreeMap(Comparator<? super K> comparator, ISeq<Entry<K, V>> seq) {
 		this(Pure4J.immutable(comparator));
-		for (Entry<? extends K, ? extends V> e : seq) {
+		for (Entry<K, V> e : seq) {
 			this.put(e.getKey(), e.getValue());
 		}
 	}
