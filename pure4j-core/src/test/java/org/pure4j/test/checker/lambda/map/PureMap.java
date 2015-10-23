@@ -1,18 +1,16 @@
 package org.pure4j.test.checker.lambda.map;
 
-import java.io.IOException;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.ISeq;
+import org.pure4j.collections.PersistentList;
 import org.pure4j.lambda.PureCollectors;
+import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
-import org.pure4j.test.checker.support.AbstractChecker;
 
-public class PureMap extends AbstractChecker {
+public class PureMap extends AbstractTest {
 
 	@ShouldBePure
 	@Pure
@@ -29,10 +27,5 @@ public class PureMap extends AbstractChecker {
 		
 		Assert.assertEquals(someSeqOut , consumeBlah(someSeqIn));
 	}
-	
-	
-	@Test
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0);
-	}
+
 }

@@ -1,16 +1,14 @@
 package org.pure4j.test.checker.lambda.reduce;
 
-import java.io.IOException;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.PersistentVector;
+import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
-import org.pure4j.test.checker.support.AbstractChecker;
 
-public class PureReduce extends AbstractChecker {
+public class PureReduce extends AbstractTest{
 
 	@ShouldBePure
 	@Pure
@@ -25,10 +23,5 @@ public class PureReduce extends AbstractChecker {
 		PersistentVector<String> someSeq = new PersistentVector<String>("john", "eats", "chips");
 		Assert.assertEquals("johneatschips" , consumeBlah(someSeq));
 	}
-	
-	
-	@Test
-	public void checkThisPackage() throws IOException {
-		checkThisPackage(this.getClass(), 0);
-	}
+
 }
