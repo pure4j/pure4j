@@ -1,21 +1,23 @@
 package org.pure4j.test.collections;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.IPersistentList;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientCollection;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.PureCollections;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentListExample extends AbstractTest {
+public class PersistentListExample extends AbstractCollectionTest {
 	
 	@Pure
 	@ShouldBePure
@@ -67,7 +69,9 @@ public class PersistentListExample extends AbstractTest {
 		// no-args
 		pv = new PersistentList<String>();
 		pv = pv.addAll(new ArraySeq<String>(someStrings(60))); 
-		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		List<String> someStrings = Arrays.asList(someStrings(60));
+		Collections.reverse(someStrings);
+		Assert.assertEquals(pv, someStrings);
 
 	}
 	
@@ -78,5 +82,11 @@ public class PersistentListExample extends AbstractTest {
 		}
 		
 		return out;
+	}
+	
+	@Pure
+	@ShouldBePure
+	public IPersistentCollection<String> getInstance() {
+		return new PersistentList<String>();
 	}
 }

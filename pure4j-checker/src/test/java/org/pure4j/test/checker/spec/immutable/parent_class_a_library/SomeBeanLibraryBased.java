@@ -1,7 +1,7 @@
 package org.pure4j.test.checker.spec.immutable.parent_class_a_library;
 
 import org.pure4j.immutable.AbstractImmutableValue;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public class SomeBeanLibraryBased extends AbstractImmutableValue<SomeBeanLibraryBased>{
 

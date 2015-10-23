@@ -2,7 +2,7 @@ package org.pure4j.test.checker.spec.generics.holder_immutable;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 @ImmutableValue
 public final class GenericHolderImm<X extends SomeImmutable> {

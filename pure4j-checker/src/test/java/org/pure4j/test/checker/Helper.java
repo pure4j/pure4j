@@ -17,8 +17,8 @@ import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.ClassFileModelBuilder;
 import org.pure4j.processor.PurityChecker;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
@@ -125,7 +125,7 @@ public final class Helper {
 
 			for (MemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
 				CausesError vals = mh.getAnnotation(this.getClass().getClassLoader(), CausesError.class);
-				for (Class<? extends Pure4JException> ex : vals.value()) {
+				for (Class<?> ex : vals.value()) {
 					countException(errorSet, fail, ex);
 				}
 			}

@@ -50,12 +50,11 @@ public abstract class APersistentVector<K> implements
 	}
 
 	public IPersistentVector<K> addAll(ISeq<? extends K> items) {
-		IPersistentVector<K> out = this;
-		for(K k: items) {
-			out = out.cons(k);
+		if (items == null) {
+			return this;
+		} else {
+			return this.addAll(items.next()).cons(items.first());
 		}
-
-		return out;
 	}
 	
 	
@@ -251,14 +250,9 @@ public abstract class APersistentVector<K> implements
 		return null;
 	}
 
-
-	// java.util.Collection implementation
-
+	@Pure(Enforcement.FORCE)
 	public Object[] toArray() {
-		Object[] ret = new Object[size()];
-		for (int i = 0; i < size(); i++)
-			ret[i] = nth(i);
-		return ret;
+		return toArray(new Object[] {});
 	}
 
 	public boolean add(Object o) {
@@ -303,10 +297,10 @@ public abstract class APersistentVector<K> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	@Pure(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	@Override
 	public <T> T[] toArray(T[] a) {
-		return (T[]) PureCollections.seqToNewArray(seq(), a);
+		return (T[]) PureCollections.seqToNewArray(seq(), a, true);
 	}
 
 	public int size() {
@@ -437,8 +431,8 @@ public abstract class APersistentVector<K> implements
 		}
 
 		@SuppressWarnings("unchecked")
-		public IPersistentCollection<K> empty() {
-			return (IPersistentCollection<K>) PersistentVector.EMPTY;
+		public IPersistentStack<K> empty() {
+			return (IPersistentStack<K>) PersistentVector.EMPTY;
 		}
 
 		@SuppressWarnings("unchecked")

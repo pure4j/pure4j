@@ -2,8 +2,8 @@ package org.pure4j.test.checker.spec.immutable.composition;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.spec.immutable.good.SomeGoodValueObject;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 @ImmutableValue
 public final class CompositionalObject {

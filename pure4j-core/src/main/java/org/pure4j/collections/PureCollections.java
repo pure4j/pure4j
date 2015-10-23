@@ -21,11 +21,15 @@ public class PureCollections {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Pure(Enforcement.FORCE)
-	static public Object[] seqToNewArray(ISeq seq, Object[] passed) {
+	static public Object[] seqToNewArray(ISeq seq, Object[] passed, boolean reverse) {
 		int len = seq == null ? 0 : seq.size();
 		Object[] dest = (Object[]) Array.newInstance(passed.getClass().getComponentType(), len);
 		for (int i = 0; seq != null; ++i, seq = seq.next()) {
-			dest[i] = seq.first();
+			if (reverse) {
+				dest[len - i - 1] = seq.first(); 
+			} else {
+				dest[i] = seq.first();
+			}
 		}
 		return dest;
 	}
@@ -93,18 +97,6 @@ public class PureCollections {
 		return seq.first();
 	}
 
-	static public Object second(Object x) {
-		return first(next(x));
-	}
-
-	static public Object third(Object x) {
-		return first(next(next(x)));
-	}
-
-	static public Object fourth(Object x) {
-		return first(next(next(next(x))));
-	}
-
 	@SuppressWarnings("rawtypes")
 	static public ISeq next(Object x) {
 		if (x instanceof ISeq)
@@ -113,52 +105,6 @@ public class PureCollections {
 		if (seq == null)
 			return null;
 		return seq.next();
-	}
-
-	@Pure(Enforcement.FORCE)
-	@SuppressWarnings("rawtypes")
-	static public Object nth(Object coll, int n) {
-		if (coll instanceof Indexed)
-			return ((Indexed) coll).nth(n);
-
-		return nthFrom(Util.ret1(coll, coll = null), n);
-	}
-
-	@SuppressWarnings("rawtypes")
-	static Object nthFrom(Object coll, int n) {
-		if (coll == null)
-			return null;
-		else if (coll instanceof CharSequence)
-			return Character.valueOf(((CharSequence) coll).charAt(n));
-		else if (coll.getClass().isArray())
-			return prepRet(coll.getClass().getComponentType(),
-					Array.get(coll, n));
-		else if (coll instanceof RandomAccess)
-			return ((List) coll).get(n);
-		else if (coll instanceof Matcher)
-			return ((Matcher) coll).group(n);
-
-		else if (coll instanceof Map.Entry) {
-			Map.Entry e = (Map.Entry) coll;
-			if (n == 0)
-				return e.getKey();
-			else if (n == 1)
-				return e.getValue();
-			throw new IndexOutOfBoundsException();
-		}
-
-		else if (coll instanceof ISeq) {
-			ISeq seq = PureCollections.seq(coll);
-			coll = null;
-			for (int i = 0; i <= n && seq != null; ++i, seq = seq.next()) {
-				if (i == n)
-					return seq.first();
-			}
-			throw new IndexOutOfBoundsException();
-		} else
-			throw new UnsupportedOperationException(
-					"nth not supported on this type: "
-							+ coll.getClass().getSimpleName());
 	}
 
 	@SuppressWarnings("rawtypes")

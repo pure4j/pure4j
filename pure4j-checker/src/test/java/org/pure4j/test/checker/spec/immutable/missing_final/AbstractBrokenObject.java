@@ -2,8 +2,8 @@ package org.pure4j.test.checker.spec.immutable.missing_final;
 
 import org.pure4j.exception.FieldNotFinalException;
 import org.pure4j.exception.PureMethodAccessesNonFinalFieldException;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
 public abstract class AbstractBrokenObject {
 

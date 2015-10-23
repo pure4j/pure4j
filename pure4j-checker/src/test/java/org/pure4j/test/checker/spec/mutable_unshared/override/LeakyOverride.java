@@ -1,8 +1,8 @@
 package org.pure4j.test.checker.spec.mutable_unshared.override;
 
 import org.pure4j.exception.PureMethodCallsImpureException;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
 public class LeakyOverride extends BadBase {
 

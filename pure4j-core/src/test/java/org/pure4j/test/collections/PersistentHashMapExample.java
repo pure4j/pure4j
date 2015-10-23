@@ -11,11 +11,26 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.PersistentHashMap;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentHashMapExample extends AbstractTest {
+public class PersistentHashMapExample extends AbstractMapTest {
 
+	@Test
+	@Pure
+	@ShouldBePure
+	public void soakTest() {
+		mapSoakTest(new PersistentHashMap<String, String>());
+	}
+	
+	@Pure
+	@ShouldBePure
+	@Test(expected=RuntimeException.class)
+	public void exTest() {
+		new PersistentHashMap<String, String>().assocEx("a", "b").assocEx("a", "c");
+		
+	}
+	
+	
 	@Pure
 	@ShouldBePure
 	public static void pureMethod(IPersistentMap<String, String> in, int expectedKeys, int expectedVals) {

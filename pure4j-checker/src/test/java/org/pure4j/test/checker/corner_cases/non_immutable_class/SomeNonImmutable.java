@@ -8,8 +8,8 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.PureMethodAccessesNonImmutableFieldException;
 import org.pure4j.exception.PureMethodOnNonImmutableClassException;
+import org.pure4j.test.CausesError;
 import org.pure4j.test.checker.support.AbstractChecker;
-import org.pure4j.test.checker.support.CausesError;
 
 public class SomeNonImmutable extends AbstractChecker {
 

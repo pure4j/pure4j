@@ -149,16 +149,14 @@ public class PersistentList<K> extends ASeq<K> implements IPersistentList<K> {
 		return new TransientList<K>((Collection<K>) this);
 	}
 
-	/**
-	 * This implementation ensures the Seq ordering is maintained in the list being added to.
-	 */
 	@Override
 	public IPersistentList<K> addAll(ISeq<? extends K> in) {
-		while (in != null) {
-			return addAll(in.next()).cons(in.first());
+		IPersistentList<K> out = this;
+		for(K k: in) {
+			out = out.cons(k);
 		}
-
-		return this;
+		
+		return out;
 	}
 
 }

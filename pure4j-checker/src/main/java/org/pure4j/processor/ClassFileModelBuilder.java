@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Stack;
 
-import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
-
 import org.pure4j.Pure4J;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.model.AnnotatedElementHandle;
@@ -325,7 +323,7 @@ public class ClassFileModelBuilder {
 				if (Opcodes.ARETURN == arg0) {
 					int line2 = line;
 					// we are returning something.  we need to keep track of the previous
-					ci.addMethodBeforeReturn(lastMethodCall == null ? line : lastMethodCall);
+					ci.addMethodBeforeReturn(lastMethodCall == null ? line2 : lastMethodCall);
 				}
 			}
 
@@ -438,21 +436,4 @@ public class ClassFileModelBuilder {
 			return new MethodHandle(owner, name, desc, line);
 		}
 	}
-
-	protected int[] getArgs(String desc, Stack<Integer> argStack, int[] vars) {
-		if (argStack != null) {
-			int args = argCount(desc);
-			vars = new int[args];
-		
-			for (int i = 0; i < vars.length; i++) {
-				vars[i] = argStack.get(i);
-			}
-		}
-		return vars;
-	}
-
-	private int argCount(String desc) {
-		return Type.getArgumentTypes(desc).length;
-	}
-
 }

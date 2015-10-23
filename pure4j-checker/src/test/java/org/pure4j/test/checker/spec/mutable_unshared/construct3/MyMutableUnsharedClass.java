@@ -1,6 +1,6 @@
 package org.pure4j.test.checker.spec.mutable_unshared.construct3;
 
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 
 public class MyMutableUnsharedClass extends AbstractMutableUnshared {

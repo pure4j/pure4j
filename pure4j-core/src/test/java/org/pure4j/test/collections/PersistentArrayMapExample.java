@@ -8,11 +8,18 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.PersistentArrayMap;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentArrayMapExample extends AbstractTest {
+public class PersistentArrayMapExample extends AbstractMapTest {
 
+	@Pure
+	@ShouldBePure
+	@Test(expected=RuntimeException.class)
+	public void exTest() {
+		new PersistentArrayMap<String, String>().assocEx("a", "b").assocEx("a", "c");
+		
+	}
+	
 	@Pure
 	@ShouldBePure
 	public static void pureMethod(IPersistentMap<String, String> in, int expectedKeys, int expectedVals) {
@@ -55,6 +62,13 @@ public class PersistentArrayMapExample extends AbstractTest {
 		assertEquals("{a=b, rob=moffat, testy=mctest, peter=moffat, named=valued, fiona=pauli}", trans.persistent().toString());
 	}
 
+	@Test
+	@Pure
+	@ShouldBePure
+	public void soakTest() {
+		mapSoakTest(new PersistentArrayMap<String, String>());
+	}
+	
 	@Test
 	public void testConstruction() {
 		// array
@@ -100,4 +114,6 @@ public class PersistentArrayMapExample extends AbstractTest {
 		}
 		return out;
 	}
+	
+	
 }

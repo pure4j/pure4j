@@ -10,8 +10,8 @@ import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ISeq;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.support.AbstractChecker;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 @ImmutableValue
 public class AnonymousInnerClass extends AbstractChecker {

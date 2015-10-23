@@ -19,7 +19,7 @@ public class TransientQueue<T> extends ATransientList<T> implements ITransientQu
 
 	@Override
 	public IPersistentCollection<T> persistent() {
-		return new PersistentQueue<T>(this.size(), null, new PersistentVector<T>(this));
+		return new PersistentQueue<T>(this.size(), this.seq(), null);
 	}
 
 	@Override

@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.junit.Test;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.support.AbstractChecker;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 public class ImmutableEnum extends AbstractChecker {
 

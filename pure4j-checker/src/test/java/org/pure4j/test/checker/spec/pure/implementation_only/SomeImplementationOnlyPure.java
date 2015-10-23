@@ -3,7 +3,7 @@ package org.pure4j.test.checker.spec.pure.implementation_only;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
-import org.pure4j.test.checker.support.CausesError;
+import org.pure4j.test.CausesError;
 
 public class SomeImplementationOnlyPure {
 

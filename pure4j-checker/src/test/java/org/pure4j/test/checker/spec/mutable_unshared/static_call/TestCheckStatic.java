@@ -3,8 +3,8 @@ package org.pure4j.test.checker.spec.mutable_unshared.static_call;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.PureMethodAccessesNonFinalFieldException;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
 
 public class TestCheckStatic {

@@ -190,8 +190,8 @@ public class PersistentArrayMap<K, V> extends APersistentMap<K, V> implements IM
 	}
 
 	@SuppressWarnings("unchecked")
-	public IPersistentMap<K, V> empty() {
-		return (IPersistentMap<K, V>) EMPTY;
+	public PersistentArrayMap<K, V> empty() {
+		return (PersistentArrayMap<K, V>) EMPTY;
 	}
 	
 	@SuppressWarnings("unchecked")

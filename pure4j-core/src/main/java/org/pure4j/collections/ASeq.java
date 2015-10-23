@@ -104,7 +104,7 @@ public abstract class ASeq<K> implements ISeq<K>, Serializable {
 	@SuppressWarnings("unchecked")
 	@Pure(Enforcement.FORCE)
 	public <T> T[] toArray(T[] a) {
-		return (T[]) PureCollections.seqToNewArray(seq(), a);
+		return (T[]) PureCollections.seqToNewArray(seq(), a, false);
 	}
 
 	public boolean add(K o) {
@@ -146,7 +146,7 @@ public abstract class ASeq<K> implements ISeq<K>, Serializable {
 	}
 
 	public boolean isEmpty() {
-		return seq() == null;
+		return size() ==0;
 	}
 
 	public boolean contains(Object o) {
@@ -205,9 +205,13 @@ public abstract class ASeq<K> implements ISeq<K>, Serializable {
 		return new PureListIterator<K>(reify().listIterator(index));
 	}
 
-	@SuppressWarnings("unchecked")
 	public K get(int index) {
-		return (K) PureCollections.nth(this, index);
+		ISeq<K> current = this;
+		while ((index > 0) && (current != null)) {
+			current = current.next();
+			index --;
+		}
+		return current == null ? null : current.first();
 	}
 
 	public void add(int index, Object element) {

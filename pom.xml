@@ -180,7 +180,19 @@
 					<annotations><annotation>org.pure4j.lambda.Java8API</annotation></annotations>
 				</configuration>
 			</plugin>
-			
+		 	<plugin>
+			    <groupId>org.jacoco</groupId>
+			    <artifactId>jacoco-maven-plugin</artifactId>
+			    <version>0.7.5.201505241946</version>
+			    <executions>
+	                <execution>
+	                    <phase>process-test-classes</phase>
+	                    <goals>
+	                        <goal>prepare-agent</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+			</plugin>			
 			<plugin>
 			    <groupId>org.eluder.coveralls</groupId>
 			    <artifactId>coveralls-maven-plugin</artifactId>

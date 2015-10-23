@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.PureMethodCallsImpureException;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.spec.pure.static_methods.StaticPureMethods;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 public final class SomeValueObjectBrokenExtend extends AbstractVO {
 

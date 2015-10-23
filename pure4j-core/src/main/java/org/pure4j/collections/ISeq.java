@@ -41,5 +41,9 @@ public interface ISeq<K> extends Counted, Seqable<K> {
 	 * @param o any object
 	 */
 	ISeq<K> cons(K o);
+	
+	int lastIndexOf(Object o);
+	
+	int indexOf(Object o);
 
 }

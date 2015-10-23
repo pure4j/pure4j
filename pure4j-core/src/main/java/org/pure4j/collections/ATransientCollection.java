@@ -38,13 +38,13 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 		return getWrapped().iterator();
 	}
 
-	@Pure(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	@Override
 	public Object[] toArray() {
 		return getWrapped().toArray();
 	}
 
-	@Pure(Enforcement.NOT_PURE)
+	@Pure(Enforcement.FORCE)
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return getWrapped().toArray(a);

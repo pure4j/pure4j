@@ -2,13 +2,13 @@ package org.pure4j.test.collections;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentHashSet;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentHashSetExample extends AbstractTest {
+public class PersistentHashSetExample extends AbstractCollectionTest {
 
 	@Pure
 	@ShouldBePure
@@ -68,6 +68,12 @@ public class PersistentHashSetExample extends AbstractTest {
 
 	}
 	
+	
+	@Pure
+	@ShouldBePure
+	public IPersistentCollection<String> getInstance() {
+		return new PersistentHashSet<String>();
+	}
 
 	private String[] makeSet(int i) {
 		String[] out = new String[i];

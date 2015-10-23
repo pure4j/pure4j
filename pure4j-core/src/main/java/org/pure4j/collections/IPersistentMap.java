@@ -33,5 +33,7 @@ public interface IPersistentMap<K, V> extends Iterable<Map.Entry<K, V>>, Counted
 	ISeq<K> keySeq();
 	
 	ISeq<V> valueSeq();
+	
+	IPersistentMap<K, V> empty();
 
 }

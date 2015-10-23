@@ -1,7 +1,7 @@
 package org.pure4j.test.checker.spec.pure.callingnotinterfacepure;
 
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public class InterfaceNotPureOkCall {
 

@@ -16,8 +16,11 @@ import org.pure4j.model.ProjectModel;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.PurityChecker;
 import org.pure4j.processor.SpringProjectModelFactory;
+import org.pure4j.test.AbstractTest;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
-public class AbstractChecker {
+public class AbstractChecker extends AbstractTest {
 	
 	
 	@Pure(Enforcement.FORCE)
@@ -103,7 +106,7 @@ public class AbstractChecker {
 		
 		for (MemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
 			CausesError vals =mh.getAnnotation(this.getClass().getClassLoader(), CausesError.class);
-			for (Class<? extends Pure4JException> ex : vals.value()) {
+			for (Class<?> ex : vals.value()) {
 				fail = countException(errorSet, fail, ex);
 			}
 		}
@@ -136,17 +139,5 @@ public class AbstractChecker {
 			errorSet.remove(ex);
 		}
 		return fail;
-	}
-	
-	@Pure(Enforcement.FORCE)
-	public static void assertEquals(Object exp, Object act) {
-		if (!exp.equals(act)) {
-			throw new RuntimeException("Was expecting equality: "+exp+" and "+act);
-		}
-	}
-	
-	@Pure(Enforcement.FORCE) 
-	public static void log(String s) {
-		System.out.println(s);
 	}
 }

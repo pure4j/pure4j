@@ -1,6 +1,6 @@
 package org.pure4j.test.checker.spec.immutable.extending;
 
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public abstract class AbstractVO {
 

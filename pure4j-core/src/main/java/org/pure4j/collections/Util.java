@@ -19,9 +19,6 @@ import org.pure4j.annotations.pure.PureInterface;
 
 public class Util {
 
-	private Util() {
-	}
-	
 	@Pure
 	@SuppressWarnings("unchecked")
 	@PureInterface(Enforcement.NOT_PURE)
@@ -44,26 +41,6 @@ public class Util {
 		return o.hashCode();
 	}
 
-
-	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
-	static public int hashCombine(int seed, int hash) {
-		// a la boost
-		seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-		return seed;
-	}
-
-	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
-	static public Object ret1(Object ret, Object nil) {
-		return ret;
-	}
-
-	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
-	static public <K> ISeq<K> ret1(ISeq<K> ret, Object nil) {
-		return ret;
-	}
 
 	@Pure
 	@PureInterface(Enforcement.NOT_PURE)

@@ -2,7 +2,7 @@ package org.pure4j.test.checker.spec.pure.forced2;
 
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public class SomeForcedPure {
 

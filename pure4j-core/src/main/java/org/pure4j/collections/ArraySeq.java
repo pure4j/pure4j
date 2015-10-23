@@ -80,6 +80,11 @@ public class ArraySeq<K> extends ASeq<K> {
 		return new LongSeq(array, 0, true);
 	}
 	
+	@Pure(Enforcement.FORCE)
+	public static ByteSeq create(byte... array) {
+		return new ByteSeq(array, 0, true);
+	}
+	
 	
 	@Pure(Enforcement.FORCE)
 	public static ShortSeq create(short... array) {

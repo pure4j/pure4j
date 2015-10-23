@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.support.AbstractChecker;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 /**
  * A really bad java edge-case where you can create a mutable enum.  

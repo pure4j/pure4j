@@ -10,6 +10,8 @@
 
 package org.pure4j.collections;
 
+import java.util.Map.Entry;
+
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 
@@ -45,5 +47,33 @@ public class MapEntry<K, V> extends AMapEntry<K, V> {
 	public V setValue(V value) {
 		throw new UnsupportedOperationException("Persistent Collections don't support changing map entries");
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (obj instanceof Entry<?,?>) {
+			Entry<?,?> other = (Entry<?,?>) obj;
+			if (_key == null) {
+				if (other.getKey() != null)
+					return false;
+			} else if (!_key.equals(other.getKey()))
+				return false;
+			
+			
+			if (_val == null) {
+				if (other.getValue() != null)
+					return false;
+			} else if (!_val.equals(other.getValue()))
+				return false;
+			
+			return true;
+		}
+		return false;
+	}
+	
+	
 
 }

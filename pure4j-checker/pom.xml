@@ -54,6 +54,13 @@
 			<version>1.5.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.pure4j</groupId>
+			<artifactId>pure4j-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -113,21 +120,6 @@
      				</execution>
    				</executions>
    			</plugin>
-   			
-   			<plugin>
-			    <groupId>org.jacoco</groupId>
-			    <artifactId>jacoco-maven-plugin</artifactId>
-			    <version>0.7.5.201505241946</version>
-			    <executions>
-	                <execution>
-	                    <phase>process-test-classes</phase>
-	                    <goals>
-	                        <goal>prepare-agent</goal>
-	                    </goals>
-	                </execution>
-	            </executions>
-			</plugin>
-   			
 		</plugins>
 	</build>
 	

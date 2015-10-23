@@ -3,7 +3,7 @@ package org.pure4j.test.checker.spec.mutable_unshared.visitor;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public class VisitorExample {
 	

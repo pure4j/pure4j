@@ -6,15 +6,31 @@ import java.util.Map.Entry;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.APersistentMap;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.ITransientMap;
 import org.pure4j.collections.IterableSeq;
 import org.pure4j.collections.PersistentTreeMap;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentTreeMapExample extends AbstractTest {
+public class PersistentTreeMapExample extends AbstractMapTest {
 
+	@Test
+	@Pure
+	@ShouldBePure
+	public void soakTest() {
+		mapSoakTest(new PersistentTreeMap<String, String>());
+	}
+	
+	@Pure
+	@ShouldBePure
+	@Test(expected=RuntimeException.class)
+	public void exTest() {
+		new PersistentTreeMap<String, String>().assocEx("a", "b").assocEx("a", "c");
+		
+	}
+	
+	
 	@Pure
 	@ShouldBePure
 	public static void pureMethod(PersistentTreeMap<String, String> in, int expectedKeys, int expectedVals) {
@@ -66,6 +82,15 @@ public class PersistentTreeMapExample extends AbstractTest {
 		tm.put("blah", "grommet");
 		
 		assertEquals(new ArraySeq<String>("blah", "fiona", "peter","rob", "testy"), new IterableSeq<String>(tm.persistent().keyIterator()));
+		
+		assertEquals(new ArraySeq<String>("blah", "fiona", "peter","rob", "testy"), tm.persistent().keySeq());
+		assertEquals(new ArraySeq<String>("testy", "rob", "peter","fiona"), APersistentMap.KeySeq.create(phm.rseq()));
+		assertEquals(new ArraySeq<String>("peter","rob", "testy"), APersistentMap.KeySeq.create(phm.seqFrom("peter", true)));
+		assertEquals(new ArraySeq<String>("peter","fiona"), APersistentMap.KeySeq.create(phm.seqFrom("peter", false)));
+		assertEquals(new ArraySeq<String>("testy", "rob", "peter","fiona"), APersistentMap.KeySeq.create(phm.seqFrom("zzz", false)));
+		assertEquals(null, APersistentMap.KeySeq.create(phm.seqFrom("zzz", true)));
+		assertEquals(false, phm.empty().reverseIterator().hasNext());
+		assertEquals("blah", tm.persistent().seq().first().getKey());
 		
 	}
 	

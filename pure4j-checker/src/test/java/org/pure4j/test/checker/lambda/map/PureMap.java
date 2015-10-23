@@ -9,8 +9,8 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.collections.ISeq;
 import org.pure4j.lambda.PureCollectors;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.support.AbstractChecker;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 public class PureMap extends AbstractChecker {
 

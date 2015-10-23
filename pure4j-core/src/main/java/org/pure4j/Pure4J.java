@@ -165,8 +165,10 @@ public class Pure4J {
 		
 		// ok, we have to check each element in turn
 		for (int i = 0; i < fields.length; i++) {
-			component = fields[i].getClass();
-			RuntimeImmutabilityChecker.throwIfClassNotImmutable(component);
+			if (fields[i] != null) {
+				component = fields[i].getClass();
+				RuntimeImmutabilityChecker.throwIfClassNotImmutable(component);
+			}
 		}
 	} 
 }

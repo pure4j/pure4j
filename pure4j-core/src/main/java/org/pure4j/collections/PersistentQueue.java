@@ -34,7 +34,6 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	final int cnt;
 	final ISeq<K> f;
 	final PersistentVector<K> r;
-	// static final int INITIAL_REAR_SIZE = 4;
 	
 	@IgnoreImmutableTypeCheck
 	private int _hasheq = -1;
@@ -46,9 +45,9 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	}
 
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ISeq))
+		if (!(obj instanceof Seqable))
 			return false;
-		ISeq<K> ms = PureCollections.seq(obj);
+		ISeq<?> ms = ((Seqable<?>)obj).seq();
 		for (ISeq<K> s = seq(); s != null; s = s.next(), ms = ms.next()) {
 			if (ms == null || !Util.equals(s.first(), ms.first()))
 				return false;
@@ -196,16 +195,16 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 	public boolean containsAll(Collection<?> c) {
 		Pure4J.immutable(c);
 		for (Object o : c) {
-			if (contains(o))
-				return true;
+			if (!contains(o))
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Pure(Enforcement.FORCE)
 	public <E> E[] toArray(E[] a) {
-		return (E[]) PureCollections.seqToNewArray(seq(), a);
+		return (E[]) PureCollections.seqToNewArray(seq(), a, false);
 	}
 	
 	public boolean isEmpty() {

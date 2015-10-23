@@ -379,8 +379,8 @@ public class PersistentVector<K> extends APersistentVector<K> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public IPersistentCollection<K> empty() {
-		return (IPersistentCollection<K>) EMPTY;
+	public PersistentVector<K> empty() {
+		return (PersistentVector<K>) EMPTY;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -439,7 +439,11 @@ public class PersistentVector<K> extends APersistentVector<K> {
 
 	@Override
 	public PersistentVector<K> addAll(ISeq<? extends K> items) {
-		return (PersistentVector<K>) super.addAll(items);
+		PersistentVector<K> out = this;
+		for(K k: items) {
+			out = out.cons(k);
+		}
+		return out;
 	}
 	
 	

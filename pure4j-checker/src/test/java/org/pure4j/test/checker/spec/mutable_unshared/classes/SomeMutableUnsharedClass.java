@@ -9,8 +9,8 @@ import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.exception.PureMethodReturnNotImmutableException;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
 @MutableUnshared
 public class SomeMutableUnsharedClass {

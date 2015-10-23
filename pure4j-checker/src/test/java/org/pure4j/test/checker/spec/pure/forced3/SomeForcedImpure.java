@@ -3,7 +3,7 @@ package org.pure4j.test.checker.spec.pure.forced3;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.PureMethodCallsImpureException;
-import org.pure4j.test.checker.support.CausesError;
+import org.pure4j.test.CausesError;
 
 public class SomeForcedImpure {
 

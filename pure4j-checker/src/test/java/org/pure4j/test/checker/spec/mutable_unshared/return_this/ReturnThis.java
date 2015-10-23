@@ -2,8 +2,8 @@ package org.pure4j.test.checker.spec.mutable_unshared.return_this;
 
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
 @MutableUnshared
 public class ReturnThis {

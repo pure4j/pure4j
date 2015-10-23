@@ -17,4 +17,12 @@ public interface IPersistentStack<K> extends IPersistentCollection<K> {
 	K peek();
 
 	IPersistentStack<K> pop();
+	
+	IPersistentStack<K> cons(K o);
+
+	IPersistentStack<K> empty();
+	
+	ITransientCollection<K> asTransient();
+	
+	IPersistentStack<K> addAll(ISeq<? extends K> items);
 }

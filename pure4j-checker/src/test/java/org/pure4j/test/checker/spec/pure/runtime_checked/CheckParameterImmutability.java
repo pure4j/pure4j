@@ -11,8 +11,8 @@ import org.pure4j.exception.MissingImmutableParameterCheckException;
 import org.pure4j.exception.PureMethodAccessesNonFinalFieldException;
 import org.pure4j.exception.PureMethodParameterNotImmutableException;
 import org.pure4j.immutable.ClassNotImmutableException;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 
 public class CheckParameterImmutability {
 

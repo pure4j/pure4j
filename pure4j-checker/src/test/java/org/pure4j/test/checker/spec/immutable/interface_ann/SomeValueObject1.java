@@ -1,7 +1,7 @@
 package org.pure4j.test.checker.spec.immutable.interface_ann;
 
 import org.pure4j.Pure4J;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public class SomeValueObject1 implements SomeInterface {
 

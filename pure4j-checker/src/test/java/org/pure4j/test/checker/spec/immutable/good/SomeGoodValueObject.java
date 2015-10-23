@@ -3,8 +3,8 @@ package org.pure4j.test.checker.spec.immutable.good;
 import java.math.BigInteger;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.spec.pure.static_methods.StaticPureMethods;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 /**
  * Decent immutable value implementation.

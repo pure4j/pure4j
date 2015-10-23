@@ -1,21 +1,23 @@
 package org.pure4j.test.collections;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.IPersistentVector;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientVector;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentVectorExample extends AbstractTest {
+public class PersistentVectorExample extends AbstractCollectionTest {
 	
 	@Pure
 	@ShouldBePure
@@ -29,6 +31,13 @@ public class PersistentVectorExample extends AbstractTest {
 		
 		return total;
 	}
+	
+	@Pure
+	@ShouldBePure
+	public IPersistentCollection<String> getInstance() {
+		return new PersistentVector<String>();
+	}
+	
 	
 	@Test
 	@Pure
@@ -81,7 +90,8 @@ public class PersistentVectorExample extends AbstractTest {
 		// no-args
 		pv = new PersistentVector<String>();
 		pv = pv.addAll(new ArraySeq<String>(someStrings(60))); 
-		Assert.assertEquals(pv, Arrays.asList(someStrings(60)));
+		List<String> elems = Arrays.asList(someStrings(60));
+		Assert.assertEquals(pv, elems);
 
 	}
 

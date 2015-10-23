@@ -7,8 +7,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.collections.PersistentVector;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.support.AbstractChecker;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 public class PureReduce extends AbstractChecker {
 

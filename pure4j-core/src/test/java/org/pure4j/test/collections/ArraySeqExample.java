@@ -29,6 +29,13 @@ public class ArraySeqExample extends AbstractTest {
 		if (in instanceof List) {
 			assertEquals(0, ((List<K>)in).indexOf(expectedFirst));
 		}
+		
+		assertEquals(0, in.lastIndexOf(expectedFirst));
+		assertEquals(-1, in.lastIndexOf("sdkfhsk"));
+		assertEquals(0, in.indexOf(expectedFirst));
+		assertEquals(-1, in.indexOf("sjfhgds"));
+		assertEquals(-1, in.indexOf(null));
+		assertEquals(-1, in.lastIndexOf(null));
 	}
 
 	
@@ -38,12 +45,14 @@ public class ArraySeqExample extends AbstractTest {
 		
 		// check persistence
 		checkSeq(new ArraySeq<String>("A", "B", "C"), 3, "A");		// strings (i.e. objects)
-		checkSeq(ArraySeq.create( 5, 5, 3 ), 3, 5);	// ints
+		checkSeq(ArraySeq.create( 5, 6, 3 ), 3, 5);	// ints
 		ISeq<Character> chars = ArraySeq.create('d', 'e', 'f', 'g' );	//chars
 		checkSeq(chars, 4, 'd');
 		checkSeq(chars.next(), 3, 'e');
-		
+		checkSeq(ArraySeq.create((short) 5, (short) 4, (short) 9), 3, (short) 5);  // short
 		checkSeq(ArraySeq.create(5f, 4f, 9f), 3, 5f);  // float
+		checkSeq(ArraySeq.create(5l, 4l, 9l), 3, 5l);  // long
+		checkSeq(ArraySeq.create((byte) 5, (byte) 4, (byte) 9), 3, (byte) 5);  // long
 		checkSeq(ArraySeq.create(5d, 4d, 9d ), 3, 5d);  // double
 		checkSeq(new ArraySeq.BooleanSeq(true, false ), 2, true);  // boolean
 		

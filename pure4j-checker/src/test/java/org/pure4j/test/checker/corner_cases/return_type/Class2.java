@@ -1,7 +1,7 @@
 package org.pure4j.test.checker.corner_cases.return_type;
 
 import org.pure4j.Pure4J;
-import org.pure4j.test.checker.support.ShouldBePure;
+import org.pure4j.test.ShouldBePure;
 
 public class Class2 implements Class1 {
 

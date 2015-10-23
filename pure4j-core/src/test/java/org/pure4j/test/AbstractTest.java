@@ -7,6 +7,9 @@ public class AbstractTest {
 
 	@Pure(Enforcement.FORCE)
 	public static void assertEquals(Object exp, Object act) {
+		if ((exp == null) && (act == null)) {
+			return;
+		}
 		if (!exp.equals(act)) {
 			throw new RuntimeException("Was expecting equality: "+exp+" and "+act);
 		}

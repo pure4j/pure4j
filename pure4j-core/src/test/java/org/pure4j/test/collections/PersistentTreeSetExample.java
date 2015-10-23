@@ -8,13 +8,13 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.IPersistentSet;
 import org.pure4j.collections.ITransientSet;
 import org.pure4j.collections.PersistentTreeSet;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentTreeSetExample extends AbstractTest {
+public class PersistentTreeSetExample extends AbstractCollectionTest {
 
 	@Pure
 	@ShouldBePure
@@ -28,6 +28,12 @@ public class PersistentTreeSetExample extends AbstractTest {
 		assertEquals(l1Str, inStr);
 		
 		in.cons("bobob");
+	}
+	
+	@Pure
+	@ShouldBePure
+	public IPersistentCollection<String> getInstance() {
+		return new PersistentTreeSet<String>();
 	}
 	
 	@Test

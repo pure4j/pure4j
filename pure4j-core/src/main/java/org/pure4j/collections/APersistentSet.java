@@ -129,7 +129,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	@SuppressWarnings("unchecked")
 	@Pure(Enforcement.FORCE)	// due to param
 	public <T> T[] toArray(T[] a) {
-		return (T[]) PureCollections.seqToNewArray(seq(), a);
+		return (T[]) PureCollections.seqToNewArray(seq(), a, false);
 	}
 
 	public boolean isEmpty() {

@@ -277,12 +277,6 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 		return new ValIterator<K, V>(it);
 	}
 
-	int depth(Node t) {
-		if (t == null)
-			return 0;
-		return 1 + Math.max(depth(t.left()), depth(t.right()));
-	}
-
 	@SuppressWarnings("unchecked")
 	public V get(Object key, Object notFound) {
 		Pure4J.immutable(key, notFound);
@@ -912,5 +906,11 @@ public class PersistentTreeMap<K, V> extends APersistentMap<K, V> implements Rev
 	@Override
 	public ITransientMap<K, V> asTransient() {
 		return new TransientTreeMap<K, V>(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PersistentTreeMap<K, V> empty() {
+		return (PersistentTreeMap<K, V>) EMPTY;
 	}
 }

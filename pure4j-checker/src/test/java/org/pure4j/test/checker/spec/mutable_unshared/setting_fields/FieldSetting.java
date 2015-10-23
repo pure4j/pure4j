@@ -3,9 +3,9 @@ package org.pure4j.test.checker.spec.mutable_unshared.setting_fields;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.FieldTypeNotImmutableException;
+import org.pure4j.test.CausesError;
+import org.pure4j.test.ShouldBePure;
 import org.pure4j.test.checker.spec.immutable.broken_extend.SomeValueObjectBrokenExtend;
-import org.pure4j.test.checker.support.CausesError;
-import org.pure4j.test.checker.support.ShouldBePure;
 
 @MutableUnshared
 public class FieldSetting {

@@ -2,8 +2,8 @@ package org.pure4j.test.checker.spec.pure.state;
 
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.PureMethodOnNonImmutableClassException;
+import org.pure4j.test.CausesError;
 import org.pure4j.test.checker.spec.immutable.calls_super.SomeValueObject;
-import org.pure4j.test.checker.support.CausesError;
 
 public class SomeNonImmutableObject {
 

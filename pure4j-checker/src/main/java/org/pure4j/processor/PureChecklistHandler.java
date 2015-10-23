@@ -463,16 +463,9 @@ public class PureChecklistHandler {
 		String line = br.readLine();
 		while (line != null) {
 			String[] parts = line.trim().split(" ");
-			if (parts.length == 2) {
-				Enforcement impl = Enforcement.valueOf(parts[0]);
-				PureMethod pureMethod = new PureMethod(parts[1], impl, null);
-				pureChecklist.put(pureMethod.declaration, pureMethod);
-			} else {
-				Enforcement impl = Enforcement.valueOf(parts[0]);
-				Enforcement intf = Enforcement.valueOf(parts[1]);
-				PureMethod pureMethod = new PureMethod(parts[2], impl, intf);
-				pureChecklist.put(pureMethod.declaration, pureMethod);
-			}
+			Enforcement impl = Enforcement.valueOf(parts[0]);
+			PureMethod pureMethod = new PureMethod(parts[1], impl, null);
+			pureChecklist.put(pureMethod.declaration, pureMethod);
 			line = br.readLine();
 		}
 	}
@@ -480,9 +473,8 @@ public class PureChecklistHandler {
 	private static boolean isAnonymousInnerClass(String className) {
 		String tail = className.substring(className.lastIndexOf("$")+1);
 		boolean out = tail.matches("[0-9]*");
-		int mods = PureChecklistHandler.class.getModifiers();
+		//int mods = PureChecklistHandler.class.getModifiers();
 		return out;
-		
 	}
 	
 	
@@ -626,32 +618,6 @@ public class PureChecklistHandler {
 
 	public PureMethod getElementFor(MemberHandle mh) {
 		return pureChecklist.get(mh);
-	}
-
-	public static boolean methodIsVisible(Method m, Class<?> pureClass) {
-		if (Modifier.isPrivate(m.getModifiers())) {
-			return false;
-		}
-
-		if (Modifier.isProtected(m.getModifiers())) {
-			return false;
-		}
-
-		Class<?> onClass = m.getDeclaringClass();
-		while (pureClass != onClass) {
-			Method over;
-			try {
-				over = pureClass.getDeclaredMethod(m.getName(), m.getParameterTypes());
-				if (over != null) {
-					return false;
-				}
-			} catch (Exception e) {
-			}
-
-			pureClass = pureClass.getSuperclass();
-		}
-
-		return true;
 	}
 
 	public void doPureMethodChecks(Callback cb, ProjectModel pm) {

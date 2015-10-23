@@ -1,17 +1,19 @@
 package org.pure4j.test.collections;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.ITransientQueue;
 import org.pure4j.collections.PersistentQueue;
-import org.pure4j.test.AbstractTest;
 import org.pure4j.test.ShouldBePure;
 
-public class PersistentQueueExample extends AbstractTest {
+public class PersistentQueueExample extends AbstractCollectionTest {
 
+	public boolean isLifo() {
+		return false;
+	}
+	
 	@Pure
 	@ShouldBePure
 	public static void checkIt(PersistentQueue<String> in, int expectedSize, String expectedFirst) {
@@ -23,7 +25,11 @@ public class PersistentQueueExample extends AbstractTest {
 		assertEquals(expectedFirst, in.peek());
 	}
 	
-	
+	@Pure
+	@ShouldBePure
+	public IPersistentCollection<String> getInstance() {
+		return new PersistentQueue<String>();
+	}
 
 	@Test
 	@Pure

@@ -2,7 +2,7 @@ package org.pure4j.test.checker.corner_cases.both_annotations;
 
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.exception.ClassHasConflictingAnnotationsException;
-import org.pure4j.test.checker.support.CausesError;
+import org.pure4j.test.CausesError;
 
 @MutableUnshared
 public abstract class AnotherBrokenObject implements BrokenValueObject {
