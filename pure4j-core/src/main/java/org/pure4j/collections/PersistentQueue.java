@@ -122,6 +122,7 @@ public class PersistentQueue<K> implements IPersistentStack<K> {
 		this(0, null, null);
 	}
 	
+	@Pure
 	@SuppressWarnings("unchecked")
 	public static <K> PersistentQueue<K> emptyQueue() {
 		return (PersistentQueue<K>) EMPTY;
