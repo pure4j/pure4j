@@ -42,8 +42,7 @@ public class IterableSeq<K> extends ASeq<K> {
 	}
 
 	public IterableSeq(Iterator<K> iter) {
-		this.iter = iter;
-		state = new State();
+		this(iter,new State());
 		this.state.val = state;
 		this.state._rest = state;
 	}

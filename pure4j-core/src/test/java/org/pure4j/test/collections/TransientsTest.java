@@ -61,6 +61,10 @@ public class TransientsTest {
 		tq.add("ellie");
 		tq.poll();
 		Assert.assertEquals(Arrays.asList("ellie"), tq);
+		tq.offer("fred");
+		Assert.assertEquals("ellie", tq.peek());
+		Assert.assertEquals("ellie", tq.element());
+		
 	}
 	
 	@Test

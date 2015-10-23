@@ -38,6 +38,23 @@ public class PersistentVectorExample extends AbstractCollectionTest {
 		return new PersistentVector<String>();
 	}
 	
+	@Test
+	@Pure
+	@ShouldBePure
+	public void testBusinessLogic2() {
+		PersistentVector<Integer> pl = new PersistentVector<Integer>(Arrays.asList(0,1,2,3,4,5));
+		pl = pl.assocN(0, 10);
+		pl = pl.assocN(6, 6);
+		assertEquals(10, pl.get(0));
+		assertEquals(6, pl.get(6));
+		assertEquals(7, pl.size());
+		assertEquals(3, pl.nth(3));
+		assertEquals(20, pl.nth(10, 20));
+		
+		
+		
+	}
+	
 	
 	@Test
 	@Pure
@@ -71,6 +88,13 @@ public class PersistentVectorExample extends AbstractCollectionTest {
 		IPersistentVector<Integer> toPers = trans.persistent();
 		assertEquals("[6, 1, 2, 5, 4, 3, 0, 64]", toPers.toString());
 		assertEquals("[6, 1, 2, 5, 4, 3, 0]", pv.toString());
+		
+		PersistentVector<Integer> pint = new PersistentVector<Integer>(5, 6, 3, 1, 5);
+		int sum = 0;
+		for (Integer integer : pint.subList(2, 4)) {
+			sum += integer;
+		}
+		assertEquals(4, sum);
 	}
 	
 	@Test

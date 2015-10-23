@@ -26,8 +26,8 @@ public class PersistentHashSetExample extends AbstractCollectionTest {
 	public void sanityTestOfSet() {
 		
 		// check persistence
-		IPersistentSet<String> phm = new PersistentHashSet<String>("bob", "jeff", "gogo");
-		phm = phm.cons("spencer");
+		IPersistentSet<String> phm1 = new PersistentHashSet<String>("bob", "jeff", "gogo");
+		IPersistentSet<String> phm = phm1.cons("spencer");
 		pureMethod(phm, 4);
 		phm = phm.cons("spencera");
 		phm = phm.cons("spencerb");
@@ -41,6 +41,10 @@ public class PersistentHashSetExample extends AbstractCollectionTest {
 		set.remove("spencera");
 		IPersistentSet<String> out = set.persistent();
 		System.out.println(out);
+		
+		assertEquals(phm1, phm1.cons("bb").cons("jeff").disjoin("bb").disjoin("np"));
+		
+		assertEquals(0, PersistentHashSet.emptySet().size());
 	}
 	
 	@Test

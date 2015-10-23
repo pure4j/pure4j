@@ -50,6 +50,9 @@ public class PersistentListExample extends AbstractCollectionTest {
 		ITransientCollection<Integer> tran = pl.asTransient();
 		tran.add(77);
 		assertEquals("[10, 5, 77]", tran.persistent().toString());
+		
+		assertEquals(0, PersistentList.emptySeq().size());
+		assertEquals(0, PersistentList.emptyList().cons("blob").pop().size());
 	}
 	
 	@Test

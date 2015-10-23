@@ -137,24 +137,21 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	public Iterator<K> iterator() {
-		if (impl instanceof IMapIterable)
-			return ((IMapIterable<K, ?>) impl).keyIterator();
-		else
-			return new IPureIterator<K>() {
-				private final Iterator<Entry<K, K>> iter = impl.iterator();
+		return new IPureIterator<K>() {
+			private final Iterator<Entry<K, K>> iter = impl.iterator();
 
-				public boolean hasNext() {
-					return iter.hasNext();
-				}
+			public boolean hasNext() {
+				return iter.hasNext();
+			}
 
-				public K next() {
-					return iter.next().getKey();
-				}
+			public K next() {
+				return iter.next().getKey();
+			}
 
-				public void remove() {
-					throw new UnsupportedOperationException();
-				}
-			};
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 	
 	@Pure

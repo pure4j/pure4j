@@ -1,6 +1,8 @@
 package org.pure4j.test.collections;
 
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.collections.APersistentMap.KeySeq;
+import org.pure4j.collections.APersistentMap.ValSeq;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.IterableSeq;
 import org.pure4j.collections.MapEntry;
@@ -48,6 +50,10 @@ public class AbstractMapTest extends AbstractTest {
 		
 		assertEquals(keys, new PersistentHashSet<String>(someMap.keySeq()));
 		assertEquals(values,  new PersistentHashSet<String>(someMap.valueSeq()));
+		
+		assertEquals(keys, new PersistentHashSet<String>(KeySeq.createFromMap(someMap)));
+		assertEquals(values,  new PersistentHashSet<String>(ValSeq.createFromMap(someMap)));
+		
 		
 		assertEquals(keys, new PersistentHashSet<String>(new IterableSeq<String>(someMap.keyIterator())));
 		assertEquals(values, new PersistentHashSet<String>(new IterableSeq<String>(someMap.valIterator())));

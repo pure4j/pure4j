@@ -1,12 +1,16 @@
 package org.pure4j.test.collections;
 
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.IPersistentList;
 import org.pure4j.collections.IPersistentStack;
+import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
 import org.pure4j.test.AbstractTest;
 
@@ -17,6 +21,14 @@ public abstract class AbstractCollectionTest extends AbstractTest {
 	public boolean isLifo() {
 		return true;
 	}
+	
+	@Test
+	public void testIterator() {
+		getInstance().cons("g").cons("b");
+		
+		
+	}
+	
 	
 	@Test
 	public void soakTestCollection() {
@@ -44,10 +56,26 @@ public abstract class AbstractCollectionTest extends AbstractTest {
 			assertEquals(arrayseq, new ArraySeq<Object>((Object[]) stack.toArray()));
 		}
 		
+		if (pc instanceof List) {
+			@SuppressWarnings("unchecked")
+			ListIterator<String> li = ((List<String>) pc).listIterator();
+			while (li.hasNext()) {
+				li.next();
+			}
+		}
+		
+		if (pc instanceof Iterable) {
+			Iterator<String> i = pc.iterator();
+			while (i.hasNext()) {
+				i.next();
+			}
+		}
+		
 		if (pc instanceof IPersistentList) {
 			IPersistentList<String> pl = (IPersistentList<String>) pc;
 //			pl.
 		}
+	
 		
 		pc = pc.cons("something").cons("else");
 		pc = pc.addAll(new ArraySeq<String>("a", "b"));
@@ -55,6 +83,15 @@ public abstract class AbstractCollectionTest extends AbstractTest {
 		assertEquals(true, pc.containsAll(new PersistentList<String>("something","else")));
 		assertEquals(false, pc.containsAll(new PersistentList<String>("something","happened")));
 		assertEquals(pc, pc.asTransient().persistent());
+		assertEquals(0, pc.empty().size());
+		
+		pc = pc.empty().cons("3").cons("2").cons("1");
+		PersistentHashSet<String> pc2 = new PersistentHashSet<String>();
+		for (String string : pc) {
+			pc2 = pc2.cons(string);
+		}
+		
+		assertEquals(pc2, new PersistentHashSet<String>(pc));
 	}
 	
 	@Test(expected=RuntimeException.class)

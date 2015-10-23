@@ -33,8 +33,7 @@ public class EnumerationSeq<K> extends ASeq<K> {
 	}
 
 	public EnumerationSeq(Enumeration<K> iter) {
-		this.iter = iter;
-		state = new State();
+		this(iter,new State());
 		this.state.val = state;
 		this.state._rest = state;
 	}
