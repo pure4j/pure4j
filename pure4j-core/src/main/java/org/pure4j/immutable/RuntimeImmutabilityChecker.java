@@ -144,21 +144,21 @@ public class RuntimeImmutabilityChecker {
 	}
 	
 	
-	
-	
-	public static void throwIfTypeNotImmutable(Type t) {
-		if (t instanceof Class) {
-			throwIfClassNotImmutable((Class<?>) t);
-		} else if (t instanceof ParameterizedType) {
-			throw new ClassNotImmutableException("Type not supported: " + t);
-		} else if (t instanceof TypeVariable) {
-			throw new ClassNotImmutableException("Type not supported: " + t);
-		} else if (t instanceof GenericArrayType) {
-			throw new ClassNotImmutableException("Type not supported: " + t);
-		} else if (t instanceof WildcardType) {
-			throw new ClassNotImmutableException("Type not supported: " + t);
-		} else {
-			throw new ClassNotImmutableException("Type not supported: " + t);
-		}
-	}
+//	
+//	
+//	public static void throwIfTypeNotImmutable(Type t) {
+//		if (t instanceof Class) {
+//			throwIfClassNotImmutable((Class<?>) t);
+//		} else if (t instanceof ParameterizedType) {
+//			throw new ClassNotImmutableException("Type not supported: " + t);
+//		} else if (t instanceof TypeVariable) {
+//			throw new ClassNotImmutableException("Type not supported: " + t);
+//		} else if (t instanceof GenericArrayType) {
+//			throw new ClassNotImmutableException("Type not supported: " + t);
+//		} else if (t instanceof WildcardType) {
+//			throw new ClassNotImmutableException("Type not supported: " + t);
+//		} else {
+//			throw new ClassNotImmutableException("Type not supported: " + t);
+//		}
+//	}
 }
