@@ -79,16 +79,6 @@ public class PureCollections {
 		return i;
 	}
 
-	@SuppressWarnings("rawtypes")
-	static public ISeq next(Object x) {
-		if (x instanceof ISeq)
-			return ((ISeq) x).next();
-		ISeq seq = seq(x);
-		if (seq == null)
-			return null;
-		return seq.next();
-	}
-
 	@Pure
 	@SuppressWarnings("unchecked")
 	static public <K> ISeq<K> cons(K x, Object coll) {
