@@ -288,6 +288,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 
 	
+	@MutableUnshared
 	private static final class TemporaryHashMap<K, V> {
 		final AtomicReference<Thread> edit;
 		volatile INode root;
