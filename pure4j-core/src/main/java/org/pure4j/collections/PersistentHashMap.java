@@ -11,11 +11,9 @@
 package org.pure4j.collections;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.pure4j.Pure4J;
@@ -285,12 +283,12 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return (hash >>> shift) & 0x01f;
 	}
 
-	public TemporaryHashMap<K, V> asTransient() {
-		return new TemporaryHashMap<K, V>(this);
+	public TransientHashMap<K, V> asTransient() {
+		return new TransientHashMap<K, V>(this);
 	}
 
 	
-	private static final class TemporaryHashMap<K, V> implements ITransientMap<K, V> {
+	private static final class TemporaryHashMap<K, V> {
 		final AtomicReference<Thread> edit;
 		volatile INode root;
 		volatile int count;
@@ -298,72 +296,14 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		volatile V nullValue;
 		final Box leafFlag = new Box(null);
 
-		public ITransientMap<K, V> conj(Entry<K, V> o) {
-			ensureEditable();
-			return assoc(o.getKey(), o.getValue());
-		}
-
-		public final V valAt(Object key) {
-			return valAt(key, null);
-		}
-
-		public final ITransientMap<K,V> assoc(K key, V val) {
+		public final TemporaryHashMap<K,V> assoc(K key, V val) {
 			ensureEditable();
 			return doAssoc(key, val);
 		}
 
-		public final ITransientMap<K, V> without(Object key) {
-			ensureEditable();
-			return doWithout(key);
-		}
-
-		public final IPersistentMap<K, V> persistent() {
-			ensureEditable();
-			return doPersistent();
-		}
-
-		public final V valAt(Object key, V notFound) {
-			ensureEditable();
-			return doValAt(key, notFound);
-		}
-
-		public final int size() {
-			ensureEditable();
-			return dosize();
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return size() == 0;
-		}
-		
-		@Override
-		public V get(Object key) {
-			return doValAt(key, null);
-		}
-		@Override
 		public V put(K key, V value) {
 			doAssoc(key, value);
 			return value;
-		}
-		@Override
-		public V remove(Object key) {
-			V value = doValAt(key, null);
-			doWithout(key);
-			return value;
-		}
-		
-		@Override
-		public void putAll(Map<? extends K, ? extends V> m) {
-			for (Map.Entry<? extends K, ? extends V> elem : m.entrySet()) {
-				doAssoc(elem.getKey(), elem.getValue());
-			}
-		}
-
-
-		TemporaryHashMap(PersistentHashMap<K, V> m) {
-			this(new AtomicReference<Thread>(Thread.currentThread()), m.root,
-					m.count, m.hasNull, m.nullValue);
 		}
 
 		TemporaryHashMap(AtomicReference<Thread> edit, INode root, int count,
@@ -400,103 +340,10 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 			return this;
 		}
 
-		TemporaryHashMap<K, V> doWithout(Object key) {
-			if (key == null) {
-				if (!hasNull)
-					return this;
-				hasNull = false;
-				nullValue = null;
-				this.count--;
-				return this;
-			}
-			if (root == null)
-				return this;
-			// Box leafFlag = new Box(null);
-			leafFlag.val = null;
-			INode n = root.without(edit, 0, hash(key), key, leafFlag);
-			if (n != root)
-				this.root = n;
-			if (leafFlag.val != null)
-				this.count--;
-			return this;
-		}
-
-		PersistentHashMap<K, V> doPersistent() {
-			edit.set(null);
-			return new PersistentHashMap<K, V>(count, root, hasNull, nullValue);
-		}
-
-		@SuppressWarnings("unchecked")
-		V doValAt(Object key, V notFound) {
-			if (key == null)
-				if (hasNull)
-					return nullValue;
-				else
-					return notFound;
-			if (root == null)
-				return notFound;
-			return (V) root.find(0, hash(key), key, notFound);
-		}
-
-		int dosize() {
-			return count;
-		}
-
 		void ensureEditable() {
 			if (edit.get() == null)
 				throw new IllegalAccessError(
 						"Transient used after persistent! call");
-		}
-
-		@Override
-		public boolean containsKey(Object key) {
-			Pure4J.immutable(key);
-			if (key == null)
-				return hasNull;
-			return (root != null) ? root.find(0, hash(key), key, NOT_FOUND) != NOT_FOUND
-					: false;
-		}
-
-		/**
-		 * Currently very expensive
-		 */
-		@Override
-		public boolean containsValue(Object value) {
-			return values().contains(value);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public void clear() {
-			this.root = EMPTY.root;
-			this.count = 0;
-			this.hasNull = EMPTY.hasNull;
-			this.nullValue = (V) EMPTY.nullValue;
-		}
-
-		@Override
-		public Set<K> keySet() {
-			return persistent().keySet();
-		}
-
-		@Override
-		public Collection<V> values() {
-			return persistent().values();
-		}
-
-		@Override
-		public Set<java.util.Map.Entry<K, V>> entrySet() {
-			return persistent().entrySet();
-		}
-
-		@Override
-		public ISeq<K> keySeq() {
-			return new IterableSeq<K>(keySet());
-		}
-
-		@Override
-		public ISeq<V> valueSeq() {
-			return new IterableSeq<V>(values());
 		}
 	}
 
