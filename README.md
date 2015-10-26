@@ -91,15 +91,17 @@ Also provided are subclasses of existing Java Collections, having the `@MutableU
 
 There are many methods in the Java language which are already pure (no side effects, deterministic) and many classes which produce immutable objects (e.g. String, Integer, LocalDate).   
 
-This library keeps track of these and allows your pure functions to use existing pure functions in Java.
+This library keeps track of these and allows your pure functions to use existing pure functions in Java.  
 
-Tutorial
---------
+Tutorials
+---------
 
-See the tutorial [here](docs/tutorial1.md). 
+See the first tutorial [here](docs/tutorial1.md). 
 
 There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
 Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
+
+[Tutorial On Persistent Collections](docs/tutorial_collections.md).
 
 FAQ
 ---
