@@ -17,8 +17,6 @@ are immutable once constructed.  Whilst the basic implementations were written b
 * Simplifying the inheritance hierarchy of the interfaces
 * Adding element checking, so that only immutable elements can be added to the collections (this prevents the collection's contents changing, ever).
 
-#### List Of Classes
-
 |Persistent Collection|Original Java Collection|Implements|
 |---------------------|------------------------|----------|
 |PersistentHashMap    |HashMap                 |Map       |
@@ -62,7 +60,6 @@ Each persistent collection class has a method to convert it back to a transient 
 * Checks elements being added to make sure they are immutable.
 * Has the `@MutableUnshared` annotation ([mutable unshared tutorial](tutorial_mutable_unshared.md)).
 * Is implementation pure.
-
 
 |Transient Collection|Wraps
 |--------------------|--------------- 
