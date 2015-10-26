@@ -2,10 +2,6 @@ package org.pure4j.collections;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.RandomAccess;
-import java.util.regex.Matcher;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;

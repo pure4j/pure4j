@@ -192,7 +192,7 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 		return assoc(key, val);
 	}
 
-	public IPersistentMap<K, V> without(Object key) {
+	public PersistentHashMap<K, V> without(Object key) {
 		Pure4J.immutable(key);
 		if (key == null)
 			return hasNull ? new PersistentHashMap<K, V>(count - 1, root,
@@ -290,15 +290,76 @@ public class PersistentHashMap<K, V> extends APersistentMap<K, V> implements IMa
 	}
 
 	
-	private static final class TemporaryHashMap<K, V> extends ATemporaryMap<K, V> {
+	private static final class TemporaryHashMap<K, V> implements ITransientMap<K, V> {
 		final AtomicReference<Thread> edit;
 		volatile INode root;
 		volatile int count;
 		volatile boolean hasNull;
 		volatile V nullValue;
 		final Box leafFlag = new Box(null);
+
+		public ITransientMap<K, V> conj(Entry<K, V> o) {
+			ensureEditable();
+			return assoc(o.getKey(), o.getValue());
+		}
+
+		public final V valAt(Object key) {
+			return valAt(key, null);
+		}
+
+		public final ITransientMap<K,V> assoc(K key, V val) {
+			ensureEditable();
+			return doAssoc(key, val);
+		}
+
+		public final ITransientMap<K, V> without(Object key) {
+			ensureEditable();
+			return doWithout(key);
+		}
+
+		public final IPersistentMap<K, V> persistent() {
+			ensureEditable();
+			return doPersistent();
+		}
+
+		public final V valAt(Object key, V notFound) {
+			ensureEditable();
+			return doValAt(key, notFound);
+		}
+
+		public final int size() {
+			ensureEditable();
+			return dosize();
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return size() == 0;
+		}
 		
+		@Override
+		public V get(Object key) {
+			return doValAt(key, null);
+		}
+		@Override
+		public V put(K key, V value) {
+			doAssoc(key, value);
+			return value;
+		}
+		@Override
+		public V remove(Object key) {
+			V value = doValAt(key, null);
+			doWithout(key);
+			return value;
+		}
 		
+		@Override
+		public void putAll(Map<? extends K, ? extends V> m) {
+			for (Map.Entry<? extends K, ? extends V> elem : m.entrySet()) {
+				doAssoc(elem.getKey(), elem.getValue());
+			}
+		}
+
 
 		TemporaryHashMap(PersistentHashMap<K, V> m) {
 			this(new AtomicReference<Thread>(Thread.currentThread()), m.root,

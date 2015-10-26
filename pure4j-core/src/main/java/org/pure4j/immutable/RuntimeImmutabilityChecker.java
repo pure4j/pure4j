@@ -1,10 +1,5 @@
 package org.pure4j.immutable;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -144,21 +139,5 @@ public class RuntimeImmutabilityChecker {
 	}
 	
 	
-//	
-//	
-//	public static void throwIfTypeNotImmutable(Type t) {
-//		if (t instanceof Class) {
-//			throwIfClassNotImmutable((Class<?>) t);
-//		} else if (t instanceof ParameterizedType) {
-//			throw new ClassNotImmutableException("Type not supported: " + t);
-//		} else if (t instanceof TypeVariable) {
-//			throw new ClassNotImmutableException("Type not supported: " + t);
-//		} else if (t instanceof GenericArrayType) {
-//			throw new ClassNotImmutableException("Type not supported: " + t);
-//		} else if (t instanceof WildcardType) {
-//			throw new ClassNotImmutableException("Type not supported: " + t);
-//		} else {
-//			throw new ClassNotImmutableException("Type not supported: " + t);
-//		}
-//	}
+//	3
 }

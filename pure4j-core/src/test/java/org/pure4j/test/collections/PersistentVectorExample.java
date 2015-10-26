@@ -3,6 +3,7 @@ package org.pure4j.test.collections;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 
 import junit.framework.Assert;
 
@@ -13,6 +14,7 @@ import org.pure4j.collections.IPersistentCollection;
 import org.pure4j.collections.IPersistentVector;
 import org.pure4j.collections.ISeq;
 import org.pure4j.collections.ITransientVector;
+import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
 import org.pure4j.test.ShouldBePure;
@@ -130,4 +132,65 @@ public class PersistentVectorExample extends AbstractCollectionTest {
 		
 		return out;
 	}
+	
+	@Pure
+	@ShouldBePure
+	@Test
+	public void collisionTest() {
+		PersistentVector<EasyCollider> items = new PersistentVector<EasyCollider>();
+		
+		for (int i = 0; i < 200; i++) {
+			items = items.cons(new EasyCollider("item"+i));
+		}
+		
+		assertEquals(200, items.size());
+		
+		for (int i = 0; i < 100; i = i+2) {
+			items = items.assocN(i*2, new EasyCollider("item"+i));
+		}
+		
+		assertEquals(200, items.size());
+		
+		for (int i = 0; i < 50; i++) {
+			items = items.pop();
+		}
+		
+		assertEquals(150, items.size());
+		
+		
+		int count = 0;
+		for (EasyCollider entry : items.seq()) {
+			if (entry != null) 
+				count ++;
+		}
+		assertEquals(150, count);
+		
+		
+		
+		PersistentVector<EasyCollider> copy = new PersistentVector<EasyCollider>(items);
+		assertEquals(150, copy.size());
+		
+	}
+	
+	@Pure
+	@ShouldBePure
+	@Test
+	public void constructionCollisionTest() {
+		PersistentVector<EasyCollider> items = new PersistentVector<EasyCollider>();
+		
+		for (int i = 0; i < 200; i++) {
+			items = items.cons(new EasyCollider("item"+(i % 10)));
+		}
+		
+		assertEquals(200, items.size());
+		
+		ISeq<EasyCollider> seq = items.seq();
+		for (EasyCollider entry : items.seq()) {
+			seq = seq.cons(entry);		// doubles the whole seq
+		}
+		
+		items = new PersistentVector<EasyCollider>(seq);
+		assertEquals(400, items.size());
+	}
+
 }
