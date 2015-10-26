@@ -75,7 +75,7 @@ Each persistent collection class has a method to convert it back to a transient 
 |TransientVector     |ArrayList
 
 As with the persistent collections, there is a method `persistent()` which converts the transient implementation into a persistent one.  Transient collections are 
-typically faster than persistent collections, if that's what you need.
+typically faster than persistent collections, if that's what you need.  Otherwise, you may as well use the persistent collections.
 
 
 ### `ISeq`s
@@ -121,6 +121,23 @@ Pass a varargs-style array to the constructor to initialise the contents via an 
 ##### No-args (pure)
 
 Creates an empty collection.
+
+### A Note On Performance
+
+For the persistent collections, which always construct new versions of themselves each time an object is added or removed, an obvious question is 
+"Doesn't this destroy the performance of the JVM?".  
+
+Good question.  Using immutable values changes the performance profile of the application.  But, does it make it better or worse? 
+
+Certainly, adding a pair to a hash map involves more object construction than before.  There is likely to be more garbage collection.
+But, on the other hand, you wont have to make defensive copies.  So, it's likely to be *a bit* worse.  
+
+However, remember that these collections are taken from the Clojure world:  and high-throughput systems like Apache Storm are written
+in that, so I would argue that often times, these collections are *good enough*.
+
+Additionally, there are clever data structures being used here which aim to minimize the memory and CPU impact of the change.  So, adding a new
+element to a 10,000 element array does *not* mean an entirely new copy of the array in memory:   adding and removing elements has something like
+log N cost each time.
 
 
 
