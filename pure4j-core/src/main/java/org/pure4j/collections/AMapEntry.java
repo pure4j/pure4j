@@ -12,6 +12,7 @@
 
 package org.pure4j.collections;
 
+
 public abstract class AMapEntry<K, V> implements IMapEntry<K, V> {
 
 

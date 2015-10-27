@@ -14,13 +14,19 @@ package org.pure4j.collections;
 
 import java.io.Serializable;
 
+import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
+
 final public class Cons<K> extends ASeq<K> implements Serializable {
 
 	private static final long serialVersionUID = -5751064091837549225L;
+
+	@IgnoreImmutableTypeCheck
 	private final K _first;
 	private final ISeq<K> _more;
 
 	public Cons(K first, ISeq<K> _more) {
+		Pure4J.immutable(first);
 		this._first = first;
 		this._more = _more;
 	}

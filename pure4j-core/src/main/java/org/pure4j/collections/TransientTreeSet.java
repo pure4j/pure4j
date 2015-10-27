@@ -97,7 +97,7 @@ public class TransientTreeSet<T> extends ATransientCollection<T> implements ITra
 	
 	@Override
 	public ISeq<T> seq() {
-		return new IterableSeq<T>(wrapped);
+		return IterableSeq.create(wrapped.iterator());
 	}
 
 	@Override

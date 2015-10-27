@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.util.Iterator;
 
+import org.pure4j.annotations.pure.Pure;
+
 /**
  * Presents a Seq from an Iterable object (e.g. a collection).
  * By using {@link Iterable}, this class is able to own the iterator instance.
@@ -31,7 +33,8 @@ public class IterableSeq<K> extends ASeq<K> {
 		volatile Object _rest;
 	}
 
-	private static <K> IterableSeq<K> create(Iterator<K> iter) {
+	@Pure
+	public static <K> IterableSeq<K> create(Iterator<K> iter) {
 		if (iter.hasNext())
 			return new IterableSeq<K>(iter);
 		return null;
@@ -48,6 +51,10 @@ public class IterableSeq<K> extends ASeq<K> {
 	}
 
 	IterableSeq(Iterator<K> iter, State state) {
+		if (!iter.hasNext()) {
+			throw new IllegalStateException("An IterableSeq must have at least one element");
+		}
+		
 		this.iter = iter;
 		this.state = state;
 	}

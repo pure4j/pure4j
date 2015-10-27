@@ -32,10 +32,23 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 		return getWrapped().contains(o);
 	}
 
-	@Pure(Enforcement.NOT_PURE)
+	@PureInterface(Enforcement.NOT_PURE)
 	@Override
-	public Iterator<K> iterator() {
-		return getWrapped().iterator();
+	public IPureIterator<K> iterator() {
+		final Iterator<K> wi = getWrapped().iterator();
+		
+		return new IPureIterator<K>() {
+
+			@Override
+			public boolean hasNext() {
+				return wi.hasNext();
+			}
+
+			@Override
+			public K next() {
+				return Pure4J.returnImmutable(wi.next());
+			}
+		};
 	}
 
 	@Pure(Enforcement.FORCE)

@@ -92,10 +92,6 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		return _hasheq;
 	}
 
-	static public int mapHasheq(IPersistentMap<?,?> m) {
-		return Hasher.hashUnordered(m);
-	}
-
 	static public class KeySeq<K, V> extends ASeq<K> {
 		private static final long serialVersionUID = 5550732202968416322L;
 		
@@ -269,15 +265,15 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 	
 	public ISeq<K> keySeq() {
-		return new IterableSeq<K>(keySet());
+		return IterableSeq.create(keySet().iterator());
 	}
 	
 	public ISeq<V> valueSeq() {
-		return new IterableSeq<V>(values());
+		return IterableSeq.create(values().iterator());
 	}
 	
 	public ISeq<Entry<K, V>> entrySeq() {
-		return new IterableSeq<Map.Entry<K,V>>(entrySet());
+		return IterableSeq.create(entrySet().iterator());
 	}
 
 	public Set<K> keySet() {

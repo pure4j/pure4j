@@ -204,7 +204,7 @@ So, this part should be fairly self-explanatory:  we hold a regular map inside t
 to reflect us putting things in and out.  Let's look now at our implementation of `priceBasket()`:
 
 ```java
-@Pure
+	@Pure
 	public float priceBasket(Map<Product, Float> priceList, float taxRate) {
 		float runningTotal = 0f;
 		for (Map.Entry<Product, Integer> item : contents.entrySet()) {
@@ -285,7 +285,7 @@ To make this work, we need to implement a single method, `fields`:
 	}
 ```
 
-To understand what this is doing, just pretent that you are writing an `equals()` method, and you want to compare two objects,
+To understand what this is doing, just pretend that you are writing an `equals()` method, and you want to compare two objects,
 `this` and `other`.  You need to compare each field in turn.  For our basket, we have a single field, `contents` which 
 needs to be compared.  Result:  a whole lot less boiler-plate code.  
 
@@ -334,7 +334,9 @@ Here, we are just using an IPersistentMap (analogous to the `java.util.Map` inte
 known to be immutable, since the interface has `@ImmutableValue` as an annotation.  So, this time, we get no errors 
 when running the Pure4J checker.
 
-In the next tutorial, we will be looking more at persistent collections and at ways of managing unshared mutable state.
+From here:
+*[More On Collections](docs/tutorial_collections.md) 
+*[Managing unshared mutable state.](docs/tutorial_mutable_unshared.md)
 
 
 

@@ -40,10 +40,21 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javafx.scene.shape.Box;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.pure4j.collections.AImmutableCollection;
+import org.pure4j.collections.AImmutableSet;
+import org.pure4j.collections.AMapEntry;
 import org.pure4j.collections.APersistentMap;
+import org.pure4j.collections.ASeq;
+import org.pure4j.collections.ArrayChunk;
 import org.pure4j.collections.ArraySeq;
+import org.pure4j.collections.Cons;
+import org.pure4j.collections.Counted;
+import org.pure4j.collections.Hasher;
+import org.pure4j.collections.MapEntry;
 import org.pure4j.collections.PersistentArrayMap;
 import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.collections.PersistentHashSet;
@@ -53,6 +64,14 @@ import org.pure4j.collections.PersistentTreeMap;
 import org.pure4j.collections.PersistentTreeSet;
 import org.pure4j.collections.PersistentVector;
 import org.pure4j.collections.PureCollections;
+import org.pure4j.collections.PureListIterator;
+import org.pure4j.collections.Reversible;
+import org.pure4j.collections.SeqEnumeration;
+import org.pure4j.collections.SeqIterator;
+import org.pure4j.collections.Seqable;
+import org.pure4j.collections.Settable;
+import org.pure4j.collections.Sorted;
+import org.pure4j.collections.ToStringFunctions;
 import org.pure4j.collections.TransientHashMap;
 import org.pure4j.collections.TransientHashSet;
 import org.pure4j.collections.TransientList;
@@ -119,7 +138,29 @@ public class JavaStandardLibraryPurity {
 						TransientTreeSet.class, 
 						TransientList.class,
 						TransientQueue.class,
-						TransientVector.class
+						TransientVector.class,
+
+						AImmutableCollection.class,
+						AImmutableSet.class,
+						AMapEntry.class,
+						ArrayChunk.class,
+						ArraySeq.class,
+						ASeq.class,
+						Box.class,
+						Cons.class,
+						Counted.class,
+						Hasher.class,
+						MapEntry.class,
+						PureCollections.class,
+						PureListIterator.class,
+						Reversible.class,
+						Seqable.class,
+						SeqEnumeration.class,
+						SeqIterator.class,
+						Settable.class,
+						Sorted.class,
+						ToStringFunctions.class,
+						Util.class
 						
 						);
 			}

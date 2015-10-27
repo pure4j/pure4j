@@ -14,6 +14,7 @@ package org.pure4j.collections;
 
 import java.util.NoSuchElementException;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 
 @MutableUnshared
@@ -32,7 +33,7 @@ public class SeqIterator<K> implements IPureIterator<K> {
 	public K next() throws NoSuchElementException {
 		K out = next.first();
 		next = next.next();
-		return out;
+		return Pure4J.returnImmutable(out);
 	}
 
 	public void remove() {

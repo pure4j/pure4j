@@ -3,7 +3,6 @@ package org.pure4j.test.checker.collections;
 import org.junit.Test;
 import org.pure4j.test.checker.Helper;
 import org.pure4j.test.collections.ArraySeqExample;
-import org.pure4j.test.collections.EnumerationSeqExample;
 import org.pure4j.test.collections.IteratorSeqExample;
 import org.pure4j.test.collections.PersistentArrayMapExample;
 import org.pure4j.test.collections.PersistentHashMapExample;
@@ -20,11 +19,6 @@ public class TestPurityOfCollectionsTests {
 	@Test 
 	public void testArraySeqPurity() {
 		Helper.check(0, ArraySeqExample.class);
-	}
-	
-	@Test 
-	public void testEnumerationSeqPurity() {
-		Helper.check(0, EnumerationSeqExample.class);
 	}
 	
 	@Test 

@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.PureInterface;
 
 
 public class ToStringFunctions {
@@ -24,6 +26,7 @@ public class ToStringFunctions {
      * 
      */
 	@Pure
+	@PureInterface(Enforcement.NOT_PURE)
 	public static <E> String toString(Collection<E> c) {
         Iterator<E> it = c.iterator();
         if (! it.hasNext())
@@ -70,6 +73,7 @@ public class ToStringFunctions {
      * @param m the map to be rendered
      */
 	@Pure
+	@PureInterface(Enforcement.NOT_PURE)
 	public static <K, V> String toString(Map<K, V> m) {
         Iterator<Entry<K,V>> i = m.entrySet().iterator();
         if (! i.hasNext())

@@ -105,7 +105,7 @@ public abstract class ATransientList<K> extends ATransientCollection<K> implemen
 
 	@Override
 	public ISeq<K> seq() {
-		return new IterableSeq<K>(this);
+		return IterableSeq.create(this.iterator());
 	}
 	
 	@PureInterface(Enforcement.NOT_PURE)

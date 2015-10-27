@@ -93,15 +93,15 @@ public abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 	}
 	
 	public ISeq<K> keySeq() {
-		return new IterableSeq<K>(keySet());
+		return IterableSeq.create(keySet().iterator());
 	}
 	
 	public ISeq<V> valueSeq() {
-		return new IterableSeq<V>(values());
+		return IterableSeq.create(values().iterator());
 	}
 	
 	public ISeq<Entry<K, V>> entrySeq() {
-		return new IterableSeq<Map.Entry<K,V>>(entrySet());
+		return IterableSeq.create(entrySet().iterator());
 	}
 	
 	public String toString() {

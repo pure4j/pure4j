@@ -13,13 +13,17 @@ package org.pure4j.collections;
 import java.util.Map.Entry;
 
 import org.pure4j.Pure4J;
+import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.immutable.ImmutableValue;
 
 @ImmutableValue
 public class MapEntry<K, V> extends AMapEntry<K, V> {
 	
-	final K _key;
-	final V _val;
+	@IgnoreImmutableTypeCheck
+	private final K _key;
+
+	@IgnoreImmutableTypeCheck
+	private final V _val;
 
 	public MapEntry(K key, V val) {
 		Pure4J.immutable(key, val);
@@ -45,8 +49,15 @@ public class MapEntry<K, V> extends AMapEntry<K, V> {
 
 	@Override
 	public V setValue(V value) {
+		Pure4J.immutable(value);
 		throw new UnsupportedOperationException("Persistent Collections don't support changing map entries");
 	}
+
+	@Override
+	public int hashCode() {
+		return Pure4J.hashCode(_key, _val);
+	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -73,7 +84,12 @@ public class MapEntry<K, V> extends AMapEntry<K, V> {
 		}
 		return false;
 	}
-	
+
+	@Override
+	public String toString() {
+		return _key+" -> "+_val;
+	}
+
 	
 
 }
