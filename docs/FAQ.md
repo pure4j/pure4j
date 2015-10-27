@@ -154,7 +154,7 @@ This handy table shows the persistent version of each class:
 
 ## What is a Seq / iSeq?
 
-
+[See the collections tutorial](tutorial_collections.md)
 
 ## What Are These Transient Collection Classes (TransientHashMap, TransientArrayList etc.) ?
 
@@ -164,7 +164,7 @@ e.g. call `PersistentHashMap.transient()` to get a `TransientHashMap`.
 The transient versions have a `persistent()` method to turn them back into persistent collections.
 
 They otherwise are `@MutableUnshared` collections, that will only collect immutable objects.
-3
+
 ## Are Interfaces Pure?
 
 You can mark an interface with `@ImmutableValue` or `@MutableUnshared` but only the concrete implementations will get
@@ -208,6 +208,35 @@ reference to which is passed in via the constructor (without you having to type 
 
 So, if you want an `@ImmutableValue` inner class, the outer class must also be `@ImmutableValue`.  You can have an `@MutableUnshared`
 inner class too, again, only if the outer class is `@ImmutableValue`.
+
+## Is there ANY Way I can pass an object as a parameter to a pure method?
+
+Let's say you are writing a 'library' function which you want to accept any immutable object.  Since we identify
+immutable objects via the annotation `@ImmutableValue` rather than by an interface, you can't simply write:
+
+```java
+
+	public void doSomething(ImmutableValue someObject) {
+		...
+	}
+
+```
+
+Instead, your interface needs to take `Object`, and you can *check at runtime* that the parameter is immutable like so:
+
+```java
+	
+	public void doSomething(Object someObject) {
+		Pure4J.immutable(someObject);
+		...
+	}
+
+```
+
+The compile-time purity checker will ensure that each of the parameters to the pure function are either classes tagged with
+@ImmutableValue, known Java Langugage immutables (String, int, Integer... etc) or that there is a runtime check for the 
+parameter.  The `Pure4J.immutable()` checks needs to be the first calls in the method, before any other logic gets called.
+
 
 
 

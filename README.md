@@ -123,18 +123,14 @@ This is currently an idea under investigation.  It’s quite possible that the c
 
 ### Known Remaining Issues
 
-* registering extra immutables
 * Stream counter-examples.
 * Cascading Implementation Impurity: One impure function should 'taint' those that use it.
-* Tutorials - mutable unshared tutorial.
 
 * Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
 	* Anonymous classes: hard to say which one we're talking about without a line-number.
 	* <init> -- change this to say constructor, and the line number
 	* Non-static pure method on class which is not immutable: should give line number of ALOAD 0.
 	
-* Thorough review of purity of Java language classes
-* Service-classes:  need a way to specify their purity without calling them `@ImmutableValue`s  -- not sure about this
 * toString purity
 
 

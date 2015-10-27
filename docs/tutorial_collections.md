@@ -1,7 +1,5 @@
 Pure4J Collections
-------------------
-
-### Overview
+==================
 
 In order to create functions that are interface pure, or to create `@ImmutableValue` objects, you will often need to use collections.  However, the collections shipped
 with Java are fundamentally mutable:  you can change the contents of them.  Even using `Collections.immutableList()` and it's ilk are not guaranteed immutable:  they

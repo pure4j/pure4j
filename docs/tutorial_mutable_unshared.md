@@ -1,7 +1,5 @@
 Mutable Unshared - Tutorial
----------------------------
-
-### Overview
+===========================
 
 The bread-and-butter of Pure4J is the creation of `@ImmutableValue` objects, and passing these between pure functions to 
 create flow-based systems that can easily be reasoned about.  However, you will definitely run into cases where this is not
