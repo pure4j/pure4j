@@ -1,8 +1,7 @@
-package org.pure4j.examples.tutorial.pure;
+package org.pure4j.examples.tutorial1.pure;
 
 import java.util.Map;
 
-import org.pure4j.Pure4J;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.immutable.AbstractImmutableValue;
 

@@ -1,10 +1,9 @@
-package org.pure4j.examples.tutorial.not_pure;
+package org.pure4j.examples.tutorial1.not_pure;
 
 import java.util.Map;
 
 import org.pure4j.Pure4J;
-import org.pure4j.annotations.pure.Pure;
-import org.pure4j.examples.tutorial.pure.Product;
+import org.pure4j.examples.tutorial1.pure.Product;
 
 public class MutableBasket {
 	

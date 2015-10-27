@@ -1,4 +1,4 @@
-package org.pure4j.examples.tutorial.pure;
+package org.pure4j.examples.tutorial1.pure;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
 
