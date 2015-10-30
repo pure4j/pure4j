@@ -119,18 +119,19 @@ Effectively this forms the Javadoc for the project, though the assertions made i
 Status of this Project
 ----------------------
 
-This is currently an idea under investigation.  It’s quite possible that the contracts and semantics provided by this project will change in the future as new use cases are discovered.   
+This is currently an idea under investigation.  It’s quite possible that the contracts and semantics provided by this project will change in the future as new use cases are discovered.  
 
-### Known Remaining Issues
+Group
+-----
 
-* Stream counter-examples.
-* Cascading Implementation Impurity: One impure function should 'taint' those that use it.
+[Visit the Google Group to join in the discussion](https://groups.google.com/forum/#!forum/pure4j)
+ 
 
-* Error Messages: currently quite hard to understand. Should include a list of potential solutions for each.
-	* Anonymous classes: hard to say which one we're talking about without a line-number.
-	* <init> -- change this to say constructor, and the line number
-	* Non-static pure method on class which is not immutable: should give line number of ALOAD 0.
-	
-* toString purity
+Known Remaining Issues
+----------------------
+
+See [Github Issues Page](https://github.com/robmoffat/pure4j/issues)
+
+
 
 
