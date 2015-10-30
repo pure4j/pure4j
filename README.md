@@ -16,6 +16,10 @@ Forces
 * You want to ensure your code is testable.
 * You want to be able to reuse your code in other contexts, and know that it is dependency-free.
 
+[More here on why this *might* be a good idea.](docs/forces.md)
+
+[Some details on the background of this project.](docs/impetus.md)
+
 What is Function Purity?
 ------------------------
 

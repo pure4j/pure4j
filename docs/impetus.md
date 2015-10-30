@@ -111,3 +111,6 @@ All that is needed is to bring these two ideas together within plain Java and we
 
 Pure4J gives you the tools to specify (and then check at compile time) immutable classes.  
 It also gives you the tool to identify your islands of purity, and again, check that this constraint is met at compile time.   
+
+On to [forces](forces.md).
+
