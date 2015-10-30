@@ -96,9 +96,9 @@ This library keeps track of these and allows your pure functions to use existing
 Tutorials
 ---------
 
-[See the first tutorial here](docs/tutorial1.md). 
-[Tutorial On Persistent Collections](docs/tutorial_collections.md).
-[About `@MutableUnshared`](docs/tutorial_mutable_unshared.md).
+* [See the first tutorial here](docs/tutorial1.md). 
+* [Tutorial On Persistent Collections](docs/tutorial_collections.md).
+* [About `@MutableUnshared`](docs/tutorial_mutable_unshared.md).
 
 There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
 Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
