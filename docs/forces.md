@@ -109,7 +109,9 @@ This also explains why we can get rid of all that mocking:  no side-effects mean
 |                 |Easy Testing
 |                 |Easy Scalability
 
-The more I write about this, the more convinced I am that this is the right way forward for a lot of code being written in Java today.  
+The more I write about this, in the industry I work in, the more convinced I am that this is the right way 
+forward for a lot of code being written in Java today.  
+
 I hope you find this useful too.  Let me know what you think.  rob -at- kite9.com
 
 
