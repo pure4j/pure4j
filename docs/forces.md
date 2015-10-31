@@ -37,6 +37,11 @@ and use a different NoSQL database for *every single project* just for the hell 
 So, to introduce the ideas of *pure functions*, *programming with immutability* and *value based programming* the simplest,
 lowest-cost way to do this is to *stick with Java*.
 
+And, sometimes, unilaterally introducing a new language into an otherwise homogenous codebase just looks like CV building, and
+is likely to *piss everyone off* that has to maintain it after you left.  
+
+I.e. sometimes being at the cutting edge of language design is a un-3pragmatic disaster.  
+
 ### 2. Code correctness is a primary concern.
 
 That's not to say that there isn't an overhead in using functional techniques.  
@@ -56,12 +61,10 @@ This is going to seem like an unfair trade-off, at least at first.
 
 Yes, you are being restricted in a lot of things that you *used to be able to do*, with the promise of fewer bugs *in the future*.  
 
-In a way that's a fair enough criticism.   
-
-But there are likely to be *at least some* parts of your code-base where you are willing to make this trade off:  
+But there are likely to be *at least some* parts of your code-base where that's a good deal:  
 usually in maths-heavy parts, or bits of code where it's hard to reason about exactly what is happening behind the scenes.
 
-### 3.  You want to ensure your code is testable.
+### 3.  You Want to Ensure Your Code is Testable.
 
 So, Pure programming and immutability are desireable for certain sections of the code-base.  
 
@@ -73,14 +76,15 @@ By writing in a pure style, you're going to make testing *so much* easier:
 everything needed to perform a calculation is provided as an argument to it.
 * Because you are working with code that is *deterministic*, you can *always expect the same result* from an interaction.
 
-### 4.  You want to be able to reuse your code in other contexts, and know that it is dependency-free.
+### 4.  You Want to be Able to Reuse Your Code in Other Contexts, and Know That it is Dependency-Free.
 
 Where I work, we have lots of "strategies".   
 
 Every week, there is a new architecture diagram.  Pinned to the wall.  Maybe framed.  In a well-meaning power-point presentation.
 
-What if you could just *stop worrying about all of that*?  If you knew, no matter what the strategy was, your code was
-*strategy proof*?
+What if you could just *stop worrying about all of that*?  
+
+If you knew, no matter what the strategy was, your code was *strategy proof*?
 
 This can happen.   
 
@@ -104,5 +108,9 @@ This also explains why we can get rid of all that mocking:  no side-effects mean
 |                 |No Dependencies
 |                 |Easy Testing
 |                 |Easy Scalability
+
+The more I write about this, the more convinced I am that this is the right way forward for a lot of code being written in Java today.  
+I hope you find this useful too.  Let me know what you think.  rob -at- kite9.com
+
 
 
