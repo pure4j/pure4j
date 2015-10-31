@@ -62,7 +62,7 @@ Yes, you are being restricted in a lot of things that you *used to be able to do
 But there are likely to be *at least some* parts of your code-base where that's a good deal:  
 usually in maths-heavy parts, or bits of code where it's hard to reason about exactly what is happening behind the scenes.
 
-### 3.  You Want to Ensure Your Code is Testable.
+### 3.  You want to ensure your code is testable.
 
 So, Pure programming and immutability are desireable for certain sections of the code-base.  
 
@@ -74,7 +74,7 @@ By writing in a pure style, you're going to make testing *so much* easier:
 everything needed to perform a calculation is provided as an argument to it.
 * Because you are working with code that is *deterministic*, you can *always expect the same result* from an interaction.
 
-### 4.  You Want to be Able to Reuse Your Code in Other Contexts, and Know That it is Dependency-Free.
+### 4.  You want to be able to reuse your code in other contexts, and know that it is dependency-Free.
 
 Where I work, we have lots of "strategies".   
 
