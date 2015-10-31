@@ -40,8 +40,6 @@ lowest-cost way to do this is to *stick with Java*.
 And, sometimes, unilaterally introducing a new language into an otherwise homogenous codebase just looks like CV building, and
 is likely to *piss everyone off* that has to maintain it after you left.  
 
-I.e. sometimes being at the cutting edge of language design is a un-3pragmatic disaster.  
-
 ### 2. Code correctness is a primary concern.
 
 That's not to say that there isn't an overhead in using functional techniques.  
