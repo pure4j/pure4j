@@ -51,6 +51,25 @@ So, for each mutation method, *a new collection is returned*.  This is the key o
 The only one of these which is probably novel to most Java developers is the PersistentArrayMap.  This is suitable for storing very small maps (typically < 8 elements),
 and stores them in an array.  Once it gets beyond a certain size, it will convert automatically to a PersistentHashMap instead.
 
+### Guarantees:  Making Sure They Don't Change
+
+In the Clojure world, objects are passed around as lists, which are essentially values.  But, in Java, we use objects.   This creates a problem:  
+
+> What if I create a persistent collection, but the objects inside it are mutable?
+
+That is, fields on the objects could change, which may alter their (`equals()`) identity or their `hashCode()`.  This is exactly what the `@ImmutableValue` annotation
+is designed to solve.  Once you add this to your value objects (and add the Pure4J maven plugin), your objects will be compile-time checked to make sure they 
+actually do fulfil the requirements for imutabillity.  That is:
+
+* The fields on the class are `final`
+* The fields are all also of immutable types (e.g. `int`, `String`, persistent collections or other `@ImmutableValue`s.
+* There are no setters for the fields
+
+Additionally, at runtime, when you construct your persistent collection, any objects you add will be checked for immutability.  This means you are guaranteed that 
+the collection cannot change under you, breaking this contract.  (The one exception is, if code uses reflection: the type system is circumvented when you resort to 
+this, unfortunately).
+
+
 ### Transient Collections
 
 Each persistent collection class has a method to convert it back to a transient collection.  A Transient Collection:
