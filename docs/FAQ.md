@@ -237,6 +237,3 @@ The compile-time purity checker will ensure that each of the parameters to the p
 @ImmutableValue, known Java Langugage immutables (String, int, Integer... etc) or that there is a runtime check for the 
 parameter.  The `Pure4J.immutable()` checks needs to be the first calls in the method, before any other logic gets called.
 
-
-
-
