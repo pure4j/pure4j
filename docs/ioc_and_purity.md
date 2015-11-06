@@ -32,7 +32,7 @@ might need a `DataSource`, from which it could pull addresses using JDBC.   A `G
 So components could be configured using the *real* implementations of the interfaces, or *mock* implementations.  Either these implementations
 were written for the purpose of testing, or, they could be scripted up with a framework like [Mockito](http://site.mockito.org).
 
-Functional programming goes one step further:  by making it so that the only dependencies you have are explictly declared as parameters to the
+**Pure** Functional programming goes one step further:  by making it so that the only dependencies you have are explictly declared as parameters to the
 methods, you can skip mocking entirely.  In the Haskell world, there is a testing framework called QuickCheck that can 
 automate a lot of the testing effort involved in even writing tests.  (And this is an area for further investigation I think, in
 terms of Java/Pure4J).
