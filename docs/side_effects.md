@@ -80,7 +80,7 @@ Pure methods can only take immutable parameters.  This makes them thread-safe.
 * Pure4J also provides a way of managing state without sharing it ([@MutableUnshared](tutorial_mutable_unshared.md)).  State can be used (sparingly)
 within the context of other pure methods.  
 * Pure4J provides [collections](tutorial_collections.md) classes which guarantee immutability of both the collection and it's contents. This allows you to construct object graphs 
-of arbitrary complexity to model your data structures immutably.
+of arbitrary depth to model your data structures immutably.
 
 
 
