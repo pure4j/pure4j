@@ -52,9 +52,7 @@ and there are a whole load of ways in which this destroys the determinism that w
 Now, before you throw your copy of Pure4J in the bin, consider that we're not saying *all* your code has to be pure.  *Obviously*, some
 code will have side-effects.  That's fine.  [But as I argue here, there is a massive benefit to minimizing the code that does](forces.md).
 
-#### Global Variables
-
-We all know [Global Variables Are Bad](https://en.wikipedia.org/wiki/Global_variable#Use).  This is a well-documented fact in software 
+But, we all know [Global Variables Are Bad](https://en.wikipedia.org/wiki/Global_variable#Use).  This is a well-documented fact in software 
 engineering.  Global variables (and shared state generally) are exactly the kind of side-effect that functional programming aims to extinguish.
 
 If our function used a global variable (reading a `static` value, say) it loses it's determinism:  it's output is *not* based entirely on the parameters, 
