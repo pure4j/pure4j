@@ -51,5 +51,11 @@
 			<artifactId>pure4j-core</artifactId>
 	        <version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.concordion</groupId>
+			<artifactId>concordion-excel-extension</artifactId>
+	        <version>1.0.7</version>
+	        <scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

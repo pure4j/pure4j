@@ -20,7 +20,7 @@ public abstract class AbstractImmutableValue<M> implements Comparable<M> {
 		public void visit(Object o, Object o2);
 	}
 
-	private static class HashCodeVisitor implements Visitor {
+	private static final class HashCodeVisitor implements Visitor {
 		int result = 0;
 		
 		@Override

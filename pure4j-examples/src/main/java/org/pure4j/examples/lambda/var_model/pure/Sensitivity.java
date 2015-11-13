@@ -4,17 +4,17 @@ import org.pure4j.immutable.AbstractImmutableValue;
 
 public final class Sensitivity extends AbstractImmutableValue<Sensitivity> {
 
-	final Ticker ticker;
+	final String ticker;
 
 	final float amount;
 	
-	public Sensitivity(Ticker ticker, float amount) {
+	public Sensitivity(String ticker, float amount) {
 		super();
 		this.ticker = ticker;
 		this.amount = amount;
 	}
 	
-	public Ticker getTicker() {
+	public String getTicker() {
 		return ticker;
 	}
 

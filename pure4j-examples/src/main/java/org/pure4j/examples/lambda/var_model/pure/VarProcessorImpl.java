@@ -1,10 +1,10 @@
 package org.pure4j.examples.lambda.var_model.pure;
 
-import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.collections.IPersistentList;
 import org.pure4j.collections.IPersistentMap;
@@ -19,36 +19,19 @@ import org.pure4j.lambda.PureCollectors;
 public class VarProcessorImpl implements VarProcessor {
 	
 	private final float confidenceLevel;
-	private final Currency homeCurrency;
 
-	public VarProcessorImpl(float confidenceLevel, Currency homeCurrency) {
+	public VarProcessorImpl(float confidenceLevel) {
 		this.confidenceLevel = confidenceLevel;
-		this.homeCurrency = homeCurrency;
 	}
 	
-	/**
-	 * It should complain about this method signature, but it wont.  Because, we allow
-	 * 
-	 */
-	public Amount getVar(IPersistentMap<Ticker, PnLStream> historic, ISeq<Sensitivity> sensitivities, IPersistentMap<Currency, Float> fxRates) {
+	public float getVar(IPersistentMap<String, PnLStream> historic, ISeq<Sensitivity> sensitivities) {
 		// combine the sensitivities
 		PnLStream combined = null;
 		for (Sensitivity s : sensitivities) {
-			Ticker t = s.getTicker();
+			String t = s.getTicker();
 			PnLStream theStream = historic.get(t);
-			float scale = s.getAmount();
-			if (theStream.getCcy() != homeCurrency) {
-				Float rate = fxRates.get(theStream.getCcy());
-				if (rate == null) {
-					throw new FXRateNotPresentException(theStream.getCcy());
-				}
-				scale = scale * rate;
-			}
-			
+			float scale = s.getAmount();			
 			PnLStream scaledStream = theStream.scale(scale);
-			
-			
-			
 			combined = (combined == null) ? scaledStream : combined.add(scaledStream);
 		}
 		
@@ -60,14 +43,15 @@ public class VarProcessorImpl implements VarProcessor {
 		
 		// work out confidence level
 		float members = sorted.size();
-		float index = members * confidenceLevel;
+		float index = members - members * confidenceLevel -1;
 		
-		return new Amount(homeCurrency, sorted.get((int) index));
+		return sorted.get((int) Math.floor(index));
 	}
 
 	@Override
 	public int hashCode() {
-		return 0;	// we don't care.  The fact we have to implement this is a bug.
+		Pure4J.unsupported();
+		return 0;
 	}
 
 	@Override

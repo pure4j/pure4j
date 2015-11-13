@@ -1,7 +1,6 @@
 package org.pure4j.examples.lambda.var_model.pure;
 
 import java.time.LocalDate;
-import java.util.Currency;
 import java.util.Map.Entry;
 
 import org.pure4j.collections.IPersistentMap;
@@ -10,23 +9,19 @@ import org.pure4j.immutable.AbstractImmutableValue;
 
 public class PnLStream extends AbstractImmutableValue<PnLStream> {
 
-	final private Currency ccy;
-
 	final private IPersistentMap<LocalDate, Float> pnls;
 	
 	public IPersistentMap<LocalDate, Float> getPnls() {
 		return pnls;
 	}
 
-	public PnLStream(IPersistentMap<LocalDate, Float> pnls, Currency ccy) {
+	public PnLStream(IPersistentMap<LocalDate, Float> pnls) {
 		super();
-		this.ccy = ccy;
 		this.pnls = pnls;
 	}
 
 	@Override
 	protected void fields(Visitor v, PnLStream p) {
-		v.visit(ccy, p.ccy);
 		v.visit(pnls, p.pnls);
 	}
 	
@@ -36,10 +31,6 @@ public class PnLStream extends AbstractImmutableValue<PnLStream> {
 	 * @return A PnL stream the same length as the current one, with the same dates.
 	 */
 	public PnLStream add(PnLStream other) {
-		if (!other.getCcy().equals(other.getCcy())) {
-			throw new CurrencyMismatchException(this.getCcy()+ " vs "+other.getCcy());
-		}
-		
 		PersistentHashMap<LocalDate, Float> added = PersistentHashMap.emptyMap();
 		for (Entry<LocalDate, Float> entry : getPnls().entrySet()) {
 			Float fo = other.getPnls().get(entry.getKey());
@@ -50,7 +41,7 @@ public class PnLStream extends AbstractImmutableValue<PnLStream> {
 			added = added.assoc(entry.getKey(), fo + entry.getValue());
 		}
 		
-		return new PnLStream(added, ccy);
+		return new PnLStream(added);
 	}
 
 	/**
@@ -64,11 +55,6 @@ public class PnLStream extends AbstractImmutableValue<PnLStream> {
 			added = added.assoc(entry.getKey(), f * entry.getValue());
 		}
 		
-		return new PnLStream(added, ccy);
+		return new PnLStream(added);
 	}
-	
-	public Currency getCcy() {
-		return ccy;
-	}
-
 }
