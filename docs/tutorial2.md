@@ -531,7 +531,7 @@ with the actual value returned from `calculateVaR()` method, and coloured the re
 
 ### Proving Purity
 
-Is our code reusable, and threadsafe?  
+Is our code reusable, threadsafe, deterministic and without side-effects?  
 
 We can run the Pure4J checker on this to prove it's so.
 
