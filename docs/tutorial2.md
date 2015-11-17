@@ -493,15 +493,14 @@ And here is the code that gets called:
 	}
 ```
 
-### All Set
+### Running The Test
 
 At this point, we have everything we need.  Let's recap:
 
 * We have a spreadsheet, which demonstrates our calculation.  It has a *minimal* surface area touching the java test code:  just a few comments in certain cells so
 that concorion knows what to do.
 * We have some java code in a test, which will call our `VarProcessor`
-* We have an immutable, pure `VarProcessorImpl`, which, because it is written as pure functional code, it has no dependencies elsewhere, and is threadsafe.  We can run the Pure4J checker on this 
-to prove it's so (you can do this for yourself by checking out the project and building it with maven).
+* We have an immutable, pure `VarProcessorImpl`, which, because it is written as pure functional code, it has no dependencies elsewhere, and is threadsafe.  
 * We can run our test using JUnit, because Concordion extends that.
 
 Let's see what happens when we run the test:
@@ -530,5 +529,41 @@ As you can see, at the end, our `assertEquals` has matched the value on the spre
 with the actual value returned from `calculateVaR()` method, and coloured the result in green.
 
 
+### Proving Purity
+
+Is our code reusable, and threadsafe?  
+
+We can run the Pure4J checker on this to prove it's so.
+
+This is the output from maven:
+
+```
+[INFO] Beginning Pure4J Analysis
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/PnLStream.<init>(Lorg/pure4j/collections/IPersistentMap;)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/PnLStream.add(Lorg/pure4j/examples/lambda/var_model/pure/PnLStream;)Lorg/pure4j/examples/lambda/var_model/pure/PnLStream;
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/PnLStream.fields(Lorg/pure4j/immutable/AbstractImmutableValue$Visitor;Ljava/lang/Object;)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/PnLStream.fields(Lorg/pure4j/immutable/AbstractImmutableValue$Visitor;Lorg/pure4j/examples/lambda/var_model/pure/PnLStream;)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/PnLStream.getPnls()Lorg/pure4j/collections/IPersistentMap;
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/PnLStream.scale(F)Lorg/pure4j/examples/lambda/var_model/pure/PnLStream;
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/Sensitivity.<init>(Ljava/lang/String;F)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/Sensitivity.fields(Lorg/pure4j/immutable/AbstractImmutableValue$Visitor;Ljava/lang/Object;)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/Sensitivity.fields(Lorg/pure4j/immutable/AbstractImmutableValue$Visitor;Lorg/pure4j/examples/lambda/var_model/pure/Sensitivity;)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/Sensitivity.getAmount()F
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/Sensitivity.getTicker()Ljava/lang/String;
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/VarProcessorImpl.<init>(F)V
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/VarProcessorImpl.getVar(Lorg/pure4j/collections/IPersistentMap;Lorg/pure4j/collections/ISeq;)F
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/VarProcessorImpl.hashCode()I
+[INFO] Marked Pure: org/pure4j/examples/lambda/var_model/pure/VarProcessorImpl.toString()Ljava/lang/String;
+[INFO] Finished Pure4J Analysis
+```
+
+### Conclusion
+
+This has been a fairly involved example.  Well done if you are still sticking with it.  If you are working in Java, in Finance, then this approach offers
+a way of engaging business analysts with the testing process, and raising the code-quality bar within a Java project.   
+
+Additionally, once you get started with
+this way of testing, the cost of changing tests remains low:  tests remain in their native, Excel format, and should BAs update them, they can review the results 
+by checking in the tests and seeing if they work on the build server.  
 
 
