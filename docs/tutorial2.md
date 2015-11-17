@@ -197,8 +197,9 @@ public final class Sensitivity extends AbstractImmutableValue<Sensitivity> {
 ```
 
 Note the use of `AbstractImmutableValue`:  this class declares the `@ImmutableValue` needed to tell Pure4J to check this class,
-and it also contains default implementations of `equals()`, `hashCode()`, `toString()` and `compareTo()` methods.  In return, the implementation needs to
-define the `fields()` method to say what fields the class has. (See [Tutorial 1](tutorial1.md) for more details).  
+and it also contains default implementations of `equals()`, `hashCode()`, `toString()` and `compareTo()` methods.  
+In return, the implementation needs to define the `fields()` method to say what fields the class has. 
+(See [Tutorial 1](tutorial1.md) for more details).  
 
 #### `PnLStream` 
 
@@ -406,11 +407,9 @@ public class ConcordionVarTest {
 
 Let's go through some of the important features here:
 
-* The `RunWith` is a **JUnit annotation**.  This means that Concordion tests are actually a type of JUnit Test.  This is nice, because IDEs like Eclipse offer
-a lot of support for JUnit.
+* The `RunWith` is a **JUnit annotation**.  This means that Concordion tests are actually a type of JUnit Test.  This is nice, because IDEs like Eclipse offer a lot of support for JUnit.
 * The `Extensions` indicates that this is going to use an **Excel** format test.  Since our test is called "ConcordionVarTest", Concordion will drop the "Test" part and look for a file called "ConcordionVaR.xlsx" in the classpath.
-* `calculateVaR` is the main test method here.  It takes a percentage argument.  It's calling our `VarProcessorImpl`, and using some local variables from the test as the arguments (so, we also need to set
-those up).
+* `calculateVaR` is the main test method here.  It takes a percentage argument.  It's calling our `VarProcessorImpl`, and using some local variables from the test as the arguments (so, we also need to set those up).
 * Concordion expects text-based parameters.  So, the percentage is passed in from the spreadsheet as text, and we return the result as text, hence the `parsePercentage` method.
 
 #### Getting Concordion To Call `calculateVaR`
@@ -428,20 +427,29 @@ And then to call the `calculateVaR` method:
 Which uses `concordion:assertEquals`.  What this does is execute the java method in the double-quotes, replacing `#interval` from the concordion variable we set.  
 Once we get the result back, this is compared to the contents of the cell.  If they are the same, then in our HTML report, the result will be a pass (i.e. green).
 
-#### Setting `theStreams` and `sensitivities`
+#### Setting the `sensitivities`
 
-This is a bit more complicated.  What we are going to do is use concordion's table-row processing capabilities to set up these variables one table row at a time.  We are
-again going to use `concordion:set` to set a variable, and also `concordion:execute` to execute some java:
+This is a bit more complicated.  What we are going to do is use concordion's table-row processing capabilities 
+to set up these variables one table row at a time.  
+
+Excel allows you to demarcate a range of cells in a sheet as a "table", and Concordion is clever enough to 
+understand this and process the table in a row-by-row
+way.  On the image below, you can see the tables:  they have blue borders, and a white-on-blue header.
+
+We are again going to use `concordion:set` to set a variable, and also `concordion:execute` to execute some 
+java, once for each data row in the table:
 
 ![Calling For Each Row of a table](tutorial_2_11.png)
 
-So here, (in the header row) we are setting up two things:  one is a variable called `#sensitivity`, and the other is a command to say, for each row of the table, 
-execute the Java `setSensitivity()` method.
+So here, (in the header row) we are setting up two things:  one is a variable called `#sensitivity`, and the 
+other is a command to say, for each row of the table, 
+execute the Java `setSensitivity()` method. (Note that we prefix this with `(table)`: concordion needs that
+to know it has to do row-by-row processing).
 
 ![Calling For Each Row of a table 2](tutorial_2_12.png)
 
-For the other cell, the `#amount` is also set, so the `setSensitivity()` command is executed for each row of the table, and takes both columns.  Here is the 
-code for that, again from our Java `ConcordionVarTest` class:
+For the other cell, the `#amount` is also set, so the `setSensitivity()` command is executed for each row of 
+the table, and takes both columns.  Here is the code for that, again from our Java `ConcordionVarTest` class:
 
 ```java
 	public void setSensitivity(String ticker, String amount) {
@@ -451,5 +459,76 @@ code for that, again from our Java `ConcordionVarTest` class:
 ```
 
 As you can see, we simply `cons` on a new sensitivity into the list for each row.  
+
+#### Setting `theStreams`
+
+This works in a similar way to the sensitivities, in that we are again going to use concordion to process 
+row-by-row the cells in an Excel table.
+
+![Calling For Each Row of theStreams](tutorial_2_13.png)
+
+And here is the code that gets called:
+
+```java
+	public void addPnLRow(String date, String goog, String yhoo, String msft) {
+		theStreams = addPnlPoint(theStreams, "GOOG", date, goog);
+		theStreams = addPnlPoint(theStreams, "YHOO", date, yhoo);
+		theStreams = addPnlPoint(theStreams, "MSFT", date, msft);
+	}
+
+	private IPersistentMap<String, PnLStream> addPnlPoint(IPersistentMap<String, PnLStream> theStreams, String sensitivity, String date, String value) {
+		PnLStream stream = theStreams.get(sensitivity);
+		IPersistentMap<LocalDate, Float> pnls;
+		if (stream == null) {
+			pnls = new PersistentHashMap<LocalDate, Float>();
+		} else {
+			pnls = stream.getPnls();
+		}
+		
+		LocalDate localDate = LocalDate.parse(date);
+		Float f = parsePercentage(value);
+		pnls = pnls.assoc(localDate, f);
+		
+		return theStreams.assoc(sensitivity, new PnLStream(pnls));
+	}
+```
+
+### All Set
+
+At this point, we have everything we need.  Let's recap:
+
+* We have a spreadsheet, which demonstrates our calculation.  It has a *minimal* surface area touching the java test code:  just a few comments in certain cells so
+that concorion knows what to do.
+* We have some java code in a test, which will call our `VarProcessor`
+* We have an immutable, pure `VarProcessorImpl`, which, because it is written as pure functional code, it has no dependencies elsewhere, and is threadsafe.  We can run the Pure4J checker on this 
+to prove it's so (you can do this for yourself by checking out the project and building it with maven).
+* We can run our test using JUnit, because Concordion extends that.
+
+Let's see what happens when we run the test:
+
+![Running The Test](tutorial_2_14.png)
+
+This is the output:
+
+```
+/var/folders/5b/9l2z3r7d2vjgfy7t8q9dzhtw0000gn/T/concordion/org/pure4j/examples/var_model/ConcordionVar.html
+Successes: 1, Failures: 0
+
+```
+
+And the file produced is the Concordion HTML Report, giving us the details of the test we just ran:
+
+It looks like this:
+
+![Output 1](tutorial_2_15.png)
+
+...
+
+![Output 2](tutorial_2_16.png)
+
+As you can see, at the end, our `assertEquals` has matched the value on the spreadsheet (the expected value)
+with the actual value returned from `calculateVaR()` method, and coloured the result in green.
+
+
 
 
