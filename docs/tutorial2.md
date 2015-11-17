@@ -25,7 +25,7 @@ If you are used to writing tests, you'll know that they are often in the form:
 
 * **Given** some inputs, A, B, C. 
 * **When** I perform some operation, X
-* **Then** I expect some value, R.
+* **Then** I expect some result, R.
 
 This is all very well if you know how to calculate R from A, B and C.  But, if the calculation
 of R is complicated, you might well want to show your working out, and use some excel functions
@@ -41,7 +41,7 @@ that they are already familiar with.
 
 Value at Risk (henceforth, VaR) is a methodology which aims to answer the following question:
 
-> Given a particular confidence interval (say 95% certainty), and a particular period of time, 
+> Given a particular confidence interval (say 90% certainty), and a particular period of time, 
 > what amount of money should I expect to lose?
 
 So, if you have a 1-day, 90% VaR of $500, you should expect that on average, once in twenty 
@@ -151,6 +151,8 @@ number.  Since it's a 90% VaR, and we have 20 numbers, we need the 2nd point.  (
 ![The VaR amount](tutorial_2_8.png)
 
 Our VaR works out to be around USD -4.448, as point 2 on the graph is at the 90% confidence interval.  
+
+[You Can Download the Completed Spreadsheet Here](https://github.com/robmoffat/pure4j/blob/master/pure4j-examples/src/test/resources/org/pure4j/examples/var_model/ConcordionVar.xlsx?raw=true)
 
 ### Creating A Pure Java Implementation
 
@@ -413,8 +415,41 @@ those up).
 
 #### Getting Concordion To Call `calculateVaR`
 
+To do this, we add some comments into the Excel spreadsheet, which concordion can interpret.  First, to set the confidence interval:
 
+![Setting the Confidence Interval](tutorial_2_9.png)
 
+This uses the `concordion:set` command, to set a concordion variable called `#interval` to whatever is in the cell.
 
+And then to call the `calculateVaR` method:
+
+![Calling the calculateVaR method](tutorial_2_10.png)
+
+Which uses `concordion:assertEquals`.  What this does is execute the java method in the double-quotes, replacing `#interval` from the concordion variable we set.  
+Once we get the result back, this is compared to the contents of the cell.  If they are the same, then in our HTML report, the result will be a pass (i.e. green).
+
+#### Setting `theStreams` and `sensitivities`
+
+This is a bit more complicated.  What we are going to do is use concordion's table-row processing capabilities to set up these variables one table row at a time.  We are
+again going to use `concordion:set` to set a variable, and also `concordion:execute` to execute some java:
+
+![Calling For Each Row of a table](tutorial_2_11.png)
+
+So here, (in the header row) we are setting up two things:  one is a variable called `#sensitivity`, and the other is a command to say, for each row of the table, 
+execute the Java `setSensitivity()` method.
+
+![Calling For Each Row of a table 2](tutorial_2_12.png)
+
+For the other cell, the `#amount` is also set, so the `setSensitivity()` command is executed for each row of the table, and takes both columns.  Here is the 
+code for that, again from our Java `ConcordionVarTest` class:
+
+```java
+	public void setSensitivity(String ticker, String amount) {
+		Float f = Float.parseFloat(amount.substring(amount.lastIndexOf("]")+1));
+		sensitivities = sensitivities.cons(new Sensitivity(ticker, f));
+	}
+```
+
+As you can see, we simply `cons` on a new sensitivity into the list for each row.  
 
 
