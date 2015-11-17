@@ -1,12 +1,15 @@
 Pure4J For Financial Calculations
 =================================
 
-Pure4J is born from experience in the financial services sector (specifically, risk). In 
-this tutorial I am going to:
-* Explain Value at Risk (as a simple financial calculation)
-* Model an example of this on a spreadsheet
-* Use Pure4J to implement the model in Java Code
-* Use [Concordion](http://concordion.org) and the Excel spreadsheet example to build an automated functional test of the Java code.
+Pure4J is born from experience in the financial services sector (specifically, risk). We have 
+to build lots of calculators, and it's hard to build tests that show you've got them right.  
+If you are facing similar issues, this approach might help.
+
+In this tutorial I am going to:
+* Explain Value at Risk (as a simple financial calculation).
+* Model an example of this on a spreadsheet.
+* Use Pure4J to implement the Value at Risk model as pure, functional java code.
+* Use [Concordion](http://concordion.org) and a Microsoft Excel example to build an automated functional test of the Java code.
 
 We will cover each of these parts as we go along, and I will introduce all the concepts described
 above.
@@ -16,12 +19,30 @@ But, the end result is that we will have:
 * A Java functional test that demonstrates (and exercises) the calculator.
 * Good code-coverage
 
+### Why Excel? 
+
+If you are used to writing tests, you'll know that they are often in the form:
+
+* **Given** some inputs, A, B, C. 
+* **When** I perform some operation, X
+* **Then** I expect some value, R.
+
+This is all very well if you know how to calculate R from A, B and C.  But, if the calculation
+of R is complicated, you might well want to show your working out, and use some excel functions
+to help you get it right.
+
+Secondly, in the world of finance, it is often business analysts (BA's) who have to put together these example
+calculations.   They are usually *very familiar* with Excel, and showing these calculations in Excel.
+
+So, in order to *minimize friction* for the people writing tests, it's a good idea to use tools and formats
+that they are already familiar with.
+
 ### Introduction To Historic Value At Risk
 
 Value at Risk (henceforth, VaR) is a methodology which aims to answer the following question:
 
-|Given a particular confidence interval (say 95% certainty), and a particular period of time, 
-|what amount of money should I expect to lose?
+> Given a particular confidence interval (say 95% certainty), and a particular period of time, 
+> what amount of money should I expect to lose?
 
 So, if you have a 1-day, 90% VaR of $500, you should expect that on average, once in twenty 
 days you will lose more than $500.  
@@ -50,7 +71,27 @@ In real life, the past performance of the stock market is no indication of what 
 would be.  For now though, we'll let that concern go:  this is the 'Historic VaR' because it's telling
 us what the VaR would have been through a particular period of the past.
 
-### Getting Started
+### How Will It Work?
+
+Let's look at an architecture diagram of how this test will work:
+
+![VaR Test Architecture](http://kite9.com/pub/tweet7/pure42.1.png)
+
+On the right side, we have the VaR model that we want to test.  To test it, we're going to call it with some
+inputs, and get back it's output.  
+
+On the left side, we have our test fixture, which consists of:
+* The Excel Spreadsheet demonstrating the VaR calculation, to give us the inputs we need.
+* Some Java Fixture code, knows how to call the VaR model.
+
+In the middle, we have Concordion, which:
+* Handles (by way of the Concordion Excel Extension) reading in the Excel spreadsheet.
+* Calling the fixture code, and checking the actual results match the expected results.
+* Producing an HTML report to show the results.
+
+Hopefully this is somewhat clear, if not, keep reading as we put some detail on this picture.
+
+### Building Our Excel Spreadsheet
 
 We need four pieces of information to get started on VaR:
 
@@ -103,10 +144,13 @@ If I sort these returns, and graph them, you can see the distribution of profits
 
 If only all investing were this profitable!  Some really big gains and a few small losses.  
 
-Let's add the formula for this: `=PERCENTILE(Table6[Portfolio], 1-B1)`, where B1 is the cell containing our confidence
-interval.
+Let's add the formula for this: `=SMALL(Table6[Portfolio], 20-C1*20)`, where B1 is the cell containing our confidence
+interval (see pic below).  What this is doing is working out which of the points on the PnL distribution is our VaR
+number.  Since it's a 90% VaR, and we have 20 numbers, we need the 2nd point.  (C1 contains our 90%).  
 
-Our VaR works out to be around USD -2.93, as point 3 on the graph is at the 90% confidence interval.  
+![The VaR amount](tutorial_2_8.png)
+
+Our VaR works out to be around USD -4.448, as point 2 on the graph is at the 90% confidence interval.  
 
 ### Creating A Pure Java Implementation
 
@@ -151,8 +195,8 @@ public final class Sensitivity extends AbstractImmutableValue<Sensitivity> {
 ```
 
 Note the use of `AbstractImmutableValue`:  this class declares the `@ImmutableValue` needed to tell Pure4J to check this class,
-and it also contains the `equals()`, `hashCode()`, `toString()` and `compareTo()` methods.  In return, the implementation needs to
-define the `fields()` method to say what fields the class has.  
+and it also contains default implementations of `equals()`, `hashCode()`, `toString()` and `compareTo()` methods.  In return, the implementation needs to
+define the `fields()` method to say what fields the class has. (See [Tutorial 1](tutorial1.md) for more details).  
 
 #### `PnLStream` 
 
@@ -227,7 +271,8 @@ Let's look at scaling the stream:
 	}
 ```
 
-Again, scaling up creates a new `PnLStream` object which is returned.
+Again, scaling up creates a new `PnLStream` object which is returned: our classes remain immutable, which 
+is what we want for thread-safe, pure java code.
 
 #### The `VarProcessor`
 
@@ -250,11 +295,7 @@ public class VarProcessorImpl implements VarProcessor {
 
 	public VarProcessorImpl(float confidenceLevel) {
 		this.confidenceLevel = confidenceLevel;
-	}
-	
-	
-	
-	
+	}	
 ```
 
 Again, we are constructing our Var processor as an immutable value object, but since I don't 
@@ -273,9 +314,14 @@ public float getVar(IPersistentMap<String, PnLStream> historic, ISeq<Sensitivity
 		PnLStream combined = null;
 		for (Sensitivity s : sensitivities) {
 			String t = s.getTicker();
+			// find the right PnL Stream for the sensitivity
 			PnLStream theStream = historic.get(t);
+			
+			// scale it
 			float scale = s.getAmount();			
 			PnLStream scaledStream = theStream.scale(scale);
+			
+			// sum it with the others
 			combined = (combined == null) ? scaledStream : combined.add(scaledStream);
 		}
 ```
@@ -316,6 +362,23 @@ in the same package structure (but in the `src/test/resources`directory), like s
 
 ![File Naming Conventions](tutorial_2_7.png)
 
+### `ConcordionVarTest.java`
+
+We've already seen how to build the Excel Spreadsheet part, and so next we need to build the Java Fixture.  The responsibilities
+of this class are:
+
+* To collect up the inputs off the spreadsheet into Java Objects.
+* To call the `VarProcessorImpl` with those inputs.
+* To return the output from the `VarProcessorImpl` back to concordion.
+
+The inputs that we have to process are going to be:
+
+* The confidence interval (of 90%) 
+* The size of the sensitivity in each of our stocks
+* The historic PnL Stream for each stock.  
+
+#### Setting The Confidence Interval & Calling The VaR Processor
+
 
 `ConcordionVarTest` starts like this:
 
@@ -323,11 +386,35 @@ in the same package structure (but in the `src/test/resources`directory), like s
 @RunWith(ConcordionRunner.class)
 @Extensions(ExcelExtension.class)
 public class ConcordionVarTest {
-
-}
+	
+	IPersistentMap<String, PnLStream> theStreams = new PersistentHashMap<String, PnLStream>();
+	IPersistentList<Sensitivity> sensitivities = new PersistentList<Sensitivity>();
+	
+	public String calculateVaR(String percentage) {
+		float conf = parsePercentage(percentage);
+		VarProcessor processor = new VarProcessorImpl(conf);
+		float result = processor.getVar(theStreams, sensitivities.seq());
+		return new DecimalFormat("#.000").format(result);
+	}
+	
+	private float parsePercentage(String percentage) {
+		return Float.parseFloat(percentage.trim().substring(0, percentage.trim().length()-1)) / 100f;
+	}
 ```
 
-These annotations instruct it that it's a concordion test, and to use the excel extension.  
+Let's go through some of the important features here:
+
+* The `RunWith` is a **JUnit annotation**.  This means that Concordion tests are actually a type of JUnit Test.  This is nice, because IDEs like Eclipse offer
+a lot of support for JUnit.
+* The `Extensions` indicates that this is going to use an **Excel** format test.  Since our test is called "ConcordionVarTest", Concordion will drop the "Test" part and look for a file called "ConcordionVaR.xlsx" in the classpath.
+* `calculateVaR` is the main test method here.  It takes a percentage argument.  It's calling our `VarProcessorImpl`, and using some local variables from the test as the arguments (so, we also need to set
+those up).
+* Concordion expects text-based parameters.  So, the percentage is passed in from the spreadsheet as text, and we return the result as text, hence the `parsePercentage` method.
+
+#### Getting Concordion To Call `calculateVaR`
+
+
+
 
 
 

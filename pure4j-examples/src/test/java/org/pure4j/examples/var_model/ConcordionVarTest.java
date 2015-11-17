@@ -1,7 +1,6 @@
 package org.pure4j.examples.var_model;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.time.LocalDate;
 
 import org.concordion.api.extension.Extensions;
@@ -23,7 +22,18 @@ public class ConcordionVarTest {
 	
 	IPersistentMap<String, PnLStream> theStreams = new PersistentHashMap<String, PnLStream>();
 	IPersistentList<Sensitivity> sensitivities = new PersistentList<Sensitivity>();
-
+	
+	public String calculateVaR(String percentage) {
+		float conf = parsePercentage(percentage);
+		VarProcessor processor = new VarProcessorImpl(conf);
+		float result = processor.getVar(theStreams, sensitivities.seq());
+		return new DecimalFormat("#.000").format(result);
+	}
+	
+	private float parsePercentage(String percentage) {
+		return Float.parseFloat(percentage.trim().substring(0, percentage.trim().length()-1)) / 100f;
+	}
+	
 	public void addPnLRow(String date, String goog, String yhoo, String msft) {
 		theStreams = addPnlPoint(theStreams, "GOOG", date, goog);
 		theStreams = addPnlPoint(theStreams, "YHOO", date, yhoo);
@@ -49,16 +59,5 @@ public class ConcordionVarTest {
 	public void setSensitivity(String ticker, String amount) {
 		Float f = Float.parseFloat(amount.substring(amount.lastIndexOf("]")+1));
 		sensitivities = sensitivities.cons(new Sensitivity(ticker, f));
-	}
-	
-	public String calculateVaR(String percentage) {
-		float conf = parsePercentage(percentage);
-		VarProcessor processor = new VarProcessorImpl(conf);
-		float result = processor.getVar(theStreams, sensitivities.seq());
-		return new DecimalFormat("#.000").format(result);
-	}
-	
-	private float parsePercentage(String percentage) {
-		return Float.parseFloat(percentage.trim().substring(0, percentage.trim().length()-1)) / 100f;
 	}
 }
