@@ -8,10 +8,10 @@ to build lots of calculators, and it's hard to build tests that show you've got 
 If you are facing similar issues, this approach might help.
 
 In this tutorial I am going to:
-* Explain Value at Risk (as a simple financial calculation).
-* Model an example of this on a spreadsheet.
-* Use Pure4J to implement the Value at Risk model as pure, functional java code.
-* Use [Concordion](http://concordion.org) and a Microsoft Excel example to build an automated functional test of the Java code.
+* [Explain Value at Risk](#introduction-to-historic-value-at-risk) (as a simple financial calculation).
+* [Model an example of this](#building-our-excel-spreadsheet) on a spreadsheet.
+* Use Pure4J to [implement the Value at Risk model](#creating-a-pure-java-implementation) as pure, functional java code.
+* Use [Concordion](http://concordion.org) and a Microsoft Excel example to build an [automated functional test](#using-concordion-to-build-the-test) of the Java code.
 
 We will cover each of these parts as we go along, and I will introduce all the concepts described
 above.
