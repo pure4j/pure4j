@@ -124,6 +124,10 @@ Broadly, there are four main ways to construct any persistent or transient colle
 
 Pass an ISeq into the constructor of a collection class to copy the collection.
 
+e.g.
+
+`new PersistentHashMap(<someISeq>)`
+
 ##### Interface Based (interface impure)
 
 Pass an existing collection in (say a regular `HashMap`, `Collection` or `List`) to a constructor, and create a copy.

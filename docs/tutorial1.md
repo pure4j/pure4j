@@ -334,6 +334,19 @@ Here, we are just using an IPersistentMap (analogous to the `java.util.Map` inte
 known to be immutable, since the interface has `@ImmutableValue` as an annotation.  So, this time, we get no errors 
 when running the Pure4J checker.
 
+Summing Up
+----------
+
+What we've demonstrated here is:
+* the construction of some immutable objects.   Unlike many immutable objects in Java, 
+ones constructed using the `@ImmutableValue` annotation are immutable *all the way down*, so that no part of them
+mutates.
+* We've used the Pure4J Checker to prove their immutability guarantee.
+* We've used `AbstractImmutableValue` to cut down on boiler-plate code.
+
+There are [huge advantages to this](forces.md):  pure, immutable code is thread-safe, scalable, easier to reason about, easier to test, 
+has no hidden dependencies on other objects in the system.  So, it's worth the effort.
+
 From here:
 *[More On Collections](docs/tutorial_collections.md) 
 *[Managing unshared mutable state.](docs/tutorial_mutable_unshared.md)

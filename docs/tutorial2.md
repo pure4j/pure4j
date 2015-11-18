@@ -1,6 +1,8 @@
 Pure4J For Financial Calculations
 =================================
 
+*Reading time:  Approx 15 mins* 
+
 Pure4J is born from experience in the financial services sector (specifically, risk). We have 
 to build lots of calculators, and it's hard to build tests that show you've got them right.  
 If you are facing similar issues, this approach might help.
@@ -557,13 +559,23 @@ This is the output from maven:
 [INFO] Finished Pure4J Analysis
 ```
 
-### Conclusion
+### What Did We Learn?
 
-This has been a fairly involved example.  Well done if you are still sticking with it.  If you are working in Java, in Finance, then this approach offers
+So, here we showed how to construct a complete, real financial calculation.  We used pure, functional Java code
+to do it, and we tested our code using Concordion and Excel spreadsheets.  By doing this, we can re-use our Java code anywhere it needs to go:
+there are no "hidden" dependencies waiting to trip us up in moving to a new environment.  
+
+Also, we have very clear examples of how our calculation works, that anyone with an understanding of Excel can follow. 
+
+Admittedly, one example is not enough, but you get the idea.
+
+If you are working in Java, in Finance, then this approach offers
 a way of engaging business analysts with the testing process, and raising the code-quality bar within a Java project.   
 
 Additionally, once you get started with
 this way of testing, the cost of changing tests remains low:  tests remain in their native, Excel format, and should BAs update them, they can review the results 
 by checking in the tests and seeing if they work on the build server.  
+
+[A more detailed argument on the advantages of pure functional programming](forces.md)
 
 
