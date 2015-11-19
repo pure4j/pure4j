@@ -16,9 +16,10 @@ Forces
 * You want to ensure your code is testable.
 * You want to be able to reuse your code in other contexts, and know that it is dependency-free.
 
-[More here on why this *might* be a good idea.](docs/forces.md)
-
-[Some details on the background of this project.](docs/impetus.md)
+Supporting Argument:
+* [More here on why this *might* be a good idea.](docs/forces.md)
+* [Some details on the background of this project.](docs/impetus.md)
+* [Top 9 Reasons For Writing Pure, Functional Code In Java](docs/topx.md)
 
 What is Function Purity?
 ------------------------
@@ -103,6 +104,7 @@ Tutorials
 * [See the first tutorial here](docs/tutorial1.md). 
 * [Tutorial On Persistent Collections](docs/tutorial_collections.md).
 * [About `@MutableUnshared`](docs/tutorial_mutable_unshared.md).
+* [Financial Calculations In Pure4J, Tested Using Concordion](docs/tutorial2.md).
 
 There is an example project in the `pure4j-examples` folder which builds has some example use cases, and builds them using the Maven 
 Plugin.  If you are starting a project and want to use Pure4J, start by looking at this.
