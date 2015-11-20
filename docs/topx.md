@@ -88,7 +88,7 @@ Pure functional programmers have said goodbye to this problem completely.
 ### 9.  You Don't Need To Learn A New Language
 
 Sure, you could go and learn Haskell or Frege.  They are great.  But, you can get started on pure
-functional programming within the JVM using Java [right now](http://pure4j.org).  
+functional programming within the JVM using Java [right now](https://github.com/robmoffat/pure4j/blob/master/README.md).  
 
 
 

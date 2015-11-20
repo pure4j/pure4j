@@ -21,6 +21,15 @@ Supporting Argument:
 * [Some details on the background of this project.](docs/impetus.md)
 * [Top 9 Reasons For Writing Pure, Functional Code In Java](docs/topx.md)
 
+Quick Start
+-----------
+
+1.  Add the [maven plugin](#2--maven-purity-checker) to your java project.
+2.  Add the [library](#3-persistent-collections) to your java project.
+3.  Annotate some classes with [`@ImmutableValue`](#1--annotations).
+4.  Run a `maven install` to see if your classes are pure.
+
+
 What is Function Purity?
 ------------------------
 
