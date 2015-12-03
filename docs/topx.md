@@ -71,9 +71,9 @@ Yes, your code is going to need Java.  But, you can isolate it from being legacy
 Ok, so pure functional code is thread-safe, and there is no shared state.  This means you can scale to
 your heart's content without running into issues.  Nice.
 
-### 8.  No Hiesenbugs 
+### 8.  No Heisenbugs 
 
-> In computer programming jargon, a heisenbug is a software bug that seems to disappear or alter its behavior when one attempts to study it.
+> In computer programming jargon, a Heisenbug is a software bug that seems to disappear or alter its behavior when one attempts to study it.
 
 From [Hiesenbug](https://en.wikipedia.org/wiki/Heisenbug)
 
