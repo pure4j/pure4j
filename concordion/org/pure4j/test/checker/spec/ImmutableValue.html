@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><html xmlns:concordion="http://www.concordion.org/2007/concordion"><head><style>* {
+  font-family: Arial;
+}
+body {
+  padding: 32px;  
+}
+pre {
+  padding: 6px 28px 6px 28px;
+  background-color: #E8EEF7;
+}
+pre, pre *, code, code *, kbd {
+  font-family: Courier New, Courier;
+  font-size: 10pt;
+}
+h1, h1 * {
+  font-size: 24pt;	
+}
+p, td, th, li, .breadcrumbs {
+  font-size: 10pt;
+}
+p, li {
+  line-height: 140%;
+  max-width: 720px;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 8px 0px 8px 0px;
+}
+th, td {
+  border: 1px solid black;
+  padding: 3px;
+}
+td {
+  background-color: white;
+  vertical-align: top;
+}
+th {
+  background-color: #C3D9FF;
+}
+li {
+  margin-top: 6px;
+  margin-bottom: 6px; 
+}
+
+.example {
+  padding: 6px 16px 6px 16px;
+  border: 1px solid #C3D9FF;
+  margin: 6px 0px 28px 0px;
+  background-color: #F5F9FD;
+}
+.example h3 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: 12pt;
+}
+
+p.success {
+  padding: 2px;
+}
+.success, .success * {
+  background-color: #afa !important;
+}
+.success pre {
+  background-color: #bbffbb;
+}
+.failure, .failure * {
+  background-color: #ffb0b0;
+  padding: 1px;
+}
+.failure .expected {
+  text-decoration: line-through;
+  color: #bb5050;
+}
+.ignored, .ignored * {
+  background-color: #f0f0f0 !important;	
+}
+
+ins {
+  text-decoration: none;	
+}
+
+.exceptionMessage {
+  background-color: #fdd;
+  font-family: Courier New, Courier, Monospace;
+  font-size: 10pt;
+  display: block;
+  font-weight: normal;
+  padding: 4px;
+  text-decoration: none !important;
+}
+.stackTrace, .stackTrace * {
+  font-weight: normal;
+}
+.stackTrace {
+  display: none;
+  padding: 1px 4px 4px 4px;
+  background-color: #fdd;
+  border-top: 1px dotted black;
+}
+.stackTraceExceptionMessage {
+  display: block;
+  font-family: Courier New, Courier, Monospace;
+  font-size: 8pt;
+  white-space: wrap;
+  padding: 1px 0px 1px 0px;
+}
+.stackTraceEntry {
+  white-space: nowrap;
+  font-family: Courier New, Courier, Monospace;
+  display: block;
+  font-size: 8pt;
+  padding: 1px 0px 1px 32px;
+}
+.stackTraceButton {
+  font-size: 8pt;
+  margin: 2px 8px 2px 0px;
+  font-weight: normal;
+  font-family: Arial;
+}
+
+.special {
+  font-style: italic;
+}
+.missing, .missing * {
+  background-color: #ff9999;
+  color:#bb5050;
+  text-decoration: line-through;
+}
+.surplus, .surplus * {
+  background-color: #ff9999;
+}
+.footer {
+  text-align: right;
+  margin-top: 40px;
+  font-size: 8pt;
+  width: 100%;
+  color: #999;
+}
+.footer .testTime {
+  padding: 2px 10px 0px 0px;
+}
+
+.idea {
+  font-size: 9pt;
+  color: #888;
+  font-style: italic;	
+}
+.tight li {
+  margin-top: 1px;
+  margin-bottom: 1px; 
+}
+.commentary {
+  float: right;
+  width: 200px;
+  background-color: #ffffd0;
+  padding:8px;
+  border: 3px solid #eeeeb0;	 
+  margin: 10px 0px 10px 10px;	 
+}
+.commentary, .commentary * {
+  font-size: 8pt;
+}
+</style><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<link href="../../../concordion.css" rel="stylesheet" type="text/css" />
+</head><body>
+
+    <h1><code>@ImmutableValue</code> Specification</h1>
+
+	<p>This annotation declares that instances of this class are immutable and are value objects.</p>
+
+	<p>That is, In object-oriented and functional programming:</p>
+	<ul>
+		<li><b>An immutable object</b> is an object whose state cannot be modified after it is created.</li>
+		<li>A <b>Value object</b> is one where the identity of the object is defined by the state (i.e. fields) of the object itself. </li>
+	</ul>
+
+	<h3>Immutability Contract</h3>
+
+	<p>This class declares the immutability contract, which is then checked by the JPure compile-time checker. </p>
+	
+	<ul>
+		<li concordion:execute="annotationIsInherited()">Concrete classes inherit <code>@ImmutableValue</code> from any superclass or interface with the annotation. </li>
+		<li concordion:execute="fieldsMustBeFinal()">The fields on the class  <strong>must</strong> be declared <code>final</code>, and therefore unalterable once set by the constructor.</li>
+		<li concordion:execute="fieldsMustBeImmutable()">The fields must only contain other immutable value objects/primitives (see below). </li>
+		<li><del>Concrete classes inheriting or declaring this annotation must be <code>final</code></del>.</li>
+		<li concordion:execute="genericParamsMustBeImmutable()">Any generic type parameters supplied to an <code>ImmutableValue</code> annotated class must also be immutable value types.</li>
+		<li concordion:execute="parametersMustBeImmutable()">To ensure thread-safety, arguments to methods on the class must also be immutable. </li>
+		<li concordion:execute="returnTypeAnything()">Returned values from <code>@ImmutableValue</code> objects can be of any type.</li>
+		<li concordion:execute="methodsMustBePure()">Any instance (i.e. non-static) methods on the class must be implementation-pure. (see {@link Pure} for what this entails).</li>
+		<li concordion:execute="overriddenMethodPurityNotChecked()">Methods (inherited from a base-class) which are overridden need not be pure.</li>
+		<li concordion:execute="staticMethodsNotPure()">The purity (or otherwise) of static methods in the class hierarchy are not affected by this annotation</li>
+		<li concordion:execute="privateMethodsNeedNotBeInterfacePure()">Public / Package accessible methods of the class must only take immutable parameters (interface pure).</li>
+	</ul>
+
+	<h3>What Qualifies As An Immutable Value?</h3>
+	<p>Various classes from the Java platform are already immutable, and recognized as such by Pure4J.</p>
+	
+	<ul>
+		<li concordion:execute="stringsAreImmutable()"><code>String</code>s.</li>
+		<li concordion:execute="primitivesAreImmutable()">Java primitives and their wrapper classes. e.g. <code>int</code> and <code>Integer</code></li>
+		<li concordion:execute="immutableValuesCanBeParameters()">Instances of other classes labeled <code>@ImmutableValue</code>. </li>
+		<li concordion:execute="bigDecimalIsImmutable()">BigDecimal, BigInteger</li>
+		<li concordion:execute="currencyIsImmutable()">Currency</li>
+		<li concordion:execute="exceptionsTreatedImmutable()">Anything extending <code>Throwable</code>.  e.g. checked and unchecked exceptions.</li>
+	</ul>
+	
+	<h4>Notable Exceptions To Immutable Values</h4>
+	
+	<ul>
+		<li concordion:execute="arrayNotImmutable()">Arrays.</li>
+		<li concordion:execute="collectionsNotImmutable()">Java Collection Classes (use the provided PersistentCollections instead)</li>
+	</ul>
+	
+	<h3>Implementing <code>toString()</code> and <code>HashCode()</code></h3>
+		
+	<p>Clients are warned that  <code>toString</code> and <code>hashCode</code> are <b>not</b> pure functions, as they are 
+	not deterministic (being dependent on the system hash code, which is based on object id). </p>
+	
+	<ul>
+		<li concordion:execute="hashCodeAndToStringMustBeImplemented()">Implementations with the <code>@ImmutableValue</code> annotation will need to implement these.</li>
+		<li concordion:execute="abstractImmutableValueImplementsHashCodeAndEquals()"><code>AbstractImmutableValue</code> is provided as a convenience class, which can be used to reduce boiler-plate code
+	in implementation classes.</li>
+	</ul>
+	
+
+	<h3>Implementing <code>equals()</code></h3>
+	
+	<p concordion:execute="equalsNeedNotBeImplemented()"><code>equals()</code> by default <em>is</em> pure.</p>
+	<p>Your code is expected to observe the contract of <code>equals()</code> and not modify the state of the parameter object
+	being passed to it.  Unfortunately, this case is not checked by the system.</p>
+	
+	<h3>Exceptions</h3>
+	
+	<p>Exceptions are regarded as being immutable for convenience only.  You should not use exceptions for passing system state. </p>
+	
+	<h3>Extending / Using Other Code</h3>
+	
+	<p concordion:execute="usingLibrary()">Pure4J will check code in your code base, but assume that anything tagged <code>@ImmutableValue</code> in a library has been correctly verified
+	by the build process of that library.</p>
+
+<div class="footer">Results generated by <a href="http://www.concordion.org" style="font-weight: bold; text-decoration: none; color: #89C;">Concordion</a><div class="testTime">in 366 ms on 04-Dec-2015 at 13:31:21 GMT</div></div></body>
+</html>
