@@ -109,7 +109,7 @@
    				<configuration>
      				<message>Creating site for ${project.version}</message>
      				<repositoryName>pure4j</repositoryName>
-     				<repositoryOwner>robmoffat</repositoryOwner>
+     				<repositoryOwner>pure4j</repositoryOwner>
    				</configuration>
    				<executions>
      				<execution>
