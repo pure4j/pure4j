@@ -11,4 +11,5 @@ target/*
 */.settings/*
 /core/.settings/org.eclipse.wst.common.component
 pure4j-checker/*.pure
+pure4j-cf/ext
 ~                                                    
