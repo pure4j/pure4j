@@ -75,7 +75,7 @@ your heart's content without running into issues.  Nice.
 
 > In computer programming jargon, a Heisenbug is a software bug that seems to disappear or alter its behavior when one attempts to study it.
 
-From [Hiesenbug](https://en.wikipedia.org/wiki/Heisenbug)
+From [Heisenbug](https://en.wikipedia.org/wiki/Heisenbug)
 
 Pure functions don't have *any* shared state, much less global state.  For the Clojure and Haskell guys,
 this often means they build programs without a debugger, and just use a REPL.
