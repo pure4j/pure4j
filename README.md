@@ -127,7 +127,7 @@ Please see the FAQ [here](docs/FAQ.md).
 Specifications
 --------------
 
-Concordion specifications detailing the interface of the project are available online [here](http://robmoffat.github.io/pure4j/concordion/org/pure4j/test/checker/spec/Index.html).
+Concordion specifications detailing the interface of the project are available online [here](http://pure4j.github.io/pure4j/concordion/org/pure4j/test/checker/spec/Index.html).
 
 Effectively this forms the Javadoc for the project, though the assertions made in the documentation are tested.
 
