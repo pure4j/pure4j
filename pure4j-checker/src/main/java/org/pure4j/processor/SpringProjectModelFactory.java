@@ -3,7 +3,8 @@ package org.pure4j.processor;
 import java.io.IOException;
 
 import org.pure4j.model.ProjectModel;
-import org.pure4j.model.ProjectModelImpl;
+import org.pure4j.model.impl.ClassFileModelBuilder;
+import org.pure4j.model.impl.ProjectModelImpl;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

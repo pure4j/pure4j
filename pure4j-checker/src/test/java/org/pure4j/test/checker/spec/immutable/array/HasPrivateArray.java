@@ -5,13 +5,15 @@ import org.pure4j.exception.FieldTypeNotImmutableException;
 import org.pure4j.test.CausesError;
 import org.pure4j.test.ShouldBePure;
 
+import com.google.common.hash.HashingOutputStream;
+
 @ImmutableValue
 public final class HasPrivateArray {
 
 	/*
 	 * Can't be immutable, as this can be changed.
 	 */
-	@CausesError({FieldTypeNotImmutableException.class})
+	@CausesError({FieldTypeNotImmutableException.class, HashingOutputStream.class})
 	private final int[] members = new int[] { 4, 5, 6};
 
 	@Override

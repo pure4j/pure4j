@@ -1,7 +1,6 @@
-package org.pure4j.model;
+package org.pure4j.model.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
+import org.pure4j.model.Handle;
 
 
 /**
@@ -12,14 +11,14 @@ import java.lang.reflect.AccessibleObject;
  * @author moffatr
  * 
  */
-public abstract class MemberHandle extends AbstractHandle<AccessibleObject> implements AnnotatedElementHandle<AccessibleObject> {
+public abstract class AbstractMemberHandle extends AbstractAnnotatedHandle {
 
 	protected String className;
 	protected String name;
 	protected String desc;
 	protected int line;
-	
-	public MemberHandle(String className, String name, String desc, int line) {
+
+	public AbstractMemberHandle(String className, String name, String desc, int line) {
 		super();
 		this.className = className;
 		this.name = name;
@@ -48,12 +47,12 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 		return className + "." + name + (desc == null ? "" : desc)+(line != 0 ? " @line="+line : "");
 	}
 
-	public int compareTo(AnnotatedElementHandle<?> oo) {
-	    if (oo instanceof MemberHandle) {
-	    	MemberHandle o = (MemberHandle) oo;
+	public int compareTo(Handle oo) {
+	    if (oo instanceof AbstractMemberHandle) {
+	    	AbstractMemberHandle o = (AbstractMemberHandle) oo;
 	    	return (className+desc+name).compareTo(o.className+o.desc+o.name);
 	    } else {
-	    	return 0;
+			return this.getClass().getName().compareTo(oo.getClass().getName());
 	    }
 	}
 
@@ -73,9 +72,9 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 		return true;
 	    if (obj == null)
 		return false;
-	    if (!(obj instanceof MemberHandle)) 
+	    if (!(obj instanceof AbstractMemberHandle)) 
 		return false;
-	    MemberHandle other = (MemberHandle) obj;
+	    AbstractMemberHandle other = (AbstractMemberHandle) obj;
 	    if (className == null) {
 		if (other.className != null)
 		    return false;
@@ -93,18 +92,8 @@ public abstract class MemberHandle extends AbstractHandle<AccessibleObject> impl
 		return false;
 	    return true;
 	}
-	
-	public abstract AccessibleObject hydrate(ClassLoader cl);
-	
-	public abstract <T extends Annotation> T getAnnotation(ClassLoader cl, Class<T> c);
-	
-	public abstract java.lang.reflect.Type[] getGenericTypes(ClassLoader cl);
-	
-	public abstract Class<?>[] getRawTypes(ClassLoader cl);
-	
+		
 	public String getSignature() {
 		return name+(desc != null ? desc.substring(0, desc.lastIndexOf(")")+1) : "");
 	}
-
-	public abstract int getModifiers(ClassLoader cl);
 }

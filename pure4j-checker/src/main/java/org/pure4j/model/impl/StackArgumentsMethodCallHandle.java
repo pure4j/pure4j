@@ -1,8 +1,10 @@
-package org.pure4j.model;
+package org.pure4j.model.impl;
 
 import java.util.List;
 
-public class StackArgumentsMethodHandle extends MethodHandle implements StackArgumentsHandle {
+import org.pure4j.model.StackArgumentsCallHandle;
+
+public class StackArgumentsMethodCallHandle extends AbstractMemberHandle implements StackArgumentsCallHandle {
 
 	private boolean firstCall;
 
@@ -10,7 +12,7 @@ public class StackArgumentsMethodHandle extends MethodHandle implements StackArg
 		return firstCall;
 	}
 
-	public StackArgumentsMethodHandle(String className, String name, String desc, int line, List<Integer> localVariables, boolean firstCall) {
+	public StackArgumentsMethodCallHandle(String className, String name, String desc, int line, List<Integer> localVariables, boolean firstCall) {
 		super(className, name, desc, line);
 		this.localVariables = localVariables == null ? this.localVariables : localVariables;
 		this.firstCall = firstCall;

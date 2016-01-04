@@ -1,10 +1,10 @@
 package org.pure4j.exception;
 
-import org.pure4j.model.MemberHandle;
+import org.pure4j.model.impl.AbstractMemberHandle;
 
 public class MemberCantBeHydratedException extends Pure4JException {
 
-	public MemberCantBeHydratedException(MemberHandle mh) {
+	public MemberCantBeHydratedException(AbstractMemberHandle mh) {
 		super("Couldn't hydrate: "+mh);
 	}
 

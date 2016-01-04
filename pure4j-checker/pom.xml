@@ -28,6 +28,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker</artifactId>
+			<version>1.9.8</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 		    <groupId>org.reflections</groupId>
 		    <artifactId>reflections</artifactId>
 		    <version>0.9.10</version>
@@ -52,6 +58,12 @@
 			<groupId>org.concordion</groupId>
 			<artifactId>concordion</artifactId>
 			<version>1.5.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.testing.compile</groupId>
+			<artifactId>compile-testing</artifactId>
+			<version>0.6</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -1,7 +1,5 @@
 package org.pure4j.processor;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,16 +12,17 @@ import org.pure4j.exception.ClassHasConflictingAnnotationsException;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
 import org.pure4j.exception.MemberCantBeHydratedException;
 import org.pure4j.immutable.RuntimeImmutabilityChecker;
-import org.pure4j.model.ClassHandle;
-import org.pure4j.model.ClassInitHandle;
-import org.pure4j.model.ConstructorHandle;
-import org.pure4j.model.ImplementationHandle;
-import org.pure4j.model.MemberHandle;
-import org.pure4j.model.MethodHandle;
+import org.pure4j.model.AnnotatedElementHandle;
+import org.pure4j.model.CallHandle;
+import org.pure4j.model.DeclarationHandle;
 import org.pure4j.model.ProjectModel;
-import org.pure4j.model.StackArgumentsMethodHandle;
+import org.pure4j.model.impl.AnnotationHandle;
+import org.pure4j.model.impl.ClassHandle;
+import org.pure4j.model.impl.ClassInitHandle;
+import org.pure4j.model.impl.ConstructorDeclarationHandle;
+import org.pure4j.model.impl.MethodDeclarationHandle;
+import org.pure4j.model.impl.StackArgumentsMethodCallHandle;
 import org.pure4j.processor.PureChecklistHandler.PureMethod;
-import org.springframework.asm.Type;
 
 public class PurityChecker implements Rule {
 	
@@ -59,23 +58,23 @@ public class PurityChecker implements Rule {
 	}
 	
 	private void identifyImpureCallsToPureImplementations(ProjectModel pm, Callback cb) {
-		for (MemberHandle declaration : pm.getAllDeclaredMethods()) {
+		for (DeclarationHandle declaration : pm.getAllDeclaredMethods()) {
 			boolean pure = false;
 			
 			try {
-				pure = pureChecklist.isMarkedPure(declaration, cb);
+				pure = pureChecklist.isMarkedPure(declaration, cb, pm);
 			} catch (MemberCantBeHydratedException e) {
 			}
 			
 			if (!pure) {
-				for (MemberHandle called : pm.getCalls(declaration)) {
+				for (CallHandle called : pm.getCalls(declaration)) {
 					PureMethod pureMethod = pureChecklist.getElementFor(called);
 					if (pureMethod != null) {
 						if (true == pureMethod.checkImplementationPurity(cb, pm)) {
 							if (false == pureMethod.checkInterfacePurity(cb, pm)) {
 								cb.registerError(new ImpureCodeCallingPureCodeWithoutInterfacePurity(declaration, called));
 							}
-						}
+						} 
 					}
 				}
 			}
@@ -95,7 +94,7 @@ public class PurityChecker implements Rule {
 		cb.send("Pure Methods");
 		cb.send("------------");
 		for (PureMethod pureMethod : pureChecklist.getMethodList()) {
-			if (pm.getAllClasses().contains(pureMethod.declaration.getDeclaringClass())) {
+			if (pm.getAllClasses().contains(pureMethod.declaration.getClassName())) {
 				cb.registerPure(pureMethod.declaration.toString(), pureMethod.checkInterfacePurity(cb, pm), pureMethod.checkImplementationPurity(cb, pm));
 			}
 		}
@@ -103,10 +102,10 @@ public class PurityChecker implements Rule {
 
 	private void addMethodsFromImmutableValueClassToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {
-			Class<?> cl = hydrate(className);
-			if (immutables.classIsMarked(cl, cb)) {
-				Class<?> immutableClass = hydrate(className);
-				if (isConcrete(immutableClass) && (!RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(immutableClass.getName()))) {
+			ClassHandle cl = pm.getClassHandle(className);
+			if (immutables.classIsMarked(cl, cb, pm)) {
+				ClassHandle immutableClass = pm.getClassHandle(className);
+				if (immutableClass.isConcrete() && (!RuntimeImmutabilityChecker.INBUILT_IMMUTABLE_CLASSES.contains(immutableClass.getClassName()))) {
 					immutables.doClassChecks(immutableClass, cb, pm);
 					cb.send("@ImmutableValue: "+immutableClass);
 					addMethodsFromClassToPureList(immutableClass, cb, pm, true, false); 
@@ -117,13 +116,13 @@ public class PurityChecker implements Rule {
 
 	private void addMethodsFromMutableUnsharedToPureList(ProjectModel pm, Callback cb) {
 		for (String className : pm.getAllClasses()) {
-			Class<?> cl = hydrate(className);
-			if (mutableUnshared.classIsMarked(cl, cb)) {
-				if (immutables.classIsMarked(cl, cb)) {
+			ClassHandle cl = pm.getClassHandle(className);
+			if (mutableUnshared.classIsMarked(cl, cb, pm)) {
+				if (immutables.classIsMarked(cl, cb, pm)) {
 					cb.registerError(new ClassHasConflictingAnnotationsException(cl));
 				} else {
-					Class<?> pureClass = hydrate(className);
-					if (isConcrete(pureClass)) {
+					ClassHandle pureClass = pm.getClassHandle(className);
+					if (pureClass.isConcrete()) {
 						mutableUnshared.doClassChecks(pureClass, cb, pm);
 						cb.send("@MutableUnshared: "+pureClass);
 						addMethodsFromClassToPureList(pureClass, cb, pm, false, false);
@@ -133,73 +132,67 @@ public class PurityChecker implements Rule {
 		}
 	}
 	
-	public void addMethodsFromClassToPureList(Class<?> pureClass, Callback cb, ProjectModel pm, boolean includeObject, boolean includeStatics) {
+	public void addMethodsFromClassToPureList(ClassHandle pureClass, Callback cb, ProjectModel pm, boolean includeObject, boolean includeStatics) {
 		cb.send(pureClass.toString()+" methods: ");
 		Set<String> overrides = new LinkedHashSet<String>();
-		Class<?> in = pureClass;
+		ClassHandle in = pureClass;
 		
-		while (includeObject ? (in != null) : ((in != Object.class) && (in != null))) {
-			String className = Type.getInternalName(in);
+		while (includeObject ? (in != null) : ((!in.isObject()) && (in != null))) {
+			String className = in.getClassName();
 			if (pm.getAllClasses().contains(className)) {
-				for (MemberHandle mh : pm.getDeclaredMethods(className)) {
+				for (DeclarationHandle mh : pm.getDeclaredMethods(className)) {
 					if (mh.getName().equals("<clinit>")) {
 						// handle purity of class initialization
-						registerMethodWithCorrectEnforcement(pureClass, cb, (ClassInitHandle) mh); 
+						registerMethodWithCorrectEnforcement(pureClass, cb, (ClassInitHandle) mh, pm); 
 					}
 				}
 			}
 			Set<String> implementations = new LinkedHashSet<String>();
-			for (Constructor<?> c : in.getDeclaredConstructors()) {
-				ConstructorHandle ch = new ConstructorHandle(c);
-				registerMethodWithCorrectEnforcement(pureClass, cb, ch);
+			for (ConstructorDeclarationHandle ch : in.getDeclaredConstructors()) {
+				registerMethodWithCorrectEnforcement(pureClass, cb, ch, pm);
 			}
 			
-			for (Method m : in.getDeclaredMethods()) {
-				MethodHandle mh = new MethodHandle(m);
-				if ((!isStaticMethod(m)) || includeStatics) {
+			for (MethodDeclarationHandle mh : in.getDeclaredMethods()) {
+				if (mh.isStatic() || includeStatics) {
 					String signature = mh.getSignature();
 					boolean overridden = overrides.contains(signature);
 					boolean calledByThisClass = calledWithin(pm.getCalledBy(mh), pureClass, pm, mh);
 					if ((!overridden) || (calledByThisClass)) {
-						registerMethodWithCorrectEnforcement(pureClass, cb, mh);
+						registerMethodWithCorrectEnforcement(pureClass, cb, mh, pm);
 						implementations.add(signature);
 					}
 				}
 			}
 			
 			overrides.addAll(implementations);
-			in = in.getSuperclass();
+			in = pm.getClassHandle(in.getSuperclass());
 		}
 	}
 
-	protected void registerMethodWithCorrectEnforcement(Class<?> pureClass, Callback cb, MemberHandle ch) {
+	protected void registerMethodWithCorrectEnforcement(ClassHandle pureClass, Callback cb, DeclarationHandle ch, ProjectModel pm) {
 		Enforcement impl = getImplementationEnforcement(ch);
 		Enforcement intf = getInterfaceEnforcement(ch);
-		PurityType ret = getPurityType(cb, pureClass);
+		PurityType ret = getPurityType(cb, pureClass, pm);
 		pureChecklist.addMethod(ch, impl, intf, ret, pureClass, cb);
 	}
 
-	protected Enforcement getImplementationEnforcement(MemberHandle mh) {
-		Pure p = mh.getAnnotation(cl, Pure.class);
-		Enforcement e = p == null ? Enforcement.CHECKED : p.value();
+	protected Enforcement getImplementationEnforcement(DeclarationHandle mh) {
+		AnnotationHandle p = mh.getAnnotation(Pure.class);
+		Enforcement e = p == null ? Enforcement.CHECKED : (Enforcement) p.getField("value");
 		return e;
-	}
-
-	protected boolean isStaticMethod(Method m) {
-		return Modifier.isStatic(m.getModifiers());
 	}
 
 	/**
 	 * Even if a class overrides a method, it can still use super to call it.
 	 */
-	private boolean calledWithin(Set<MemberHandle> calledBy, Class<?> pureClass, ProjectModel pm, MethodHandle callTo) {
-		for (MemberHandle memberHandle : calledBy) {
-			if (calledWithin(memberHandle, pureClass)) {
-				for (MemberHandle call : pm.getCalls(memberHandle)) {
+	private boolean calledWithin(Set<DeclarationHandle> calledBy, ClassHandle pureClass, ProjectModel pm, MethodDeclarationHandle callTo) {
+		for (DeclarationHandle memberHandle : calledBy) {
+			if (calledWithin(memberHandle, pureClass, pm)) {
+				for (CallHandle call : pm.getCalls(memberHandle)) {
 					if (call.equals(callTo)) {
 						// is it a call to "this"?
-						if (call instanceof StackArgumentsMethodHandle) {
-							if (((StackArgumentsMethodHandle) call).getLocalVariables().contains(0)) {
+						if (call instanceof StackArgumentsMethodCallHandle) {
+							if (((StackArgumentsMethodCallHandle) call).getLocalVariables().contains(0)) {
 								return true;
 							}
 						}
@@ -211,9 +204,9 @@ public class PurityChecker implements Rule {
 		return false;
 	}
 	
-	private boolean calledWithin(MemberHandle calledBy, Class<?> pureClass) {
-		if ((pureClass != Object.class) && (pureClass != null)) {
-			return (calledBy.getDeclaringClass(cl) == pureClass) || calledWithin(calledBy, pureClass.getSuperclass());
+	private boolean calledWithin(DeclarationHandle calledBy, ClassHandle pureClass, ProjectModel pm) {
+		if ((!pureClass.isObject()) && (pureClass != null)) {
+			return (calledBy.getClassName().equals(pureClass.getClassName())) || calledWithin(calledBy, pm.getClassHandle(pureClass.getSuperclass()), pm);
 		}
 		
 		return false;
@@ -223,26 +216,23 @@ public class PurityChecker implements Rule {
 		return !Modifier.isAbstract(someClass.getModifiers()) && !Modifier.isInterface(someClass.getModifiers());
 	}	
 
-	private Class<?> hydrate(String className) {
-		return new ClassHandle(className).hydrate(cl);
-	}
-
 	private void addPureMethodsToPureList(ProjectModel pm, Callback cb) {
 		cb.send("@Pure methods:");
-		for (MemberHandle handle : pm.getMembersWithAnnotation(getInternalName(Pure.class))) {
-			if (handle instanceof ImplementationHandle) {
-				Class<?> class1 = handle.getDeclaringClass(cl);
-				registerMethodWithCorrectEnforcement(class1, cb, handle);
+		for (AnnotatedElementHandle handle : pm.getMembersWithAnnotation(getInternalName(Pure.class))) {
+			if (handle instanceof DeclarationHandle) {
+				String className = ((DeclarationHandle) handle).getClassName();
+				ClassHandle class1 = pm.getClassHandle(className);
+				registerMethodWithCorrectEnforcement(class1, cb, (DeclarationHandle) handle, pm);
 			}
 		}
 	}
 
-	protected PurityType getPurityType(Callback cb, Class<?> class1) {
+	protected PurityType getPurityType(Callback cb, ClassHandle class1, ProjectModel pm) {
 		boolean mutable = false;
-		if (classIsAnonymousInner(class1)) {
+		if (class1.isAnonymousInner()) {
 			mutableUnshared.addClass(class1);
 			mutable = true;
-		} else if (mutableUnshared.classIsMarked(class1, cb)) {
+		} else if (mutableUnshared.classIsMarked(class1, cb, pm)) {
 			mutable = true;
 		}
 		if (mutable) {
@@ -252,21 +242,9 @@ public class PurityChecker implements Rule {
 		}
 	}
 
-	public static boolean classIsAnonymousInner(Class<?> class1) {
-		int dollar = class1.getName().lastIndexOf("$");
-		if (dollar > -1) {
-			String number = class1.getName().substring(dollar+1);
-			if (number.matches("[0-9]+")) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-	protected Enforcement getInterfaceEnforcement(MemberHandle handle) {
-		PureInterface pp = handle.getAnnotation(cl, PureInterface.class);
-		Enforcement intf = pp == null ? Enforcement.CHECKED : pp.value();
+	protected Enforcement getInterfaceEnforcement(DeclarationHandle handle) {
+		AnnotationHandle pp = handle.getAnnotation(PureInterface.class);
+		Enforcement intf = pp == null ? Enforcement.CHECKED : (Enforcement) pp.getField("value");
 		return intf;
 	}
 

@@ -1,10 +1,13 @@
 package org.pure4j.model;
 
-import java.lang.reflect.AnnotatedElement;
+import org.pure4j.model.impl.AnnotationHandle;
+import org.pure4j.model.impl.ClassHandle;
 
-public interface AnnotatedElementHandle<X extends AnnotatedElement> extends Handle<X>, Comparable<AnnotatedElementHandle<? extends AnnotatedElement>> {
 
-	public String getDeclaringClass();
+
+public interface AnnotatedElementHandle extends Handle {
 	
-	public Class<?> getDeclaringClass(ClassLoader cl);
+	public AnnotationHandle getAnnotation(Class<?> forClass);
+	
+	public ClassHandle getDeclaringClass();
 }

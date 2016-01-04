@@ -1,25 +1,18 @@
-package org.pure4j.processor;
+package org.pure4j.model.impl;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Stack;
 
 import org.pure4j.Pure4J;
 import org.pure4j.exception.Pure4JException;
-import org.pure4j.model.AnnotatedElementHandle;
-import org.pure4j.model.AnnotationHandle;
+import org.pure4j.model.CallHandle;
 import org.pure4j.model.CallInfo;
-import org.pure4j.model.ClassHandle;
-import org.pure4j.model.ClassInitHandle;
-import org.pure4j.model.ConstructorHandle;
-import org.pure4j.model.FieldHandle;
-import org.pure4j.model.MemberHandle;
-import org.pure4j.model.MethodHandle;
-import org.pure4j.model.PackageHandle;
-import org.pure4j.model.ProjectModelImpl;
-import org.pure4j.model.StackArgumentsConstructorHandle;
-import org.pure4j.model.StackArgumentsMethodHandle;
+import org.pure4j.model.DeclarationHandle;
+import org.pure4j.model.GenericTypeHandle;
+import org.pure4j.model.impl.ClassHandle.Classification;
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.Attribute;
 import org.springframework.asm.ClassReader;
@@ -40,7 +33,7 @@ import org.springframework.core.io.Resource;
  */
 public class ClassFileModelBuilder {
 	
-	public static boolean ALWAYS_OUTPUT_ASM = false;
+	public static boolean ALWAYS_OUTPUT_ASM = true;
 
 	public ClassFileModelBuilder() {
 		this(ALWAYS_OUTPUT_ASM);
@@ -58,30 +51,46 @@ public class ClassFileModelBuilder {
 	}
 
 	public void visit(Resource resource) throws IOException {
-		ClassReader cr = new ClassReader(resource.getInputStream());
+		visit(resource.getInputStream());
+	}
+	
+	public void visit(InputStream is) throws IOException {
+		ClassReader cr = new ClassReader(is);
 		cr.accept(createClassVisitor(model), 0);
 	}
 
 	protected String convertAnnotationDescriptor(String desc) {
 		Type t = Type.getType(desc);
-		return t.getInternalName();
+		return fixClassName(t.getInternalName());
+	}
+	
+	protected String fixClassName(String name) {
+		return name.replace("/", ".");
+	}
+	
+	protected String[] fixClassName(String[] name) {
+		for (int i = 0; i < name.length; i++) {
+			name[i] = fixClassName(name[i]);
+		}
+		return name;
 	}
 
-	public ClassVisitor createClassVisitor(final ProjectModelImpl model) {
+
+	private ClassVisitor createClassVisitor(final ProjectModelImpl model) {
 		return new ClassVisitor(Opcodes.ASM5) {
-
-			String className;
-			String sup;
-
+			
+			ClassHandle ch; 
+ 
 			public void visit(int version, int access, String name, String sig, String superName, String[] interfaces) {
 				output("CLASS: "+name);
-				this.className = name;
-				this.sup = superName;
+				String packageName = getPackageName(name);
+				name = fixClassName(name);
+				superName = fixClassName(superName);
 				model.addSubclass(superName, name);
 
-				String packageName = getPackageName(name);
 				model.addPackageClass(packageName, name);
-				model.addClass(name);
+				ch = new ClassHandle(name, superName, fixClassName(interfaces), access, null);
+				model.addClass(name, ch);
 
 				for (int j = 0; j < interfaces.length; j++) {
 					model.addSubclass(interfaces[j], name);
@@ -91,25 +100,31 @@ public class ClassFileModelBuilder {
 				addDependency(name, model, superName);
 			}
 
+		
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-				model.addClassAnnotation(convertAnnotationDescriptor(desc), className);
-				addDependency(className, model, desc, false);
-				return createAnnotationVisitor(model, new ClassHandle(className), desc);
+				String annotationClass = convertAnnotationDescriptor(desc);
+				AnnotationHandle ah = new AnnotationHandle(ch, annotationClass);
+				ch.addHandle(ah);
+				model.addClassAnnotation(annotationClass, ch.getClassName());
+				addDependency(ch.getClassName(), model, desc, false);
+				return createAnnotationVisitor(model, ah, desc);
 			}
 
 			public FieldVisitor visitField(int access, String name, String desc, String sign, Object value) {
-				final FieldHandle mh = new FieldHandle(className, name, 0);
-				addDependency(className, model, desc, true);
-				return createFieldVisitor(model, className, mh);
+				GenericTypeHandle gth = createGenericType(desc);
+				final FieldDeclarationHandle mh = new FieldDeclarationHandle(ch.getClassName(), name, 0, access, ch, gth);
+				addDependency(ch.getClassName(), model, desc, true);
+				ch.fields.add(mh);
+				return createFieldVisitor(model, ch.getClassName(), mh);
 			}
 
 			public MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] exceptions) {
-				final MemberHandle mh = createHandle(className, name, desc, 0);
+				final DeclarationHandle mh = createHandle(ch.getClassName(), name, desc, 0, access, ch);
 				CallInfo ci = new CallInfo();
 				ci.setOpcodes(access);
 				model.setOpcodes(mh, ci);
-				addDependency(className, model, desc, true);
-				return createMethodVisitor(model, className, mh, sup, ci);
+				addDependency(ch.getClassName(), model, desc, true);
+				return createMethodVisitor(model, ch.getClassName(), mh, ch.getSuperclass(), ci);
 
 			}
 
@@ -130,12 +145,15 @@ public class ClassFileModelBuilder {
 		};
 	}
 
-	private FieldVisitor createFieldVisitor(final ProjectModelImpl model, final String className, final FieldHandle mh) {
+	private FieldVisitor createFieldVisitor(final ProjectModelImpl model, final String className, final FieldDeclarationHandle mh) {
 		return new FieldVisitor(Opcodes.ASM5) {
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
-				return createAnnotationVisitor(model, mh, desc);
+				String annotationClass = convertAnnotationDescriptor(desc);
+				AnnotationHandle ah = new AnnotationHandle(mh, annotationClass);
+				mh.addHandle(ah);
+				model.addMemberAnnotation(annotationClass, mh);
+				return createAnnotationVisitor(model, ah, desc);
 			}
 
 			public void visitAttribute(Attribute arg0) {
@@ -170,22 +188,18 @@ public class ClassFileModelBuilder {
 		
 	}
 
-	private AnnotationVisitor createAnnotationVisitor(final ProjectModelImpl model,
-			final AnnotatedElementHandle<?> handle, final String desc) {
+	private AnnotationVisitor createAnnotationVisitor(final ProjectModelImpl model, final AnnotationHandle ah, final String desc) {
 		return new AnnotationVisitor(Opcodes.ASM5) {
 
-			String field = null;
-
 			public void visit(String arg0, Object arg1) {
-				setFieldName(arg0);
 				if (arg1 instanceof Type) {
+					ah.addField(arg0 == null ? "value" : arg0, createGenericType((Type) arg1));
 					Type referenced = (Type) arg1;
 					String name = referenced.getClassName();
-					Type annotationClass = Type.getType(desc);
-					AnnotationHandle ah = new AnnotationHandle(field, handle, MemberHandle
-							.convertClassName(annotationClass.getClassName()));
-					model.addAnnotationReference(MemberHandle.convertClassName(name), ah);
-					addDependency(handle.getDeclaringClass(), model, referenced);
+					model.addAnnotationReference(fixClassName(name), ah);
+					addDependency(ah.getAnnotatedItem().getDeclaringClass().getClassName(), model, referenced);
+				} else {
+					ah.addField(arg0 == null ? "value" : arg0, arg1);
 				}
 			}
 
@@ -194,14 +208,9 @@ public class ClassFileModelBuilder {
 			}
 
 			public AnnotationVisitor visitArray(final String arg0) {
-				setFieldName(arg0);
 				return this;
 			}
 
-			private void setFieldName(final String arg0) {
-				if (arg0 != null)
-					field = arg0;
-			}
 
 			public void visitEnd() {
 			}
@@ -212,7 +221,7 @@ public class ClassFileModelBuilder {
 		};
 	}
 
-	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className, final MemberHandle mh, final String superName, final CallInfo ci) {
+	private MethodVisitor createMethodVisitor(final ProjectModelImpl model, final String className, final DeclarationHandle mh, final String superName, final CallInfo ci) {
 		model.addDeclaredMethod(className, mh);
 		final String methodName = mh.getName();
 		output(methodName);
@@ -222,15 +231,18 @@ public class ClassFileModelBuilder {
 			Stack<Integer> arguments = new Stack<Integer>();
 			int line = 0;
 			boolean firstCall = true;
-			MemberHandle lastMethodCall;
+			CallHandle lastMethodCall;
 
 			public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-				model.addMemberAnnotation(convertAnnotationDescriptor(desc), mh);
-				return createAnnotationVisitor(model, mh, desc);
+				String annotationClass = convertAnnotationDescriptor(desc);
+				AnnotationHandle ah = new AnnotationHandle(mh, annotationClass);
+				((AbstractAnnotatedHandle)mh).addHandle(ah);
+				model.addMemberAnnotation(annotationClass, mh);
+				return createAnnotationVisitor(model, ah, desc);
 			}
 
 			public void visitFieldInsn(int arg0, String owner, String name, String desc) {
-				FieldHandle field = new FieldHandle(owner, name, line);
+				FieldCallHandle field = new FieldCallHandle(owner, name, desc, line);
 				model.addCalls(mh, field);
 				addDependency(className, model, desc, true);
 				model.addClassDependency(className, owner);
@@ -240,15 +252,15 @@ public class ClassFileModelBuilder {
 
 			public void visitMethodInsn(int arg0, String owner, String name, String desc, boolean itf) {
 				//String callerName = methodName;
-				MemberHandle remoteMethod = null;
+				CallHandle remoteMethod = null;
 				if (name.equals("<init>")) {
-					remoteMethod = new StackArgumentsConstructorHandle(owner, desc, line, arguments, true);	
+					remoteMethod = new StackArgumentsConstructorCallHandle(owner, desc, line, arguments, true);	
 					arguments = new Stack<Integer>();
 					
 					// check calling the superclass constructor:  Reactivate first call for possible immutable after it.
 					firstCall = mh.getName().equals("<init>") && owner.equals(superName);
 				} else {
-					remoteMethod = new StackArgumentsMethodHandle(owner, name, desc, line, arguments, firstCall);
+					remoteMethod = new StackArgumentsMethodCallHandle(owner, name, desc, line, arguments, firstCall);
 					arguments = new Stack<Integer>();
 					
 					if (!owner.equals(Type.getInternalName(Pure4J.class))) {
@@ -413,12 +425,6 @@ public class ClassFileModelBuilder {
 
 	private void addDependency(final String className, final ProjectModelImpl model, String className2) {
 		model.addClassDependency(className, className2);
-		String packageName1 = getPackageName(className);
-		String packageName2 = getPackageName(className2);
-		PackageHandle ph1 = new PackageHandle(packageName1, className);
-		PackageHandle ph2 = new PackageHandle(packageName2, className2);
-		
-		model.addPackageDependency(ph1, ph2);
 	}
 
 	private String getPackageName(String name) {
@@ -427,13 +433,50 @@ public class ClassFileModelBuilder {
 		return name.substring(0, li);
 	}
 	
-	private MemberHandle createHandle(String owner, String name, String desc, int line) {
+	private DeclarationHandle createHandle(String owner, String name, String desc, int line, int modifiers, ClassHandle ch) {
 		if (name.equals("<init>")) {
-			return new ConstructorHandle(owner, desc, line);			
+			ConstructorDeclarationHandle constructorDeclarationHandle = 
+					new ConstructorDeclarationHandle(owner, desc, line, modifiers, ch, createArguments(desc));
+			ch.constructors.add(constructorDeclarationHandle);
+			return constructorDeclarationHandle;	
+			
 		} else if (name.equals("<clinit>")) {
-			return new ClassInitHandle(owner, desc, line);
+			return new ClassInitHandle(owner, desc, line, modifiers, ch);
+			
 		} else {
-			return new MethodHandle(owner, name, desc, line);
+			MethodDeclarationHandle methodDeclarationHandle = 
+					new MethodDeclarationHandle(owner, name, desc, line, modifiers, ch, createGenericType(desc), createArguments(desc));
+			ch.methods.add(methodDeclarationHandle);
+			return methodDeclarationHandle;
 		}
 	}
+	
+	private GenericTypeHandle[] createArguments(String desc) {
+		Type[] t = Type.getArgumentTypes(desc);
+		GenericTypeHandle[] out = new GenericTypeHandle[t.length];
+		for (int i = 0; i < out.length; i++) {
+			out[i] = createGenericType(t[i]);
+		}
+
+		return out;
+	}
+
+ 	private GenericTypeHandle createGenericType(String desc) {
+		Type t = Type.getReturnType(desc);
+		return createGenericType(t);
+	}
+
+	
+	private GenericTypeHandle createGenericType(Type t) {
+		if (t.getSort() == Type.ARRAY) {
+			return new ArrayHandle(t.getDimensions(), createGenericType(t.getElementType()));
+		} else if (t.getSort() == Type.METHOD) {
+			throw new RuntimeException("not yet supported");
+		} else if (t.getSort() == Type.OBJECT) {
+			return new ClassHandle(t.getClassName(), null, null, 0, Classification.CLASS);
+		} else {
+			return new ClassHandle(t.getClassName(), null, null, 0, Classification.PRIMITIVE);
+		}
+	}
+
 }

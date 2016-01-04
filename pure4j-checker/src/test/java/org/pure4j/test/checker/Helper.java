@@ -12,10 +12,13 @@ import junit.framework.Assert;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.Pure4JException;
-import org.pure4j.model.MemberHandle;
+import org.pure4j.model.AnnotatedElementHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.model.impl.AbstractMemberHandle;
+import org.pure4j.model.impl.AnnotationHandle;
+import org.pure4j.model.impl.ClassFileModelBuilder;
+import org.pure4j.model.impl.ClassHandle;
 import org.pure4j.processor.Callback;
-import org.pure4j.processor.ClassFileModelBuilder;
 import org.pure4j.processor.PurityChecker;
 import org.pure4j.test.CausesError;
 import org.pure4j.test.ShouldBePure;
@@ -48,7 +51,7 @@ public final class Helper {
 	public boolean thenCheck(int defaultConstructors, int maxSynthetics, Class<?>... classes) {
 		try {
 			final Set<String> pures = new LinkedHashSet<String>();
-			final Map<Class<? extends Pure4JException>, Integer> errorSet = new HashMap<Class<? extends Pure4JException>, Integer>();
+			final Map<String, Integer> errorSet = new HashMap<String, Integer>();
 
 			Callback cb = new Callback() {
 
@@ -67,7 +70,7 @@ public final class Helper {
 						count = count + 1;
 					}
 
-					errorSet.put(e.getClass(), count);
+					errorSet.put(e.getClass().getName(), count);
 					System.err.println(e.getClass() + ": " + e.getMessage());
 					System.err.flush();
 				}
@@ -93,7 +96,7 @@ public final class Helper {
 			System.out.flush();
 
 			String pureAnn = org.pure4j.model.Type.getInternalName(ShouldBePure.class);
-			for (MemberHandle mh : pm.getMembersWithAnnotation(pureAnn)) {
+			for (AnnotatedElementHandle mh : pm.getMembersWithAnnotation(pureAnn)) {
 				String toStringmh = mh.toString();
 				if (!pures.remove(toStringmh)) {
 					System.err.println("Couldn't find expected pure: " + toStringmh);
@@ -119,24 +122,24 @@ public final class Helper {
 			Assert.assertTrue(synthetics <= maxSynthetics);
 			
 
-			String errorAnn = org.pure4j.model.Type.getInternalName(CausesError.class);
+			String errorAnn = CausesError.class.getName();
 
 			StringBuilder fail = new StringBuilder();
 
-			for (MemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
-				CausesError vals = mh.getAnnotation(this.getClass().getClassLoader(), CausesError.class);
-				for (Class<?> ex : vals.value()) {
-					countException(errorSet, fail, ex);
+			for (AnnotatedElementHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
+				AnnotationHandle vals = mh.getAnnotation(CausesError.class);
+				for (ClassHandle ex : (ClassHandle[]) vals.getField("value")) {
+					countException(errorSet, fail, ex.getClassName());
 				}
 			}
 
 			for (Class<?> ex : otherExceptions) {
-				countException(errorSet, fail, ex);
+				countException(errorSet, fail, ex.getName());
 			}
 
 			otherExceptions = new Class[] {};
 
-			for (Class<? extends Exception> e : errorSet.keySet()) {
+			for (String e : errorSet.keySet()) {
 				fail.append("Checker logged exception: " + e);
 			}
 
@@ -151,13 +154,13 @@ public final class Helper {
 
 	@Pure(Enforcement.NOT_PURE)
 	@SuppressWarnings("unchecked")
-	protected void countException(final Map<Class<? extends Pure4JException>, Integer> errorSet, StringBuilder fail, Class<?> ex) {
+	protected void countException(final Map<String, Integer> errorSet, StringBuilder fail, String ex) {
 		Integer count = errorSet.get(ex);
 		if ((count == null) || (count == 0)) {
-			fail.append("Was expecting a " + ex.getName());
+			fail.append("Was expecting a " + ex);
 		} else if (count > 1) {
 			count--;
-			errorSet.put((Class<? extends Pure4JException>) ex, count);
+			errorSet.put(ex, count);
 		} else {
 			errorSet.remove(ex);
 		}

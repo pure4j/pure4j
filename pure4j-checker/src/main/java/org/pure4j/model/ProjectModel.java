@@ -3,6 +3,9 @@ package org.pure4j.model;
 import java.util.List;
 import java.util.Set;
 
+import org.pure4j.model.impl.AnnotationHandle;
+import org.pure4j.model.impl.ClassHandle;
+
 /**
  * Returns information about the java project which can only be ascertained by bytecode scanning 
  * the project structure.
@@ -12,23 +15,21 @@ import java.util.Set;
  */
 public interface ProjectModel {
 
-    public List<MemberHandle> getCalls(MemberHandle m);
+	public ClassHandle getClassHandle(String className);
+	
+    public List<CallHandle> getCalls(DeclarationHandle m);
     
-    public Set<MemberHandle> getCalledBy(MemberHandle m);
+    public Set<DeclarationHandle> getCalledBy(CallHandle m);
     
     public Set<String> getSubclasses(String className);
     
     public Set<String> getClassesWithAnnotation(String annotationName);
     
-    public Set<MemberHandle> getMembersWithAnnotation(String annotationName);
+    public Set<AnnotatedElementHandle> getMembersWithAnnotation(String annotationName);
     
     public Set<String> getDependsOnClasses(String className);
     
     public Set<String> getDependedOnClasses(String className);
-
-    public Set<PackageHandle> getDependsOnPackages(PackageHandle packageName);
-    
-    public Set<PackageHandle> getDependedOnPackages(PackageHandle packageName);    
 
     public boolean withinModel(String className);
     
@@ -38,12 +39,14 @@ public interface ProjectModel {
     
     public Set<String> getAllClasses();
     
-    public Set<MemberHandle> getAllDeclaredMethods();
+    public Set<DeclarationHandle> getAllDeclaredMethods();
 
-    public Set<MemberHandle> getDeclaredMethods(String className);
+    public Set<DeclarationHandle> getDeclaredMethods(String className);
     
     public Set<AnnotationHandle> getAnnotationReferences(String className);
     
-    public CallInfo getOpcodes(MemberHandle ch);
+    public CallInfo getOpcodes(DeclarationHandle ch);
+
+	public ClassHandle getClassHandle(CallHandle handle);
     
 }

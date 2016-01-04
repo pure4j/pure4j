@@ -1,45 +1,51 @@
-package org.pure4j.model;
+package org.pure4j.model.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.pure4j.model.AnnotatedElementHandle;
+import org.pure4j.model.CallHandle;
+import org.pure4j.model.CallInfo;
+import org.pure4j.model.DeclarationHandle;
+import org.pure4j.model.Handle;
+import org.pure4j.model.ProjectModel;
+
 public class ProjectModelImpl implements ProjectModel {
 
 	private Map<Object, Boolean> finality = new HashMap<Object, Boolean>(100);
-	private Map<MemberHandle, List<MemberHandle>> calls = new HashMap<MemberHandle, List<MemberHandle>>(100);
-	private Map<MemberHandle, Set<MemberHandle>> calledBy = new HashMap<MemberHandle, Set<MemberHandle>>(100);
+	private Map<DeclarationHandle, List<CallHandle>> calls = new HashMap<DeclarationHandle, List<CallHandle>>(100);
+	private Map<CallHandle, Set<DeclarationHandle>> calledBy = new HashMap<CallHandle, Set<DeclarationHandle>>(100);
 	private Map<String, Set<String>> annotatedClasses = new HashMap<String, Set<String>>(100);
-	private Map<String, Set<MemberHandle>> annotatedMembers = new HashMap<String, Set<MemberHandle>>(100);
+	private Map<String, Set<AnnotatedElementHandle>> annotatedMembers = new HashMap<String, Set<AnnotatedElementHandle>>(100);
 	private Map<String, Set<String>> subclasses = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<String>> dependsOnClasses = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<String>> dependedOnClasses = new HashMap<String, Set<String>>(100);
-	private Map<PackageHandle, Set<PackageHandle>> dependsOnPackages = new HashMap<PackageHandle, Set<PackageHandle>>(100);
-	private Map<PackageHandle, Set<PackageHandle>> dependedOnPackages = new HashMap<PackageHandle, Set<PackageHandle>>(100);
 	private Map<String, Set<String>> packageContents = new HashMap<String, Set<String>>(100);
 	private Map<String, Set<AnnotationHandle>> annotationReferences = new HashMap<String, Set<AnnotationHandle>>(100);
-	private Map<MemberHandle, CallInfo> opcodes = new HashMap<MemberHandle, CallInfo>(100);
-	private Set<MemberHandle> declaredMethods = new HashSet<MemberHandle>(1000);
-	private Map<String, Set<MemberHandle>> declaredMethodsByClass = new HashMap<String, Set<MemberHandle>>(100);
+	private Map<Handle, CallInfo> opcodes = new HashMap<Handle, CallInfo>(100);
+	private Set<DeclarationHandle> declaredMethods = new HashSet<DeclarationHandle>(1000);
+	private Map<String, Set<DeclarationHandle>> declaredMethodsByClass = new HashMap<String, Set<DeclarationHandle>>(100);
 	
-	public void addDeclaredMethod(String className, MemberHandle mh) {
+	
+	public void addDeclaredMethod(String className, DeclarationHandle mh) {
 		declaredMethods.add(mh);
 		checkSetAdd(className, mh, declaredMethodsByClass);
 	}
 
-	private LinkedHashSet<String> classes = new LinkedHashSet<String>(100);
+	private LinkedHashMap<String, ClassHandle> classes = new LinkedHashMap<String, ClassHandle>(100);
 
-	public List<MemberHandle> getCalls(MemberHandle m) {
+	public List<CallHandle> getCalls(DeclarationHandle m) {
 		return checkListGet(calls.get(m));
 	}
 
-	public Set<MemberHandle> getCalledBy(MemberHandle m) {
+	public Set<DeclarationHandle> getCalledBy(CallHandle m) {
 		return checkSetGet(calledBy.get(m));
 	} 
 
@@ -47,7 +53,7 @@ public class ProjectModelImpl implements ProjectModel {
 		return checkSetGet(annotatedClasses.get(annotationName));
 	}
 
-	public Set<MemberHandle> getMembersWithAnnotation(String annotationName) {
+	public Set<AnnotatedElementHandle> getMembersWithAnnotation(String annotationName) {
 		return checkSetGet(annotatedMembers.get(annotationName));
 	}
 
@@ -97,11 +103,11 @@ public class ProjectModelImpl implements ProjectModel {
 		checkSetAdd(desc, className, annotatedClasses);
 	}
 
-	public void addMemberAnnotation(String desc, MemberHandle mh) {
+	public void addMemberAnnotation(String desc, AnnotatedElementHandle mh) {
 		checkSetAdd(desc, mh, annotatedMembers);
 	}
 
-	public void addCalls(MemberHandle desc, MemberHandle mh) {
+	public void addCalls(DeclarationHandle desc, CallHandle mh) {
 		if (!desc.equals(mh)) {
 			checkListAdd(desc, mh, calls);
 			checkSetAdd(mh, desc, calledBy);
@@ -115,19 +121,12 @@ public class ProjectModelImpl implements ProjectModel {
 		}
 	}
 
-	public void addPackageDependency(PackageHandle from, PackageHandle on) {
-		if (!from.equals(on)) {
-			checkSetAdd(from, on, dependsOnPackages);
-			checkSetAdd(on, from, dependedOnPackages);
-		}
-	}
-
 	public void addPackageClass(String packageName, String cl) {
 		checkSetAdd(packageName, cl, packageContents);
 	}
 
-	public void addClass(String name) {
-		classes.add(name);
+	public void addClass(String name, ClassHandle ch) {
+		classes.put(name, ch);
 	}
 
 	public Set<String> getClassesInPackage(String packageName) {
@@ -135,7 +134,7 @@ public class ProjectModelImpl implements ProjectModel {
 	}
 
 	public boolean withinModel(String className) {
-		return classes.contains(className);
+		return classes.containsKey(className);
 	}
 
 	public int getClassCount() {
@@ -150,14 +149,6 @@ public class ProjectModelImpl implements ProjectModel {
 		return checkSetGet(dependsOnClasses.get(className));
 	}
 	
-	public Set<PackageHandle> getDependedOnPackages(PackageHandle packageName) {
-		return checkSetGet(dependedOnPackages.get(packageName));
-	}
-
-	public Set<PackageHandle> getDependsOnPackages(PackageHandle packageName) {
-		return checkSetGet(dependsOnPackages.get(packageName));
-	}
-
 	public Set<AnnotationHandle> getAnnotationReferences(String className) {
 		return checkSetGet(annotationReferences.get(className));
 	}
@@ -171,7 +162,7 @@ public class ProjectModelImpl implements ProjectModel {
 	}
 
 	public Set<String> getAllClasses() {
-		return classes;
+		return classes.keySet();
 	}
 	
 	public void setFinal(Object thing, boolean finality) {
@@ -179,23 +170,34 @@ public class ProjectModelImpl implements ProjectModel {
 	}
 
 	@Override
-	public CallInfo getOpcodes(MemberHandle ch) {
+	public CallInfo getOpcodes(DeclarationHandle ch) {
 		CallInfo out = opcodes.get(ch);
 		return (out == null) ? CallInfo.NO_CALL : out;
 	}
 
-	public void setOpcodes(MemberHandle ch, CallInfo o) {
+	public void setOpcodes(Handle ch, CallInfo o) {
 		opcodes.put(ch, o);
 	}
 
 	@Override
-	public Set<MemberHandle> getAllDeclaredMethods() {
+	public Set<DeclarationHandle> getAllDeclaredMethods() {
 		return declaredMethods;
 	}
 
 	@Override
-	public Set<MemberHandle> getDeclaredMethods(String className) {
+	public Set<DeclarationHandle> getDeclaredMethods(String className) {
 		return checkSetGet(declaredMethodsByClass.get(className));
 	}
 
+	@Override
+	public ClassHandle getClassHandle(String className) {
+		return className == null ? null : classes.get(className);
+	}
+
+	@Override
+	public ClassHandle getClassHandle(CallHandle ch) {
+		return getClassHandle(ch.getClassName());
+	}
+
+	
 }

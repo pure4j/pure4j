@@ -1,10 +1,10 @@
 package org.pure4j.exception;
 
-import java.lang.reflect.Field;
+import org.pure4j.model.impl.FieldDeclarationHandle;
 
 public class FieldNotFinalException extends Pure4JException {
 
-	public FieldNotFinalException(Field f) {
+	public FieldNotFinalException(FieldDeclarationHandle f) {
 		super("Field "+f+" not declared final, but is immutable");
 	}
 

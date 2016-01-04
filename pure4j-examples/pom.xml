@@ -20,6 +20,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<annotationProcessors>
+			            <annotationProcessor>
+			              org.pure4j.processor.Pure4JAnnotationProcessor</annotationProcessor>
+			          </annotationProcessors>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
@@ -56,6 +60,12 @@
 			<artifactId>concordion-excel-extension</artifactId>
 	        <version>1.0.7</version>
 	        <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.pure4j</groupId>
+			<artifactId>pure4j-checker</artifactId>
+			<version>${project.version}</version>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>

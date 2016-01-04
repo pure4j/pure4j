@@ -11,8 +11,8 @@ import junit.framework.Assert;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.Pure4JException;
-import org.pure4j.model.MemberHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.model.impl.AbstractMemberHandle;
 import org.pure4j.processor.Callback;
 import org.pure4j.processor.PurityChecker;
 import org.pure4j.processor.SpringProjectModelFactory;
@@ -85,7 +85,7 @@ public class AbstractChecker extends AbstractTest {
 		System.out.flush();
 		
 		String pureAnn = org.pure4j.model.Type.getInternalName(ShouldBePure.class);
-		for (MemberHandle mh : pm.getMembersWithAnnotation(pureAnn)) {
+		for (AbstractMemberHandle mh : pm.getMembersWithAnnotation(pureAnn)) {
 			String toStringmh = mh.toString();
 			if (!pures.remove(toStringmh)) {
 				System.err.println("Couldn't find expected pure: "+toStringmh);
@@ -104,7 +104,7 @@ public class AbstractChecker extends AbstractTest {
 		
 		boolean fail = false;
 		
-		for (MemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
+		for (AbstractMemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
 			CausesError vals =mh.getAnnotation(this.getClass().getClassLoader(), CausesError.class);
 			for (Class<?> ex : vals.value()) {
 				fail = countException(errorSet, fail, ex);

@@ -1,17 +1,17 @@
 package org.pure4j.processor;
 
-import java.lang.reflect.Type;
-
+import org.pure4j.model.GenericTypeHandle;
 import org.pure4j.model.ProjectModel;
+import org.pure4j.model.impl.ClassHandle;
 
 public interface ClassAnnotationCache {
+	
+	boolean classIsMarked(ClassHandle in, Callback cb, ProjectModel pm);
 
-	boolean classIsMarked(Class<?> in, Callback cb);
+	boolean typeIsMarked(GenericTypeHandle t, Callback cb, ProjectModel pm);
 
-	boolean typeIsMarked(Type t, Callback cb);
+	void doClassChecks(ClassHandle immutableClass, Callback cb, ProjectModel pm);
 
-	void doClassChecks(Class<?> immutableClass, Callback cb, ProjectModel pm);
-
-	void addClass(Class<?> pureClass);
+	void addClass(ClassHandle pureClass);
 
 }
