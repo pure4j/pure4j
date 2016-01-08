@@ -6,7 +6,9 @@ import java.util.Map.Entry;
 import org.pure4j.collections.IPersistentMap;
 import org.pure4j.collections.PersistentHashMap;
 import org.pure4j.immutable.AbstractImmutableValue;
+import org.pure4j.lambda.Java8API;
 
+@Java8API
 public class PnLStream extends AbstractImmutableValue<PnLStream> {
 
 	final private IPersistentMap<LocalDate, Float> pnls;

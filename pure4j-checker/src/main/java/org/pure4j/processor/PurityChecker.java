@@ -1,5 +1,6 @@
 package org.pure4j.processor;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -43,6 +44,17 @@ public class PurityChecker implements Rule {
 		pureChecklist = new PureChecklistHandler(cl, immutables, mutableUnshared, intf, impl);
 	}
 	
+	public PurityChecker(ClassLoader classLoader, String pureResources[]) throws ClassNotFoundException, IOException {
+		this(classLoader);
+		for (String resourceName : pureResources) {
+			try {
+				pureChecklist.load(resourceName);
+			} catch (Exception e) {
+				throw new RuntimeException("Couldn't load file: "+resourceName, e);
+			}
+		}
+	}
+
 	@Override
 	public void checkModel(ProjectModel pm, Callback cb) {
 		cb.send("Method Scanning");

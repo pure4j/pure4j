@@ -457,8 +457,8 @@ public class PureChecklistHandler {
 		}
 	}
 
-	private void load(String fileName) throws IOException, ClassNotFoundException {
-		InputStream is = PureChecklistHandler.class.getResourceAsStream(fileName);
+	public void load(String fileName) throws IOException, ClassNotFoundException {
+		InputStream is = getInputStreamForResource(fileName);
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String line = br.readLine();
 		while (line != null) {
@@ -468,6 +468,19 @@ public class PureChecklistHandler {
 			pureChecklist.put(pureMethod.declaration, pureMethod);
 			line = br.readLine();
 		}
+	}
+
+	/**
+	 * Tries both the classloader for pure4j, and also the checked-code classloader.
+	 * @param fileName Resource to load
+	 * @return InputStream to the resource.  pure4j library gets priority.
+	 */
+	protected InputStream getInputStreamForResource(String fileName) {
+		InputStream is = PureChecklistHandler.class.getResourceAsStream(fileName.startsWith("/") ? fileName : "/"+fileName);
+		if (is == null) {
+			is = cl.getResourceAsStream(fileName);
+		}
+		return is;
 	}
 
 	private static boolean isAnonymousInnerClass(String className) {
@@ -499,8 +512,6 @@ public class PureChecklistHandler {
 			// because you can't add the pure annotation to anonymous inner classes, we assume it is pure.
 			return true;
 		}
-			
-		
 
 		Pure p = mh.getAnnotation(cl, Pure.class);
 		if (p != null) {

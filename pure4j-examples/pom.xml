@@ -36,6 +36,11 @@
 	                    </goals>   
 			         </execution>
 			     </executions>
+			     <configuration>
+			     	<pureFiles>
+			     		<pureFile>example.pure</pureFile>
+			     	</pureFiles>
+			     </configuration>
 			</plugin>
 		</plugins>
 	</build>
