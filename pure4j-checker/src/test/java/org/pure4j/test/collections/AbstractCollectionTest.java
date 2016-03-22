@@ -8,11 +8,9 @@ import java.util.ListIterator;
 import org.junit.Test;
 import org.pure4j.collections.ArraySeq;
 import org.pure4j.collections.IPersistentCollection;
-import org.pure4j.collections.IPersistentList;
 import org.pure4j.collections.IPersistentStack;
 import org.pure4j.collections.PersistentHashSet;
 import org.pure4j.collections.PersistentList;
-import org.pure4j.collections.Seqable;
 import org.pure4j.test.AbstractTest;
 
 public abstract class AbstractCollectionTest extends AbstractTest {
@@ -20,7 +18,7 @@ public abstract class AbstractCollectionTest extends AbstractTest {
 	public abstract IPersistentCollection<String> getInstance();
 	
 	public boolean isLifo() {
-		return true;
+		return true; 
 	}
 	
 	@Test

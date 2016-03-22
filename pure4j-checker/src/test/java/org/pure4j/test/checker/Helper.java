@@ -1,26 +1,37 @@
 package org.pure4j.test.checker;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
+import javax.tools.ToolProvider;
 
+import org.junit.Assert;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
 import org.pure4j.exception.Pure4JException;
-import org.pure4j.model.MemberHandle;
-import org.pure4j.model.ProjectModel;
-import org.pure4j.processor.Callback;
 import org.pure4j.processor.ClassFileModelBuilder;
-import org.pure4j.processor.PurityChecker;
+import org.pure4j.processor.Pure4JChecker;
 import org.pure4j.test.CausesError;
-import org.pure4j.test.ShouldBePure;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+
+import com.google.testing.compile.JavaFileObjects;
 
 public final class Helper {
 
@@ -46,107 +57,119 @@ public final class Helper {
 	}
 	
 	public boolean thenCheck(int defaultConstructors, int maxSynthetics, Class<?>... classes) {
+		DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
 		try {
-			final Set<String> pures = new LinkedHashSet<String>();
-			final Map<Class<? extends Pure4JException>, Integer> errorSet = new HashMap<Class<? extends Pure4JException>, Integer>();
-
-			Callback cb = new Callback() {
-
-				@Override
-				public void send(String s) {
-					System.out.println(s);
-					System.out.flush();
-				}
-
-				@Override
-				public void registerError(Pure4JException e) {
-					Integer count = errorSet.get(e.getClass());
-					if (count == null) {
-						count = 1;
-					} else {
-						count = count + 1;
-					}
-
-					errorSet.put(e.getClass(), count);
-					System.err.println(e.getClass() + ": " + e.getMessage());
-					System.err.flush();
-				}
-
-				@Override
-				public void registerPure(String signature, Boolean intf, Boolean impl) {
-					if (intf && impl) {
-						pures.add(signature);
-					}
-				}
-			};
-
-			String packageName = classes[0].getPackage().getName();
-			ProjectModel pm = createModel(classes, packageName);
-			PurityChecker checker = new PurityChecker(this.getClass().getClassLoader());
-			checker.checkModel(pm, cb);
-
-			System.out.println("----- PURES ---- ");
-			for (String string : pures) {
-				System.out.println(string);
-			}
-
-			System.out.flush();
-
-			String pureAnn = org.pure4j.model.Type.getInternalName(ShouldBePure.class);
-			for (MemberHandle mh : pm.getMembersWithAnnotation(pureAnn)) {
-				String toStringmh = mh.toString();
-				if (!pures.remove(toStringmh)) {
-					System.err.println("Couldn't find expected pure: " + toStringmh);
-				}
-			}
-
-			System.out.println("----- EXTRA PURES ---- ");
-			for (String string : pures) {
-				System.out.println(string);
-			}
-
-			int synthetics = 0;
-			int constructors = 0;
-			for (String string : pures) {
-				if (string.contains("<")) {
-					constructors ++;
-				} else {
-					synthetics ++;
-				}
+			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+			CompilationTask task = compiler.getTask(
+				null, compiler.getStandardFileManager(null, null, null), diagnosticCollector, 
+				Arrays.asList(
+						"-AprintErrorStack", 
+						"-Ashowchecks"), null, getFileContents(classes));
+			
+			
+			task.setProcessors(Collections.singleton(new Pure4JChecker()));
+				
+			task.call();
+			
+			for (Diagnostic<?> d : diagnosticCollector.getDiagnostics()) {
+				System.out.println(d);
 			}
 			
-			Assert.assertEquals(defaultConstructors, constructors);
-			Assert.assertTrue(synthetics <= maxSynthetics);
+			for (Class<?> class1 : classes) {
+				for (Field f : class1.getDeclaredFields()) {
+					CausesError ce = f.getAnnotation(CausesError.class);
+					if (ce != null) {
+						Assert.fail();
+					}
+				}	
+			}
 			
-
-			String errorAnn = org.pure4j.model.Type.getInternalName(CausesError.class);
-
-			StringBuilder fail = new StringBuilder();
-
-			for (MemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
-				CausesError vals = mh.getAnnotation(this.getClass().getClassLoader(), CausesError.class);
-				for (Class<?> ex : vals.value()) {
-					countException(errorSet, fail, ex);
-				}
-			}
-
-			for (Class<?> ex : otherExceptions) {
-				countException(errorSet, fail, ex);
-			}
-
-			otherExceptions = new Class[] {};
-
-			for (Class<? extends Exception> e : errorSet.keySet()) {
-				fail.append("Checker logged exception: " + e);
-			}
-
-			Assert.assertTrue(fail.toString(), fail.length() == 0);
-
 			return true;
-		} catch (IOException e) {
+			
+//
+//			System.out.println("----- PURES ---- ");
+//			for (String string : pures) {
+//				System.out.println(string);
+//			}
+//
+//			System.out.flush();
+//
+//			String pureAnn = org.pure4j.model.Type.getInternalName(ShouldBePure.class);
+//			for (MemberHandle mh : pm.getMembersWithAnnotation(pureAnn)) {
+//				String toStringmh = mh.toString();
+//				if (!pures.remove(toStringmh)) {
+//					System.err.println("Couldn't find expected pure: " + toStringmh);
+//				}
+//			}
+//
+//			System.out.println("----- EXTRA PURES ---- ");
+//			for (String string : pures) {
+//				System.out.println(string);
+//			}
+//
+//			int synthetics = 0;
+//			int constructors = 0;
+//			for (String string : pures) {
+//				if (string.contains("<")) {
+//					constructors ++;
+//				} else {
+//					synthetics ++;
+//				}
+//			}
+//			
+//			Assert.assertEquals(defaultConstructors, constructors);
+//			Assert.assertTrue(synthetics <= maxSynthetics);
+//			
+//
+//			String errorAnn = org.pure4j.model.Type.getInternalName(CausesError.class);
+//
+//			StringBuilder fail = new StringBuilder();
+//
+//			for (MemberHandle mh : pm.getMembersWithAnnotation(errorAnn)) {
+//				CausesError vals = mh.getAnnotation(this.getClass().getClassLoader(), CausesError.class);
+//				for (Class<?> ex : vals.value()) {
+//					countException(errorSet, fail, ex);
+//				}
+//			}
+//
+//			for (Class<?> ex : otherExceptions) {
+//				countException(errorSet, fail, ex);
+//			}
+//
+//			otherExceptions = new Class[] {};
+//
+//			for (Class<? extends Exception> e : errorSet.keySet()) {
+//				fail.append("Checker logged exception: " + e);
+//			}
+//
+//			Assert.assertTrue(fail.toString(), fail.length() == 0);
+//
+//			return true;
+		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new RuntimeException("Problem:", e);
 		}
 
+	}
+
+	private Iterable<? extends JavaFileObject> getFileContents(Class<?>[] classes) throws IOException {
+		List<JavaFileObject> out = new ArrayList<JavaFileObject>();
+		for (Class<?> c1 : classes) {
+			File f = new File("src/test/java/"+c1.getName().replace(".", "/")+".java");
+			StringBuilder sb = new StringBuilder();
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			String line = br.readLine();
+			while (line != null) {
+				sb.append(line);
+				sb.append("\n");
+				line = br.readLine();
+			}
+			
+			out.add(JavaFileObjects.forSourceString(c1.getName(), sb.toString()));
+			br.close();
+		}
+		
+		return out;
 	}
 
 	@Pure(Enforcement.NOT_PURE)
@@ -175,23 +198,6 @@ public final class Helper {
 		System.out.println(s);
 	}
 
-	protected ProjectModel createModel(Class<?>[] classes, String packageStem) throws IOException {
-		ClassFileModelBuilder cfmb = new ClassFileModelBuilder(false);
-		ClassLoader cl = this.getClass().getClassLoader();
-		DefaultResourceLoader drl = new DefaultResourceLoader(cl);
-		Set<Resource> resources = new HashSet<Resource>();
-
-		for (Class<?> c : classes) {
-			visitAllOf(c, drl, cfmb, packageStem, new HashSet<Class<?>>(), resources);
-		}
-
-		for (Resource resource : resources) {
-			cfmb.visit(resource);
-		}
-
-		ProjectModel pm = cfmb.getModel();
-		return pm;
-	}
 
 	private void visitAllOf(Class<?> c, DefaultResourceLoader drl, ClassFileModelBuilder cfmb, String packageStem, Set<Class<?>> done, Set<Resource> resources) throws IOException {
 		if ((c != Object.class) && (c != null) && (!done.contains(c))) {

@@ -13,6 +13,13 @@ public final class HasPrivateArray {
 	 */
 	@CausesError({FieldTypeNotImmutableException.class})
 	private final int[] members = new int[] { 4, 5, 6};
+	
+	/*
+	 * You shouldn't be able to "tell" it that it's immutable, either
+	 */
+	@CausesError({FieldTypeNotImmutableException.class})
+	@ImmutableValue
+	private final int[] someArray = new int[] {4, 5,6 };
 
 	@Override
 	@ShouldBePure
