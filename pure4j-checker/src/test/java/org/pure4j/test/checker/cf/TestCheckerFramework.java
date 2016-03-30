@@ -14,4 +14,14 @@ public class TestCheckerFramework {
 	public void testImmutableMisuse() {
 		Helper.check(1, ImmutableMisuse.class);
 	}
+	
+	@Test
+	public void testPolyImmutableUse() {
+		Helper.check(1, PolyImmutableUse.class);
+	}
+	
+	@Test
+	public void testPolyImmutableMisuse() {
+		Helper.check(1, PolyImmutableMisuse.class);
+	}
 }

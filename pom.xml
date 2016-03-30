@@ -8,7 +8,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>pure4j-core</module>
 		<module>pure4j-checker</module>
 		<module>pure4j-maven-plugin</module>
 		<module>pure4j-examples</module>
