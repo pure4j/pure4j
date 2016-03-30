@@ -34,11 +34,6 @@
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.pure4j</groupId>
-			<artifactId>pure4j-core</artifactId>
-            <version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>4.2.0.RELEASE</version>
@@ -61,7 +56,7 @@
             <type>test-jar</type>
             <scope>test</scope>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.checkerframework</groupId>
 			<artifactId>checker</artifactId>
 			<version>1.9.8</version>

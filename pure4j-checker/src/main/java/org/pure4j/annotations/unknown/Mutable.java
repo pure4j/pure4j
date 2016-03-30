@@ -9,13 +9,17 @@ import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
 import org.checkerframework.framework.qual.InvisibleQualifier;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeQualifier;
-import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.annotations.mutable.MutableUnshared;
 
+/**
+ * Default type for java elements - mutable.
+ * 
+ * @author robmoffat
+ *
+ */
 @TypeQualifier
 @InvisibleQualifier
 @DefaultQualifierInHierarchy
-@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
+@Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER, ElementType.TYPE})
 @SubtypeOf({})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Mutable {

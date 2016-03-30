@@ -6,14 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -21,6 +24,7 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
+import org.checkerframework.framework.source.SourceChecker.CheckerError;
 import org.junit.Assert;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
@@ -70,22 +74,40 @@ public final class Helper {
 			task.setProcessors(Collections.singleton(new Pure4JChecker()));
 				
 			task.call();
-			
-			for (Diagnostic<?> d : diagnosticCollector.getDiagnostics()) {
-				System.out.println(d);
+		}  catch (Throwable e) {
+			e.printStackTrace();
+			throw new RuntimeException("Problem:", e);
+		}
+
+		
+		List<Diagnostic<?>> errors = new ArrayList<>();
+		
+		for (Diagnostic<?> d : diagnosticCollector.getDiagnostics()) {
+			if (d.getKind() == Kind.ERROR) {
+				errors.add(d);
 			}
 			
-			for (Class<?> class1 : classes) {
-				for (Field f : class1.getDeclaredFields()) {
-					CausesError ce = f.getAnnotation(CausesError.class);
-					if (ce != null) {
-						Assert.fail();
-					}
-				}	
+			System.out.println(d);
+		}
+		
+		for (Class<?> class1 : classes) {
+			for (Field f : class1.getDeclaredFields()) {
+				CausesError ce = f.getAnnotation(CausesError.class);
+				handleCausesAnnotation(errors, ce);
+			}	
+			
+			for (Method m : class1.getDeclaredMethods()) {
+				CausesError ce = m.getAnnotation(CausesError.class);
+				handleCausesAnnotation(errors, ce);
 			}
-			
-			return true;
-			
+		}
+		
+		// remaining error codes
+		Assert.assertTrue("Unexpected Errors: "+errors, errors.size() == 0);
+		
+		
+		return true;
+		
 //
 //			System.out.println("----- PURES ---- ");
 //			for (String string : pures) {
@@ -145,11 +167,34 @@ public final class Helper {
 //			Assert.assertTrue(fail.toString(), fail.length() == 0);
 //
 //			return true;
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new RuntimeException("Problem:", e);
-		}
+//		} catch (Throwable e) {
+//			e.printStackTrace();
+//			throw new RuntimeException("Problem:", e);
+//		}
 
+	}
+
+	private void handleCausesAnnotation(List<Diagnostic<?>> errors, CausesError ce) {
+		if ((ce != null) && (ce.code() != null)) {
+			for(String err : ce.code()) {
+				boolean found = extractError(errors, err);
+				
+				if (!found) {
+					Assert.fail("Was expecting error code: "+err);
+				}
+			}
+		}
+	}
+
+	private boolean extractError(List<Diagnostic<?>> errors, String err) {
+		for (Iterator<Diagnostic<?>> iterator = errors.iterator(); iterator.hasNext();) {
+			Diagnostic<?> diagnostic = iterator.next();
+			if (diagnostic.toString().contains(err)) {
+				iterator.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Iterable<? extends JavaFileObject> getFileContents(Class<?>[] classes) throws IOException {
