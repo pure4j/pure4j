@@ -18,9 +18,7 @@ import java.util.Set;
 
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
-import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PurityType;
 import org.pure4j.exception.ClassExpectingPureMethod;
 import org.pure4j.exception.ClassHierarchyUsesBothTypesOfPurity;
 import org.pure4j.exception.IncorrectPure4JImmutableCallException;

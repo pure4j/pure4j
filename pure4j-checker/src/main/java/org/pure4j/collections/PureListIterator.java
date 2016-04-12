@@ -5,7 +5,7 @@ import java.util.ListIterator;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 /**
  * Should only be constructed with immutable contents in order to
@@ -19,7 +19,7 @@ public final class PureListIterator<E> implements IPureListIterator<E>{
 	
 	private ListIterator<E> wraps;
 	
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	public PureListIterator(ListIterator<E> wraps) {
 		this.wraps = wraps;
 	}

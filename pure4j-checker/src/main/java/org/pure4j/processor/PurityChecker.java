@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 import org.pure4j.annotations.pure.PurityType;
 import org.pure4j.exception.ClassHasConflictingAnnotationsException;
 import org.pure4j.exception.ImpureCodeCallingPureCodeWithoutInterfacePurity;
@@ -277,7 +277,7 @@ public class PurityChecker implements Rule {
 	}
 
 	protected Enforcement getInterfaceEnforcement(MemberHandle handle) {
-		PureInterface pp = handle.getAnnotation(cl, PureInterface.class);
+		PureNotThreadsafe pp = handle.getAnnotation(cl, PureNotThreadsafe.class);
 		Enforcement intf = pp == null ? Enforcement.CHECKED : pp.value();
 		return intf;
 	}

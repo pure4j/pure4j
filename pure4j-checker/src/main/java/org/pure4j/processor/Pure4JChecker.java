@@ -7,7 +7,6 @@ import org.pure4j.annotations.immutable.PolyImmutableValue;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.unknown.Mutable;
 
-@TypeQualifiers({Mutable.class, ImmutableValue.class, MutableUnshared.class, PolyImmutableValue.class})
 public class Pure4JChecker extends BaseTypeChecker {
 	
 }

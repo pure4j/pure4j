@@ -32,7 +32,7 @@ package org.pure4j.collections;
 
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 
 
@@ -77,7 +77,7 @@ public final class Hasher {
 	}
 
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	public static int hashOrdered(Iterable<?> xs) {
 		int n = 0;
 		int hash = 1;
@@ -91,7 +91,7 @@ public final class Hasher {
 	}
 
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	public static int hashUnordered(Iterable<?> xs) {
 		int hash = 0;
 		int n = 0;

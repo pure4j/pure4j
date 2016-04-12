@@ -1,7 +1,6 @@
 package org.pure4j.test.checker.spec.immutable.calling_impure;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
-import org.pure4j.exception.PureMethodCallsImpureException;
 import org.pure4j.test.CausesError;
 import org.pure4j.test.ShouldBePure;
 
@@ -15,7 +14,7 @@ public final class SomeValueObjectWithImpures {
 		return new Object().hashCode();
 	}
 	
-	@CausesError(PureMethodCallsImpureException.class)
+	@CausesError(code ="pure4j.method_calls_impure")
 	public int someMethodThatShouldBePure() {
 		return someImpure();
 	}

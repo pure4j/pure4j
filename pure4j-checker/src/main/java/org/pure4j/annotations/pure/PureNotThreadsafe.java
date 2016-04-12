@@ -5,6 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.checkerframework.framework.qual.SubtypeOf;
+import org.checkerframework.framework.qual.TypeQualifier;
+
 /**
  * Allows you to change the level of interface purity checking on a pure method.
  * @see org.pure4j.annotations.immutable.ImmutableValue
@@ -16,7 +19,8 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PureInterface {
+@TypeQualifier
+@SubtypeOf({Impure.class})
+public @interface PureNotThreadsafe {
 
-	public Enforcement value() default Enforcement.NOT_PURE;
 }

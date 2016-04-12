@@ -31,4 +31,9 @@ public class TestCheckerFramework {
 	public void testPolyImmutableMisuse() {
 		Helper.check(1, PolyImmutableMisuse.class);
 	}
+	
+	@Test
+	public void testImmutableCallUse() {
+		Helper.check(1, ImmutableCallUse.class);
+	}
 }

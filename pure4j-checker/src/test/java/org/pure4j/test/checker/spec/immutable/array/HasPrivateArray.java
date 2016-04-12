@@ -11,13 +11,13 @@ public final class HasPrivateArray {
 	/*
 	 * Can't be immutable, as this can be changed.
 	 */
-	@CausesError({FieldTypeNotImmutableException.class})
+	@CausesError(code="pure4j.array_not_immutable")
 	private final int[] members = new int[] { 4, 5, 6};
 	
 	/*
 	 * You shouldn't be able to "tell" it that it's immutable, either
 	 */
-	@CausesError({FieldTypeNotImmutableException.class})
+	@CausesError(code="pure4j.array_not_immutable")
 	@ImmutableValue
 	private final int[] someArray = new int[] {4, 5,6 };
 

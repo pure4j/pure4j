@@ -20,7 +20,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 		Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable {
@@ -63,7 +63,7 @@ public abstract class APersistentMap<K, V> implements IPersistentMap<K, V>,
 	}
 
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	static public <K2, V2> boolean mapEquals(Iterable<Entry<K2,V2>> m1, int size, Object obj) {
 		if (m1 == obj)
 			return true;

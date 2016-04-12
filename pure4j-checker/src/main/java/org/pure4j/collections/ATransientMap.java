@@ -8,7 +8,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 @MutableUnshared
 public abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
@@ -60,7 +60,7 @@ public abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 		return Pure4J.returnImmutable(wrapped.remove(key));
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
 		for (Entry<? extends K, ? extends V> ent : m.entrySet()) {
@@ -74,19 +74,19 @@ public abstract class ATransientMap<K, V> implements ITransientMap<K, V> {
 		wrapped.clear();
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)	// since this shares state - changes to map affect the returned set.
+	@PureNotThreadsafe(Enforcement.NOT_PURE)	// since this shares state - changes to map affect the returned set.
 	@Override
 	public Set<K> keySet() {
 		return wrapped.keySet();
 	}
 
-	@PureInterface(Enforcement.NOT_PURE) // since this shares state - changes to map affect the returned set.
+	@PureNotThreadsafe(Enforcement.NOT_PURE) // since this shares state - changes to map affect the returned set.
 	@Override
 	public Collection<V> values() {
 		return wrapped.values();
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public Set<java.util.Map.Entry<K, V>> entrySet() {
 		return wrapped.entrySet();

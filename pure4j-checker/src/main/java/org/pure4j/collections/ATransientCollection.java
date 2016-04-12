@@ -6,7 +6,7 @@ import java.util.Iterator;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 public abstract class ATransientCollection<K> implements ITransientCollection<K> {
 
@@ -32,7 +32,7 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 		return getWrapped().contains(o);
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public IPureIterator<K> iterator() {
 		final Iterator<K> wi = getWrapped().iterator();
@@ -75,7 +75,7 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 		return getWrapped().remove(o);
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		for (Object object : c) {
@@ -87,7 +87,7 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 		return true;
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public boolean addAll(Collection<? extends K> c) {
 		boolean result = false;
@@ -100,7 +100,7 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 		
 	}
 
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean result = false;
@@ -112,7 +112,7 @@ public abstract class ATransientCollection<K> implements ITransientCollection<K>
 	}
 
 	@Pure(Enforcement.FORCE)
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		boolean changed = false;

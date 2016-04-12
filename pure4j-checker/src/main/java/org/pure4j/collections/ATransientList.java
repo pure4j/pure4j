@@ -9,7 +9,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.mutable.MutableUnshared;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 @MutableUnshared
 public abstract class ATransientList<K> extends ATransientCollection<K> implements List<K>, Seqable<K> {
@@ -108,7 +108,7 @@ public abstract class ATransientList<K> extends ATransientCollection<K> implemen
 		return IterableSeq.create(this.iterator());
 	}
 	
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	public boolean addAll(int index, Collection<? extends K> c) {
 		boolean result = false;
 		for (K k : c) {

@@ -15,13 +15,13 @@ package org.pure4j.collections;
 import org.pure4j.Pure4J;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 public class Util {
 
 	@Pure
 	@SuppressWarnings("unchecked")
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	static public int compare(Object k1, Object k2) {
 		if (k1 == k2)
 			return 0;
@@ -43,13 +43,13 @@ public class Util {
 
 
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	static public RuntimeException runtimeException(String s) {
 		return new RuntimeException(s);
 	}
 	
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	static public boolean equals(Object k1, Object k2){
 		if(k1 == k2)
 			return true;

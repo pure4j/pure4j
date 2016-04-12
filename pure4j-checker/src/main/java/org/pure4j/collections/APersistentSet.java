@@ -22,7 +22,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 public abstract class APersistentSet<K> implements IPersistentSet<K>,
 		Collection<K>, Set<K>, Serializable {
@@ -58,7 +58,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	static public boolean setEquals(Set<?> s1, Object obj) {
 		if (s1 == obj)
 			return true;
@@ -155,7 +155,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 	
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	protected static <K> IPersistentMap<K, K> createMap(ISeq<K> items, ITransientMap<K, K> map) {
 		for (; items != null; items = items.next()) {
 			K first = items.first();
@@ -165,7 +165,7 @@ public abstract class APersistentSet<K> implements IPersistentSet<K>,
 	}
 	
 	@Pure
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	private static <K> IPersistentMap<K, K> createMap(Collection<K> init, ITransientMap<K, K> map ) {
 		for (K key : init) {
 			map.put(key, key);

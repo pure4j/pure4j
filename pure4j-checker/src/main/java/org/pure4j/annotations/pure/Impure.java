@@ -15,7 +15,7 @@ import org.checkerframework.framework.qual.TypeQualifier;
 @TypeQualifier
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
-@SubtypeOf({PureNotThreadsafe.class})
-public @interface Pure {
+@SubtypeOf({UnspecifiedPurity.class})
+public @interface Impure {
 	
 }

@@ -2,7 +2,7 @@ package org.pure4j.test.checker.spec.pure.forced1;
 
 import org.pure4j.annotations.immutable.ImmutableValue;
 import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 import org.pure4j.test.ShouldBePure;
 
 /**
@@ -12,7 +12,7 @@ import org.pure4j.test.ShouldBePure;
 public final class ForceInterfacePurity {
 
 	@ShouldBePure
-	@PureInterface(Enforcement.FORCE)
+	@PureNotThreadsafe(Enforcement.FORCE)
 	public ForceInterfacePurity(int[] someArray) {
 		super();
 	}

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -20,14 +19,12 @@ import javax.tools.Diagnostic.Kind;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
-import org.checkerframework.framework.source.SourceChecker.CheckerError;
 import org.junit.Assert;
-import org.pure4j.annotations.pure.Enforcement;
-import org.pure4j.annotations.pure.Pure;
+import org.pure4j.annotations.pure.ForcePure;
+import org.pure4j.annotations.pure.Impure;
 import org.pure4j.exception.Pure4JException;
 import org.pure4j.processor.ClassFileModelBuilder;
 import org.pure4j.processor.Pure4JChecker;
@@ -217,7 +214,7 @@ public final class Helper {
 		return out;
 	}
 
-	@Pure(Enforcement.NOT_PURE)
+	@Impure
 	@SuppressWarnings("unchecked")
 	protected void countException(final Map<Class<? extends Pure4JException>, Integer> errorSet, StringBuilder fail, Class<?> ex) {
 		Integer count = errorSet.get(ex);
@@ -231,14 +228,14 @@ public final class Helper {
 		}
 	}
 
-	@Pure(Enforcement.FORCE)
+	@Impure
 	public void assertEquals(Object exp, Object act) {
 		if (!exp.equals(act)) {
 			throw new RuntimeException("Was expecting equality: " + exp + " and " + act);
 		}
 	}
 
-	@Pure(Enforcement.FORCE)
+	@ForcePure
 	public void log(String s) {
 		System.out.println(s);
 	}

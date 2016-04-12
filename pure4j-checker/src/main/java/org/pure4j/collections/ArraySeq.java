@@ -18,7 +18,7 @@ import org.pure4j.Pure4J;
 import org.pure4j.annotations.immutable.IgnoreImmutableTypeCheck;
 import org.pure4j.annotations.pure.Enforcement;
 import org.pure4j.annotations.pure.Pure;
-import org.pure4j.annotations.pure.PureInterface;
+import org.pure4j.annotations.pure.PureNotThreadsafe;
 
 public class ArraySeq<K> extends ASeq<K> {
 	
@@ -91,7 +91,7 @@ public class ArraySeq<K> extends ASeq<K> {
 		return new ShortSeq(array, 0, true);
 	}
 	
-	@PureInterface(Enforcement.NOT_PURE)
+	@PureNotThreadsafe(Enforcement.NOT_PURE)
 	public static CharSeq create(char... array) {
 		return new CharSeq(array, 0, true);
 	}
