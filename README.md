@@ -7,6 +7,8 @@ Pure4J
 
 Compile-Time Purity and Immutability Semantics For The Java Language
 
+**Please Note:** This project was an experiment:  While it achieves the goals of providing immutability and purity constraints for Java, coding using Pure4J is _hard work_.  If you're interested in playing with these concepts in Java then you've come to the right place, but having tried to build projects using this, I don't recommend using it in-the-large.  Feel free to experiment though.
+
 Forces
 ------
 
